@@ -1,0 +1,20 @@
+{
+  "parent": "elysium:sigil",
+  "display": {
+    "icon": {
+      "id": "elysium:golden_birch_leaves"
+    },
+    "title": "An Afternoon Without End",
+    "description": "Step into Elysium.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "entered": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "elysium:elysium"
+      }
+    }
+  }
+}

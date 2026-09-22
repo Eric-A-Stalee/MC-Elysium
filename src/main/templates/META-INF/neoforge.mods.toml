@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="${mod_license}"
+issueTrackerURL="https://github.com/Eric-A-Stalee/MC-Elysium/issues"
+
+[[mixins]]
+config="elysium.mixins.json"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="https://github.com/Eric-A-Stalee/MC-Elysium"
+authors="Eric A Stalee"
+description='''
+A realm of golden birches, wild grain, and harvest hamlets beneath an unmoving afternoon sun.
+Find shards in mature wheat, assemble a sigil, and awaken a harvest shrine at sunset.
+'''
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},21.2)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"

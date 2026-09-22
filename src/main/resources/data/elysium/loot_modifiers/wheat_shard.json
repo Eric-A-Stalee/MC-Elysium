@@ -1,0 +1,16 @@
+{
+  "type": "elysium:wheat_shard",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:blocks/wheat"
+    },
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:wheat",
+      "properties": {
+        "age": "7"
+      }
+    }
+  ]
+}

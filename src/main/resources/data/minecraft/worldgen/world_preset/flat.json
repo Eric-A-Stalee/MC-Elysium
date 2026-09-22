@@ -1,0 +1,156 @@
+{
+  "dimensions": {
+    "minecraft:overworld": {
+      "type": "minecraft:overworld",
+      "generator": {
+        "type": "minecraft:flat",
+        "settings": {
+          "biome": "minecraft:plains",
+          "features": false,
+          "lakes": false,
+          "layers": [
+            {
+              "block": "minecraft:bedrock",
+              "height": 1
+            },
+            {
+              "block": "minecraft:dirt",
+              "height": 2
+            },
+            {
+              "block": "minecraft:grass_block",
+              "height": 1
+            }
+          ],
+          "structure_overrides": [
+            "minecraft:strongholds",
+            "minecraft:villages"
+          ]
+        }
+      }
+    },
+    "minecraft:the_end": {
+      "type": "minecraft:the_end",
+      "generator": {
+        "type": "minecraft:noise",
+        "biome_source": {
+          "type": "minecraft:the_end"
+        },
+        "settings": "minecraft:end"
+      }
+    },
+    "minecraft:the_nether": {
+      "type": "minecraft:the_nether",
+      "generator": {
+        "type": "minecraft:noise",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "preset": "minecraft:nether"
+        },
+        "settings": "minecraft:nether"
+      }
+    },
+    "elysium:elysium": {
+      "type": "elysium:elysium",
+      "generator": {
+        "type": "minecraft:noise",
+        "settings": "elysium:elysium",
+        "biome_source": {
+          "type": "minecraft:multi_noise",
+          "biomes": [
+            {
+              "biome": "elysium:golden_fields",
+              "parameters": {
+                "humidity": [
+                  -1.0,
+                  0.1
+                ],
+                "erosion": [
+                  -0.22,
+                  1.0
+                ],
+                "temperature": [
+                  -1.0,
+                  1.0
+                ],
+                "continentalness": [
+                  -1.2,
+                  1.2
+                ],
+                "weirdness": [
+                  -1.2,
+                  1.2
+                ],
+                "depth": [
+                  -2.0,
+                  2.0
+                ],
+                "offset": 0.0
+              }
+            },
+            {
+              "biome": "elysium:golden_birch_woods",
+              "parameters": {
+                "humidity": [
+                  0.1,
+                  1.0
+                ],
+                "erosion": [
+                  -0.22,
+                  1.0
+                ],
+                "temperature": [
+                  -1.0,
+                  1.0
+                ],
+                "continentalness": [
+                  -1.2,
+                  1.2
+                ],
+                "weirdness": [
+                  -1.2,
+                  1.2
+                ],
+                "depth": [
+                  -2.0,
+                  2.0
+                ],
+                "offset": 0.0
+              }
+            },
+            {
+              "biome": "elysium:elysian_highlands",
+              "parameters": {
+                "humidity": [
+                  -1.0,
+                  1.0
+                ],
+                "erosion": [
+                  -1.0,
+                  -0.22
+                ],
+                "temperature": [
+                  -1.0,
+                  1.0
+                ],
+                "continentalness": [
+                  -1.2,
+                  1.2
+                ],
+                "weirdness": [
+                  -1.2,
+                  1.2
+                ],
+                "depth": [
+                  -2.0,
+                  2.0
+                ],
+                "offset": 0.0
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

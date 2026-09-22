@@ -1,0 +1,102 @@
+{
+  "type": "elysium:elysium",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "elysium:elysium",
+    "biome_source": {
+      "type": "minecraft:multi_noise",
+      "biomes": [
+        {
+          "biome": "elysium:golden_fields",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              0.1
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_birch_woods",
+          "parameters": {
+            "humidity": [
+              0.1,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:elysian_highlands",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              -0.22
+            ],
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "parent": "elysium:root",
+  "display": {
+    "icon": {
+      "id": "elysium:elysium_sigil"
+    },
+    "title": "The Remaining Light",
+    "description": "An open sky. Four white pillars. A harvest laid between them. Offer wheat to the sigil as the sun descends.",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "sigil": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "elysium:elysium_sigil"
+          }
+        ]
+      }
+    }
+  }
+}

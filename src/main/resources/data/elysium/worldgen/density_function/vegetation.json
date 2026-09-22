@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:shifted_noise",
+  "noise": "minecraft:vegetation",
+  "shift_x": "elysium:shift_x",
+  "shift_y": 0.0,
+  "shift_z": "elysium:shift_z",
+  "xz_scale": 0.25,
+  "y_scale": 0.0
+}

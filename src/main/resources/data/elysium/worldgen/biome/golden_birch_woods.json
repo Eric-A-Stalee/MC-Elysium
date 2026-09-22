@@ -1,0 +1,76 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.85,
+  "downfall": 0.65,
+  "effects": {
+    "grass_color": 9348691,
+    "foliage_color": 15385671,
+    "sky_color": 11916007,
+    "fog_color": 15128234,
+    "water_color": 5613230,
+    "water_fog_color": 2653832
+  },
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "elysium:golden_birch_woods/trees",
+      "elysium:golden_birch_woods/flowers",
+      "elysium:golden_birch_woods/grain",
+      "elysium:golden_birch_woods/grass"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:sheep",
+        "weight": 12,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:cow",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:chicken",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:rabbit",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 3
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:salmon",
+        "weight": 6,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "water_creature": []
+  },
+  "creature_spawn_probability": 0.12
+}

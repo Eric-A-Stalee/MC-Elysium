@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "active=false,has_sigil=false": {
+      "model": "elysium:block/harvest_altar"
+    },
+    "active=false,has_sigil=true": {
+      "model": "elysium:block/harvest_altar_sigil"
+    },
+    "active=true,has_sigil=false": {
+      "model": "elysium:block/harvest_altar_active"
+    },
+    "active=true,has_sigil=true": {
+      "model": "elysium:block/harvest_altar_active_sigil"
+    }
+  }
+}

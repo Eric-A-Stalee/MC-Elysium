@@ -1,0 +1,64 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.8,
+  "downfall": 0.35,
+  "effects": {
+    "grass_color": 10333545,
+    "foliage_color": 15385671,
+    "sky_color": 12375785,
+    "fog_color": 15852231,
+    "water_color": 5613230,
+    "water_fog_color": 2653832
+  },
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "elysium:elysian_highlands/trees",
+      "elysium:elysian_highlands/flowers",
+      "elysium:elysian_highlands/grain",
+      "elysium:elysian_highlands/grass"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:sheep",
+        "weight": 10,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:rabbit",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 3
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:salmon",
+        "weight": 6,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "water_creature": []
+  },
+  "creature_spawn_probability": 0.12
+}

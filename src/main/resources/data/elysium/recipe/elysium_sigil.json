@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "elysium:elysium_fragment"
+    }
+  },
+  "result": {
+    "id": "elysium:elysium_sigil",
+    "count": 1
+  }
+}

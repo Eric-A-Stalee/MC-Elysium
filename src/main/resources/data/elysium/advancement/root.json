@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "id": "elysium:elysium_shard"
+    },
+    "title": "A Glint in the Harvest",
+    "description": "Something impossible was hiding in the wheat. Four shards make a fragment; four fragments make a sigil.",
+    "background": "minecraft:textures/block/birch_planks.png",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "shard": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "elysium:elysium_shard"
+          }
+        ]
+      }
+    }
+  }
+}

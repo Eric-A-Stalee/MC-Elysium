@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "elysium:harvest_hamlet",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 28,
+    "separation": 10,
+    "salt": 192837461,
+    "spread_type": "linear"
+  }
+}
