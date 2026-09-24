@@ -8,11 +8,14 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -85,6 +88,24 @@ public final class ElysiumGameTests {
             helper.assertTrue(realm.getBlockState(pos).is(Blocks.STONE),
                     "The initial buried world should be solid stone at " + pos);
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = "portal_test_empty", timeoutTicks = 600)
+    public static void portalPiglinsCannotSpawnInParadise(GameTestHelper helper) {
+        var realm = helper.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
+        helper.assertTrue(realm != null, "Spawn test requires the real Elysium dimension");
+        BlockPos surface = realm.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.ZERO);
+        // Nether portal random ticks spawn zombified piglins with the STRUCTURE spawn type.
+        helper.assertTrue(EntityType.ZOMBIFIED_PIGLIN.spawn(realm, surface, MobSpawnType.STRUCTURE) == null,
+                "A lit nether portal must not bring zombified piglins into paradise");
+        var summoned = EntityType.ZOMBIFIED_PIGLIN.spawn(realm, surface, MobSpawnType.COMMAND);
+        helper.assertTrue(summoned != null, "Commands and spawn eggs should still work inside Elysium");
+        summoned.discard();
+        var overworldPiglin = EntityType.ZOMBIFIED_PIGLIN.spawn(helper.getLevel(),
+                helper.absolutePos(new BlockPos(2, 1, 2)), MobSpawnType.STRUCTURE);
+        helper.assertTrue(overworldPiglin != null, "Overworld nether portals must keep their vanilla behavior");
+        overworldPiglin.discard();
         helper.succeed();
     }
 }

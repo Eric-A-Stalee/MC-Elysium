@@ -4,7 +4,8 @@ The initial world has Golden Fields, Golden Birch Woods, and Elysian Highlands.
 They share white birch trunks, gold canopies, olive grass, clear blue-green water,
 flowers, passive animals, and a sun held at time 11000. The distinction is spatial:
 open grain country, enclosed tall woodland, and pale rocky uplands. Surface rain,
-raids, and ordinary hostile biome spawns are disabled in Elysium. This does not
+raids, ordinary hostile biome spawns, and zombified piglins from lit nether
+portals are disabled in Elysium while its sun is fixed. This does not
 override the rest of a player's world or promise that another mod cannot spawn
 an entity here.
 

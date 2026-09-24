@@ -4,7 +4,7 @@ The first prototype uses an open-air harvest shrine. Its four pale pillars frame
 
 ## Obtaining a sigil
 
-Harvest fully mature **vanilla wheat**. The default Elysium Shard chance is **0.01% per harvested crop**, independent of Fortune. Four shards make one Elysium Fragment and four fragments make one Sigil of Elysium. This means sixteen shards per sigil and an average of **160,000 mature wheat harvests** at the default rate. It is deliberately rare and highly variable; it is not a guaranteed drop after that many crops. The server configuration exposes `entrance.wheatShardChance` for a less demanding playthrough. Wild grain inside Elysium does not produce shards.
+Harvest fully mature **vanilla wheat**. The default Elysium Shard chance is **0.01% per harvested crop**, independent of Fortune. Four shards make one Elysium Fragment and four fragments make one Sigil of Elysium. This means sixteen shards per sigil and an average of **160,000 mature wheat harvests** at the default rate. It is deliberately rare and highly variable; it is not a guaranteed drop after that many crops. The server configuration exposes `entrance.wheatShardChance` for a less demanding playthrough. Every mature wheat break that rolls the wheat loot table counts, whoever or whatever breaks it, so villager farmers, water-flushed farms and modded harvesters all collect shards. Automation is the intended way to reach that volume. Wild grain inside Elysium does not produce shards.
 
 Craft the Harvest Altar using its recipe. Once placed, put the sigil into it with a normal right-click while holding the sigil in your main hand. Its position is the center of the sanctuary.
 
