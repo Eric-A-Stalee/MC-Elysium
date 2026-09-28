@@ -52,6 +52,11 @@ asset("models/block/golden_birch_sapling", {"parent": "minecraft:block/cross",
       "render_type": "minecraft:cutout", "textures": {"cross": "minecraft:block/birch_sapling"}})
 asset("models/block/wild_grain", {"parent": "minecraft:block/crop", "render_type": "minecraft:cutout",
       "textures": {"crop": "minecraft:block/wheat_stage7"}})
+asset("models/block/leaf_litter", {"parent": "minecraft:block/block", "render_type": "minecraft:cutout",
+      "textures": {"leaf": "elysium:particle/golden_leaf", "particle": "#leaf"},
+      "elements": [{"from": [x, y, z], "to": [x + 6, y, z + 6],
+                    "faces": {"up": {"texture": "#leaf", "tintindex": 0, "uv": [0, 0, 16, 16], "rotation": rotation}}}
+                   for x, y, z, rotation in [(0, 0.05, 1, 0), (8, 0.10, 0, 90), (3, 0.15, 9, 270), (9, 0.20, 8, 180)]]})
 
 
 def cuboid(start, end, texture):
@@ -76,15 +81,17 @@ asset("blockstates/harvest_altar", {"variants": {
     f"active={str(a).lower()},has_sigil={str(s).lower()}": {"model": "elysium:block/harvest_altar" + ("_active" if a else "") + ("_sigil" if s else "")}
     for a in [False, True] for s in [False, True]}})
 
-for name in ["golden_birch_leaves", "golden_birch_sapling", "wild_grain"]:
+for name in ["golden_birch_leaves", "golden_birch_sapling", "wild_grain", "leaf_litter"]:
     asset(f"blockstates/{name}", {"variants": {"": {"model": f"elysium:block/{name}"}}})
-for name in ["golden_birch_leaves", "golden_birch_sapling", "wild_grain", "harvest_altar"]:
+for name in ["golden_birch_leaves", "golden_birch_sapling", "wild_grain", "harvest_altar", "leaf_litter"]:
     asset(f"models/item/{name}", {"parent": f"elysium:block/{name}"})
 # Cross/crop inventory sprites should remain legible when held.
 for name, tex in [("golden_birch_sapling", "birch_sapling"), ("wild_grain", "wheat_stage7")]:
     asset(f"models/item/{name}", {"parent": "minecraft:item/generated", "textures": {"layer0": f"minecraft:block/{tex}"}})
 
 loot("golden_birch_sapling", [pool([item("elysium:golden_birch_sapling")], [SURVIVES])])
+asset("models/item/leaf_litter", {"parent": "minecraft:item/generated", "textures": {"layer0": "elysium:particle/golden_leaf"}})
+loot("leaf_litter", [pool([item("elysium:leaf_litter")], [SURVIVES])])
 loot("wild_grain", [pool([item("minecraft:wheat")], [SURVIVES]), pool([item("minecraft:wheat_seeds")],
                    [SURVIVES, {"condition": "minecraft:random_chance", "chance": 0.35}])])
 loot("harvest_altar", [pool([item("elysium:harvest_altar")], [SURVIVES]),

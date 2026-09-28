@@ -25,7 +25,7 @@ GOLDEN_HOUR = 11000
 @dataclass(frozen=True)
 class Palette:
     grass: int
-    foliage: int = 0xEAC447
+    foliage: int = 0xE8BB39
     sky: int = 0xB5D2E7
     fog: int = 0xF0DAB1
     water: int = 0x55A6AE
@@ -72,6 +72,8 @@ class Vegetation:
     branching_tree_chance: float = 0.0
     groves: GrovePattern | None = None
     riverside_attempts: int = 0
+    canopy_tree_chance: float = 0.0
+    leaf_patches: int = 0
 
 
 @dataclass(frozen=True)
@@ -81,6 +83,7 @@ class TreeShape:
     radius: tuple[int, int]
     foliage_height: int
     branching: bool = False
+    forking: bool = False
 
 
 TREE_SHAPES = (
@@ -88,6 +91,7 @@ TREE_SHAPES = (
     # Narrower variable crowns and a wider height range interrupt the old roof.
     TreeShape("tall_golden_birch", (9, 3, 2), (2, 3), 4),
     TreeShape("branching_golden_birch", (8, 4, 0), (2, 2), 4, branching=True),
+    TreeShape("canopy_golden_birch", (12, 3, 2), (3, 4), 4, forking=True),
 )
 
 
@@ -107,7 +111,7 @@ class Spawn:
 class BiomeDefinition:
     id: str
     name: str
-    climate: ClimateBox
+    climates: tuple[ClimateBox, ...]
     palette: Palette
     vegetation: Vegetation
     creatures: tuple[Spawn, ...]
@@ -124,25 +128,49 @@ class BiomeDefinition:
 
 FARM_CREATURES = (Spawn("sheep", 12), Spawn("cow", 8), Spawn("chicken", 8),
                   Spawn("rabbit", 5, 2, 3))
-# The climate boxes tile humidity/erosion space. Highlands follow the same
-# low-erosion signal that raises terrain, rather than an unrelated biome roll.
+# Corridors use the same ridge and temperature signals as the river/lake
+# density functions. Temperature is a geographic palette selector, not time.
+def inland_climates(humidity):
+    return tuple(ClimateBox(humidity, (-0.22, 1.0), temperature=temp, weirdness=band)
+                 for temp, width in (((-1.0, 0.25), 0.10), ((0.25, 1.0), 0.22))
+                 for band in ((-1.2, -width), (width, 1.2)))
+
+
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
-                    ClimateBox((-1.0, 0.10), (-0.22, 1.0)),
+                    inland_climates((-1.0, 0.10)),
                     Palette(0xCBB16A), Vegetation(0, 12, 2, 2, 0.20, riverside_attempts=2),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
-                    ClimateBox((0.10, 1.0), (-0.22, 1.0)),
+                    inland_climates((0.10, 1.0)),
                     Palette(0xB99B59, fog=0xE6D6AA),
                     Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze"),
+    BiomeDefinition("golden_watermeadows", "Golden Watermeadows",
+                    (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(-1.0, 0.25), weirdness=(-0.10, 0.10)),),
+                    Palette(0xC4AA60, foliage=0xEAC34C, water=0x65AEB3),
+                    Vegetation(2, 1, 9, 4, 0.15, canopy_tree_chance=0.75), FARM_CREATURES,
+                    downfall=0.65, ambient_loop="elysium:woodland_breeze"),
+    BiomeDefinition("amber_lakes", "Amber Lakes",
+                    (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(0.25, 1.0), weirdness=(-0.22, 0.22)),),
+                    Palette(0xA58D52, foliage=0xCC8537, sky=0xB9CEDD, fog=0xDFC39C,
+                            water=0x386C79, water_fog=0x264B59),
+                    Vegetation(3, 2, 3, 3, 0.25, 0.20, canopy_tree_chance=0.40, leaf_patches=3),
+                    FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze"),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
-                    ClimateBox((-1.0, 1.0), (-1.0, -0.22)),
-                    Palette(0xC3AE79, sky=0xBCD6E9, fog=0xF1E2C7),
-                    Vegetation(3, 4, 2, 3, 0.35, 0.08),
+                    (ClimateBox((-1.0, 1.0), (-0.55, -0.22)),),
+                    Palette(0xBBB28A, foliage=0xDDBB68, sky=0xAFC6DF, fog=0xD7DCE2,
+                            water=0x527D93, water_fog=0x354F68),
+                    Vegetation(2, 2, 2, 3, 0.70, 0.10),
                     (Spawn("sheep", 10), Spawn("rabbit", 5, 2, 3)),
-                    temperature=0.8, downfall=0.35, pale_cliffs=True),
+                    temperature=0.45, downfall=0.35, pale_cliffs=True),
+    BiomeDefinition("ivory_peaks", "Ivory Peaks",
+                    (ClimateBox((-1.0, 1.0), (-1.0, -0.55)),),
+                    Palette(0xB9B496, foliage=0xD2B66F, sky=0xA7BDD5, fog=0xCDD6E1,
+                            water=0x496D88, water_fog=0x334962),
+                    Vegetation(1, 0, 1, 1, 0.80), (Spawn("sheep", 8), Spawn("rabbit", 4, 2, 3)),
+                    temperature=0.35, downfall=0.25, pale_cliffs=True),
 )
 
 
@@ -215,8 +243,17 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     # Height varies only across X/Z. Density decreases monotonically with Y,
     # so a ground column cannot contain underground air pockets or noise caves.
     # abs(ridges) near zero cuts linked river channels down below sea level.
-    river = spline(unary("abs", "elysium:ridges"),
-                   ((0.0, 0.0), (0.018, 0.0), (0.055, 0.28), (0.12, 1.0), (1.2, 1.0)))
+    emit(entries, "worldgen/density_function/river_distance.json", unary("abs", "elysium:ridges"))
+    emit(entries, "worldgen/density_function/autumn_weight.json",
+         spline("elysium:temperature", ((-1.2, 0.0), (0.05, 0.0), (0.30, 1.0), (1.2, 1.0))))
+    river = spline("elysium:river_distance",
+                   ((0.0, 0.0), (0.012, 0.0), (0.028, 0.12), (0.065, 0.40), (0.14, 1.0), (1.2, 1.0)))
+    lake = spline("elysium:river_distance",
+                  ((0.0, 0.0), (0.075, 0.0), (0.12, 0.16), (0.19, 0.65), (0.27, 1.0), (1.2, 1.0)))
+    # Broad quiet reaches connect to the brook network. The blend avoids a
+    # terrain step at biome borders; neither mask depends on a biome lookup.
+    channel = binary("add", river, binary("mul", "elysium:autumn_weight",
+                    binary("add", lake, binary("mul", -1.0, river))))
     mountains = spline("elysium:erosion",
                        ((-1.0, 118.0), (-0.7, 104.0), (-0.45, 58.0),
                         (-0.22, 12.0), (0.0, 3.0), (0.5, 0.0), (1.0, 0.0)))
@@ -225,7 +262,7 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     upland = binary("add", 17.0,
                     binary("add", binary("mul", 9.0, "elysium:continents"),
                            binary("add", mountains, binary("mul", 3.0, relief))))
-    terrain_height = unary("flat_cache", binary("add", 60.0, binary("mul", river, upland)))
+    terrain_height = unary("flat_cache", binary("add", 60.0, binary("mul", channel, upland)))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
                                                     gradient(MIN_Y, 320, 64.0, -320.0)))
     emit(entries, "worldgen/noise/gentle_relief.json", {"firstOctave": -4, "amplitudes": [1.0, 0.5]})
@@ -264,7 +301,7 @@ def make_noise(entries: dict[Path, bytes]) -> None:
         "legacy_random_source": False, "noise": {"min_y": MIN_Y, "height": HEIGHT,
                                                   "size_horizontal": 1, "size_vertical": 2},
         "noise_router": router, "ore_veins_enabled": False, "sea_level": SEA_LEVEL,
-        "spawn_target": [biome.climate.parameters() for biome in BIOMES if biome.settlements],
+        "spawn_target": [climate.parameters() for biome in BIOMES if biome.settlements for climate in biome.climates],
         "surface_rule": surface,
     })
 
@@ -282,7 +319,8 @@ def tree(shape: TreeShape) -> dict:
         minimum_size.update(limit=0, upper_size=0)
     return {"type": "minecraft:tree", "config": {
         "trunk_provider": simple_provider("birch_log", axis="y"),
-        "trunk_placer": {"type": "minecraft:fancy_trunk_placer" if shape.branching else "minecraft:straight_trunk_placer",
+        "trunk_placer": {"type": "minecraft:fancy_trunk_placer" if shape.branching else (
+                         "minecraft:forking_trunk_placer" if shape.forking else "minecraft:straight_trunk_placer"),
                          "base_height": base, "height_rand_a": random_a, "height_rand_b": random_b},
         "foliage_provider": simple_provider("elysium:golden_birch_leaves", distance="7",
                                             persistent="false", waterlogged="false"),
@@ -328,6 +366,7 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         {"data": state(name), "weight": weight} for name, weight in
         (("dandelion", 5), ("oxeye_daisy", 4), ("azure_bluet", 3), ("cornflower", 1), ("white_tulip", 2))]}
     emit(entries, "worldgen/configured_feature/meadow_flowers.json", patch(flowers, 48, 6))
+    emit(entries, "worldgen/configured_feature/autumn_leaves.json", patch(simple_provider("elysium:leaf_litter"), 32, 5))
 
     for biome in BIOMES:
         vegetation = biome.vegetation
@@ -335,13 +374,16 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         # to conditional probabilities rather than silently reducing tall trees.
         branches = vegetation.branching_tree_chance
         tall = vegetation.tall_tree_chance
-        assert 0 <= branches < 1 and 0 <= tall <= 1 - branches
+        canopy = vegetation.canopy_tree_chance
+        assert all(0 <= n <= 1 for n in (branches, tall, canopy)) and branches + tall + canopy <= 1.00001
         choices = []
-        for shape, chance in (("branching_golden_birch", branches),
-                              ("tall_golden_birch", tall / (1 - branches))):
-            if chance > 0:
-                choices.append({"chance": chance,
+        remaining = 1.0
+        for shape, share in (("canopy_golden_birch", canopy), ("branching_golden_birch", branches),
+                              ("tall_golden_birch", tall)):
+            if share > 0:
+                choices.append({"chance": min(1.0, share / remaining),
                                 "feature": {"feature": f"elysium:{shape}", "placement": []}})
+                remaining -= share
         mixed_trees = {"type": "minecraft:random_selector", "config": {
             "default": {"feature": "elysium:golden_birch", "placement": []},
             "features": choices}}
@@ -363,6 +405,10 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         features[9] = [f"elysium:{biome.id}/{suffix}" for suffix in ("trees", "flowers", "grain", "grass")]
         if vegetation.riverside_attempts:
             features[9].insert(1, f"elysium:{biome.id}/riverside_trees")
+        if vegetation.leaf_patches:
+            emit(entries, f"worldgen/placed_feature/{biome.id}/leaves.json",
+                 placed("elysium:autumn_leaves", vegetation.leaf_patches))
+            features[9].append(f"elysium:{biome.id}/leaves")
         effects = biome.palette.effects()
         if biome.ambient_loop:
             effects["ambient_sound"] = biome.ambient_loop
@@ -591,6 +637,7 @@ class SiteDefinition:
     min_height: int = 0
     view_drop: int = 0
     water_approach: bool = False
+    require_water_approach: bool = False
 
 
 def emit_site(entries, site: SiteDefinition):
@@ -601,10 +648,46 @@ def emit_site(entries, site: SiteDefinition):
         "radius": site.radius, "max_relief": site.max_relief,
         "min_height_above_sea": site.min_height, "view_drop": site.view_drop,
         "water_approach": site.water_approach,
+        "require_water_approach": site.require_water_approach,
     })
 
 
 def make_settlements(entries: dict[Path, bytes]) -> None:
+    from settlement_templates import house, plaza, WATERSIDE, NORDIC
+    modules = (house(state, "waterside_cottage", WATERSIDE),
+               house(state, "mountain_cottage", NORDIC),
+               house(state, "mountain_cottage_store", NORDIC, variant=1),
+               house(state, "mountain_hall", NORDIC, radius=8, hall=True), plaza(state))
+    for module in modules:
+        c = module.size[0] // 2
+        villagers = [] if module.name == "mountain_plaza" else [{
+            "pos": Tag(9, (6, [c + 0.5, 3.0, c + 1.5])), "blockPos": Tag(9, (3, [c, 3, c + 1])),
+            "nbt": nbt_compound({"id": Tag(8, "minecraft:villager"), "PersistenceRequired": Tag(1, 1),
+                "VillagerData": nbt_compound({"type": Tag(8, "minecraft:taiga" if module.name.startswith("mountain") else "minecraft:plains"),
+                    "profession": Tag(8, "minecraft:none"), "level": Tag(3, 1)})})}]
+        entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
+    emit(entries, "tags/worldgen/biome/has_structure/waterside_cottage.json",
+         {"replace": False, "values": ["elysium:golden_watermeadows", "elysium:amber_lakes"]})
+    emit_site(entries, SiteDefinition("waterside_cottage", ("waterside_cottage",),
+              "#elysium:has_structure/waterside_cottage", 6, 2, require_water_approach=True))
+    emit(entries, "worldgen/structure_set/waterside_cottage.json", {
+        "structures": [{"structure": "elysium:waterside_cottage", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 18, "separation": 7,
+            "salt": 459270831, "exclusion_zone": {"other_set": "elysium:harvest_hamlet", "chunk_count": 3}}})
+    emit(entries, "tags/worldgen/biome/has_structure/mountain_town.json",
+         {"replace": False, "values": ["elysium:elysian_highlands", "elysium:ivory_peaks"]})
+    emit(entries, "worldgen/structure/mountain_town.json", {
+        "type": "elysium:mountain_town", "biomes": "#elysium:has_structure/mountain_town",
+        "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "none",
+        "plaza": "elysium:mountain_plaza",
+        "hall": {"template": "elysium:mountain_hall", "radius": 8, "max_relief": 4},
+        "cottages": [{"template": f"elysium:{name}", "radius": 6, "max_relief": 4}
+                     for name in ("mountain_cottage", "mountain_cottage_store")],
+        "minimum_cottages": 3, "maximum_cottages": 5, "min_height_above_sea": 24})
+    emit(entries, "worldgen/structure_set/mountain_town.json", {
+        "structures": [{"structure": "elysium:mountain_town", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 38, "separation": 14,
+                      "salt": 760491532, "spread_type": "linear"}})
     settlements = sorted({name for biome in BIOMES for name in biome.settlements})
     for name in settlements:
         if name != "harvest_hamlet":
@@ -657,7 +740,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
     })
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge", "elysium:waterside_cottage", "elysium:mountain_town"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:
@@ -711,7 +794,7 @@ def generate() -> dict[Path, bytes]:
     dimension = {
         "type": "elysium:elysium", "generator": {"type": "minecraft:noise", "settings": "elysium:elysium",
             "biome_source": {"type": "minecraft:multi_noise", "biomes": [
-                {"biome": biome.key, "parameters": biome.climate.parameters()} for biome in BIOMES]}}}
+                {"biome": biome.key, "parameters": climate.parameters()} for biome in BIOMES for climate in biome.climates]}}}
     emit(entries, "dimension/elysium.json", dimension)
     make_test_preset(entries, dimension)
     validate(entries)
@@ -727,7 +810,7 @@ def validate(entries: dict[Path, bytes]) -> None:
         assert not body["spawners"]["monster"] and not body["carvers"]
         for feature in body["features"][9]:
             assert f"worldgen/placed_feature/{feature.split(':')[1]}.json" in resources
-        assert -1.2 <= biome.climate.erosion[0] <= biome.climate.erosion[1] <= 1.2
+        assert all(-1.2 <= climate.erosion[0] <= climate.erosion[1] <= 1.2 for climate in biome.climates)
     for name, resource in resources.items():
         if name.startswith("worldgen/placed_feature/"):
             feature = resource["feature"]

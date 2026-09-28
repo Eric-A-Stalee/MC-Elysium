@@ -6,39 +6,131 @@
     "argument2": {
       "type": "minecraft:mul",
       "argument1": {
-        "type": "minecraft:spline",
-        "spline": {
-          "coordinate": {
-            "type": "minecraft:abs",
-            "argument": "elysium:ridges"
-          },
-          "points": [
-            {
-              "location": 0.0,
-              "value": 0.0,
-              "derivative": 0.0
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "elysium:river_distance",
+            "points": [
+              {
+                "location": 0.0,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.012,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.028,
+                "value": 0.12,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.065,
+                "value": 0.4,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.14,
+                "value": 1.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 1.2,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": "elysium:autumn_weight",
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "elysium:river_distance",
+                "points": [
+                  {
+                    "location": 0.0,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.075,
+                    "value": 0.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.12,
+                    "value": 0.16,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.19,
+                    "value": 0.65,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.27,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 1.2,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  }
+                ]
+              }
             },
-            {
-              "location": 0.018,
-              "value": 0.0,
-              "derivative": 0.0
-            },
-            {
-              "location": 0.055,
-              "value": 0.28,
-              "derivative": 0.0
-            },
-            {
-              "location": 0.12,
-              "value": 1.0,
-              "derivative": 0.0
-            },
-            {
-              "location": 1.2,
-              "value": 1.0,
-              "derivative": 0.0
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": -1.0,
+              "argument2": {
+                "type": "minecraft:spline",
+                "spline": {
+                  "coordinate": "elysium:river_distance",
+                  "points": [
+                    {
+                      "location": 0.0,
+                      "value": 0.0,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 0.012,
+                      "value": 0.0,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 0.028,
+                      "value": 0.12,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 0.065,
+                      "value": 0.4,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 0.14,
+                      "value": 1.0,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": 1.2,
+                      "value": 1.0,
+                      "derivative": 0.0
+                    }
+                  ]
+                }
+              }
             }
-          ]
+          }
         }
       },
       "argument2": {

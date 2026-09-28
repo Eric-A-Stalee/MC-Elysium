@@ -1,14 +1,14 @@
 {
   "has_precipitation": false,
-  "temperature": 0.8,
+  "temperature": 0.45,
   "downfall": 0.35,
   "effects": {
-    "grass_color": 12824185,
-    "foliage_color": 15385671,
-    "sky_color": 12375785,
-    "fog_color": 15852231,
-    "water_color": 5613230,
-    "water_fog_color": 2653832
+    "grass_color": 12300938,
+    "foliage_color": 14531432,
+    "sky_color": 11519711,
+    "fog_color": 14146786,
+    "water_color": 5406099,
+    "water_fog_color": 3493736
   },
   "carvers": {},
   "features": [

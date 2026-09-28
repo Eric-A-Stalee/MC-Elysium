@@ -27,5 +27,9 @@
   "message.elysium.travel.prevented": "The crossing was prevented.",
   "message.elysium.travel.fallback": "Your old path was obstructed. The sanctuary returned you near your Overworld spawn.",
   "title.elysium.arrival": "Elysium",
-  "title.elysium.arrival.subtitle": "The fields remember only golden hours."
+  "title.elysium.arrival.subtitle": "The fields remember only golden hours.",
+  "block.elysium.leaf_litter": "Fallen Birch Leaves",
+  "biome.elysium.golden_watermeadows": "Golden Watermeadows",
+  "biome.elysium.amber_lakes": "Amber Lakes",
+  "biome.elysium.ivory_peaks": "Ivory Peaks"
 }

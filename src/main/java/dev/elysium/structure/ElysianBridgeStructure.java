@@ -2,13 +2,10 @@ package dev.elysium.structure;
 
 import com.mojang.serialization.MapCodec;
 import dev.elysium.registry.ModStructures;
-import java.util.HashMap;
-import java.util.Map;
+import dev.elysium.worldgen.TerrainSampler;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 
@@ -23,10 +20,7 @@ public final class ElysianBridgeStructure extends Structure {
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         int seaLevel = context.chunkGenerator().getSeaLevel();
         // Cache belongs to this one candidate only: no retained worlds, seeds, or unbounded global maps.
-        Map<Long, Integer> heights = new HashMap<>();
-        BridgePlanner.Terrain terrain = (x, z) -> heights.computeIfAbsent(columnKey(x, z), key ->
-                context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                        context.heightAccessor(), context.randomState()));
+        var terrain = new TerrainSampler(context);
         boolean firstAxis = context.random().nextBoolean();
         int firstProbe = context.random().nextInt(PROBES.length);
         for (int index = 0; index < PROBES.length; index++) {
@@ -35,8 +29,7 @@ public final class ElysianBridgeStructure extends Structure {
             int z = context.chunkPos().getMinBlockZ() + probe[1];
             if (terrain.floorHeight(x, z) >= seaLevel) continue;
             // Height alone could also describe a dry depression in an unfamiliar generator.
-            if (!context.chunkGenerator().getBaseColumn(x, z, context.heightAccessor(), context.randomState())
-                    .getBlock(seaLevel - 1).is(Blocks.WATER)) continue;
+            if (terrain.column(x, z).waterSurfaceY().orElse(Integer.MIN_VALUE) != seaLevel) continue;
             for (boolean eastWest : new boolean[]{firstAxis, !firstAxis}) {
                 Optional<BridgePlanner.Span> plan = BridgePlanner.find(terrain, x, z, eastWest, seaLevel);
                 if (plan.isEmpty()) continue;

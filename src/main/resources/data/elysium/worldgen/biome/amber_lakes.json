@@ -1,0 +1,78 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.85,
+  "downfall": 0.6,
+  "effects": {
+    "grass_color": 10849618,
+    "foliage_color": 13403447,
+    "sky_color": 12177117,
+    "fog_color": 14664604,
+    "water_color": 3697785,
+    "water_fog_color": 2509657,
+    "ambient_sound": "elysium:woodland_breeze"
+  },
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "elysium:amber_lakes/trees",
+      "elysium:amber_lakes/flowers",
+      "elysium:amber_lakes/grain",
+      "elysium:amber_lakes/grass",
+      "elysium:amber_lakes/leaves"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "minecraft:sheep",
+        "weight": 12,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:cow",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:chicken",
+        "weight": 8,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "minecraft:rabbit",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 3
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:salmon",
+        "weight": 6,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "water_creature": []
+  },
+  "creature_spawn_probability": 0.12
+}

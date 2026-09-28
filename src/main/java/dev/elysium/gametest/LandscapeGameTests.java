@@ -167,7 +167,7 @@ public final class LandscapeGameTests {
         var realm = helper.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
         helper.assertTrue(realm != null, "Elysium must exist for the landmark terrain probe");
         var generator = realm.getChunkSource().getGenerator();
-        String[] names = {"elder_spring", "sunlit_lookout", "harvest_hamlet"};
+        String[] names = {"elder_spring", "sunlit_lookout", "harvest_hamlet", "waterside_cottage"};
         class Probe implements Runnable {
             int site, attempts;
             @Override public void run() {
@@ -184,6 +184,7 @@ public final class LandscapeGameTests {
                     if (stub.isEmpty()) continue;
                     var pieces = stub.get().getPiecesBuilder().build().pieces();
                     helper.assertTrue(pieces.getFirst() instanceof LandscapePiece, "Every site must create its saved template piece");
+                    if (names[site].equals("waterside_cottage")) helper.assertTrue(pieces.size() == 2, "Cottages must have an actual bank approach");
                     helper.assertTrue(pieces.size() <= 2, "A site has at most one bounded bank approach");
                     LogUtils.getLogger().info("Elysium landscape probe: site={}, seed={}, chunk={}, pieces={}, attempts={}",
                             names[site], realm.getSeed(), chunk, pieces.size(), attempts + 1);

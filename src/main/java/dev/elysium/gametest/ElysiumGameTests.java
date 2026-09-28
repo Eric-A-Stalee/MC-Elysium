@@ -76,7 +76,7 @@ public final class ElysiumGameTests {
         helper.assertTrue(type.timeOfDay(0) == type.timeOfDay(12000), "The Overworld clock must not move Elysium's sun");
         helper.assertTrue(type.hasSkyLight() && type.bedWorks(), "The realm needs daylight and usable beds");
         var biomes = realm.registryAccess().registryOrThrow(Registries.BIOME);
-        for (String id : new String[]{"golden_fields", "golden_birch_woods", "elysian_highlands"}) {
+        for (String id : new String[]{"golden_fields", "golden_birch_woods", "golden_watermeadows", "amber_lakes", "elysian_highlands", "ivory_peaks"}) {
             var biome = biomes.get(ResourceLocation.fromNamespaceAndPath("elysium", id));
             helper.assertTrue(biome != null, "Missing biome: " + id);
             helper.assertTrue(!biome.hasPrecipitation(), "Paradise biome should not rain: " + id);

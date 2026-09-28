@@ -12,5 +12,6 @@
   "max_relief": 3,
   "min_height_above_sea": 0,
   "view_drop": 0,
-  "water_approach": true
+  "water_approach": true,
+  "require_water_approach": false
 }

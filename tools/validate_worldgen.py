@@ -33,31 +33,30 @@ def validate_climates() -> int:
     source = dimension["generator"]["biome_source"]
     assert source["type"] == "minecraft:multi_noise"
     entries = source["biomes"]
-    assert len({entry["biome"] for entry in entries}) == len(entries)
+    axes = ("humidity", "erosion", "temperature", "weirdness")
     for entry in entries:
         parameters = entry["parameters"]
         assert parameters["offset"] == 0
-        for axis in ("temperature", "continentalness", "depth", "weirdness"):
+        for axis in ("continentalness", "depth"):
             low, high = bounds(parameters[axis])
-            assert low <= -1 and high >= 1, f"Uncovered {axis}: {entry}"
+            assert low <= -1 and high >= 1
         name = entry["biome"].split(":", 1)[1]
         assert (DATA / f"worldgen/biome/{name}.json").is_file()
     samples = {}
-    for axis in ("humidity", "erosion"):
+    for axis in axes:
         boundaries = sorted({v for entry in entries for v in bounds(entry["parameters"][axis])})
         samples[axis] = sorted(set(boundaries + [(a + b) / 2 for a, b in zip(boundaries, boundaries[1:])]))
         assert boundaries[0] <= -1 and boundaries[-1] >= 1
     checked = 0
-    for humidity, erosion in itertools.product(samples["humidity"], samples["erosion"]):
-        matches = [entry for entry in entries if
-                   bounds(entry["parameters"]["humidity"])[0] <= humidity <= bounds(entry["parameters"]["humidity"])[1]
-                   and bounds(entry["parameters"]["erosion"])[0] <= erosion <= bounds(entry["parameters"]["erosion"])[1]]
-        assert matches, f"Climate hole at humidity {humidity}, erosion {erosion}"
-        # A shared boundary may tie; the interior of two boxes may not overlap.
-        strict = [entry for entry in matches if
-                  bounds(entry["parameters"]["humidity"])[0] < humidity < bounds(entry["parameters"]["humidity"])[1]
-                  and bounds(entry["parameters"]["erosion"])[0] < erosion < bounds(entry["parameters"]["erosion"])[1]]
-        assert len(strict) <= 1, f"Interior climate overlap at {humidity}, {erosion}"
+    for values in itertools.product(*(samples[axis] for axis in axes)):
+        matches = [entry for entry in entries if all(
+            bounds(entry["parameters"][axis])[0] <= value <= bounds(entry["parameters"][axis])[1]
+            for axis, value in zip(axes, values))]
+        assert matches, f"Climate hole at {values}"
+        strict = [entry for entry in matches if all(
+            bounds(entry["parameters"][axis])[0] < value < bounds(entry["parameters"][axis])[1]
+            for axis, value in zip(axes, values))]
+        assert len(strict) <= 1, f"Interior climate overlap at {values}"
         checked += 1
     return checked
 

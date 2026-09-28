@@ -1,0 +1,110 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "leaf": "elysium:particle/golden_leaf",
+    "particle": "#leaf"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0.05,
+        1
+      ],
+      "to": [
+        6,
+        0.05,
+        7
+      ],
+      "faces": {
+        "up": {
+          "texture": "#leaf",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0.1,
+        0
+      ],
+      "to": [
+        14,
+        0.1,
+        6
+      ],
+      "faces": {
+        "up": {
+          "texture": "#leaf",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0.15,
+        9
+      ],
+      "to": [
+        9,
+        0.15,
+        15
+      ],
+      "faces": {
+        "up": {
+          "texture": "#leaf",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 270
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        0.2,
+        8
+      ],
+      "to": [
+        15,
+        0.2,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#leaf",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "rotation": 180
+        }
+      }
+    }
+  ]
+}

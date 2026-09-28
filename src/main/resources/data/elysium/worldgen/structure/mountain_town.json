@@ -1,0 +1,28 @@
+{
+  "type": "elysium:mountain_town",
+  "biomes": "#elysium:has_structure/mountain_town",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "plaza": "elysium:mountain_plaza",
+  "hall": {
+    "template": "elysium:mountain_hall",
+    "radius": 8,
+    "max_relief": 4
+  },
+  "cottages": [
+    {
+      "template": "elysium:mountain_cottage",
+      "radius": 6,
+      "max_relief": 4
+    },
+    {
+      "template": "elysium:mountain_cottage_store",
+      "radius": 6,
+      "max_relief": 4
+    }
+  ],
+  "minimum_cottages": 3,
+  "maximum_cottages": 5,
+  "min_height_above_sea": 24
+}

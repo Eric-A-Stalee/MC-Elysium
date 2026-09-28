@@ -19,6 +19,66 @@
             ],
             "temperature": [
               -1.0,
+              0.25
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              -0.1
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_fields",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              0.1
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              -1.0,
+              0.25
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              0.1,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_fields",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              0.1
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              0.25,
               1.0
             ],
             "continentalness": [
@@ -27,6 +87,36 @@
             ],
             "weirdness": [
               -1.2,
+              -0.22
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_fields",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              0.1
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              0.25,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              0.22,
               1.2
             ],
             "depth": [
@@ -49,6 +139,186 @@
             ],
             "temperature": [
               -1.0,
+              0.25
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              -0.1
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_birch_woods",
+          "parameters": {
+            "humidity": [
+              0.1,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              -1.0,
+              0.25
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              0.1,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_birch_woods",
+          "parameters": {
+            "humidity": [
+              0.1,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              0.25,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -1.2,
+              -0.22
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_birch_woods",
+          "parameters": {
+            "humidity": [
+              0.1,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              0.25,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              0.22,
+              1.2
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:golden_watermeadows",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              -1.0,
+              0.25
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -0.1,
+              0.1
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:amber_lakes",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -0.22,
+              1.0
+            ],
+            "temperature": [
+              0.25,
+              1.0
+            ],
+            "continentalness": [
+              -1.2,
+              1.2
+            ],
+            "weirdness": [
+              -0.22,
+              0.22
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "elysium:elysian_highlands",
+          "parameters": {
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -0.55,
+              -0.22
+            ],
+            "temperature": [
+              -1.0,
               1.0
             ],
             "continentalness": [
@@ -67,7 +337,7 @@
           }
         },
         {
-          "biome": "elysium:elysian_highlands",
+          "biome": "elysium:ivory_peaks",
           "parameters": {
             "humidity": [
               -1.0,
@@ -75,7 +345,7 @@
             ],
             "erosion": [
               -1.0,
-              -0.22
+              -0.55
             ],
             "temperature": [
               -1.0,

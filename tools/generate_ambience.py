@@ -19,9 +19,9 @@ ASSETS = Path(__file__).resolve().parents[1] / "src/main/resources/assets/elysiu
 
 
 def leaf_png():
-    # Serrated golden birch leaf, darker central vein and a short brown stem.
+    # Original grayscale mask; the client applies the regional foliage palette.
     rows = ("....y...", "...yyy..", "..yyvyy.", ".yyvvyy.", "..yvyy..", ".yvyy...", "..v.....", "..s.....")
-    colors = {".": (0, 0, 0, 0), "y": (236, 192, 65, 255), "v": (189, 133, 39, 255), "s": (122, 89, 45, 255)}
+    colors = {".": (0, 0, 0, 0), "y": (255, 255, 255, 255), "v": (190, 190, 190, 255), "s": (115, 115, 115, 255)}
     raw = b"".join(b"\0" + bytes(channel for char in row for channel in colors[char]) for row in rows)
 
     def chunk(kind, data):

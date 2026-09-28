@@ -6,6 +6,8 @@ import dev.elysium.structure.ElysianBridgeStructure;
 import dev.elysium.structure.LandscapeStructure;
 import dev.elysium.structure.LandscapePiece;
 import dev.elysium.structure.BankPathPiece;
+import dev.elysium.structure.MountainTownStructure;
+import dev.elysium.structure.TerracePathPiece;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -26,6 +28,10 @@ public final class ModStructures {
             PIECES.register("landscape_site", () -> (StructurePieceType.StructureTemplateType) LandscapePiece::new);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> BANK_PATH_PIECE =
             PIECES.register("bank_path", () -> (StructurePieceType.ContextlessType) BankPathPiece::new);
+    public static final DeferredHolder<StructureType<?>, StructureType<MountainTownStructure>> MOUNTAIN_TOWN =
+            STRUCTURES.register("mountain_town", () -> () -> MountainTownStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> TERRACE_PATH_PIECE =
+            PIECES.register("terrace_path", () -> (StructurePieceType.ContextlessType) TerracePathPiece::new);
 
     private ModStructures() {}
 

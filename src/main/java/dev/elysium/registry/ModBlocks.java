@@ -3,6 +3,7 @@ package dev.elysium.registry;
 import dev.elysium.Elysium;
 import dev.elysium.block.WildGrainBlock;
 import dev.elysium.block.GoldenBirchLeavesBlock;
+import dev.elysium.block.LeafLitterBlock;
 import dev.elysium.portal.HarvestAltarBlock;
 import java.util.Optional;
 import net.minecraft.core.registries.Registries;
@@ -32,6 +33,9 @@ public final class ModBlocks {
     public static final DeferredBlock<WildGrainBlock> WILD_GRAIN = BLOCKS.register("wild_grain",
             () -> new WildGrainBlock(BlockBehaviour.Properties.of().noCollission().instabreak()
                     .sound(SoundType.CROP).mapColor(MapColor.COLOR_YELLOW)));
+    public static final DeferredBlock<LeafLitterBlock> LEAF_LITTER = BLOCKS.register("leaf_litter",
+            () -> new LeafLitterBlock(BlockBehaviour.Properties.of().noCollission().instabreak()
+                    .sound(SoundType.GRASS).mapColor(MapColor.COLOR_ORANGE)));
     public static final DeferredBlock<HarvestAltarBlock> HARVEST_ALTAR = BLOCKS.register("harvest_altar",
             () -> new HarvestAltarBlock(BlockBehaviour.Properties.of().strength(3.0F, 6.0F).noOcclusion()
                     .sound(SoundType.STONE).mapColor(MapColor.QUARTZ)

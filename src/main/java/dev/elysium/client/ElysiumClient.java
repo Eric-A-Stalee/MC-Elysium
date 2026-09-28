@@ -4,6 +4,11 @@ import dev.elysium.Elysium;
 import dev.elysium.registry.ModBlocks;
 import dev.elysium.registry.ModItems;
 import dev.elysium.registry.ModAmbience;
+import dev.elysium.portal.ElysiumTravel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
@@ -24,12 +29,20 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block event) {
-        event.register((state, level, pos, tint) -> ModBlocks.GOLDEN_LEAF_COLOR, ModBlocks.GOLDEN_BIRCH_LEAVES.get());
+        event.register((state, level, pos, tint) -> foliageColor(level, pos),
+                ModBlocks.GOLDEN_BIRCH_LEAVES.get(), ModBlocks.LEAF_LITTER.get());
+    }
+
+    static int foliageColor(BlockAndTintGetter level, BlockPos pos) {
+        var world = Minecraft.getInstance().level;
+        return level != null && pos != null && world != null && world.dimension().equals(ElysiumTravel.DIMENSION)
+                ? BiomeColors.getAverageFoliageColor(level, pos) : ModBlocks.GOLDEN_LEAF_COLOR;
     }
 
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tint) -> ModBlocks.GOLDEN_LEAF_COLOR, ModBlocks.GOLDEN_BIRCH_LEAVES.get());
+        event.register((stack, tint) -> ModBlocks.GOLDEN_LEAF_COLOR,
+                ModBlocks.GOLDEN_BIRCH_LEAVES.get(), ModBlocks.LEAF_LITTER.get());
         event.register((stack, tint) -> 0xFFE4A1, ModItems.ELYSIUM_SHARD.get(), ModItems.ELYSIUM_FRAGMENT.get(), ModItems.ELYSIUM_SIGIL.get());
     }
 
@@ -39,6 +52,7 @@ public final class ElysiumClient {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GOLDEN_BIRCH_LEAVES.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GOLDEN_BIRCH_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WILD_GRAIN.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.LEAF_LITTER.get(), RenderType.cutout());
         });
     }
 

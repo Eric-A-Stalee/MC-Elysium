@@ -1,0 +1,16 @@
+{
+  "type": "elysium:landscape_site",
+  "biomes": "#elysium:has_structure/waterside_cottage",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "templates": [
+    "elysium:waterside_cottage"
+  ],
+  "radius": 6,
+  "max_relief": 2,
+  "min_height_above_sea": 0,
+  "view_drop": 0,
+  "water_approach": false,
+  "require_water_approach": true
+}

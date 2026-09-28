@@ -20,6 +20,7 @@ public final class ModItems {
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_LEAVES);
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_SAPLING);
         ITEMS.registerSimpleBlockItem(ModBlocks.WILD_GRAIN);
+        ITEMS.registerSimpleBlockItem(ModBlocks.LEAF_LITTER);
         ITEMS.registerSimpleBlockItem(ModBlocks.HARVEST_ALTAR);
     }
 
@@ -30,6 +31,7 @@ public final class ModItems {
                         output.accept(ELYSIUM_SHARD); output.accept(ELYSIUM_FRAGMENT); output.accept(ELYSIUM_SIGIL);
                         output.accept(ModBlocks.HARVEST_ALTAR); output.accept(ModBlocks.GOLDEN_BIRCH_LEAVES);
                         output.accept(ModBlocks.GOLDEN_BIRCH_SAPLING); output.accept(ModBlocks.WILD_GRAIN);
+                        output.accept(ModBlocks.LEAF_LITTER);
                     }).build());
 
     private ModItems() {}

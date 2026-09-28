@@ -57,6 +57,60 @@
       ],
       "temperature": [
         -1.0,
+        0.25
+      ],
+      "continentalness": [
+        -1.2,
+        1.2
+      ],
+      "weirdness": [
+        -1.2,
+        -0.1
+      ],
+      "depth": [
+        -2.0,
+        2.0
+      ],
+      "offset": 0.0
+    },
+    {
+      "humidity": [
+        -1.0,
+        0.1
+      ],
+      "erosion": [
+        -0.22,
+        1.0
+      ],
+      "temperature": [
+        -1.0,
+        0.25
+      ],
+      "continentalness": [
+        -1.2,
+        1.2
+      ],
+      "weirdness": [
+        0.1,
+        1.2
+      ],
+      "depth": [
+        -2.0,
+        2.0
+      ],
+      "offset": 0.0
+    },
+    {
+      "humidity": [
+        -1.0,
+        0.1
+      ],
+      "erosion": [
+        -0.22,
+        1.0
+      ],
+      "temperature": [
+        0.25,
         1.0
       ],
       "continentalness": [
@@ -65,6 +119,33 @@
       ],
       "weirdness": [
         -1.2,
+        -0.22
+      ],
+      "depth": [
+        -2.0,
+        2.0
+      ],
+      "offset": 0.0
+    },
+    {
+      "humidity": [
+        -1.0,
+        0.1
+      ],
+      "erosion": [
+        -0.22,
+        1.0
+      ],
+      "temperature": [
+        0.25,
+        1.0
+      ],
+      "continentalness": [
+        -1.2,
+        1.2
+      ],
+      "weirdness": [
+        0.22,
         1.2
       ],
       "depth": [
@@ -113,7 +194,8 @@
               "if_true": {
                 "type": "minecraft:biome",
                 "biome_is": [
-                  "elysium:elysian_highlands"
+                  "elysium:elysian_highlands",
+                  "elysium:ivory_peaks"
                 ]
               },
               "then_run": {
@@ -173,7 +255,8 @@
               "if_true": {
                 "type": "minecraft:biome",
                 "biome_is": [
-                  "elysium:elysian_highlands"
+                  "elysium:elysian_highlands",
+                  "elysium:ivory_peaks"
                 ]
               },
               "then_run": {
