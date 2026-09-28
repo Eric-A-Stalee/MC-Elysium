@@ -1,7 +1,7 @@
 # Elysium world generation
 
 The initial world has Golden Fields, Golden Birch Woods, and Elysian Highlands.
-They share white birch trunks, gold canopies, olive grass, clear blue-green water,
+They share white birch trunks, gold canopies, straw/ochre grass, clear blue-green water,
 flowers, passive animals, and a sun held at time 11000. The distinction is spatial:
 open grain country, enclosed tall woodland, and pale rocky uplands. Surface rain,
 raids, ordinary hostile biome spawns, and zombified piglins from lit nether
@@ -21,7 +21,7 @@ python3 tools/validate_worldgen.py
 ```
 
 The catalog uses frozen `BiomeDefinition`, `ClimateBox`, `Palette`, `Vegetation`,
-and `Spawn` dataclasses. Each definition provides the biome's stable resource ID,
+`GrovePattern`, `TreeShape`, and `Spawn` dataclasses. Each definition provides the biome's stable resource ID,
 display name, climate box, colors, vegetation budgets, animal list, temperature,
 surface treatment, and settlement affinities. The same definition emits its biome
 JSON, four placed features, tree mixture, dimension biome-source entry, and biome
@@ -30,23 +30,54 @@ means adding one definition; no independent switch statements or hand-maintained
 biome membership lists are needed. Localization must also be provided by the
 client's language catalog when introducing a new display name.
 
-Configured features describe the shared golden birch, tall golden birch, grain,
-flowers, and grass. Placed features apply each biome's attempt budgets. All
+Configured features describe the shared small, tall and branching golden birches,
+grain, flowers, and grass. Placed features apply each biome's attempt budgets. All
 vegetation uses the order trees → flowers → grain → grass. Keeping that order
 consistent avoids cross-biome feature sorting cycles and gives trees priority
 before filling their clearings. Attempts are not guaranteed placements: vanilla
 survival predicates, terrain, existing blocks, and tree collisions can reject
 them. Decorations use Minecraft's feature RNG, never global random state.
 
-| Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall tree fraction |
+| Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall / branching shares |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Golden Fields | 1 | 12 | 2 | 2 | 20% |
-| Golden Birch Woods | 9 | 3 | 3 | 5 | 65% |
-| Elysian Highlands | 3 | 4 | 2 | 3 | 35% |
+| Golden Fields | 0 | 12 | 2 | 2 | No natural tree placement |
+| Golden Birch Woods | 2 in sparse areas; 7 in groves | 3 | 3 | 5 | 50% / 20% |
+| Elysian Highlands | 3 | 4 | 2 | 3 | 35% / 8% |
 
-The table describes the initial defaults; the catalog is authoritative. A grain
+The table describes alpha 2; the catalog is authoritative. A grain
 patch makes 96 survival-checked placement attempts and needs ordinary soil, not
 farmland. Hamlet crops use normal cultivated wheat separately.
+
+Golden Fields retain a zero-count tree feature under their existing resource ID
+for compatibility. They generate no ordinary scattered trees. Trees authored in
+hamlets, planted by players, or extending across a woodland boundary can still
+appear there; this is not a rule that deletes trees or prohibits saplings.
+
+The woods use vanilla `noise_threshold_count`, sampled before the per-attempt
+position is chosen. Its coherent X/Z noise is evaluated at a 200-block scale,
+with two attempts below -0.15 and seven above. This creates broad sparse patches
+within the woods. The vanilla noise field is fixed across seeds; terrain, biome
+boundaries, positions and tree shapes still depend on the world seed. These
+groves are not yet biased toward rivers. Explicit riverside groves remain a
+possible later addition that must preserve open field interiors.
+
+Small birches have requested trunk heights of 5–8 blocks. Tall birches request
+9–14 blocks and sample a crown radius of 2 or 3, reducing the former uniform
+wide canopy. Branching specimens use vanilla fancy trunk/foliage placers with
+birch logs and golden leaves, producing multiple rounded foliage clusters. The
+shared tree catalog owns their geometry. Per-biome shares are absolute selection
+probabilities; the generator converts them to the conditional probabilities
+needed by Minecraft's sequential random selector. Placement failures can change
+the mix among surviving trees.
+
+Grass colors are biome effects: Golden Fields use `#CBB16A` (muted straw),
+Golden Birch Woods `#B99B59` (ochre), and Elysian Highlands `#C3AE79` (pale gold).
+Vanilla grass blocks and biome-tinted grass plants pick up these colors without
+new blocks or copied textures. The canopy remains more saturated than the
+ground, while birch trunks, pale stone, water and flowers provide contrast.
+Resource packs and shaders can change the final appearance or override tinting.
+On world restart, these palette changes affect already generated Elysium biomes;
+the new tree distributions only affect newly generated chunks.
 
 ## Architecture informed by BicBiomeCraft
 

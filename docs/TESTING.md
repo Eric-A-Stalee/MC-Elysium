@@ -41,6 +41,21 @@ The Python validator independently decodes both generated NBT hamlets, checks th
 
 The co-installation test loaded both mod IDs and passed the same 12 tests with identical bridge probe geometry. It **did not activate a FreeTerraForged Overworld preset**, test its multiplayer flow behavior, or make its terrain engine generate Elysium. See [the integration investigation](RETERRAFORGED.md).
 
+## Alpha 2 visual revision (September 28, 2026)
+
+The first in-game screenshots informed a focused landscape revision: no ordinary
+tree spawning in Golden Fields; straw/ochre biome grass tints; coherent sparse
+patches within Golden Birch Woods; and small, tall and branching birch forms.
+The generators now emit 88 resources in total. Run the same 13-test suite and
+resource checks above; CI uploads the resulting alpha 2 jar and server logs.
+
+Compare new chunks for vegetation changes and existing Elysium chunks after a
+world restart for grass colors. Hamlet garden trees and player-planted trees
+remain valid in the fields. The new grass tints, tree silhouettes and woodland
+openings still need visual comparison with the player's resource pack/shaders.
+Grass uses normal biome coloring; packs that override it can produce a different
+result. River-specific groves are not implemented in this revision.
+
 ## What still needs a client playtest
 
 No graphical Minecraft client was available in the development environment. The mod is an early alpha, with server and data validation rather than a completed visual playthrough.

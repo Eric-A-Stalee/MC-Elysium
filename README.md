@@ -2,7 +2,7 @@
 
 An eternal harvest hidden in an ordinary wheat field. **Minecraft 1.21.1 · NeoForge 21.1.233+ · Java 21.**
 
-Elysium is a separate dimension of golden birches, olive meadows, wild grain, clear rivers, pale uplands and small harvest settlements. Its sun stays in the late afternoon. People who never seek what lies beneath it can simply live there.
+Elysium is a separate dimension of golden birches, straw-colored meadows, wild grain, clear rivers, pale uplands and small harvest settlements. Its sun stays in the late afternoon. People who never seek what lies beneath it can simply live there.
 
 This repository develops the first playable **paradise** milestone. Hephaestus' Forge, Tartarus, bosses, a moving sun and the later crisis are future work. The current realm has no automatic countdown or hidden catastrophe.
 
@@ -10,7 +10,7 @@ This repository develops the first playable **paradise** milestone. Hephaestus' 
 
 - Three related biomes: Golden Fields, Golden Birch Woods and Elysian Highlands.
 - Parameterized biome definitions generate climate entries, palettes, feature budgets and settlement tags together, informed by the architecture of BicBiomeCraft.
-- Golden birch leaves and saplings, taller trees, wild grain and passive animals. Models reference vanilla textures; no Minecraft texture files are redistributed.
+- Open Golden Fields, straw/ochre biome grass colors, and golden woods with sparse openings, varied tall crowns and occasional branching birches. Wild grain and passive animals fill the landscape. Models reference vanilla textures; no Minecraft texture files are redistributed.
 - Independent terrain with river cuts and uplands over mostly uninterrupted stone. Natural noise caves and ore veins are deliberately absent in this first realm.
 - Two original harvest hamlet layouts with pale cottages, grain plots, villagers, beds, paths and lanterns. Terrain-aware birch bridges span suitable rivers, with stair approaches and pale stone piers.
 - Shard → fragment → sigil progression, an open-air harvest shrine, remembered return travel, and an arrival title.
@@ -18,7 +18,7 @@ This repository develops the first playable **paradise** milestone. Hephaestus' 
 
 ## Try it
 
-Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.1.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Start a **new test world** while terrain is under active development; already generated chunks retain their old terrain when the generator changes.
+Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.2.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Alpha 2 updates biome grass colors on existing Elysium terrain after restarting the world; tree placement changes appear in **newly generated chunks**. Existing trees and player builds are retained. A new test world is the easiest way to compare the complete landscape.
 
 With commands enabled, `/elysium visit` enters safely from the Overworld. `/elysium return` works for any player inside Elysium as an escape route if a return altar is lost. Wait three seconds between crossings. The Elysium creative tab exposes all blocks and progression items. Use `/locate biome elysium:golden_fields` and `/locate structure elysium:harvest_hamlet` inside the dimension to inspect content.
 

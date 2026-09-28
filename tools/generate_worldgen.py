@@ -49,12 +49,45 @@ class ClimateBox:
 
 
 @dataclass(frozen=True)
+class GrovePattern:
+    clearing_attempts: int
+    noise_threshold: float = -0.15
+
+    def placement(self, woodland_attempts: int) -> dict:
+        # Vanilla samples a coherent X/Z noise at a 200-block scale. A shared
+        # count per chunk creates woodland openings instead of isolated misses.
+        return {"type": "minecraft:noise_threshold_count",
+                "noise_level": self.noise_threshold,
+                "below_noise": self.clearing_attempts,
+                "above_noise": woodland_attempts}
+
+
+@dataclass(frozen=True)
 class Vegetation:
     tree_attempts: int
     grain_patches: int
     flower_patches: int
     grass_patches: int
     tall_tree_chance: float
+    branching_tree_chance: float = 0.0
+    groves: GrovePattern | None = None
+
+
+@dataclass(frozen=True)
+class TreeShape:
+    id: str
+    height: tuple[int, int, int]
+    radius: tuple[int, int]
+    foliage_height: int
+    branching: bool = False
+
+
+TREE_SHAPES = (
+    TreeShape("golden_birch", (5, 2, 1), (2, 2), 3),
+    # Narrower variable crowns and a wider height range interrupt the old roof.
+    TreeShape("tall_golden_birch", (9, 3, 2), (2, 3), 4),
+    TreeShape("branching_golden_birch", (8, 4, 0), (2, 2), 4, branching=True),
+)
 
 
 @dataclass(frozen=True)
@@ -94,18 +127,18 @@ FARM_CREATURES = (Spawn("sheep", 12), Spawn("cow", 8), Spawn("chicken", 8),
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
                     ClimateBox((-1.0, 0.10), (-0.22, 1.0)),
-                    Palette(0xA4B75F), Vegetation(1, 12, 2, 2, 0.20),
+                    Palette(0xCBB16A), Vegetation(0, 12, 2, 2, 0.20),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
                     ClimateBox((0.10, 1.0), (-0.22, 1.0)),
-                    Palette(0x8EA653, fog=0xE6D6AA),
-                    Vegetation(9, 3, 3, 5, 0.65), FARM_CREATURES,
+                    Palette(0xB99B59, fog=0xE6D6AA),
+                    Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
                     downfall=0.65),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
                     ClimateBox((-1.0, 1.0), (-1.0, -0.22)),
-                    Palette(0x9DAD69, sky=0xBCD6E9, fog=0xF1E2C7),
-                    Vegetation(3, 4, 2, 3, 0.35),
+                    Palette(0xC3AE79, sky=0xBCD6E9, fog=0xF1E2C7),
+                    Vegetation(3, 4, 2, 3, 0.35, 0.08),
                     (Spawn("sheep", 10), Spawn("rabbit", 5, 2, 3)),
                     temperature=0.8, downfall=0.35, pale_cliffs=True),
 )
@@ -200,7 +233,7 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     cliff_biomes = [biome.key for biome in BIOMES if biome.pale_cliffs]
     pale_cliffs = condition({"type": "minecraft:biome", "biome_is": cliff_biomes},
                             condition({"type": "minecraft:steep"}, block_rule("calcite")))
-    # Submerged beds are sand; land keeps olive grass and dirt. No deepslate,
+    # Submerged beds are sand; land keeps biome-tinted grass and dirt. No deepslate,
     # ore veins, lakes, aquifers, springs or carvers obscure the buried future.
     surface = sequence(
         condition({"type": "minecraft:vertical_gradient", "random_name": "elysium:bedrock_floor",
@@ -234,19 +267,28 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     })
 
 
-def tree(tall: bool = False) -> dict:
+def tree(shape: TreeShape) -> dict:
+    base, random_a, random_b = shape.height
+    radius_min, radius_max = shape.radius
+    radius = radius_min if radius_min == radius_max else {
+        "type": "minecraft:uniform", "min_inclusive": radius_min, "max_inclusive": radius_max}
+    minimum_size = {"type": "minecraft:two_layers_feature_size", "limit": 1,
+                    "lower_size": 0, "upper_size": 1}
+    if shape.branching:
+        # Fancy limbs perform their own collision checks. Require the full
+        # configured height so a crowded site cannot produce a clipped stump.
+        minimum_size.update(limit=0, upper_size=0)
     return {"type": "minecraft:tree", "config": {
         "trunk_provider": simple_provider("birch_log", axis="y"),
-        "trunk_placer": {"type": "minecraft:straight_trunk_placer",
-                         "base_height": 8 if tall else 5, "height_rand_a": 3 if tall else 2,
-                         "height_rand_b": 1 if tall else 0},
+        "trunk_placer": {"type": "minecraft:fancy_trunk_placer" if shape.branching else "minecraft:straight_trunk_placer",
+                         "base_height": base, "height_rand_a": random_a, "height_rand_b": random_b},
         "foliage_provider": simple_provider("elysium:golden_birch_leaves", distance="7",
                                             persistent="false", waterlogged="false"),
-        "foliage_placer": {"type": "minecraft:blob_foliage_placer", "radius": 3 if tall else 2,
-                           "offset": 0, "height": 4 if tall else 3},
+        "foliage_placer": {"type": "minecraft:fancy_foliage_placer" if shape.branching else "minecraft:blob_foliage_placer",
+                           "radius": radius, "offset": 4 if shape.branching else 0,
+                           "height": shape.foliage_height},
         "dirt_provider": simple_provider("dirt"), "force_dirt": False, "ignore_vines": True,
-        "minimum_size": {"type": "minecraft:two_layers_feature_size", "limit": 1,
-                         "lower_size": 0, "upper_size": 2 if tall else 1},
+        "minimum_size": minimum_size,
         "decorators": [{"type": "minecraft:beehive", "probability": 0.03}],
     }}
 
@@ -261,8 +303,9 @@ def patch(provider: dict, tries: int, spread: int = 7) -> dict:
     }}
 
 
-def placed(feature: str, count: int, tree_feature: bool = False) -> dict:
-    modifiers = [{"type": "minecraft:count", "count": count}, {"type": "minecraft:in_square"}]
+def placed(feature: str, count: int, tree_feature: bool = False, groves: GrovePattern | None = None) -> dict:
+    counter = groves.placement(count) if groves else {"type": "minecraft:count", "count": count}
+    modifiers = [counter, {"type": "minecraft:in_square"}]
     if tree_feature:
         modifiers.append({"type": "minecraft:surface_water_depth_filter", "max_water_depth": 0})
     modifiers.extend([{"type": "minecraft:heightmap", "heightmap": "OCEAN_FLOOR" if tree_feature else "WORLD_SURFACE_WG"},
@@ -275,8 +318,8 @@ def placed(feature: str, count: int, tree_feature: bool = False) -> dict:
 
 
 def make_biomes(entries: dict[Path, bytes]) -> None:
-    emit(entries, "worldgen/configured_feature/golden_birch.json", tree())
-    emit(entries, "worldgen/configured_feature/tall_golden_birch.json", tree(tall=True))
+    for shape in TREE_SHAPES:
+        emit(entries, f"worldgen/configured_feature/{shape.id}.json", tree(shape))
     emit(entries, "worldgen/configured_feature/wild_grain_patch.json", patch(simple_provider("elysium:wild_grain"), 96))
     emit(entries, "worldgen/configured_feature/soft_grass_patch.json", patch(simple_provider("short_grass"), 32))
     flowers = {"type": "minecraft:weighted_state_provider", "entries": [
@@ -286,13 +329,23 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
 
     for biome in BIOMES:
         vegetation = biome.vegetation
+        # RandomSelector checks entries sequentially, so convert absolute shares
+        # to conditional probabilities rather than silently reducing tall trees.
+        branches = vegetation.branching_tree_chance
+        tall = vegetation.tall_tree_chance
+        assert 0 <= branches < 1 and 0 <= tall <= 1 - branches
+        choices = []
+        for shape, chance in (("branching_golden_birch", branches),
+                              ("tall_golden_birch", tall / (1 - branches))):
+            if chance > 0:
+                choices.append({"chance": chance,
+                                "feature": {"feature": f"elysium:{shape}", "placement": []}})
         mixed_trees = {"type": "minecraft:random_selector", "config": {
             "default": {"feature": "elysium:golden_birch", "placement": []},
-            "features": [{"chance": vegetation.tall_tree_chance,
-                          "feature": {"feature": "elysium:tall_golden_birch", "placement": []}}]}}
+            "features": choices}}
         emit(entries, f"worldgen/configured_feature/{biome.id}/trees.json", mixed_trees)
         emit(entries, f"worldgen/placed_feature/{biome.id}/trees.json",
-             placed(f"elysium:{biome.id}/trees", vegetation.tree_attempts, True))
+             placed(f"elysium:{biome.id}/trees", vegetation.tree_attempts, True, vegetation.groves))
         for suffix, feature, count in (("flowers", "meadow_flowers", vegetation.flower_patches),
                                        ("grain", "wild_grain_patch", vegetation.grain_patches),
                                        ("grass", "soft_grass_patch", vegetation.grass_patches)):

@@ -12,9 +12,9 @@
     },
     "trunk_placer": {
       "type": "minecraft:straight_trunk_placer",
-      "base_height": 8,
+      "base_height": 9,
       "height_rand_a": 3,
-      "height_rand_b": 1
+      "height_rand_b": 2
     },
     "foliage_provider": {
       "type": "minecraft:simple_state_provider",
@@ -29,7 +29,11 @@
     },
     "foliage_placer": {
       "type": "minecraft:blob_foliage_placer",
-      "radius": 3,
+      "radius": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 2,
+        "max_inclusive": 3
+      },
       "offset": 0,
       "height": 4
     },
@@ -45,7 +49,7 @@
       "type": "minecraft:two_layers_feature_size",
       "limit": 1,
       "lower_size": 0,
-      "upper_size": 2
+      "upper_size": 1
     },
     "decorators": [
       {
