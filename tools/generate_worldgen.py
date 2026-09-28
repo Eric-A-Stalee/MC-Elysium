@@ -151,26 +151,26 @@ BIOMES = (
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(-1.0, 0.25), weirdness=(-0.10, 0.10)),),
                     Palette(0xC4AA60, foliage=0xEAC34C, water=0x65AEB3),
                     Vegetation(2, 1, 9, 4, 0.15, canopy_tree_chance=0.75), FARM_CREATURES,
-                    downfall=0.65, ambient_loop="elysium:woodland_breeze"),
+                    downfall=0.65, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("amber_lakes", "Amber Lakes",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(0.25, 1.0), weirdness=(-0.22, 0.22)),),
                     Palette(0xA58D52, foliage=0xCC8537, sky=0xB9CEDD, fog=0xDFC39C,
                             water=0x386C79, water_fog=0x264B59),
                     Vegetation(3, 2, 3, 3, 0.25, 0.20, canopy_tree_chance=0.40, leaf_patches=3),
-                    FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze"),
+                    FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
                     (ClimateBox((-1.0, 1.0), (-0.55, -0.22)),),
                     Palette(0xBBB28A, foliage=0xDDBB68, sky=0xAFC6DF, fog=0xD7DCE2,
                             water=0x527D93, water_fog=0x354F68),
                     Vegetation(2, 2, 2, 3, 0.70, 0.10),
                     (Spawn("sheep", 10), Spawn("rabbit", 5, 2, 3)),
-                    temperature=0.45, downfall=0.35, pale_cliffs=True),
+                    temperature=0.45, downfall=0.35, pale_cliffs=True, settlements=("mountain_town",)),
     BiomeDefinition("ivory_peaks", "Ivory Peaks",
                     (ClimateBox((-1.0, 1.0), (-1.0, -0.55)),),
                     Palette(0xB9B496, foliage=0xD2B66F, sky=0xA7BDD5, fog=0xCDD6E1,
                             water=0x496D88, water_fog=0x334962),
                     Vegetation(1, 0, 1, 1, 0.80), (Spawn("sheep", 8), Spawn("rabbit", 4, 2, 3)),
-                    temperature=0.35, downfall=0.25, pale_cliffs=True),
+                    temperature=0.35, downfall=0.25, pale_cliffs=True, settlements=("mountain_town",)),
 )
 
 
@@ -660,22 +660,19 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                house(state, "mountain_hall", NORDIC, radius=8, hall=True), plaza(state))
     for module in modules:
         c = module.size[0] // 2
+        spawn_x = c - 1 if module.name == "mountain_hall" else c
         villagers = [] if module.name == "mountain_plaza" else [{
-            "pos": Tag(9, (6, [c + 0.5, 3.0, c + 1.5])), "blockPos": Tag(9, (3, [c, 3, c + 1])),
+            "pos": Tag(9, (6, [spawn_x + 0.5, 3.0, c + 1.5])), "blockPos": Tag(9, (3, [spawn_x, 3, c + 1])),
             "nbt": nbt_compound({"id": Tag(8, "minecraft:villager"), "PersistenceRequired": Tag(1, 1),
                 "VillagerData": nbt_compound({"type": Tag(8, "minecraft:taiga" if module.name.startswith("mountain") else "minecraft:plains"),
                     "profession": Tag(8, "minecraft:none"), "level": Tag(3, 1)})})}]
         entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
-    emit(entries, "tags/worldgen/biome/has_structure/waterside_cottage.json",
-         {"replace": False, "values": ["elysium:golden_watermeadows", "elysium:amber_lakes"]})
     emit_site(entries, SiteDefinition("waterside_cottage", ("waterside_cottage",),
               "#elysium:has_structure/waterside_cottage", 6, 2, require_water_approach=True))
     emit(entries, "worldgen/structure_set/waterside_cottage.json", {
         "structures": [{"structure": "elysium:waterside_cottage", "weight": 1}],
         "placement": {"type": "minecraft:random_spread", "spacing": 18, "separation": 7,
             "salt": 459270831, "exclusion_zone": {"other_set": "elysium:harvest_hamlet", "chunk_count": 3}}})
-    emit(entries, "tags/worldgen/biome/has_structure/mountain_town.json",
-         {"replace": False, "values": ["elysium:elysian_highlands", "elysium:ivory_peaks"]})
     emit(entries, "worldgen/structure/mountain_town.json", {
         "type": "elysium:mountain_town", "biomes": "#elysium:has_structure/mountain_town",
         "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "none",
@@ -690,10 +687,10 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 760491532, "spread_type": "linear"}})
     settlements = sorted({name for biome in BIOMES for name in biome.settlements})
     for name in settlements:
-        if name != "harvest_hamlet":
-            raise ValueError(f"Unknown settlement geometry: {name}")
         emit(entries, f"tags/worldgen/biome/has_structure/{name}.json",
              {"replace": False, "values": [biome.key for biome in BIOMES if name in biome.settlements]})
+        if name != "harvest_hamlet":
+            continue  # Other settlements use the module definitions above.
         emit_site(entries, SiteDefinition(name, (name, f"{name}_orchard"),
                                           f"#elysium:has_structure/{name}", 16, 3, water_approach=True))
         emit(entries, f"worldgen/structure_set/{name}.json", {
@@ -740,7 +737,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
     })
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge", "elysium:waterside_cottage", "elysium:mountain_town"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:

@@ -2,9 +2,9 @@
   "replace": false,
   "values": [
     "elysium:harvest_hamlet",
-    "elysium:elysian_bridge",
-    "elysium:waterside_cottage",
     "elysium:mountain_town",
+    "elysium:waterside_cottage",
+    "elysium:elysian_bridge",
     "elysium:elder_spring",
     "elysium:sunlit_lookout"
   ]

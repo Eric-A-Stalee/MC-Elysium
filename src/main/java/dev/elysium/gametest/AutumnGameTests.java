@@ -103,7 +103,7 @@ public final class AutumnGameTests {
                     String id=registry.getKey(biome.value()).getPath();found.add(id);
                     if(y<generator.getSeaLevel() && generator.getBaseColumn(x,z,realm,random).getBlock(62).is(Blocks.WATER))wet.merge(id,1,Integer::sum);
                 }
-                if(index<1681) {helper.runAfterDelay(1,this);return;}
+                if(index<1681) {helper.runAfterDelay(1,() -> run());return;}
                 helper.assertTrue(found.containsAll(List.of("golden_fields","golden_birch_woods","golden_watermeadows","amber_lakes","elysian_highlands","ivory_peaks")),
                         "All six biomes must occur in the real seeded climate survey: "+found);
                 helper.assertTrue(wet.getOrDefault("golden_watermeadows",0)>0 && wet.getOrDefault("amber_lakes",0)>0,
@@ -145,7 +145,7 @@ public final class AutumnGameTests {
                     helper.succeed();return;
                 }
                 helper.assertTrue(attempt<3600,"No complete mountain town found in bounded real-terrain survey");
-                helper.runAfterDelay(1,this);
+                helper.runAfterDelay(1,() -> run());
             }
         }
         new Probe().run();

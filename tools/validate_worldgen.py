@@ -314,13 +314,75 @@ def validate_structures() -> None:
     for element in read_json("worldgen/template_pool/harvest_hamlet/start.json")["elements"]:
         template = element["element"]["location"].split(":", 1)[1]
         assert (DATA / f"structure/{template}.nbt").is_file()
-    for name in ("harvest_hamlet", "elder_spring", "sunlit_lookout"):
+    for name in ("harvest_hamlet", "elder_spring", "sunlit_lookout", "waterside_cottage"):
         site = read_json(f"worldgen/structure/{name}.json")
         assert site["type"] == "elysium:landscape_site" and site["terrain_adaptation"] == "none"
         for template in site["templates"]:
             path = DATA / "structure" / f"{template.split(':', 1)[1]}.nbt"
             root = NbtReader(gzip.decompress(path.read_bytes())).root()
             assert root["size"][0] == root["size"][2] == site["radius"] * 2 + 1
+    assert read_json("worldgen/structure/waterside_cottage.json")["require_water_approach"]
+    town = read_json("worldgen/structure/mountain_town.json")
+    assert 1 <= town["minimum_cottages"] <= town["maximum_cottages"] <= 6
+    for module in [town["hall"], *town["cottages"]]:
+        name = module["template"].split(":")[1]
+        root = NbtReader(gzip.decompress((DATA / f"structure/{name}.nbt").read_bytes())).root()
+        assert root["size"][0] == root["size"][2] == module["radius"] * 2 + 1
+        assert 0 <= module["max_relief"] <= 4
+
+
+def validate_modules() -> int:
+    """Read the actual NBT and verify usable entrances, beds and villager exits."""
+    from collections import deque
+    total = 0
+    for name in ("waterside_cottage", "mountain_cottage", "mountain_cottage_store", "mountain_hall", "mountain_plaza"):
+        root = NbtReader(gzip.decompress((DATA / f"structure/{name}.nbt").read_bytes())).root()
+        blocks = {}
+        for record in root["blocks"]:
+            pos = tuple(record["pos"])
+            assert pos not in blocks and all(0 <= p < n for p, n in zip(pos, root["size"]))
+            blocks[pos] = root["palette"][record["state"]]
+        total += len(blocks)
+        for (x, y, z), block in blocks.items():
+            props, kind = block.get("Properties", {}), block["Name"]
+            if kind.endswith("_door") and props["half"] == "lower":
+                assert blocks[x, y + 1, z]["Properties"]["half"] == "upper"
+                assert blocks[x, y - 1, z]["Name"] not in ("minecraft:air", "minecraft:water")
+            if kind.endswith("_bed") and props["part"] == "foot":
+                assert props["facing"] == "north" and blocks[x, y, z - 1]["Properties"]["part"] == "head"
+            if kind == "minecraft:lantern":
+                support = blocks.get((x, y - 1, z), {})
+                assert support.get("Name") not in (None, "minecraft:air", "minecraft:water"), f"Floating lantern in {name}"
+        if not root["entities"]:
+            continue
+        # Closed doors are operable by villagers, so count their two halves as
+        # clear for this geometric check. This is not a simulation of NPC AI.
+        def clear(pos):
+            kind = blocks.get(pos, {}).get("Name", "minecraft:air")
+            return kind == "minecraft:air" or kind.endswith("_door")
+        def walkable(pos):
+            x, y, z = pos
+            return (all(0 <= p < n for p, n in zip(pos, root["size"])) and clear(pos)
+                    and clear((x, y + 1, z)) and not clear((x, y - 1, z)))
+        exit_pos = (root["size"][0] // 2, 2, root["size"][2] - 1)
+        assert walkable(exit_pos), f"Missing authored path connector in {name}"
+        for entity in root["entities"]:
+            start = tuple(entity["blockPos"])
+            assert walkable(start), f"Blocked villager in {name}"
+            seen, queue = set(), deque([start])
+            while queue:
+                at = queue.popleft()
+                if at in seen:
+                    continue
+                seen.add(at)
+                x, y, z = at
+                for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    for dy in (-1, 0, 1):
+                        nxt = (x + dx, y + dy, z + dz)
+                        if nxt not in seen and walkable(nxt):
+                            queue.append(nxt)
+            assert exit_pos in seen, f"Villager cannot reach the outside connector in {name}"
+    return total
 
 
 def validate_landmarks() -> int:
@@ -421,6 +483,7 @@ def main():
     isolated = validate_density_isolation()
     validate_structures()
     landmarks = validate_landmarks()
+    modules = validate_modules()
     suffix = ""
     if args.minecraft_jar:
         parameters, formulas = validate_vanilla_refs(args.minecraft_jar)
@@ -428,7 +491,7 @@ def main():
     print(f"Worldgen validation passed: {climates} climate probes, {features} ordered features, "
           f"{len(templates)} templates/{sum(template[0] for template in templates)} positions, "
           f"{sum(template[2] for template in templates)} villagers, 2 landmarks/{landmarks} positions, "
-          f"{isolated} isolated density functions, solid-depth density{suffix}.")
+          f"5 settlement modules/{modules} positions, {isolated} isolated density functions, solid-depth density{suffix}.")
 
 
 if __name__ == "__main__":
