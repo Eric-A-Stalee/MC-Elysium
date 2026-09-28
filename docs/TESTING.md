@@ -6,6 +6,7 @@ Use a Java 21 JDK, Minecraft 1.21.1 and the pinned NeoForge 21.1.233 development
 
 ```sh
 python3 tools/generate_assets.py --check
+python3 tools/generate_ambience.py --check
 python3 tools/generate_worldgen.py --check
 python3 tools/validate_worldgen.py
 ./gradlew build
@@ -56,13 +57,42 @@ openings still need visual comparison with the player's resource pack/shaders.
 Grass uses normal biome coloring; packs that override it can produce a different
 result. River-specific groves are not implemented in this revision.
 
+## Alpha 3 landscape pass (September 28, 2026)
+
+The landscape build compiles and runs **19 required GameTests**. The six added
+checks cover full-footprint rejection of narrow ridges and submerged corners;
+real-water bank paths and bounded slopes; registered template/path save-reload;
+path chunk clipping; dry-field and covered-water rejection for riverside trees;
+actual spring placement and lantern support; and all three loaded site codecs
+against the real Elysium noise generator. They preserve all thirteen earlier
+portal, weather, loot, dimension and bridge checks.
+
+In the first passing run, seed 0 yielded an elder spring and a hamlet candidate
+in chunk `[-45, -45]` on the first probe, and a lookout in chunk `[3, -45]` after
+17 probes. The entire 19-test suite took 3.993 seconds. These are independent
+planner probes, not simultaneous natural placements or a claim that structure
+spacing selects those chunks. The hamlet found in that probe had no bank path;
+path geometry and rejection conditions are tested separately.
+
+Resource checks reproduce 54 worldgen resources and 42 other JSON assets,
+validate 13 ordered features and the two new landmark templates' 1,655 authored
+positions, and retain the original hamlet, climate and density checks. Spring
+sources must have authored floors and containing rims. The original sound is
+mono Vorbis, 24 kHz, exactly 24 seconds; the leaf sprite is 8 × 8 RGBA.
+
+Alpha 3 is not yet a graphical client playtest, a multi-seed frequency/performance
+survey, or a repeat of the packaged-jar/FreeTerraForged smoke tests above. In
+particular, listen for sound seams/volume and inspect particle frequency with the
+actual resource pack and shaders. Natural site frequency, bank path availability
+and terrain seams still need exploration in new chunks.
+
 ## What still needs a client playtest
 
 No graphical Minecraft client was available in the development environment. The mod is an early alpha, with server and data validation rather than a completed visual playthrough.
 
 1. Install the jar on both client and server with NeoForge 21.1.233+, and create a new world. Use `/elysium visit` with operator permission for a quick inspection.
 2. Inspect all three biomes across several seeds: tree shapes, foliage and item tinting, water and sky colors, mountain slopes, lighting, and frame/chunk-generation performance.
-3. Locate `elysium:harvest_hamlet` and `elysium:elysian_bridge` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails and approaches. Hamlet templates are complete layouts, not a village road network connecting independently fitted houses; slopes need particular attention.
+3. Locate `elysium:harvest_hamlet`, `elysium:elysian_bridge`, `elysium:elder_spring` and `elysium:sunlit_lookout` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails, bank landings, spring containment and the lookout’s orientation. Hamlet templates are complete layouts, not a village road network connecting independently fitted houses; slopes need particular attention.
 4. Follow [the survival entrance guide](ENTRANCE.md). Check item insertion, the sunset offering, particles, title, cooldown, two-way travel, and inventory on an actual connected player.
 5. Test two players entering from different shrines, reconnecting, dying/respawning, server restarts, rebuilding a return stone, and `/elysium return` after losing it. Safe-position predicates and persistence code have been checked, but these are not automated end-to-end connected-player tests.
 6. If experimenting with FreeTerraForged, test an explicitly enabled Overworld preset in a disposable world. Merely installing its jar is a narrower compatibility check.

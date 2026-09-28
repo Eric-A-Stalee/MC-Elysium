@@ -129,7 +129,7 @@ public final class LandscapeGameTests {
     }
 
     @GameTest(template = "portal_test_empty", timeoutTicks = 40)
-    public static void springTemplatePlacesContainedWaterWithoutTouchingOutsideItsClip(GameTestHelper helper) {
+    public static void landmarkTemplatesKeepWaterContainedAndLanternsSupported(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos origin = helper.absolutePos(new BlockPos(-9, 2, -8));
         var piece = new LandscapePiece(level.getServer().getStructureManager(),
@@ -146,6 +146,19 @@ public final class LandscapeGameTests {
         helper.assertTrue(level.getBlockState(origin.offset(17, 1, 11)).is(Blocks.SMOOTH_SANDSTONE), "Spring must have a containing rim");
         helper.assertTrue(level.getBlockState(untouched).is(Blocks.RED_CONCRETE), "Template and foundation must respect the clip");
         level.setBlock(untouched, original, 2);
+        BlockPos court = helper.absolutePos(BlockPos.ZERO);
+        var lookout = new LandscapePiece(level.getServer().getStructureManager(),
+                ResourceLocation.fromNamespaceAndPath("elysium", "sunlit_lookout"), court, Rotation.NONE, 6, 3);
+        var roofClip = new BoundingBox(court.getX() + 2, court.getY() + 5, court.getZ() + 2,
+                court.getX() + 7, court.getY() + 7, court.getZ() + 7);
+        lookout.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), level.random,
+                roofClip, new ChunkPos(court), court);
+        BlockPos lantern = court.offset(3, 6, 6);
+        var state = level.getBlockState(lantern);
+        helper.assertTrue(state.is(Blocks.LANTERN) && state.canSurvive(level, lantern),
+                "Lookout lantern must attach to the slab's real lower face and survive block updates");
+        helper.assertTrue(level.getBlockState(court.offset(3, 7, 3)).is(Blocks.SMOOTH_SANDSTONE_SLAB),
+                "The cornice must connect to the pillar beneath it");
         helper.succeed();
     }
 

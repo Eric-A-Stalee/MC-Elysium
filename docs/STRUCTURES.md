@@ -1,9 +1,9 @@
 # Settlements and river crossings
 
-Elysium ships original harvest hamlets and terrain-aware bridges, with no
-structure-mod dependency. `tools/generate_worldgen.py` owns the hamlet geometry,
-template pools, biome membership, and both structure sets. The bridge geometry
-is Java because its length and approaches depend on the actual river banks.
+Elysium ships original harvest hamlets, spring trees, lookout pergolas and
+terrain-aware bridges, with no structure-mod dependency. The Python generators
+own the static geometry, site profiles, biome membership and structure sets.
+Java planners handle terrain acceptance, saved approaches and river spans.
 
 ## Why these are original structures
 
@@ -34,9 +34,12 @@ The two 33 × 33 templates contain pale houses, dark roofs, birch beams, mature
 wheat, beds, workstations, villagers, bells, golden trees, and lanterns. The
 courtyard variant surrounds a fountain; the orchard variant grows around a
 larger golden birch. These are small inhabited hamlets, not a modular road
-network. Vanilla jigsaw placement adapts their footprint to the terrain, but
-steep-edge placement still needs visual inspection. See [WORLDGEN.md](WORLDGEN.md)
-for the generator, palette, spawn spacing, and template validation.
+network. Alpha 3 uses the shared landscape-site placer: every column must be
+dry and the whole court must fit within three blocks of relief. It rejects
+steep edges and adds a short, saved bank approach where gentle terrain reaches
+actual water within 48 blocks of the court centre. Old template/pool IDs and
+saved jigsaw pieces remain compatible. See [WORLDGEN.md](WORLDGEN.md) for the
+site profiles, spring and lookout geometry, spacing and validation.
 
 ## Elysian bridges
 
@@ -46,7 +49,7 @@ its current geometry constraints live together in `BridgePlanner`.
 
 - The random-spread structure set has 12-chunk spacing and 5-chunk separation.
   These are candidate positions, not a promise of a bridge in each region.
-  A three-chunk exclusion around harvest-hamlet candidates prevents overlap.
+  A three-chunk exclusion reserves space around harvest-hamlet candidates.
 - A candidate examines five positions inside its source chunk and both cardinal
   axes. Probe order is seeded using Minecraft's structure RNG. Each noise-floor
   column is cached only for that one candidate; no static world cache is kept.
@@ -96,8 +99,8 @@ that particular chunk for natural generation. These tests are useful contracts,
 not a substitute for visiting several naturally generated bridges and inspecting
 their scenery.
 
-A separate packaged-jar server smoke test also exercised natural placement in
-a normal seed-0 world. `/locate` found a hamlet at `[160, 208]` and a bridge at
+An alpha 1 packaged-jar server smoke test also exercised natural placement in
+a normal seed-0 world; the following hamlet coordinates predate the alpha 3 placer. `/locate` found a hamlet at `[160, 208]` and a bridge at
 `[-528, -336]`. After loading the areas, three hamlet villagers were alive, and
 the saved full chunks contained both structure starts. The natural bridge was
 44 blocks long, north/south, starting at `(-515, 66, -346)`. Its saved piece
@@ -109,10 +112,12 @@ With cheats enabled inside a development world:
 ```mcfunction
 /execute in elysium:elysium run locate structure elysium:harvest_hamlet
 /execute in elysium:elysium run locate structure elysium:elysian_bridge
+/execute in elysium:elysium run locate structure elysium:elder_spring
+/execute in elysium:elysium run locate structure elysium:sunlit_lookout
 /execute in elysium:elysium run place structure elysium:elysian_bridge ~ ~ ~
 ```
 
-The bridge `place` command can fail on unsuitable terrain, intentionally. Locate
+The bridge and landscape-site `place` commands can fail on unsuitable terrain, intentionally. Locate
 and visit a valid naturally generated crossing when assessing bank alignment.
 Check that the approach has dry footing at both ends, that the walkway is
 continuous across chunk borders, and that reloading preserves the crossing.

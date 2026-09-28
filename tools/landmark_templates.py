@@ -86,13 +86,14 @@ def lookout(state):
         t.put(x, 2, z, "chiseled_sandstone")
         t.fill(x, 3, z, x, 5, z, "smooth_sandstone")
         t.put(x, 6, z, "chiseled_sandstone")
+        t.put(x, 7, z, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     # An open pergola: pale cornices and a few birch slats let golden light in.
     t.fill(2, 7, 2, 10, 7, 2, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     t.fill(2, 7, 10, 10, 7, 10, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     t.fill(2, 7, 3, 2, 7, 9, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     t.fill(10, 7, 3, 10, 7, 9, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     for x in (4, 6, 8):
-        t.fill(x, 7, 3, x, 7, 9, "birch_slab", type="top", waterlogged="false")
+        t.fill(x, 7, 3, x, 7, 9, "birch_slab", type="bottom", waterlogged="false")
     for x in (4, 5, 7, 8):
         t.put(x, 2, 9, "birch_stairs", facing="south", half="bottom", shape="straight", waterlogged="false")
     for x in (2, 10):
@@ -100,5 +101,5 @@ def lookout(state):
         t.put(x, 2, 6, "smooth_sandstone_slab", type="bottom", waterlogged="false")
     for x in (3, 9):
         t.put(x, 6, 6, "lantern", hanging="true", waterlogged="false")
-        t.put(x, 7, 6, "birch_slab", type="top", waterlogged="false")
+        t.put(x, 7, 6, "birch_slab", type="bottom", waterlogged="false")
     return t

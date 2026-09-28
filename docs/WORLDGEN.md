@@ -21,10 +21,10 @@ python3 tools/validate_worldgen.py
 ```
 
 The catalog uses frozen `BiomeDefinition`, `ClimateBox`, `Palette`, `Vegetation`,
-`GrovePattern`, `TreeShape`, and `Spawn` dataclasses. Each definition provides the biome's stable resource ID,
+`GrovePattern`, `TreeShape`, `SiteDefinition`, and `Spawn` dataclasses. Each definition provides the biome's stable resource ID,
 display name, climate box, colors, vegetation budgets, animal list, temperature,
 surface treatment, and settlement affinities. The same definition emits its biome
-JSON, four placed features, tree mixture, dimension biome-source entry, and biome
+JSON, its placed features, tree mixture, dimension biome-source entry, and biome
 tags. Adding a fourth biome using the existing tree/terrain/settlement vocabulary
 means adding one definition; no independent switch statements or hand-maintained
 biome membership lists are needed. Localization must also be provided by the
@@ -32,7 +32,7 @@ client's language catalog when introducing a new display name.
 
 Configured features describe the shared small, tall and branching golden birches,
 grain, flowers, and grass. Placed features apply each biome's attempt budgets. All
-vegetation uses the order trees → flowers → grain → grass. Keeping that order
+vegetation uses the order ordinary trees → optional riverside trees → flowers → grain → grass. Keeping that order
 consistent avoids cross-biome feature sorting cycles and gives trees priority
 before filling their clearings. Attempts are not guaranteed placements: vanilla
 survival predicates, terrain, existing blocks, and tree collisions can reject
@@ -40,17 +40,17 @@ them. Decorations use Minecraft's feature RNG, never global random state.
 
 | Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall / branching shares |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Golden Fields | 0 | 12 | 2 | 2 | No natural tree placement |
+| Golden Fields | 0 inland; 0 or 2 near water | 12 | 2 | 2 | Riverside mixture: 20% / 0% |
 | Golden Birch Woods | 2 in sparse areas; 7 in groves | 3 | 3 | 5 | 50% / 20% |
 | Elysian Highlands | 3 | 4 | 2 | 3 | 35% / 8% |
 
-The table describes alpha 2; the catalog is authoritative. A grain
+The table describes alpha 3; the catalog is authoritative. A grain
 patch makes 96 survival-checked placement attempts and needs ordinary soil, not
 farmland. Hamlet crops use normal cultivated wheat separately.
 
 Golden Fields retain a zero-count tree feature under their existing resource ID
 for compatibility. They generate no ordinary scattered trees. Trees authored in
-hamlets, planted by players, or extending across a woodland boundary can still
+hamlets and rare spring landmarks, planted by players, or extending across a woodland boundary can still
 appear there; this is not a rule that deletes trees or prohibits saplings.
 
 The woods use vanilla `noise_threshold_count`, sampled before the per-attempt
@@ -58,8 +58,12 @@ position is chosen. Its coherent X/Z noise is evaluated at a 200-block scale,
 with two attempts below -0.15 and seven above. This creates broad sparse patches
 within the woods. The vanilla noise field is fixed across seeds; terrain, biome
 boundaries, positions and tree shapes still depend on the world seed. These
-groves are not yet biased toward rivers. Explicit riverside groves remain a
-possible later addition that must preserve open field interiors.
+woodland openings are independent of rivers. Golden Fields additionally use a
+separate riparian feature: zero attempts below noise -0.05, two above, then a
+bounded `near_surface_water` filter. A candidate must be dry, within four blocks
+of sea level, and find exposed water in one of twelve probes within six blocks.
+This creates intermittent bank groves rather than returning trees to field
+interiors. It reads only available decoration chunks and never loads neighbours.
 
 Small birches have requested trunk heights of 5–8 blocks. Tall birches request
 9–14 blocks and sample a crown radius of 2 or 3, reducing the former uniform
@@ -132,7 +136,7 @@ untested; this change is not a FreeTerraForged dimension adapter.
 
 Density is proportional to **terrain height minus Y**. It decreases monotonically
 upward for each column: there are no 3D noise caves. The settings also disable
-aquifers and ore veins; biome lists contain no carvers, ore features, springs,
+aquifers and ore veins; biome lists contain no carvers, ore features, underground fluid springs,
 lava lakes, geodes, dungeons, or other underground decorators. Below the shallow
 soil and sand, the initial dimension is ordinary stone down to its bedrock floor
 at Y -64. Explicit future forge/Tartarus structures can carve their own space.
@@ -156,17 +160,57 @@ Python; their compressed NBT is reproducible and contains no imported structure
 asset. They use Minecraft blocks and the mod's leaves, with no required
 structure mod.
 
-A single-piece jigsaw pool places it in Golden Fields, with random-spread spacing
-28 chunks and separation 10. `beard_thin` terrain adaptation blends its footprint
-with the ground. Templates clear only authored house, crop, path and court
-volumes; they do not place a blanket of air over the full 33 × 33 bounds, and
-their unused corners contain no foundation blocks. The layouts are level
-courtyards: they do not yet
-assemble multi-part roads along slopes or bridges across rivers, and awkward
-placement near steep banks remains a visual playtest concern. The village uses
-the normal villager AI/POI system; beds, bell, and composters supply the village
-infrastructure. Minecraft 1.21.1 reads the template from the singular
-`data/elysium/structure` directory.
+The shared `elysium:landscape_site` codec places hamlets in Golden Fields,
+retaining the 28-chunk spacing and 10-chunk separation. Every noise-floor column
+in the 33 × 33 footprint must be dry; total relief can be at most three blocks.
+Unsuitable hills and wet corners reject the candidate rather than carving a
+courtyard into them. Terrain adaptation is `none`. Foundations extend only below
+authored bottom-layer soil/stone, for at most the permitted relief. Unused corners
+remain untouched. The old jigsaw pool and both template IDs remain available,
+and already saved vanilla jigsaw pieces still deserialize normally.
+
+When a suitable bank is nearby, a three-block path continues one of the court's
+four exits. It checks dry, gentle terrain up to 48 blocks from the hamlet centre,
+requires actual water beyond its endpoint, and stops on the bank. Smooth
+sandstone steps handle one-block changes; a short birch landing has a lantern.
+The shortest valid cardinal route wins. Paths cannot cross cliffs or water and
+are not a road network connecting settlements. A hamlet with no valid nearby
+bank simply has its original courtyard paths. Normal villager AI/POIs, beds,
+bell and composters supply village behaviour.
+
+## Landscape landmarks and ambience
+
+`elder_spring` combines an original broad, branching golden birch, a contained
+pale-stone spring, flowers and a small bench. Its 19 × 19 site tolerates two
+blocks of relief. `sunlit_lookout` is a 13 × 13 open pergola with pale pillars,
+birch slats, benches and lanterns. It requires three blocks or less of local
+relief, ground at least eight blocks above sea level, and a view falling at
+least eight blocks at both 24 and 40 blocks away. It rotates its open face toward
+the strongest qualifying cardinal view.
+
+Both use `SiteDefinition` and the same `LandscapeStructure`/`LandscapePiece`
+implementation as hamlets. Their geometry lives in `tools/landmark_templates.py`
+and uses the shared deterministic NBT writer. A common `quiet_landmarks`
+structure set has spacing 20, separation 8, a spring/lookout weight of 3:2, and a
+three-chunk exclusion around hamlet candidates. These are candidate budgets,
+not guaranteed densities: terrain checks can reject either kind. The bridge set
+remains independent. No loot or story trigger is attached to these peaceful sites.
+
+All site decisions use base noise heights/columns with a per-candidate cache,
+never neighbouring chunk generation. Saved template rotation, pivot, foundation
+depth and bank-path surface profiles keep partial generation stable across
+reloads. Block writes and template entities use the generating chunk's clip.
+The algorithms assume Elysium's sea-level rivers, not elevated hydrology from
+another terrain engine.
+
+Golden Birch Woods have a quiet 24-second looping breeze under Minecraft's
+Ambient/Environment volume control. `tools/generate_ambience.py` synthesizes the
+original sound and an original 8 × 8 leaf sprite; no third-party recordings or
+Minecraft texture bytes are copied. Gold leaves use vanilla cherry-leaf motion,
+with a one-in-100 chance per leaf animation tick at exposed canopy undersides.
+They appear only in Elysium, respect normal particle settings, and add no server
+ticks, entities or network traffic. The wind uses vanilla biome sound fading;
+its volume and the leaf frequency still need subjective client tuning.
 
 `elysium:elysian_bridge` is a separate original structure implementation. Its
 registered codec uses normal structure settings; its Java locator searches for
@@ -185,6 +229,8 @@ Useful inspection commands with cheats enabled:
 /execute in elysium:elysium run locate biome elysium:elysian_highlands
 /execute in elysium:elysium run locate structure elysium:harvest_hamlet
 /execute in elysium:elysium run locate structure elysium:elysian_bridge
+/execute in elysium:elysium run locate structure elysium:elder_spring
+/execute in elysium:elysium run locate structure elysium:sunlit_lookout
 /execute in elysium:elysium run place structure elysium:harvest_hamlet ~ ~ ~
 ```
 

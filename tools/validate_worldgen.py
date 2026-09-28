@@ -345,7 +345,11 @@ def validate_landmarks() -> int:
                         "minecraft:water", "minecraft:smooth_sandstone"}, f"Uncontained spring at {(x, y, z)}"
             if state["Name"] == "minecraft:lantern":
                 support_y = y + 1 if state["Properties"]["hanging"] == "true" else y - 1
-                assert blocks.get((x, support_y, z), {}).get("Name") not in {None, "minecraft:air", "minecraft:water"}
+                support = blocks.get((x, support_y, z), {})
+                assert support.get("Name") not in {None, "minecraft:air", "minecraft:water"}
+                if support["Name"].endswith("_slab"):
+                    face = "bottom" if state["Properties"]["hanging"] == "true" else "top"
+                    assert support["Properties"]["type"] in {face, "double"}, "Lantern needs a solid attachment face"
         # Terrain around the authored footprint remains untouched.
         for x in (0, root["size"][0] - 1):
             for z in (0, root["size"][2] - 1):
