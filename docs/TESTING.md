@@ -86,13 +86,30 @@ particular, listen for sound seams/volume and inspect particle frequency with th
 actual resource pack and shaders. Natural site frequency, bank path availability
 and terrain seams still need exploration in new chunks.
 
+## Alpha 4 autumn and settlement pass (September 28, 2026)
+
+[GitHub Actions run 36411321707](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36411321707) built commit `dbd9b8534170293902f8e122b8b75168d2ef1f94` successfully and passed **all 23 required GameTests** in **4.886 seconds**. This includes the previous 19 checks, expanded to cover all six registered biomes and the required water approach for cottages.
+
+The four additional tests verify:
+
+- Every doorway in a synthetic sloping town connects to its plaza with at most one-block rises; building elevations differ, intersections have one saved surface, and steep terrain is rejected.
+- Terrace paths retain their terrain/foundation profile through registered NBT loading, place actual retaining blocks and stairs, and respect chunk clips.
+- A 4,225-column seed-0 survey across ±6,144 blocks finds all six biomes and real water in both new lowland corridors. The wet samples included 182 Watermeadow and 109 Amber Lake columns. This is a coarse occurrence check, not a shoreline-width or visual-quality measurement.
+- The actual registered mountain-town codec finds a complete site in seed 0 at candidate chunk `[-4, -108]` after 210 probes: plaza, hall, four cottages and a saved path piece. Every resulting piece round-trips through its registered loader.
+
+The waterside cottage probe found candidate chunk `[-24, -45]` after eight attempts and produced both the house and required bank path. The bridge probe still found a valid crossing, now 33 blocks long under the revised channel profile. These site coordinates are planner probes: they do not assert that random-spread structure sets select those chunks, nor that a player has visited them.
+
+The independent validator checks 1,925 four-axis climate samples, 26 ordered features and 11 isolated density functions. It decodes five new settlement modules containing 10,578 authored positions, checks paired beds/doors and lantern supports, and finds a geometric route from each resident's starting position to the external path connector. The initial check caught a hall resident intersecting the communal table; the corrected spawn is in the aisle. These checks supplement the original hamlet/landmark validation. The generators reproduce 88 worldgen resources and 46 other JSON assets.
+
+This pass was tested standalone. The older packaged-server and FreeTerraForged co-install results above have not been repeated for alpha 4. No graphical Minecraft client was available; natural settlement frequency across multiple seeds, in-game appearance and actual villager behaviour still need player inspection. Use a fresh world for the full new biome source and terrain layout.
+
 ## What still needs a client playtest
 
 No graphical Minecraft client was available in the development environment. The mod is an early alpha, with server and data validation rather than a completed visual playthrough.
 
 1. Install the jar on both client and server with NeoForge 21.1.233+, and create a new world. Use `/elysium visit` with operator permission for a quick inspection.
-2. Inspect all three biomes across several seeds: tree shapes, foliage and item tinting, water and sky colors, mountain slopes, lighting, and frame/chunk-generation performance.
-3. Locate `elysium:harvest_hamlet`, `elysium:elysian_bridge`, `elysium:elder_spring` and `elysium:sunlit_lookout` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails, bank landings, spring containment and the lookout’s orientation. Hamlet templates are complete layouts, not a village road network connecting independently fitted houses; slopes need particular attention.
+2. Inspect all six biomes across several seeds: tree shapes, foliage and item tinting, water and sky colors, mountain slopes, lighting, and frame/chunk-generation performance.
+3. Locate `elysium:harvest_hamlet`, `elysium:elysian_bridge`, `elysium:elder_spring` `elysium:sunlit_lookout`, `elysium:waterside_cottage` and `elysium:mountain_town` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails, bank landings, spring containment and the lookout’s orientation. Harvest hamlets remain complete layouts; mountain towns now connect independently fitted houses. Check their junctions, short retaining walls, door approaches and lanterns on several slopes.
 4. Follow [the survival entrance guide](ENTRANCE.md). Check item insertion, the sunset offering, particles, title, cooldown, two-way travel, and inventory on an actual connected player.
 5. Test two players entering from different shrines, reconnecting, dying/respawning, server restarts, rebuilding a return stone, and `/elysium return` after losing it. Safe-position predicates and persistence code have been checked, but these are not automated end-to-end connected-player tests.
 6. If experimenting with FreeTerraForged, test an explicitly enabled Overworld preset in a disposable world. Merely installing its jar is a narrower compatibility check.
