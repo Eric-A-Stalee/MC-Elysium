@@ -1,16 +1,15 @@
 {
   "type": "elysium:landscape_site",
-  "biomes": "#elysium:has_structure/harvest_hamlet",
+  "biomes": "#elysium:is_elysium",
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
   "templates": [
-    "elysium:harvest_hamlet",
-    "elysium:harvest_hamlet_orchard"
+    "elysium:elder_spring"
   ],
-  "radius": 16,
-  "max_relief": 3,
+  "radius": 9,
+  "max_relief": 2,
   "min_height_above_sea": 0,
   "view_drop": 0,
-  "water_approach": true
+  "water_approach": false
 }

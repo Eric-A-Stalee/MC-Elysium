@@ -1,0 +1,11 @@
+{
+  "woodland_breeze": {
+    "sounds": [
+      {
+        "name": "elysium:woodland_breeze",
+        "stream": true,
+        "volume": 0.32
+      }
+    ]
+  }
+}

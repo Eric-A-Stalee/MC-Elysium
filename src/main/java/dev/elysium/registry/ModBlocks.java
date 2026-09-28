@@ -2,6 +2,7 @@ package dev.elysium.registry;
 
 import dev.elysium.Elysium;
 import dev.elysium.block.WildGrainBlock;
+import dev.elysium.block.GoldenBirchLeavesBlock;
 import dev.elysium.portal.HarvestAltarBlock;
 import java.util.Optional;
 import net.minecraft.core.registries.Registries;
@@ -25,7 +26,7 @@ public final class ModBlocks {
             ResourceLocation.fromNamespaceAndPath(Elysium.MOD_ID, "golden_birch"))), Optional.empty());
 
     public static final DeferredBlock<LeavesBlock> GOLDEN_BIRCH_LEAVES = BLOCKS.register("golden_birch_leaves",
-            () -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LEAVES).mapColor(MapColor.COLOR_YELLOW)));
+            () -> new GoldenBirchLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_LEAVES).mapColor(MapColor.COLOR_YELLOW)));
     public static final DeferredBlock<SaplingBlock> GOLDEN_BIRCH_SAPLING = BLOCKS.register("golden_birch_sapling",
             () -> new SaplingBlock(GOLDEN_BIRCH_GROWER, BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_SAPLING)));
     public static final DeferredBlock<WildGrainBlock> WILD_GRAIN = BLOCKS.register("wild_grain",

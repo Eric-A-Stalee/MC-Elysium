@@ -36,6 +36,8 @@ def pool(entries, conditions=None):
 
 
 SURVIVES = {"condition": "minecraft:survives_explosion"}
+asset("particles/golden_leaf", {"textures": ["elysium:golden_leaf"]})
+asset("sounds", {"woodland_breeze": {"sounds": [{"name": "elysium:woodland_breeze", "stream": True, "volume": 0.32}]}})
 for name, texture in [("elysium_shard", "quartz"), ("elysium_fragment", "prismarine_crystals"),
                       ("elysium_sigil", "nether_star")]:
     asset(f"models/item/{name}", {"parent": "minecraft:item/generated", "textures": {"layer0": f"minecraft:item/{texture}"}})

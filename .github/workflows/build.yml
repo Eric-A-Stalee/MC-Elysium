@@ -19,6 +19,7 @@ jobs:
       - name: Verify generated content
         run: |
           python3 tools/generate_assets.py --check
+          python3 tools/generate_ambience.py --check
           python3 tools/generate_worldgen.py --check
           python3 tools/validate_worldgen.py
       - name: Compile and package

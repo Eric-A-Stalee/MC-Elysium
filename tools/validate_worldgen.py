@@ -315,6 +315,46 @@ def validate_structures() -> None:
     for element in read_json("worldgen/template_pool/harvest_hamlet/start.json")["elements"]:
         template = element["element"]["location"].split(":", 1)[1]
         assert (DATA / f"structure/{template}.nbt").is_file()
+    for name in ("harvest_hamlet", "elder_spring", "sunlit_lookout"):
+        site = read_json(f"worldgen/structure/{name}.json")
+        assert site["type"] == "elysium:landscape_site" and site["terrain_adaptation"] == "none"
+        for template in site["templates"]:
+            path = DATA / "structure" / f"{template.split(':', 1)[1]}.nbt"
+            root = NbtReader(gzip.decompress(path.read_bytes())).root()
+            assert root["size"][0] == root["size"][2] == site["radius"] * 2 + 1
+
+
+def validate_landmarks() -> int:
+    total = 0
+    for name in ("elder_spring", "sunlit_lookout"):
+        root = NbtReader(gzip.decompress((DATA / f"structure/{name}.nbt").read_bytes())).root()
+        assert root["DataVersion"] == 3955 and not root["entities"]
+        blocks = {}
+        for block in root["blocks"]:
+            pos = tuple(block["pos"])
+            assert pos not in blocks
+            assert all(0 <= p < size for p, size in zip(pos, root["size"]))
+            blocks[pos] = root["palette"][block["state"]]
+        for (x, y, z), state in blocks.items():
+            if state["Name"] == "minecraft:water":
+                # Every source is contained at its own level and has a solid
+                # authored floor. Sparse template edges must not spill water.
+                assert blocks[x, y - 1, z]["Name"] == "minecraft:smooth_sandstone"
+                for dx, dz in ((0, 1), (0, -1), (1, 0), (-1, 0)):
+                    assert blocks.get((x + dx, y, z + dz), {}).get("Name") in {
+                        "minecraft:water", "minecraft:smooth_sandstone"}, f"Uncontained spring at {(x, y, z)}"
+            if state["Name"] == "minecraft:lantern":
+                support_y = y + 1 if state["Properties"]["hanging"] == "true" else y - 1
+                assert blocks.get((x, support_y, z), {}).get("Name") not in {None, "minecraft:air", "minecraft:water"}
+        # Terrain around the authored footprint remains untouched.
+        for x in (0, root["size"][0] - 1):
+            for z in (0, root["size"][2] - 1):
+                assert not any((x, y, z) in blocks for y in range(root["size"][1]))
+        if name == "elder_spring":
+            assert sum(state["Name"] == "minecraft:water" for state in blocks.values()) >= 15
+            assert max(y for (x, y, z), state in blocks.items() if state["Name"] == "elysium:golden_birch_leaves") >= 17
+        total += len(blocks)
+    return total
 
 
 def validate_vanilla_refs(jar: Path) -> tuple[int, int]:
@@ -377,13 +417,15 @@ def main():
     validate_terrain()
     isolated = validate_density_isolation()
     validate_structures()
+    landmarks = validate_landmarks()
     suffix = ""
     if args.minecraft_jar:
         parameters, formulas = validate_vanilla_refs(args.minecraft_jar)
         suffix = f"; {parameters} vanilla noise parameters, {formulas} exact climate formulas"
     print(f"Worldgen validation passed: {climates} climate probes, {features} ordered features, "
           f"{len(templates)} templates/{sum(template[0] for template in templates)} positions, "
-          f"{sum(template[2] for template in templates)} villagers, {isolated} isolated density functions, solid-depth density{suffix}.")
+          f"{sum(template[2] for template in templates)} villagers, 2 landmarks/{landmarks} positions, "
+          f"{isolated} isolated density functions, solid-depth density{suffix}.")
 
 
 if __name__ == "__main__":

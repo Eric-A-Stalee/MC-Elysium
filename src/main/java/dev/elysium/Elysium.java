@@ -3,6 +3,8 @@ package dev.elysium;
 import dev.elysium.registry.ModBlocks;
 import dev.elysium.registry.ModItems;
 import dev.elysium.registry.ModStructures;
+import dev.elysium.registry.ModAmbience;
+import dev.elysium.registry.ModWorldgen;
 import dev.elysium.loot.WheatShardModifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,6 +21,9 @@ public final class Elysium {
         ModItems.TABS.register(modBus);
         WheatShardModifier.SERIALIZERS.register(modBus);
         ModStructures.register(modBus);
+        ModWorldgen.PLACEMENTS.register(modBus);
+        ModAmbience.PARTICLES.register(modBus);
+        ModAmbience.SOUNDS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ElysiumConfig.SPEC);
     }
 }

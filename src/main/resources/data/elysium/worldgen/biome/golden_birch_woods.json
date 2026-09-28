@@ -8,7 +8,8 @@
     "sky_color": 11916007,
     "fog_color": 15128234,
     "water_color": 5613230,
-    "water_fog_color": 2653832
+    "water_fog_color": 2653832,
+    "ambient_sound": "elysium:woodland_breeze"
   },
   "carvers": {},
   "features": [

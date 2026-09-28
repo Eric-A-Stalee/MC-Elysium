@@ -71,6 +71,7 @@ class Vegetation:
     tall_tree_chance: float
     branching_tree_chance: float = 0.0
     groves: GrovePattern | None = None
+    riverside_attempts: int = 0
 
 
 @dataclass(frozen=True)
@@ -114,6 +115,7 @@ class BiomeDefinition:
     downfall: float = 0.45
     pale_cliffs: bool = False
     settlements: tuple[str, ...] = ()
+    ambient_loop: str | None = None
 
     @property
     def key(self) -> str:
@@ -127,14 +129,14 @@ FARM_CREATURES = (Spawn("sheep", 12), Spawn("cow", 8), Spawn("chicken", 8),
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
                     ClimateBox((-1.0, 0.10), (-0.22, 1.0)),
-                    Palette(0xCBB16A), Vegetation(0, 12, 2, 2, 0.20),
+                    Palette(0xCBB16A), Vegetation(0, 12, 2, 2, 0.20, riverside_attempts=2),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
                     ClimateBox((0.10, 1.0), (-0.22, 1.0)),
                     Palette(0xB99B59, fog=0xE6D6AA),
                     Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
-                    downfall=0.65),
+                    downfall=0.65, ambient_loop="elysium:woodland_breeze"),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
                     ClimateBox((-1.0, 1.0), (-1.0, -0.22)),
                     Palette(0xC3AE79, sky=0xBCD6E9, fog=0xF1E2C7),
@@ -346,6 +348,11 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         emit(entries, f"worldgen/configured_feature/{biome.id}/trees.json", mixed_trees)
         emit(entries, f"worldgen/placed_feature/{biome.id}/trees.json",
              placed(f"elysium:{biome.id}/trees", vegetation.tree_attempts, True, vegetation.groves))
+        if vegetation.riverside_attempts:
+            river_trees = placed(f"elysium:{biome.id}/trees", vegetation.riverside_attempts, True,
+                                 GrovePattern(0, noise_threshold=-0.05))
+            river_trees["placement"].append({"type": "elysium:near_surface_water"})
+            emit(entries, f"worldgen/placed_feature/{biome.id}/riverside_trees.json", river_trees)
         for suffix, feature, count in (("flowers", "meadow_flowers", vegetation.flower_patches),
                                        ("grain", "wild_grain_patch", vegetation.grain_patches),
                                        ("grass", "soft_grass_patch", vegetation.grass_patches)):
@@ -354,13 +361,18 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         # Stable order everywhere: trees, flowers, grain, grass. Biome-specific
         # placed-feature IDs keep density choices independent at boundaries.
         features[9] = [f"elysium:{biome.id}/{suffix}" for suffix in ("trees", "flowers", "grain", "grass")]
+        if vegetation.riverside_attempts:
+            features[9].insert(1, f"elysium:{biome.id}/riverside_trees")
+        effects = biome.palette.effects()
+        if biome.ambient_loop:
+            effects["ambient_sound"] = biome.ambient_loop
         spawners = {name: [] for name in ("ambient", "axolotls", "creature", "misc", "monster",
                                         "underground_water_creature", "water_ambient", "water_creature")}
         spawners["creature"] = [spawn.entry() for spawn in biome.creatures]
         spawners["water_ambient"] = [Spawn("salmon", 6, 2, 4).entry()]
         emit(entries, f"worldgen/biome/{biome.id}.json", {
             "has_precipitation": False, "temperature": biome.temperature, "downfall": biome.downfall,
-            "effects": biome.palette.effects(), "carvers": {}, "features": features,
+            "effects": effects, "carvers": {}, "features": features,
             "spawn_costs": {}, "spawners": spawners, "creature_spawn_probability": 0.12,
         })
     emit(entries, "tags/worldgen/biome/is_elysium.json", {"replace": False, "values": [biome.key for biome in BIOMES]})
@@ -399,6 +411,31 @@ def nbt_payload(tag: Tag) -> bytes:
 
 def nbt_compound(values: dict) -> Tag:
     return Tag(10, values)
+
+
+def encode_template(blocks: dict, size: tuple[int, int, int], label: str, entities=()) -> bytes:
+    palette, palette_ids, block_list = [], {}, []
+    for position, (blockstate, data) in sorted(blocks.items()):
+        key = json.dumps(blockstate, sort_keys=True)
+        if key not in palette_ids:
+            palette_ids[key] = len(palette)
+            record = {"Name": Tag(8, blockstate["Name"])}
+            if "Properties" in blockstate:
+                record["Properties"] = nbt_compound({k: Tag(8, v) for k, v in blockstate["Properties"].items()})
+            palette.append(record)
+        record = {"pos": Tag(9, (3, list(position))), "state": Tag(3, palette_ids[key])}
+        if data:
+            record["nbt"] = nbt_compound(data)
+        block_list.append(record)
+    root = nbt_compound({"DataVersion": Tag(3, 3955), "author": Tag(8, "Elysium"), "layout": Tag(8, label),
+                         "size": Tag(9, (3, list(size))), "palette": Tag(9, (10, palette)),
+                         "blocks": Tag(9, (10, block_list)), "entities": Tag(9, (10, entities))})
+    # GzipFile writes a stable OS byte across Python 3.11/3.12/3.13; bare
+    # gzip.compress(..., mtime=0) changed that header between Python releases.
+    output = io.BytesIO()
+    with gzip.GzipFile(filename="", mode="wb", fileobj=output, mtime=0) as stream:
+        stream.write(b"\x0a\x00\x00" + nbt_payload(root))
+    return output.getvalue()
 
 
 def make_hamlet(layout: str = "courtyard") -> bytes:
@@ -532,19 +569,6 @@ def make_hamlet(layout: str = "courtyard") -> bytes:
     for x, z in ((12, 24), (20, 8), (10, 19), (22, 13)):
         put(x, 2, z, "hay_block", axis="y")
 
-    palette, palette_ids, block_list = [], {}, []
-    for position, (blockstate, data) in sorted(blocks.items()):
-        key = json.dumps(blockstate, sort_keys=True)
-        if key not in palette_ids:
-            palette_ids[key] = len(palette)
-            record = {"Name": Tag(8, blockstate["Name"])}
-            if "Properties" in blockstate:
-                record["Properties"] = nbt_compound({k: Tag(8, v) for k, v in blockstate["Properties"].items()})
-            palette.append(record)
-        record = {"pos": Tag(9, (3, list(position))), "state": Tag(3, palette_ids[key])}
-        if data:
-            record["nbt"] = nbt_compound(data)
-        block_list.append(record)
     villagers = []
     residents = ((7.5, 6.5, "farmer"), (26.5, 26.5, "farmer"), (18.5, 21.5, "none")) if layout == "courtyard" else (
         (7.5, 6.5, "farmer"), (26.5, 6.5, "none"), (6.5, 26.5, "none"), (18.5, 21.5, "farmer"))
@@ -554,15 +578,30 @@ def make_hamlet(layout: str = "courtyard") -> bytes:
                                                "VillagerData": nbt_compound({"type": Tag(8, "minecraft:plains"),
                                                                             "profession": Tag(8, f"minecraft:{job}"),
                                                                             "level": Tag(3, 1)})})})
-    root = nbt_compound({"DataVersion": Tag(3, 3955), "author": Tag(8, "Elysium"), "layout": Tag(8, layout),
-                         "size": Tag(9, (3, [33, 11, 33])), "palette": Tag(9, (10, palette)),
-                         "blocks": Tag(9, (10, block_list)), "entities": Tag(9, (10, villagers))})
-    # GzipFile writes a stable OS byte across Python 3.11/3.12/3.13; bare
-    # gzip.compress(..., mtime=0) changed that header between Python releases.
-    output = io.BytesIO()
-    with gzip.GzipFile(filename="", mode="wb", fileobj=output, mtime=0) as stream:
-        stream.write(b"\x0a\x00\x00" + nbt_payload(root))
-    return output.getvalue()
+    return encode_template(blocks, (33, 11, 33), layout, villagers)
+
+
+@dataclass(frozen=True)
+class SiteDefinition:
+    id: str
+    templates: tuple[str, ...]
+    biomes: str
+    radius: int
+    max_relief: int
+    min_height: int = 0
+    view_drop: int = 0
+    water_approach: bool = False
+
+
+def emit_site(entries, site: SiteDefinition):
+    emit(entries, f"worldgen/structure/{site.id}.json", {
+        "type": "elysium:landscape_site", "biomes": site.biomes,
+        "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "none",
+        "templates": [f"elysium:{name}" for name in site.templates],
+        "radius": site.radius, "max_relief": site.max_relief,
+        "min_height_above_sea": site.min_height, "view_drop": site.view_drop,
+        "water_approach": site.water_approach,
+    })
 
 
 def make_settlements(entries: dict[Path, bytes]) -> None:
@@ -572,16 +611,8 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
             raise ValueError(f"Unknown settlement geometry: {name}")
         emit(entries, f"tags/worldgen/biome/has_structure/{name}.json",
              {"replace": False, "values": [biome.key for biome in BIOMES if name in biome.settlements]})
-        emit(entries, f"worldgen/structure/{name}.json", {
-            "type": "minecraft:jigsaw", "biomes": f"#elysium:has_structure/{name}",
-            "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "beard_thin",
-            # SinglePoolElement ground-level delta is 1. Our templates reserve
-            # Y=0 for soil and use Y=1 as the court, so offset -1 aligns that
-            # court with the last solid terrain block rather than one above it.
-            "start_pool": f"elysium:{name}/start", "size": 1, "start_height": {"absolute": -1},
-            "project_start_to_heightmap": "WORLD_SURFACE_WG", "max_distance_from_center": 80,
-            "use_expansion_hack": False,
-        })
+        emit_site(entries, SiteDefinition(name, (name, f"{name}_orchard"),
+                                          f"#elysium:has_structure/{name}", 16, 3, water_approach=True))
         emit(entries, f"worldgen/structure_set/{name}.json", {
             "structures": [{"structure": f"elysium:{name}", "weight": 1}],
             "placement": {"type": "minecraft:random_spread", "spacing": 28, "separation": 10,
@@ -606,8 +637,27 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 842763195, "spread_type": "linear",
                       "exclusion_zone": {"other_set": "elysium:harvest_hamlet", "chunk_count": 3}},
     })
+    from landmark_templates import spring, lookout
+    sites = (SiteDefinition("elder_spring", ("elder_spring",), "#elysium:is_elysium", 9, 2),
+             SiteDefinition("sunlit_lookout", ("sunlit_lookout",), "#elysium:is_elysium", 6, 3,
+                            min_height=8, view_drop=8))
+    for site in sites:
+        emit_site(entries, site)
+    for template in (spring(state), lookout(state)):
+        entries[DATA / "structure" / f"{template.name}.nbt"] = encode_template(
+            template.blocks, template.size, template.name)
+    # One shared candidate grid keeps the two kinds of landmark apart. Hamlet
+    # candidates take priority; exclusions do not trigger neighbouring chunk loads.
+    emit(entries, "worldgen/structure_set/quiet_landmarks.json", {
+        "structures": [{"structure": f"elysium:{site.id}", "weight": weight}
+                       for site, weight in zip(sites, (3, 2))],
+        "placement": {"type": "minecraft:random_spread", "spacing": 20, "separation": 8,
+                      "salt": 62419387, "spread_type": "linear",
+                      "exclusion_zone": {"other_set": "elysium:harvest_hamlet", "chunk_count": 3}},
+    })
     emit(entries, "tags/worldgen/structure/is_elysium.json",
-         {"replace": False, "values": [f"elysium:{name}" for name in settlements] + ["elysium:elysian_bridge"]})
+         {"replace": False, "values": [f"elysium:{name}" for name in settlements]
+          + ["elysium:elysian_bridge"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:

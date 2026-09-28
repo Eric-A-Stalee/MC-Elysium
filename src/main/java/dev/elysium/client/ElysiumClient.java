@@ -3,6 +3,7 @@ package dev.elysium.client;
 import dev.elysium.Elysium;
 import dev.elysium.registry.ModBlocks;
 import dev.elysium.registry.ModItems;
+import dev.elysium.registry.ModAmbience;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
@@ -10,10 +11,17 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 /** Every client-class reference stays in this client-only subscriber. */
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
+    @SubscribeEvent
+    public static void particles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModAmbience.GOLDEN_LEAF.get(), sprites ->
+                (type, level, x, y, z, dx, dy, dz) -> new GoldenLeafParticle(level, x, y, z, sprites));
+    }
+
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tint) -> ModBlocks.GOLDEN_LEAF_COLOR, ModBlocks.GOLDEN_BIRCH_LEAVES.get());

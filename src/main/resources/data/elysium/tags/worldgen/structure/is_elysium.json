@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "elysium:harvest_hamlet",
-    "elysium:elysian_bridge"
+    "elysium:elysian_bridge",
+    "elysium:elder_spring",
+    "elysium:sunlit_lookout"
   ]
 }
