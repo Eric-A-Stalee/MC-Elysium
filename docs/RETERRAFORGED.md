@@ -141,6 +141,14 @@ one JVM; parallel chunk generation in both dimensions; and a clear failure when
 an adapter-created save loses its engine dependency. Actual generated terrain
 must be inspected in-game before claiming visual parity with the references.
 
+## September 28 alpha 4 re-evaluation
+
+The image-inspired water and mountain work prompted a new source review at FreeTerraForged head [`a4e4af4`](https://github.com/ETcodehome/FreeTerraForged/tree/a4e4af44441d3ca15c3e86645d45a6cc3e782d08). The six commits since the inspected release cover biome replacement compatibility, RoadWeaver null-state handling and legacy preset loading. They do not remove the separate-dimension blockers: `MixinChunkMap` still enables the context only for `Level.OVERWORLD`; `MixinRandomState` still zeroes terrain markers outside that dimension and chooses one global preset; preset noise settings still register under `minecraft:overworld`; `FlowSettings` still holds shared static state.
+
+Alpha 4 therefore retains standalone generation. Narrow rivers and wider autumn lake reaches share raw climate signals with the biome catalogue. A new candidate-local `TerrainSampler` serves bridges, cottages and modular mountain towns, distinguishing ground from local water height. This makes a later provider easier to integrate, but elevated rivers placed by FTF features would still require an explicit planned-water query. No FTF classes, mixins, resources or preset switches have been added to Elysium.
+
+The dependency decision is practical: adopt an engine adapter when its dimension lifecycle and height/water contract can be implemented and tested as a coherent change. Merely installing a structure library or lifting the Overworld guard would not solve those issues. The previous co-install smoke result remains an alpha 1 result, not a claim that alpha 4 or an active FTF Overworld preset has been retested.
+
 [repository]: https://github.com/ETcodehome/FreeTerraForged
 [branch]: https://github.com/ETcodehome/FreeTerraForged/tree/1.21.1
 [release]: https://github.com/ETcodehome/FreeTerraForged/releases/tag/1.21.1_v1.0.0

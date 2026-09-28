@@ -8,11 +8,13 @@ This repository develops the first playable **paradise** milestone. Hephaestus' 
 
 ## Current foundation
 
-- Three related biomes: Golden Fields, Golden Birch Woods and Elysian Highlands.
+- Six related biomes: Golden Fields, Golden Birch Woods, Golden Watermeadows, Amber Lakes, Elysian Highlands and Ivory Peaks.
 - Parameterized biome definitions generate climate entries, palettes, feature budgets and settlement tags together, informed by the architecture of BicBiomeCraft.
 - Open Golden Fields, straw/ochre biome grass colors, and golden woods with sparse openings, varied tall crowns and occasional branching birches. Wild grain and passive animals fill the landscape. Models reference vanilla textures; no Minecraft texture files are redistributed.
+- Flowered stream corridors with high-branching birches, wider amber lake reaches, copper foliage, scattered fallen leaves and cooler mountain palettes.
 - Independent terrain with river cuts and uplands over mostly uninterrupted stone. Natural noise caves and ore veins are deliberately absent in this first realm.
 - Two original harvest hamlet layouts with pale cottages, grain plots and villagers. Gentle sites can gain a short path to a nearby riverbank; terrain-aware birch bridges span suitable rivers.
+- Sparse waterside cottages face verified bank approaches. Rare mountain towns combine a communal hall, a bell plaza and three to five individually fitted cottages, linked by graded stone paths and short retaining walls.
 - Occasional elder birches beside contained springs, and pale lookout pergolas facing lower terrain. Sparse riverside groves leave field interiors open.
 - Quiet woodland wind and occasional golden leaves falling from real canopies. Ambient sound volume and particle density follow normal Minecraft settings.
 - Shard → fragment → sigil progression, an open-air harvest shrine, remembered return travel, and an arrival title.
@@ -20,9 +22,9 @@ This repository develops the first playable **paradise** milestone. Hephaestus' 
 
 ## Try it
 
-Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.3.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. The golden palette and woodland ambience work in existing Elysium chunks after restarting. Alpha 3 landmarks, hamlet approaches and riverside tree placement appear in **newly generated chunks**. Existing trees and player builds are retained. A new test world is the easiest way to compare the complete landscape.
+Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.4.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Use a **new test world** for the complete alpha 4 layout: its river widths and multi-noise biome source have changed. Existing saves can retain their serialized older biome source, and existing chunks keep their terrain and trees. Palette updates apply to existing registered biomes after restarting; the mod does not rewrite old chunks. Mixing terrain revisions can produce chunk-boundary seams.
 
-With commands enabled, `/elysium visit` enters safely from the Overworld. `/elysium return` works for any player inside Elysium as an escape route if a return altar is lost. Wait three seconds between crossings. The Elysium creative tab exposes all blocks and progression items. Use `/locate biome elysium:golden_fields` and `/locate structure elysium:harvest_hamlet` inside the dimension to inspect content. The new landmarks are `/locate structure elysium:elder_spring` and `/locate structure elysium:sunlit_lookout`.
+With commands enabled, `/elysium visit` enters safely from the Overworld. `/elysium return` works for any player inside Elysium as an escape route if a return altar is lost. Wait three seconds between crossings. The Elysium creative tab exposes all blocks and progression items. Use `/locate biome elysium:golden_fields` and `/locate structure elysium:harvest_hamlet` inside the dimension to inspect content. Also inspect `/locate biome elysium:golden_watermeadows`, `/locate biome elysium:amber_lakes`, `/locate structure elysium:waterside_cottage` and `/locate structure elysium:mountain_town`. Mountain towns deliberately reject unsuitable terrain, so locate searches can be longer.
 
 For the survival route, mature vanilla wheat has a default **0.01%** chance to drop one Elysium Shard. Craft four shards in a 2×2 square into a fragment, then four fragments in a 2×2 square into a Sigil of Elysium. Sixteen shards are therefore needed: **160,000 mature harvests on average** at the default rate, with substantial random variation. This intentionally preserves the proposed rarity rather than silently making the discovery common. The server config `entrance.wheatShardChance` accepts 0–1; `0.001` is 0.1% and averages 16,000 harvests per sigil. Any break that drops mature wheat's loot counts, so villager farmers and automated farms are the practical route and are intended. Wild Elysian grain does not award shards.
 
@@ -49,6 +51,6 @@ CI checks both content generators and `tools/generate_ambience.py --check`. The 
 
 [ReTerraForged / FreeTerraForged research](docs/RETERRAFORGED.md) identifies the 1.21.1 Uplift fork and a possible future dimension adapter. Its jar passed a co-installation GameTest smoke test, but its terrain engine is **not integrated into Elysium** and an active FreeTerraForged Overworld preset has not been tested.
 
-The visual target includes rich golden light and dramatic scenery. Vanilla rendering supplies the working baseline. The first player screenshots informed the golden grass and open-field revisions. Alpha 3's new landmarks, sound balance, particles, terrain fit and composition across seeds still need a graphical playtest; automated validation uses a headless server.
+The visual target includes rich golden light and dramatic scenery. Vanilla rendering supplies the working baseline. The first player screenshots informed the golden grass and open-field revisions. Alpha 4's colours, tree silhouettes, shoreline composition, town architecture and villager circulation still need a graphical playtest; automated validation uses a headless server.
 
 Original Elysium code and content are currently **All Rights Reserved** pending an explicit project license decision. The NeoForge MDK template retains its separate [MIT notice](TEMPLATE_LICENSE.txt). Minecraft assets remain referenced game assets. Third-party structure files have not been copied.

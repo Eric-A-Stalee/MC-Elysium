@@ -1,6 +1,6 @@
 # Settlements and river crossings
 
-Elysium ships original harvest hamlets, spring trees, lookout pergolas and
+Elysium ships original harvest hamlets, waterside cottages, terraced mountain towns, spring trees, lookout pergolas and
 terrain-aware bridges, with no structure-mod dependency. The Python generators
 own the static geometry, site profiles, biome membership and structure sets.
 Java planners handle terrain acceptance, saved approaches and river spans.
@@ -40,6 +40,22 @@ steep edges and adds a short, saved bank approach where gentle terrain reaches
 actual water within 48 blocks of the court centre. Old template/pool IDs and
 saved jigsaw pieces remain compatible. See [WORLDGEN.md](WORLDGEN.md) for the
 site profiles, spring and lookout geometry, spacing and validation.
+
+## Waterside cottages and mountain towns (alpha 4)
+
+`tools/settlement_templates.py` defines reusable, original building geometry with frozen material styles. Waterside cottages use birch, pale sandstone and spruce roofs. The Nordic-inspired mountain style uses dark spruce beams, calcite plaster, steep grey stair roofs, yellow glazing and real lantern light. Cottages have two beds, work blocks and a resident; the larger hall adds a communal table. A covered bell plaza provides the focal point. No third-party templates are bundled.
+
+The 13 × 13 waterside cottage uses the shared landscape-site codec. Its whole footprint must fit within two blocks of relief, and **a bank approach is mandatory**. That approach verifies actual water, gentle dry footing and a short landing, then rotates the cottage's south-facing template entrance toward the bank. Its candidate grid has spacing 18 and separation 7, excludes nearby hamlet candidates, and only permits Watermeadows/Amber Lakes. Most shoreline remains undeveloped. The landing ends on dry ground; this pass does not add floating docks or lake-spanning bridges.
+
+`mountain_town` uses a dedicated codec with data-defined hall/cottage templates, radii, relief limits and population bounds. The candidate grid has spacing 38 and separation 14. A town requires a mountain biome, elevation at least 24 blocks above sea level, and land at least eight blocks higher 64 blocks away in two cardinal directions. These conditions seek a sheltered mountain shoulder; they do not sculpt a mountain range around a town.
+
+The placer first finds a 9 × 9 plaza pad, then chooses a 17 × 17 hall pad and three to five 13 × 13 cottage pads. Every footprint is checked column by column. The plaza tolerates three blocks of relief; buildings tolerate four. Houses face the plaza and retain distinct elevations. Candidates whose buildings overlap, obstruct existing paths, fail terrain checks or cannot connect are rejected. The whole settlement is planned before creating any pieces, so a failed town does not leave partial buildings.
+
+`TerracePlanner` uses a bounded cardinal path search: at most 1,200 visited nodes per connection within a 48-block radius. Routes check a three-block width, one-block grade changes, dry ground and at most four blocks of fill. Building aprons ease down from their pads; one canonical height per path tile keeps junctions consistent. `TerracePathPiece` saves those tiles, their natural ground and resulting surface heights, and places stone stairs and short retaining walls with chunk clipping. It clears three blocks of headroom only on the authored paths. Building templates and paths remain separate saved pieces; there is no settlement-sized platform or blank air box.
+
+`TerrainSampler` centralizes candidate-local base-noise heights and water queries for all three planners. Its immutable column record distinguishes solid ground from the optional local water surface. The current bridge and bank algorithms still require sea-level hydrology; a future terrain adapter must supply **planned** elevated water, including water that its features place later. The sampler is an architectural boundary, not a claim that FreeTerraForged integration is complete.
+
+Lithostitched's released NeoForge 1.21.1 branch was also inspected at [`38779fe2`](https://github.com/Apollounknowndev/lithostitched/tree/38779fe2059d33cc92d9b8012c6eb73bfcaaac96). Its `DelegatingConfig` supports piece counts, depths, placement conditions and adaptation overrides. Its `AlternateJigsawGenerator` checks conditions at a connector before calculating the rotated footprint and aligns nonrigid pieces from an anchor height. Those tools are useful for a larger pool catalogue, but do not replace this full-footprint and connecting-road planner. No new dependency is needed for alpha 4. A future integration should be optional and tested: Lithostitched also redirects vanilla jigsaw generation globally.
 
 ## Elysian bridges
 
@@ -114,6 +130,8 @@ With cheats enabled inside a development world:
 /execute in elysium:elysium run locate structure elysium:elysian_bridge
 /execute in elysium:elysium run locate structure elysium:elder_spring
 /execute in elysium:elysium run locate structure elysium:sunlit_lookout
+/execute in elysium:elysium run locate structure elysium:waterside_cottage
+/execute in elysium:elysium run locate structure elysium:mountain_town
 /execute in elysium:elysium run place structure elysium:elysian_bridge ~ ~ ~
 ```
 

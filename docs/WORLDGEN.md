@@ -1,9 +1,6 @@
 # Elysium world generation
 
-The initial world has Golden Fields, Golden Birch Woods, and Elysian Highlands.
-They share white birch trunks, gold canopies, straw/ochre grass, clear blue-green water,
-flowers, passive animals, and a sun held at time 11000. The distinction is spatial:
-open grain country, enclosed tall woodland, and pale rocky uplands. Surface rain,
+The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 11000. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
 raids, ordinary hostile biome spawns, and zombified piglins from lit nether
 portals are disabled in Elysium while its sun is fixed. This does not
 override the rest of a player's world or promise that another mod cannot spawn
@@ -22,29 +19,32 @@ python3 tools/validate_worldgen.py
 
 The catalog uses frozen `BiomeDefinition`, `ClimateBox`, `Palette`, `Vegetation`,
 `GrovePattern`, `TreeShape`, `SiteDefinition`, and `Spawn` dataclasses. Each definition provides the biome's stable resource ID,
-display name, climate box, colors, vegetation budgets, animal list, temperature,
+display name, climate boxes, colors, vegetation budgets, animal list, temperature,
 surface treatment, and settlement affinities. The same definition emits its biome
 JSON, its placed features, tree mixture, dimension biome-source entry, and biome
-tags. Adding a fourth biome using the existing tree/terrain/settlement vocabulary
+tags. Adding another biome using the existing tree/terrain/settlement vocabulary
 means adding one definition; no independent switch statements or hand-maintained
 biome membership lists are needed. Localization must also be provided by the
 client's language catalog when introducing a new display name.
 
-Configured features describe the shared small, tall and branching golden birches,
+Configured features describe the shared small, tall, branching and high-canopy golden birches,
 grain, flowers, and grass. Placed features apply each biome's attempt budgets. All
-vegetation uses the order ordinary trees → optional riverside trees → flowers → grain → grass. Keeping that order
+vegetation uses the order ordinary trees → optional riverside trees → flowers → grain → grass → optional fallen leaves. Keeping that order
 consistent avoids cross-biome feature sorting cycles and gives trees priority
 before filling their clearings. Attempts are not guaranteed placements: vanilla
 survival predicates, terrain, existing blocks, and tree collisions can reject
 them. Decorations use Minecraft's feature RNG, never global random state.
 
-| Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall / branching shares |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Golden Fields | 0 inland; 0 or 2 near water | 12 | 2 | 2 | Riverside mixture: 20% / 0% |
-| Golden Birch Woods | 2 in sparse areas; 7 in groves | 3 | 3 | 5 | 50% / 20% |
-| Elysian Highlands | 3 | 4 | 2 | 3 | 35% / 8% |
+| Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall / fancy / high-canopy shares |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Golden Fields | 0 inland; 0 or 2 near water | 12 | 2 | 2 | 20% / 0% / 0% |
+| Golden Birch Woods | 2 in openings; 7 in groves | 3 | 3 | 5 | 50% / 20% / 0% |
+| Golden Watermeadows | 2 | 1 | 9 | 4 | 15% / 0% / 75% |
+| Amber Lakes | 3 | 2 | 3 | 3 | 25% / 20% / 40% |
+| Elysian Highlands | 2 | 2 | 2 | 3 | 70% / 10% / 0% |
+| Ivory Peaks | 1 | 0 | 1 | 1 | 80% / 0% / 0% |
 
-The table describes alpha 3; the catalog is authoritative. A grain
+The remaining share uses small birches. Amber Lakes also attempt three patches of fallen leaves. The table describes alpha 4; the catalog is authoritative. A grain
 patch makes 96 survival-checked placement attempts and needs ordinary soil, not
 farmland. Hamlet crops use normal cultivated wheat separately.
 
@@ -69,19 +69,23 @@ Small birches have requested trunk heights of 5–8 blocks. Tall birches request
 9–14 blocks and sample a crown radius of 2 or 3, reducing the former uniform
 wide canopy. Branching specimens use vanilla fancy trunk/foliage placers with
 birch logs and golden leaves, producing multiple rounded foliage clusters. The
-shared tree catalog owns their geometry. Per-biome shares are absolute selection
+shared tree catalog owns their geometry. High-canopy birches request 12–17-block trunks, use vanilla forking limbs and rounded crowns of radius 3–4, and concentrate foliage above a long clear stem. Per-biome shares are absolute selection
 probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
 
-Grass colors are biome effects: Golden Fields use `#CBB16A` (muted straw),
-Golden Birch Woods `#B99B59` (ochre), and Elysian Highlands `#C3AE79` (pale gold).
-Vanilla grass blocks and biome-tinted grass plants pick up these colors without
-new blocks or copied textures. The canopy remains more saturated than the
-ground, while birch trunks, pale stone, water and flowers provide contrast.
-Resource packs and shaders can change the final appearance or override tinting.
-On world restart, these palette changes affect already generated Elysium biomes;
-the new tree distributions only affect newly generated chunks.
+Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter retain their original golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour.
+
+| Biome | Grass | Foliage | Water |
+| --- | --- | --- | --- |
+| Golden Fields | `#CBB16A` | `#E8BB39` | `#55A6AE` |
+| Golden Birch Woods | `#B99B59` | `#E8BB39` | `#55A6AE` |
+| Golden Watermeadows | `#C4AA60` | `#EAC34C` | `#65AEB3` |
+| Amber Lakes | `#A58D52` | `#CC8537` | `#386C79` |
+| Elysian Highlands | `#BBB28A` | `#DDBB68` | `#527D93` |
+| Ivory Peaks | `#B9B496` | `#D2B66F` | `#496D88` |
+
+The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world; old saves can retain their previous serialized biome source.
 
 ## Architecture informed by BicBiomeCraft
 
@@ -118,9 +122,9 @@ original implementations of these architectural ideas.
 
 `elysium:terrain_height` combines vanilla climate noise references with an
 original height formula. Low erosion raises mountains; the Highlands climate
-box follows the same erosion signal. Lower-relief areas become fields or woods
-according to humidity. Values near zero in the ridge noise cut connected
-channels below sea level 63. A smaller custom noise adds gentle ground relief.
+boxes follow the same erosion signal: highlands span erosion -0.55 to -0.22, and peaks lie below -0.55. Values near zero in ridge noise cut channels below sea level 63. Cooler geographic temperature bands use narrow stream profiles and Watermeadows within ridge ±0.10; temperature above 0.25 selects Amber Lakes within ridge ±0.22. A smoothly blended wider channel profile creates lake-like reaches there. Outside the corridors, humidity separates fields and woods. A smaller custom noise adds gentle ground relief.
+
+The river-distance and autumn-weight functions feed the terrain formula directly; biome boxes use the same raw signals. Climate coverage is checked across humidity, erosion, temperature and ridges, including shared boundaries. This is connected sea-level water shaped by noise, not watershed simulation, flowing upland rivers or a waterfall system.
 
 Every density-function entry point is owned by Elysium: `continents`, `erosion`,
 `ridges`, `temperature`, `vegetation`, and both coordinate shifts. They use raw
@@ -196,14 +200,14 @@ three-chunk exclusion around hamlet candidates. These are candidate budgets,
 not guaranteed densities: terrain checks can reject either kind. The bridge set
 remains independent. No loot or story trigger is attached to these peaceful sites.
 
-All site decisions use base noise heights/columns with a per-candidate cache,
+`TerrainSampler` shares immutable solid-ground/local-water columns between bridges, landscape sites and mountain towns. Its cache belongs to one candidate. All site decisions use base noise heights/columns,
 never neighbouring chunk generation. Saved template rotation, pivot, foundation
 depth and bank-path surface profiles keep partial generation stable across
 reloads. Block writes and template entities use the generating chunk's clip.
 The algorithms assume Elysium's sea-level rivers, not elevated hydrology from
 another terrain engine.
 
-Golden Birch Woods have a quiet 24-second looping breeze under Minecraft's
+Golden Birch Woods, Golden Watermeadows and Amber Lakes have a quiet 24-second looping breeze under Minecraft's
 Ambient/Environment volume control. `tools/generate_ambience.py` synthesizes the
 original sound and an original 8 × 8 leaf sprite; no third-party recordings or
 Minecraft texture bytes are copied. Gold leaves use vanilla cherry-leaf motion,
@@ -227,10 +231,15 @@ Useful inspection commands with cheats enabled:
 /execute in elysium:elysium run locate biome elysium:golden_fields
 /execute in elysium:elysium run locate biome elysium:golden_birch_woods
 /execute in elysium:elysium run locate biome elysium:elysian_highlands
+/execute in elysium:elysium run locate biome elysium:golden_watermeadows
+/execute in elysium:elysium run locate biome elysium:amber_lakes
+/execute in elysium:elysium run locate biome elysium:ivory_peaks
 /execute in elysium:elysium run locate structure elysium:harvest_hamlet
 /execute in elysium:elysium run locate structure elysium:elysian_bridge
 /execute in elysium:elysium run locate structure elysium:elder_spring
 /execute in elysium:elysium run locate structure elysium:sunlit_lookout
+/execute in elysium:elysium run locate structure elysium:waterside_cottage
+/execute in elysium:elysium run locate structure elysium:mountain_town
 /execute in elysium:elysium run place structure elysium:harvest_hamlet ~ ~ ~
 ```
 

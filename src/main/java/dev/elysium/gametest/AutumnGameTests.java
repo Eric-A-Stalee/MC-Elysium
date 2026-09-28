@@ -96,14 +96,15 @@ public final class AutumnGameTests {
         class Probe implements Runnable {
             int index;
             @Override public void run() {
-                for(int n=0;n<12 && index<1681;n++,index++) {
-                    int x=(index%41-20)*96,z=(index/41-20)*96;
+                for(int n=0;n<12 && index<4225;n++,index++) {
+                    int x=(index%65-32)*192,z=(index/65-32)*192;
                     int y=generator.getBaseHeight(x,z,Heightmap.Types.OCEAN_FLOOR_WG,realm,random);
                     var biome=generator.getBiomeSource().getNoiseBiome(QuartPos.fromBlock(x),QuartPos.fromBlock(y),QuartPos.fromBlock(z),random.sampler());
                     String id=registry.getKey(biome.value()).getPath();found.add(id);
                     if(y<generator.getSeaLevel() && generator.getBaseColumn(x,z,realm,random).getBlock(62).is(Blocks.WATER))wet.merge(id,1,Integer::sum);
                 }
-                if(index<1681) {helper.runAfterDelay(1,() -> run());return;}
+                if(index<4225) {helper.runAfterDelay(1,() -> run());return;}
+                LogUtils.getLogger().info("Elysium hydrology survey: seed={}, biomes={}, wet columns={}",realm.getSeed(),found,wet);
                 helper.assertTrue(found.containsAll(List.of("golden_fields","golden_birch_woods","golden_watermeadows","amber_lakes","elysian_highlands","ivory_peaks")),
                         "All six biomes must occur in the real seeded climate survey: "+found);
                 helper.assertTrue(wet.getOrDefault("golden_watermeadows",0)>0 && wet.getOrDefault("amber_lakes",0)>0,
@@ -112,7 +113,6 @@ public final class AutumnGameTests {
                 var lake=registry.get(ResourceLocation.fromNamespaceAndPath("elysium","amber_lakes"));
                 helper.assertTrue(meadow.getFoliageColor()!=lake.getFoliageColor() && meadow.getWaterColor()!=lake.getWaterColor(),
                         "Amber shores must have their own foliage and water palette");
-                LogUtils.getLogger().info("Elysium hydrology survey: seed={}, biomes={}, wet columns={}",realm.getSeed(),found,wet);
                 helper.succeed();
             }
         }
