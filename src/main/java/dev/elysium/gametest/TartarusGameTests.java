@@ -57,15 +57,22 @@ public final class TartarusGameTests {
         helper.assertTrue(tag.equals(loaded.createTag(context)),"Complete route and chamber must survive registered NBT loading");
         var outside=at.offset(13,3,0);level.setBlock(outside,Blocks.RED_CONCRETE.defaultBlockState(),2);
         var b=loaded.getBoundingBox();
+        // Excavate actual geology. Minecraft may skip setting cave_air into an
+        // empty air section, which is visually equivalent but not state-equal.
+        for(int x=b.minX();x<=b.maxX();x++)for(int z=b.minZ();z<=b.maxZ();z++)for(int y=b.minY();y<=b.maxY();y++)
+            level.setBlock(new BlockPos(x,y,z),Blocks.STONE.defaultBlockState(),2);
         var left=new BoundingBox(b.minX(),b.minY(),b.minZ(),at.getX()-1,b.maxY(),b.maxZ());
         var right=new BoundingBox(at.getX(),b.minY(),b.minZ(),b.maxX(),b.maxY(),b.maxZ());
         // Reverse generation order relative to coordinate order, reloading in between.
         loaded.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),RandomSource.create(1),right,new ChunkPos(at),at);
+        helper.assertTrue(level.getBlockState(at.offset(-3,11,0)).is(Blocks.STONE),"Right clip may not write into the ungenerated left half");
         loaded=(TartarusChainPiece)ModStructures.TARTARUS_CHAIN_PIECE.get().load(context,tag);
         loaded.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),RandomSource.create(99),left,new ChunkPos(at),at);
         for(int x=b.minX();x<=b.maxX();x++)for(int z=b.minZ();z<=b.maxZ();z++)for(int y=b.minY();y<=b.maxY();y++) {
             var expected=original.materialAt(x-at.getX(),y,z-at.getZ());
-            if(expected!=null)helper.assertTrue(level.getBlockState(new BlockPos(x,y,z)).equals(expected),"Chunk halves must reconstruct identical chain and chamber geometry");
+            var actual=level.getBlockState(new BlockPos(x,y,z));
+            if(expected!=null)helper.assertTrue(actual.equals(expected),"Chunk halves differ at "+x+","+y+","+z+": expected "+expected+", got "+actual);
+            else helper.assertTrue(actual.is(Blocks.STONE),"Buried route must retain the original encasing stone");
         }
         helper.assertTrue(level.getBlockState(outside).is(Blocks.RED_CONCRETE),"No writes outside the saved structure bounds");
         helper.succeed();
