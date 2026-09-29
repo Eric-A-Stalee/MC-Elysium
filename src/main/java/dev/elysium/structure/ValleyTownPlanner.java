@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.PriorityQueue;
+import java.util.function.Consumer;
 import net.minecraft.core.Direction;
 
 /** Crossing-led town planning. No chunk loads, block writes, or global seed caches. */
@@ -29,6 +30,10 @@ public final class ValleyTownPlanner {
 
     public static Optional<Plan> plan(LandscapePlanner.Terrain terrain, BridgePlanner.Span bridge, int sea,
             TerracePlanner.Module hall, TerracePlanner.Module tower, List<TerracePlanner.Module> houses, int minimum, int maximum) {
+        return plan(terrain,bridge,sea,hall,tower,houses,minimum,maximum,ignored->{});
+    }
+    public static Optional<Plan> plan(LandscapePlanner.Terrain terrain, BridgePlanner.Span bridge, int sea,
+            TerracePlanner.Module hall, TerracePlanner.Module tower, List<TerracePlanner.Module> houses, int minimum, int maximum, Consumer<String> survey) {
         int cx=bridge.x(bridge.length()/2,0),cz=bridge.z(bridge.length()/2,0);
         boolean eastWest=bridge.eastWest();
         var roads=new LinkedHashMap<TerracePlanner.Point,Column>();
@@ -47,7 +52,7 @@ public final class ValleyTownPlanner {
             var plaza=new TerracePlanner.Lot(p.x(),p.z(),pad.getAsInt(),5,face(p.x(),p.z(),cx,cz),-1);
             if(connect(terrain,lots,roads,plaza,cx,cz,sea))break;
         }
-        if(lots.isEmpty())return Optional.empty();
+        if(lots.isEmpty()){survey.accept("no_square");return Optional.empty();}
         var square=lots.getFirst();
         // Higher halls receive preference, while every candidate must still have a walkable approach.
         List<TerracePlanner.Lot> halls=new ArrayList<>();
@@ -59,7 +64,7 @@ public final class ValleyTownPlanner {
         }
         halls.sort(Comparator.comparingInt(TerracePlanner.Lot::ground).reversed());
         for(var lot:halls)if(available(lot,lots,roads) && connect(terrain,lots,roads,lot,cx,cz,sea))break;
-        if(lots.size()!=2)return Optional.empty();
+        if(lots.size()!=2){survey.accept("no_hall");return Optional.empty();}
         for(int v:new int[]{26,-26,54,-54}) {
             var p=point(cx,cz,eastWest,far+12,v);
             var pad=pad(terrain,p.x(),p.z(),tower.radius(),sea,tower.relief());
@@ -67,7 +72,7 @@ public final class ValleyTownPlanner {
             var lot=new TerracePlanner.Lot(p.x(),p.z(),pad.getAsInt(),tower.radius(),face(p.x(),p.z(),cx,cz),1);
             if(available(lot,lots,roads) && connect(terrain,lots,roads,lot,cx,cz,sea))break;
         }
-        if(lots.size()!=3)return Optional.empty();
+        if(lots.size()!=3){survey.accept("no_tower");return Optional.empty();}
         int count=0,index=0;
         sites: for(int distance:new int[]{30,60,90,0})for(int sign:new int[]{1,-1})for(int row:new int[]{0,1})for(int side:new int[]{-1,1}) {
             if(distance==0 && sign<0)continue;
@@ -82,7 +87,7 @@ public final class ValleyTownPlanner {
             lot=new TerracePlanner.Lot(p.x(),p.z(),pad.getAsInt(),module.radius(),lot.face(),lot.module());
             if(connect(terrain,lots,roads,lot,cx,cz,sea) && ++count==maximum)break sites;
         }
-        if(count<minimum)return Optional.empty();
+        if(count<minimum){survey.accept("houses_"+count);return Optional.empty();}
         // Save every prepared column. Generation never resamples this terrain after another piece has changed it.
         var columns=new LinkedHashMap<TerracePlanner.Point,Column>();
         for(var lot:lots)for(int x=lot.x()-lot.radius();x<=lot.x()+lot.radius();x++)for(int z=lot.z()-lot.radius();z<=lot.z()+lot.radius();z++)

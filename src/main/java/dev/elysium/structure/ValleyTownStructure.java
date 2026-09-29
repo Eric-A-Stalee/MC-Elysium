@@ -7,6 +7,7 @@ import dev.elysium.registry.ModStructures;
 import dev.elysium.worldgen.TerrainSampler;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceLocation;
@@ -34,21 +35,27 @@ public final class ValleyTownStructure extends Structure {
         this.plaza=plaza;this.hall=hall;this.tower=tower;this.houses=List.copyOf(houses);this.minimum=minimum;this.maximum=maximum;
     }
     @Override public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        return surveyGenerationPoint(context,ignored->{});
+    }
+    public Optional<GenerationStub> surveyGenerationPoint(GenerationContext context,Consumer<String> survey) {
         var terrain=new TerrainSampler(context);int sea=context.chunkGenerator().getSeaLevel();
         for(int dx:new int[]{4,12})for(int dz:new int[]{4,12}) {
             int x=context.chunkPos().getMinBlockX()+dx,z=context.chunkPos().getMinBlockZ()+dz;
             if(terrain.height(x,z)>=sea || !validBiome(context,x,sea,z) || !terrain.water(x,z))continue;
+            survey.accept("mountain_water");
             for(boolean axis:new boolean[]{true,false}) {
                 // Both sides must rise into real mountains. Lowland river villages do not qualify.
                 int lx=x+(axis?-104:0),lz=z+(axis?0:-104),rx=x+(axis?104:0),rz=z+(axis?0:104);
                 if(terrain.height(lx,lz)<sea+32 || terrain.height(rx,rz)<sea+32)continue;
+                survey.accept("mountain_backdrop");
                 var bridge=BridgePlanner.find(terrain,x,z,axis,sea);
                 if(bridge.isEmpty())continue;
+                survey.accept("crossing");
                 var result=ValleyTownPlanner.plan(terrain,bridge.get(),sea,hall.shape(),tower.shape(),
-                        houses.stream().map(MountainTownStructure.Module::shape).toList(),minimum,maximum);
+                        houses.stream().map(MountainTownStructure.Module::shape).toList(),minimum,maximum,survey);
                 if(result.isEmpty())continue;
                 var plan=result.get();
-                if(plan.lots().stream().filter(l->validBiome(context,l.x(),l.ground(),l.z())).count()*4<plan.lots().size()*3L)continue;
+                if(plan.lots().stream().filter(l->validBiome(context,l.x(),l.ground(),l.z())).count()*4<plan.lots().size()*3L){survey.accept("biome_extent");continue;}
                 boolean valid=true;
                 for(var lot:plan.lots()) {
                     var size=context.structureTemplateManager().getOrCreate(template(lot.module())).getSize();

@@ -108,12 +108,14 @@ public final class GrandTownGameTests {
         var placement=(RandomSpreadStructurePlacement)realm.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).get(id).placement();
         class Probe implements Runnable {
             int attempt;
+            final java.util.Map<String,Integer> survey=new java.util.TreeMap<>();
             @Override public void run() {
                 for(int n=0;n<8 && attempt<12000;n++,attempt++) {
                     var chunk=placement.getPotentialStructureChunk(realm.getSeed(),(attempt%120-60)*52,(attempt/120-50)*52);
+                    if(!placement.isStructureChunk(realm.getChunkSource().getGeneratorState(),chunk.x,chunk.z))continue;
                     var context=new Structure.GenerationContext(realm.registryAccess(),generator,generator.getBiomeSource(),realm.getChunkSource().randomState(),
                             realm.getServer().getStructureManager(),realm.getSeed(),chunk,realm,structure.biomes()::contains);
-                    var stub=structure.findGenerationPoint(context);if(stub.isEmpty())continue;
+                    var stub=structure.surveyGenerationPoint(context,key->survey.merge(key,1,Integer::sum));if(stub.isEmpty())continue;
                     var pieces=stub.get().getPiecesBuilder().build().pieces();
                     helper.assertTrue(pieces.size()>=19 && pieces.getFirst() instanceof TownTerrainPiece && pieces.getLast() instanceof ElysianBridgePiece,
                             "A real town needs complete districts, saved terraces and a crossing");
@@ -123,9 +125,11 @@ public final class GrandTownGameTests {
                         helper.assertTrue(p.getType().load(serialization,tag).createTag(serialization).equals(tag),"Every town piece must survive reload");
                     }
                     LogUtils.getLogger().info("Elysium grand mountain town candidate: seed={}, chunk={}, pieces={}, candidates={}",realm.getSeed(),chunk,pieces.size(),attempt+1);
+                    LogUtils.getLogger().info("Elysium grand town survey: {}",survey);
                     helper.succeed();return;
                 }
-                helper.assertTrue(attempt<12000,"No complete grand mountain town found in bounded natural candidate survey");
+                if(attempt>=12000)LogUtils.getLogger().info("Elysium grand town survey: {}",survey);
+                helper.assertTrue(attempt<12000,"No complete grand mountain town found in bounded natural candidate survey: "+survey);
                 helper.runAfterDelay(1,()->run());
             }
         }

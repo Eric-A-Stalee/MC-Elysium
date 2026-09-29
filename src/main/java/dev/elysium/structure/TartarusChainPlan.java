@@ -23,10 +23,10 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
             int h = heights.applyAsInt(x + dx, z + dz);
             low = Math.min(low, h); high = Math.max(high, h);
         }
-        int top = center - 6;
+        int top = center - 2;
         // The top remains inside the mountain; one outer face can show through
         // a steep slope. Bound the exposed length rather than hanging in a valley.
-        if (center < 116 || high - center > 6 || top - low < 8 || top - low > 48) return Optional.empty();
+        if (center < 116 || high - center > 8 || top - low < 3 || top - low > 48) return Optional.empty();
         var plan = new TartarusChainPlan(x, z, top, floor, axis);
         int exposed = 0, bends = 0;
         // Check the actual ring footprint, not diagonal samples where there
@@ -39,7 +39,7 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
                 int index=Math.max(0,Math.floorDiv(y-plan.bottomCenter(),LINK_PITCH));
                 for(int ring=Math.max(0,index-1);ring<=index+1;ring++) {
                     int dy=Math.abs(y-plan.bottomCenter()-ring*LINK_PITCH);
-                    if(dy>=4 && dy<=5 && (Math.abs(dx)>=2 || Math.abs(dz)>=2)) {bends++;break;}
+                    if(dy>=4 && dy<=5 && ringAt(ring,dx,y,dz)) {bends++;break;}
                 }
             }
         }
@@ -50,16 +50,16 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
     public boolean chainAt(int dx, int y, int dz) {
         int first = Math.max(0, Math.floorDiv(y - bottomCenter() - 5, LINK_PITCH));
         for (int index = first; index <= first + 2; index++) {
-            int center = bottomCenter() + index * LINK_PITCH;
-            if (center + 5 > top) break;
-            int dy = Math.abs(y - center);
-            if (dy > 5) continue;
-            boolean eastWest = firstEastWest ^ (index % 2 != 0);
-            int along = Math.abs(eastWest ? dx : dz), across = eastWest ? dz : dx;
-            if (across != 0) continue;
-            if ((dy <= 3 && along == 3) || (dy == 4 && along >= 2 && along <= 3) || (dy == 5 && along <= 2)) return true;
+            if (ringAt(index,dx,y,dz)) return true;
         }
         return false;
+    }
+    private boolean ringAt(int index,int dx,int y,int dz) {
+        int center=bottomCenter()+index*LINK_PITCH,dy=Math.abs(y-center);
+        if(center+5>top || dy>5)return false;
+        boolean eastWest=firstEastWest^(index%2!=0);
+        int along=Math.abs(eastWest?dx:dz),across=eastWest?dz:dx;
+        return across==0 && ((dy<=3 && along==3) || (dy==4 && along>=2 && along<=3) || (dy==5 && along<=2));
     }
 
     public int roof(int dx, int dz) {
