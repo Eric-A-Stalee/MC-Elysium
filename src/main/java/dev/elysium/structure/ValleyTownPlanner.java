@@ -75,7 +75,7 @@ public final class ValleyTownPlanner {
         }
         if(lots.size()!=3){survey.accept("no_tower");return Optional.empty();}
         int count=0,index=0;
-        sites: for(int distance:new int[]{30,60,90,0})for(int sign:new int[]{1,-1})for(int row:new int[]{0,1})for(int side:new int[]{-1,1}) {
+        sites: for(int distance:new int[]{30,60,90,0})for(int sign:new int[]{1,-1})for(int row:new int[]{0,1,2})for(int side:new int[]{-1,1}) {
             if(distance==0 && sign<0)continue;
             var module=houses.get(index++%houses.size());
             int u=(side>0?far:near)+side*(module.radius()+5+row*30),v=distance*sign;

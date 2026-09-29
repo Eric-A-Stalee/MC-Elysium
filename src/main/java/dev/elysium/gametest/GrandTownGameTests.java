@@ -124,6 +124,21 @@ public final class GrandTownGameTests {
                         var tag=p.createTag(serialization);
                         helper.assertTrue(p.getType().load(serialization,tag).createTag(serialization).equals(tag),"Every town piece must survive reload");
                     }
+                    // Exercise the real structure set and normal chunk pipeline,
+                    // not only a successful call to the planner.
+                    var actual=realm.getChunk(chunk.x,chunk.z).getStartForStructure(structure);
+                    helper.assertTrue(actual!=null && actual.isValid() && actual.getPieces().size()==pieces.size(),
+                            "The natural candidate must become a real saved structure start");
+                    for(int i=2;i<pieces.size()-1;i++) {
+                        var box=pieces.get(i).getBoundingBox();
+                        var floor=new BlockPos((box.minX()+box.maxX())/2,box.minY()+2,(box.minZ()+box.maxZ())/2);
+                        helper.assertTrue(realm.getBlockState(floor).is(Blocks.SPRUCE_PLANKS),
+                                "Generated halls, tower and homes must retain their interior floors: "+floor);
+                    }
+                    var crossing=((ElysianBridgePiece)pieces.getLast()).span();int middle=crossing.length()/2;
+                    var deck=new BlockPos(crossing.x(middle,0),crossing.walkingHeight(middle)-1,crossing.z(middle,0));
+                    helper.assertTrue(realm.getBlockState(deck).is(Blocks.STONE_BRICKS) && realm.getBlockState(deck.above()).isAir(),
+                            "The naturally generated town needs an unobstructed stone crossing");
                     LogUtils.getLogger().info("Elysium grand mountain town candidate: seed={}, chunk={}, pieces={}, candidates={}",realm.getSeed(),chunk,pieces.size(),attempt+1);
                     LogUtils.getLogger().info("Elysium grand town survey: {}",survey);
                     helper.succeed();return;

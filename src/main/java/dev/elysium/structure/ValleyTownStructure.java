@@ -47,9 +47,9 @@ public final class ValleyTownStructure extends Structure {
                 // Look beyond the inhabited valley, not inside a large house's
                 // footprint: the town spans 224 blocks before its backdrop begins.
                 int left=0,right=0;
-                for(int distance:new int[]{144,192}) {
-                    left=Math.max(left,terrain.height(x+(axis?-distance:0),z+(axis?0:-distance)));
-                    right=Math.max(right,terrain.height(x+(axis?distance:0),z+(axis?0:distance)));
+                for(int distance:new int[]{144,192})for(int offset:new int[]{-96,0,96}) {
+                    left=Math.max(left,terrain.height(x+(axis?-distance:offset),z+(axis?offset:-distance)));
+                    right=Math.max(right,terrain.height(x+(axis?distance:offset),z+(axis?offset:distance)));
                 }
                 if(left<sea+32 || right<sea+32)continue;
                 survey.accept("mountain_backdrop");
