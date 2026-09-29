@@ -44,9 +44,14 @@ public final class ValleyTownStructure extends Structure {
             if(terrain.height(x,z)>=sea || !validBiome(context,x,sea,z) || !terrain.water(x,z))continue;
             survey.accept("mountain_water");
             for(boolean axis:new boolean[]{true,false}) {
-                // Both sides must rise into real mountains. Lowland river villages do not qualify.
-                int lx=x+(axis?-104:0),lz=z+(axis?0:-104),rx=x+(axis?104:0),rz=z+(axis?0:104);
-                if(terrain.height(lx,lz)<sea+32 || terrain.height(rx,rz)<sea+32)continue;
+                // Look beyond the inhabited valley, not inside a large house's
+                // footprint: the town spans 224 blocks before its backdrop begins.
+                int left=0,right=0;
+                for(int distance:new int[]{144,192}) {
+                    left=Math.max(left,terrain.height(x+(axis?-distance:0),z+(axis?0:-distance)));
+                    right=Math.max(right,terrain.height(x+(axis?distance:0),z+(axis?0:distance)));
+                }
+                if(left<sea+32 || right<sea+32)continue;
                 survey.accept("mountain_backdrop");
                 var bridge=BridgePlanner.find(terrain,x,z,axis,sea);
                 if(bridge.isEmpty())continue;
