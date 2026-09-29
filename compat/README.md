@@ -56,6 +56,8 @@ On Windows, use `gradlew.bat` and quote paths containing spaces. Relative depend
 
 Outputs are under `compat/guard/build/libs/` and `compat/elysiumcompat/build/libs/`. The external jars are `compileOnly`: they are not embedded in either output. Use `--rerun-tasks` when you need a fresh execution of the policy tests rather than an up-to-date result.
 
+Both adapter jars include this directory's MIT notice at `META-INF/LICENSE`.
+
 Do not add the compatibility build to Elysium's root `settings.gradle`. Keeping it separate lets Elysium build and run without these external inputs. When Elysium or either dependency changes, review the targets and repeat the relevant integration checks before changing the exact version pin or accepted hashes.
 
 ## Install and configure
@@ -77,6 +79,8 @@ Back up saves before changing the stack. These jars do not delete dimension file
 ## Validation boundaries
 
 The included `guard` unit suite exercises the actual policy implementation: Overworld allowance, dimension opt-in, invalid IDs and immutable snapshots. The addon module currently has no standalone unit or GameTest suite; an empty Gradle `test` task is not integration evidence.
+
+The repository's `compat-guard` CI job builds the guard, runs that suite, checks the packaged license, and verifies rejection of missing and wrong RTF inputs. It runs separately from Elysium's normal build and 31 server GameTests. It does not build or launch the full adapter with the private dependencies. SHA-256 checks apply to compile inputs; runtime metadata checks mod versions and mixin targets, not the hashes of installed jars. Use the exact documented binaries even when another jar advertises the same mod version.
 
 Before this source publication, controlled dedicated-server runs against the older RTF build established the erosion guard's dimension opt-in behavior, terrain preservation across reload, and exact Overworld-only block/biome parity in the bounded comparison. Separate Elysium pack runs verified the protected RTF context, declared height, valid nonduplicated chunk-section coordinates, natural hamlet/bridge generation and save/reload. The alpha.5 pack run completed 134 generation requests and retained block/biome hashes for all 133 unique chunks after reload. These integration harnesses and private pack/world data are not included here.
 

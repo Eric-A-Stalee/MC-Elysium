@@ -12,6 +12,9 @@ subprojects {
     neoForge { version = '21.1.238' }
     repositories { mavenCentral() }
     tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+    tasks.withType(Jar).configureEach {
+        from(rootProject.file('LICENSE')) { into 'META-INF' }
+    }
     sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
     sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath
 }
