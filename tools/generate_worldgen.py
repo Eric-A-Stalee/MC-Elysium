@@ -264,9 +264,13 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     mountains = binary("mul", mountains, binary("add", 1.0, binary("mul", 0.24, summit)))
     emit(entries, "worldgen/noise/summit_relief.json", {"firstOctave": -6, "amplitudes": [1.0, 0.5, 0.25]})
     upland = binary("add", 17.0,
-                    binary("add", binary("mul", 9.0, "elysium:continents"),
-                           binary("add", mountains, binary("mul", 3.0, relief))))
-    terrain_height = unary("flat_cache", binary("add", 60.0, binary("mul", channel, upland)))
+                    binary("add", binary("mul", 9.0, "elysium:continents"), binary("mul", 3.0, relief)))
+    # River banks and mountain shoulders have separate profiles. High peaks no
+    # longer multiply a gentle bank into an immediate wall beside the water.
+    shoulder = spline("elysium:river_distance", ((0.0, 0.0), (0.075, 0.0), (0.16, 0.04),
+                       (0.27, 0.30), (0.43, 0.78), (0.62, 1.0), (1.2, 1.0)))
+    terrain_height = unary("flat_cache", binary("add", 60.0, binary("add",
+                    binary("mul", channel, upland), binary("mul", shoulder, mountains))))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
                                                     gradient(MIN_Y, 320, 64.0, -320.0)))
     emit(entries, "worldgen/noise/gentle_relief.json", {"firstOctave": -4, "amplitudes": [1.0, 0.5]})
@@ -276,6 +280,9 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     cliff_biomes = [biome.key for biome in BIOMES if biome.pale_cliffs]
     pale_cliffs = condition({"type": "minecraft:biome", "biome_is": cliff_biomes},
                             condition({"type": "minecraft:steep"}, block_rule("calcite")))
+    # Pale bedrock beneath a thin soil mantle also shows through vertical faces
+    # between Minecraft's sparse steep-column detections.
+    upland_rock = condition({"type": "minecraft:biome", "biome_is": cliff_biomes}, block_rule("calcite"))
     # Submerged beds are sand; land keeps biome-tinted grass and dirt. No deepslate,
     # ore veins, lakes, aquifers, springs or carvers obscure the buried future.
     surface = sequence(
@@ -292,7 +299,10 @@ def make_noise(entries: dict[Path, bytes]) -> None:
                        "surface_depth_multiplier": 0, "add_stone_depth": False},
                       block_rule("grass_block", snowy="false")),
             block_rule("sand"))),
-        condition(surface_depth(3), sequence(pale_cliffs, block_rule("dirt"))),
+        condition(surface_depth(1), sequence(pale_cliffs, block_rule("dirt"))),
+        condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL + 3},
+                   "surface_depth_multiplier": 0, "add_stone_depth": False}, upland_rock),
+        condition(surface_depth(3), block_rule("dirt")),
     )
     router = {"barrier": 0.0, "fluid_level_floodedness": 0.0,
               "fluid_level_spread": 0.0, "lava": 0.0,
@@ -358,6 +368,7 @@ def placed(feature: str, count: int, tree_feature: bool = False, groves: GrovePa
     modifiers.extend([{"type": "minecraft:heightmap", "heightmap": "OCEAN_FLOOR" if tree_feature else "WORLD_SURFACE_WG"},
                       {"type": "minecraft:biome"}])
     if tree_feature:
+        modifiers.append({"type": "elysium:settlement_clearance"})
         modifiers.append({"type": "minecraft:block_predicate_filter",
                           "predicate": {"type": "minecraft:would_survive",
                                         "state": state("elysium:golden_birch_sapling", stage="0")}})
@@ -695,6 +706,26 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
         "structures": [{"structure": "elysium:mountain_town", "weight": 1}],
         "placement": {"type": "minecraft:random_spread", "spacing": 38, "separation": 14,
                       "salt": 760491532, "spread_type": "linear"}})
+    from grand_town_templates import RESIDENCES, residence, tower, square
+    for module in [*(residence(state, p) for p in RESIDENCES), tower(state), square(state)]:
+        villagers = [{"pos": Tag(9, (6, [x + 0.5, float(y), z + 0.5])), "blockPos": Tag(9, (3, [x, y, z])),
+            "nbt": nbt_compound({"id": Tag(8, "minecraft:villager"), "PersistenceRequired": Tag(1, 1),
+                "VillagerData": nbt_compound({"type": Tag(8, "minecraft:taiga"), "profession": Tag(8, "minecraft:none"), "level": Tag(3, 1)})})}
+            for x, y, z in module.residents]
+        entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
+    emit(entries, "worldgen/structure/grand_mountain_town.json", {
+        "type": "elysium:valley_town", "biomes": "#elysium:has_structure/mountain_town",
+        "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "none",
+        "plaza": "elysium:grand_mountain_plaza",
+        "hall": {"template": "elysium:mountain_great_hall", "radius": 13, "max_relief": 8},
+        "tower": {"template": "elysium:mountain_watchtower", "radius": 6, "max_relief": 6},
+        "houses": [{"template": "elysium:" + p.name, "radius": p.radius, "max_relief": 8} for p in RESIDENCES if not p.hall],
+        "minimum_houses": 14, "maximum_houses": 24})
+    emit(entries, "worldgen/structure_set/grand_mountain_town.json", {
+        "structures": [{"structure": "elysium:grand_mountain_town", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 52, "separation": 20,
+            "salt": 912804721, "spread_type": "linear",
+            "exclusion_zone": {"other_set": "elysium:mountain_town", "chunk_count": 8}}})
     settlements = sorted({name for biome in BIOMES for name in biome.settlements})
     for name in settlements:
         emit(entries, f"tags/worldgen/biome/has_structure/{name}.json",
@@ -756,7 +787,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
          {"replace": False, "values": ["elysium:ivory_peaks"]})
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge", "elysium:tartarus_chain"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:

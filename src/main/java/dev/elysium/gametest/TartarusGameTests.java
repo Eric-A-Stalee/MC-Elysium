@@ -50,7 +50,8 @@ public final class TartarusGameTests {
     @GameTest(template="portal_test_empty", timeoutTicks=100)
     public static void chainReloadAndClippingPreserveBothHalves(GameTestHelper helper) {
         var level=helper.getLevel(); var at=helper.absolutePos(new BlockPos(2,90,2));
-        var p=new TartarusChainPlan(at.getX(),at.getZ(),at.getY()+55,at.getY(),true);
+        // Keep the exhaustive block-by-block reload test on the legacy-size vault.
+        var p=new TartarusChainPlan(at.getX(),at.getZ(),at.getY()+55,at.getY(),true,12,22);
         var original=new TartarusChainPiece(p);var context=StructurePieceSerializationContext.fromLevel(level);
         var tag=original.createTag(context);
         var loaded=(TartarusChainPiece)ModStructures.TARTARUS_CHAIN_PIECE.get().load(context,tag);

@@ -27,8 +27,9 @@ public final class TartarusChainStructure extends Structure {
                     QuartPos.fromBlock(top), QuartPos.fromBlock(z), context.randomState().sampler()))) continue;
             // Keep the entire chamber deeply covered even beside a river valley.
             boolean covered = true;
-            for (int cx : new int[]{-12, 0, 12}) for (int cz : new int[]{-12, 0, 12})
-                covered &= terrain.height(x + cx, z + cz) > floor + 40;
+            int r=plan.get().chamberRadius();
+            for(int cx=-r;cx<=r;cx+=6)for(int cz=-r;cz<=r;cz+=6)
+                if(cx*cx+cz*cz<=r*r)covered &= terrain.height(x+cx,z+cz)>plan.get().roof(cx,cz)+20;
             if (!covered) continue;
             return Optional.of(new GenerationStub(new BlockPos(x, top, z),
                     builder -> builder.addPiece(new TartarusChainPiece(plan.get()))));

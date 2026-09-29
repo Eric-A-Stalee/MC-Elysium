@@ -385,6 +385,66 @@ def validate_modules() -> int:
     return total
 
 
+def validate_grand_modules() -> int:
+    """Independently traverse the shipped floors, stairs, rooms and ladder landings."""
+    from collections import deque
+    town = read_json("worldgen/structure/grand_mountain_town.json")
+    assert 14 <= town["minimum_houses"] <= town["maximum_houses"] <= 26
+    total = 0
+    for module in [town["hall"], town["tower"], *town["houses"]]:
+        name = module["template"].split(":")[1]
+        root = NbtReader(gzip.decompress((DATA / f"structure/{name}.nbt").read_bytes())).root()
+        size = root["size"]
+        assert size[0] == size[2] == module["radius"] * 2 + 1
+        blocks = {tuple(b["pos"]): root["palette"][b["state"]] for b in root["blocks"]}
+        assert len(blocks) == len(root["blocks"])
+        total += len(blocks)
+        def kind(p):
+            return blocks.get(p, {}).get("Name", "minecraft:air")
+        def clear(p):
+            return kind(p) in {"minecraft:air", "minecraft:ladder"} or kind(p).endswith("_door")
+        def stand(p):
+            x, y, z = p
+            return (all(0 <= n < limit for n, limit in zip(p, size)) and clear(p) and clear((x, y+1, z))
+                    and (not clear((x, y-1, z)) or kind(p) == "minecraft:ladder"))
+        start = (size[0] // 2, 2, size[2] - 1)
+        assert stand(start), f"Missing grand-town connector: {name}"
+        seen, queue = set(), deque([start])
+        while queue:
+            p = queue.popleft()
+            if p in seen:
+                continue
+            seen.add(p)
+            x, y, z = p
+            candidates = [(x+dx, y+dy, z+dz) for dx, dz in ((1,0),(-1,0),(0,1),(0,-1)) for dy in (-1,0,1)]
+            if kind(p) == "minecraft:ladder":
+                candidates.extend(((x,y-1,z),(x,y+1,z)))
+            queue.extend(q for q in candidates if q not in seen and stand(q))
+        for resident in root["entities"]:
+            assert tuple(resident["blockPos"]) in seen, f"Resident cannot reach street: {name} {resident['blockPos']}"
+        doors = []
+        for (x,y,z), block in blocks.items():
+            props, material = block.get("Properties",{}), block["Name"]
+            if material.endswith("_door") and props["half"] == "lower":
+                assert blocks[x,y+1,z]["Properties"]["half"] == "upper"
+                assert not clear((x,y-1,z)), f"Unsupported door: {name} {(x,y,z)}"
+                assert (x,y,z) in seen, f"Inaccessible room door: {name} {(x,y,z)}"
+                doors.append((x,y,z))
+            if material.endswith("_bed") and props["part"] == "foot":
+                assert blocks[x,y,z-1]["Properties"]["part"] == "head"
+                assert any((x+dx,y,z+dz) in seen for dx,dz in ((1,0),(-1,0),(0,1),(0,-1))), f"Inaccessible bed: {name}"
+            if material == "minecraft:lantern":
+                assert not clear((x,y-1,z)), f"Unsupported lantern: {name} {(x,y,z)}"
+        if "watchtower" in name:
+            assert any(y>=27 for x,y,z in seen), "Watchtower ladder must reach the top floor"
+        else:
+            assert len(doors)>=7, f"Grand houses need multiple real rooms: {name}"
+            assert sum(y==8 for x,y,z in seen)>=70, f"Upper floor must be substantial and connected: {name}"
+            assert any(y==13 for x,y,z in seen), f"Attic ladder is inaccessible: {name}"
+            assert sum("glass" in b["Name"] for b in blocks.values())>=40
+    return total
+
+
 def validate_landmarks() -> int:
     total = 0
     for name in ("elder_spring", "sunlit_lookout"):
@@ -484,6 +544,7 @@ def main():
     validate_structures()
     landmarks = validate_landmarks()
     modules = validate_modules()
+    grand_modules = validate_grand_modules()
     suffix = ""
     if args.minecraft_jar:
         parameters, formulas = validate_vanilla_refs(args.minecraft_jar)
@@ -491,7 +552,8 @@ def main():
     print(f"Worldgen validation passed: {climates} climate probes, {features} ordered features, "
           f"{len(templates)} templates/{sum(template[0] for template in templates)} positions, "
           f"{sum(template[2] for template in templates)} villagers, 2 landmarks/{landmarks} positions, "
-          f"5 settlement modules/{modules} positions, {isolated} isolated density functions, solid-depth density{suffix}.")
+          f"5 small settlement modules/{modules} positions, 5 grand building modules/{grand_modules} positions, "
+          f"{isolated} isolated density functions, solid-depth density{suffix}.")
 
 
 if __name__ == "__main__":

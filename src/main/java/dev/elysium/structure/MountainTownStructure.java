@@ -20,8 +20,8 @@ public final class MountainTownStructure extends Structure {
     public record Module(ResourceLocation template,int radius,int relief) {
         public static final Codec<Module> CODEC=RecordCodecBuilder.create(i->i.group(
                 ResourceLocation.CODEC.fieldOf("template").forGetter(Module::template),
-                Codec.intRange(3,10).fieldOf("radius").forGetter(Module::radius),
-                Codec.intRange(0,4).fieldOf("max_relief").forGetter(Module::relief)
+                Codec.intRange(3,16).fieldOf("radius").forGetter(Module::radius),
+                Codec.intRange(0,8).fieldOf("max_relief").forGetter(Module::relief)
         ).apply(i,Module::new));
         TerracePlanner.Module shape() { return new TerracePlanner.Module(radius,relief); }
     }

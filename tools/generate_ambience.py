@@ -53,17 +53,20 @@ def breeze_pcm():
 
 
 def chain_png():
-    """Original 16px forged metal with pale mineral edges and an inset maker's groove."""
+    """Quiet, tileable forged metal with sparse irregular mineral accretions."""
     rng = random.Random(813701245)
     rows = []
     for y in range(16):
         row = bytearray()
         for x in range(16):
-            grain = rng.randrange(-10, 11)
-            edge = min(x, y, 15-x, 15-y)
-            mineral = edge < 2 and ((x * 3 + y * 5) % 11 < 8)
-            groove = (x in (5, 10) and 4 <= y <= 11) or (y in (4, 11) and 5 <= x <= 10)
-            base = (180, 174, 151) if mineral else ((48, 44, 40) if groove else (95, 91, 80))
+            grain = rng.randrange(-5, 6)
+            field = (math.sin(math.tau*x/16+0.4) + 0.6*math.cos(math.tau*y/16+1.1)
+                     + 0.4*math.sin(math.tau*(x+y)/16))
+            mineral = field > 1.55 and rng.randrange(4) != 0
+            hammer = round(5*math.sin(math.tau*(x-y)/16))
+            # No frame or inset square: the structure itself supplies the link
+            # silhouette. The surface should read as one continuous material.
+            base = (120, 116, 103) if mineral else (62+hammer, 65+hammer, 67+hammer)
             row.extend(max(0, min(255, c + grain)) for c in base)
             row.append(255)
         rows.append(b"\0" + row)

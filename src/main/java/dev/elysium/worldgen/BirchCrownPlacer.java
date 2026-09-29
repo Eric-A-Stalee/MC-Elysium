@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
-/** Tapered, offset oval crowns shared by straight and branching birches. */
+/** Offset foliage lobes around each trunk/branch attachment, with a narrow connecting core. */
 public final class BirchCrownPlacer extends FoliagePlacer {
     public static final MapCodec<BirchCrownPlacer> CODEC = RecordCodecBuilder.mapCodec(instance ->
             foliagePlacerParts(instance).and(Codec.intRange(3, 8).fieldOf("height").forGetter(p -> p.height))
@@ -27,13 +27,25 @@ public final class BirchCrownPlacer extends FoliagePlacer {
     }
     @Override protected void createFoliage(LevelSimulatedReader level, FoliageSetter setter, RandomSource random,
             TreeConfiguration config, int trunkHeight, FoliageAttachment attachment, int crownHeight, int radius, int offset) {
-        int leanX = random.nextInt(3) - 1, leanZ = random.nextInt(3) - 1;
-        for (int layer = 0; layer <= crownHeight; layer++) {
-            double t = (double) layer / crownHeight;
-            int width = Math.max(1, (int) Math.round(radius * Math.sin(Math.PI * (0.08 + 0.84 * t))));
-            BlockPos center = attachment.pos().offset(layer < crownHeight / 2 ? leanX : 0,
-                    offset - layer, layer < crownHeight / 2 ? leanZ : 0);
-            placeLeavesRow(level, setter, random, config, center, width, 0, false);
+        double angle=random.nextDouble()*Math.PI*2;
+        double[][] lobes=new double[4][6];
+        lobes[0]=new double[]{0, -1.0, 0, 1.65, 1.75, 1.65};
+        for(int i=1;i<4;i++) {
+            double direction=angle+i*2.15;
+            lobes[i]=new double[]{Math.cos(direction)*(radius*0.60),-1.5-i*(crownHeight-2.0)/3,
+                    Math.sin(direction)*(radius*0.60),1.5+random.nextDouble()*0.45,1.65+random.nextDouble()*0.45,1.5+random.nextDouble()*0.45};
+        }
+        int extent=radius+1;
+        for(int y=-crownHeight-1;y<=1;y++)for(int x=-extent;x<=extent;x++)for(int z=-extent;z<=extent;z++) {
+            double best=Double.MAX_VALUE;
+            for(double[] l:lobes) {
+                double a=(x-l[0])/l[3],b=(y-l[1])/l[4],c=(z-l[2])/l[5];
+                best=Math.min(best,a*a+b*b+c*c);
+            }
+            // Keep a connected inner scaffold; only the outer lobe edges vary.
+            boolean core=x*x+z*z<=1 && y<=0 && y>=-crownHeight+1;
+            if(core || (best<=1.0 && !(best>0.86 && random.nextInt(7)==0)))
+                tryPlaceLeaf(level,setter,random,config,attachment.pos().offset(x,offset+y,z));
         }
     }
     @Override protected boolean shouldSkipLocation(RandomSource random, int x, int y, int z, int radius, boolean doubleTrunk) {

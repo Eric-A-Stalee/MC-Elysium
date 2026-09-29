@@ -4,9 +4,16 @@ import java.util.Optional;
 import java.util.function.IntBinaryOperator;
 
 /** One immutable route from a cliff exposure to a vaulted underground anchor. */
-public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstEastWest) {
-    public static final int CHAMBER_RADIUS = 12;
+public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstEastWest, int chamberRadius, int vaultHeight) {
+    public static final int CHAMBER_RADIUS = 36;
     public static final int LINK_PITCH = 7;
+    public TartarusChainPlan(int x,int z,int top,int floor,boolean firstEastWest) {
+        this(x,z,top,floor,firstEastWest,CHAMBER_RADIUS,54);
+    }
+    public TartarusChainPlan {
+        if(chamberRadius<12 || chamberRadius>40 || vaultHeight<22 || vaultHeight>64 || top<floor+22)
+            throw new IllegalArgumentException("Invalid Tartarus vault dimensions");
+    }
     public int bottomCenter() { return floor + 11; }
 
     public static Optional<TartarusChainPlan> find(IntBinaryOperator heights, int x, int z, int floor, boolean axis) {
@@ -21,15 +28,22 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
         // a steep slope. Bound the exposed length rather than hanging in a valley.
         if (center < 116 || high - center > 6 || top - low < 8 || top - low > 48) return Optional.empty();
         var plan = new TartarusChainPlan(x, z, top, floor, axis);
-        int exposed = 0;
+        int exposed = 0, bends = 0;
         // Check the actual ring footprint, not diagonal samples where there
         // may be a cliff but no chain. Most of the route remains unexcavated.
         for (int dx=-3;dx<=3;dx++) for (int dz=-3;dz<=3;dz++) {
             if (dx != 0 && dz != 0) continue;
             int surface = heights.applyAsInt(x+dx,z+dz);
-            for (int y=Math.max(surface,top-48);y<=top;y++) if (plan.chainAt(dx,y,dz)) exposed++;
+            for (int y=Math.max(surface,top-48);y<=top;y++) if (plan.chainAt(dx,y,dz)) {
+                exposed++;
+                int index=Math.max(0,Math.floorDiv(y-plan.bottomCenter(),LINK_PITCH));
+                for(int ring=Math.max(0,index-1);ring<=index+1;ring++) {
+                    int dy=Math.abs(y-plan.bottomCenter()-ring*LINK_PITCH);
+                    if(dy>=4 && dy<=5 && (Math.abs(dx)>=2 || Math.abs(dz)>=2)) {bends++;break;}
+                }
+            }
         }
-        return exposed >= 8 ? Optional.of(plan) : Optional.empty();
+        return exposed >= 8 && bends>=2 ? Optional.of(plan) : Optional.empty();
     }
 
     /** Rounded rectangular rings, alternating vertical planes and overlapping in height. */
@@ -49,7 +63,8 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
     }
 
     public int roof(int dx, int dz) {
-        double distance = (double) (dx * dx + dz * dz) / (CHAMBER_RADIUS * CHAMBER_RADIUS);
-        return floor + 12 + (int) Math.round(10 * Math.sqrt(Math.max(0, 1 - distance)));
+        double distance = (double) (dx * dx + dz * dz) / (chamberRadius * chamberRadius);
+        int spring=vaultHeight==22?12:25;
+        return floor + spring + (int) Math.round((vaultHeight-spring) * Math.sqrt(Math.max(0, 1 - distance)));
     }
 }

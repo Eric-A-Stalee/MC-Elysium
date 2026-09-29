@@ -1,0 +1,37 @@
+{
+  "type": "elysium:valley_town",
+  "biomes": "#elysium:has_structure/mountain_town",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "plaza": "elysium:grand_mountain_plaza",
+  "hall": {
+    "template": "elysium:mountain_great_hall",
+    "radius": 13,
+    "max_relief": 8
+  },
+  "tower": {
+    "template": "elysium:mountain_watchtower",
+    "radius": 6,
+    "max_relief": 6
+  },
+  "houses": [
+    {
+      "template": "elysium:mountain_manor",
+      "radius": 11,
+      "max_relief": 8
+    },
+    {
+      "template": "elysium:mountain_manor_workshop",
+      "radius": 11,
+      "max_relief": 8
+    },
+    {
+      "template": "elysium:mountain_manor_gabled",
+      "radius": 11,
+      "max_relief": 8
+    }
+  ],
+  "minimum_houses": 14,
+  "maximum_houses": 24
+}

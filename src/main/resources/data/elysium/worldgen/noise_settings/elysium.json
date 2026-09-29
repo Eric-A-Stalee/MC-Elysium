@@ -383,7 +383,7 @@
         "type": "minecraft:condition",
         "if_true": {
           "type": "minecraft:stone_depth",
-          "offset": 3,
+          "offset": 1,
           "add_surface_depth": false,
           "secondary_depth_range": 0,
           "surface_type": "floor"
@@ -420,6 +420,49 @@
               }
             }
           ]
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:y_above",
+          "anchor": {
+            "absolute": 66
+          },
+          "surface_depth_multiplier": 0,
+          "add_stone_depth": false
+        },
+        "then_run": {
+          "type": "minecraft:condition",
+          "if_true": {
+            "type": "minecraft:biome",
+            "biome_is": [
+              "elysium:elysian_highlands",
+              "elysium:ivory_peaks"
+            ]
+          },
+          "then_run": {
+            "type": "minecraft:block",
+            "result_state": {
+              "Name": "minecraft:calcite"
+            }
+          }
+        }
+      },
+      {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:stone_depth",
+          "offset": 3,
+          "add_surface_depth": false,
+          "secondary_depth_range": 0,
+          "surface_type": "floor"
+        },
+        "then_run": {
+          "type": "minecraft:block",
+          "result_state": {
+            "Name": "minecraft:dirt"
+          }
         }
       }
     ]

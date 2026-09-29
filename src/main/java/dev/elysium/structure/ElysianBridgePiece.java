@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -22,10 +24,15 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 /** Original five-block-wide birch crossing with three-block walkway and bounded stone piers. */
 public final class ElysianBridgePiece extends StructurePiece {
     private final BridgePlanner.Span span;
+    private final boolean stone;
 
     public ElysianBridgePiece(BridgePlanner.Span span) {
+        this(span,false);
+    }
+    public ElysianBridgePiece(BridgePlanner.Span span,boolean stone) {
         super(ModStructures.ELYSIAN_BRIDGE_PIECE.get(), 0, bounds(span));
         this.span = span;
+        this.stone=stone;
         setOrientation(null); // Explicit world coordinates also keep asymmetric stair facings stable after reload.
     }
 
@@ -34,6 +41,7 @@ public final class ElysianBridgePiece extends StructurePiece {
         span = new BridgePlanner.Span(tag.getInt("StartX"), tag.getInt("StartZ"), tag.getBoolean("EastWest"),
                 tag.getInt("Length"), tag.getInt("StartHeight"), tag.getInt("EndHeight"), tag.getInt("DeckHeight"),
                 tag.getIntArray("FloorHeights"));
+        stone=tag.getBoolean("Stone");
         setOrientation(null);
         // Derive, rather than trust, bounds so terrain profile and chunk clipping cannot disagree.
         boundingBox = bounds(span);
@@ -51,6 +59,7 @@ public final class ElysianBridgePiece extends StructurePiece {
         tag.putInt("EndHeight", span.endHeight());
         tag.putInt("DeckHeight", span.deckHeight());
         tag.putIntArray("FloorHeights", span.floorHeights());
+        tag.putBoolean("Stone",stone);
     }
 
     @Override
@@ -60,6 +69,9 @@ public final class ElysianBridgePiece extends StructurePiece {
         BlockState rail = Blocks.BIRCH_FENCE.defaultBlockState()
                 .setValue(span.eastWest() ? FenceBlock.EAST : FenceBlock.NORTH, true)
                 .setValue(span.eastWest() ? FenceBlock.WEST : FenceBlock.SOUTH, true);
+        if(stone)rail=Blocks.STONE_BRICK_WALL.defaultBlockState()
+                .setValue(span.eastWest()?WallBlock.EAST_WALL:WallBlock.NORTH_WALL,WallSide.LOW)
+                .setValue(span.eastWest()?WallBlock.WEST_WALL:WallBlock.SOUTH_WALL,WallSide.LOW);
         for (int along = 0; along < span.length(); along++) {
             int feet = span.walkingHeight(along);
             boolean landing = along < 2 || along >= span.length() - 2;
@@ -78,17 +90,24 @@ public final class ElysianBridgePiece extends StructurePiece {
                 if (landing || (edge && pier)) {
                     // The saved noise floor bounds every pier, and every individual block is chunk-clipped.
                     for (int y = span.floorHeight(along, across) - 1; y < feet; y++) {
-                        placeBlock(level, Blocks.SMOOTH_SANDSTONE.defaultBlockState(), x, y, z, chunkBounds);
+                        placeBlock(level, (stone?Blocks.STONE_BRICKS:Blocks.SMOOTH_SANDSTONE).defaultBlockState(), x, y, z, chunkBounds);
                     }
                 }
                 BlockState deck = edge ? Blocks.SMOOTH_SANDSTONE.defaultBlockState() : Blocks.BIRCH_PLANKS.defaultBlockState();
+                if(stone)deck=(edge?Blocks.POLISHED_ANDESITE:Blocks.STONE_BRICKS).defaultBlockState();
                 if (!edge && stairFacing != null) {
-                    deck = Blocks.BIRCH_STAIRS.defaultBlockState().setValue(StairBlock.FACING, stairFacing);
+                    deck = (stone?Blocks.STONE_BRICK_STAIRS:Blocks.BIRCH_STAIRS).defaultBlockState().setValue(StairBlock.FACING, stairFacing);
                 }
                 placeBlock(level, deck, x, feet - 1, z, chunkBounds);
                 if (edge && !landing && !pier) {
-                    placeBlock(level, Blocks.BIRCH_SLAB.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP),
+                    placeBlock(level, (stone?Blocks.STONE_BRICK_SLAB:Blocks.BIRCH_SLAB).defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP),
                             x, feet - 2, z, chunkBounds);
+                    if(stone) {
+                        int interval=Math.floorMod(along-BridgePlanner.APPROACH_LENGTH,7);
+                        int depth=4-Math.min(interval,7-interval);
+                        for(int y=Math.max(span.floorHeight(along,across),feet-depth-1);y<feet-2;y++)
+                            placeBlock(level,Blocks.STONE_BRICKS.defaultBlockState(),x,y,z,chunkBounds);
+                    }
                 }
                 // Structures generate before trees. Clearing only walkway headroom preserves river and banks.
                 for (int y = feet; y < feet + 3; y++) {
@@ -97,7 +116,7 @@ public final class ElysianBridgePiece extends StructurePiece {
                 if (edge) {
                     placeBlock(level, rail, x, feet, z, chunkBounds);
                     if (pier) {
-                        placeBlock(level, Blocks.CHISELED_SANDSTONE.defaultBlockState(), x, feet, z, chunkBounds);
+                        placeBlock(level, (stone?Blocks.CHISELED_STONE_BRICKS:Blocks.CHISELED_SANDSTONE).defaultBlockState(), x, feet, z, chunkBounds);
                         placeBlock(level, Blocks.LANTERN.defaultBlockState(), x, feet + 1, z, chunkBounds);
                     }
                 }
