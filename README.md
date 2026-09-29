@@ -22,7 +22,9 @@ This repository develops the first playable **paradise** milestone. An exposed C
 
 ## Try it
 
-Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.5.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Alpha 5 retains the fallen-leaf texture fix and introduces taller rounded birch crowns, broader valley shoulders, continuous pale cliff faces, patchier field cover, and rare Chains of Tartarus. Explore new chunks or regenerate Elysium to see the new generation; existing trees and terrain are not rewritten.
+Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.5.1.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Alpha 5 retains the fallen-leaf texture fix and introduces taller rounded birch crowns, broader valley shoulders, continuous pale cliff faces, patchier field cover, and rare Chains of Tartarus. Explore new chunks or regenerate Elysium to see the new generation; existing trees and terrain are not rewritten.
+
+Alpha 5.1 fixes transparent held and dropped leaf items by supplying the opacity required by Minecraft's item tint renderer. The same correction covers golden birch leaves, shards, fragments and sigils. Replace the old jar and restart; this hotfix needs no new chunks or dimension reset.
 
 For the complete alpha 5 terrain layout, use a new test world or [regenerate only Elysium](docs/WORLDGEN.md#regenerating-elysium). Existing chunks keep their terrain and trees; palette and texture updates apply after restarting. Mixing terrain revisions can produce chunk-boundary seams.
 

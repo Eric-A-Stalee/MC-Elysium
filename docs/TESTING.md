@@ -138,3 +138,9 @@ Graphical playtesting must inspect tree silhouettes and leaf retention, chain ap
 The natural-placement survey found a qualifying seed-0 random-spread candidate at chunk `[985, -911]` after 636 candidates: chain centre `(15761, -14571)`, planned top Y 116, chamber floor Y -48. This is a valid structure-start candidate, not a claimed graphical visit. All six biomes remained present in the climate survey, with actual water in both lowland corridors.
 
 The initial chamber test compared cave-air identity in empty sky sections, where Minecraft can retain ordinary air; the final test excavates a prefilled stone volume and verifies the entire result, untouched encasing stone, and an ungenerated neighbouring half. The stricter placement rule also rejected the first synthetic cliff fixture because too few actual ring blocks were exposed; its corrected cliff exposes 13. No graphical client or renewed FreeTerraForged integration test was run for alpha 5.
+
+## Alpha 5.1 item opacity fix (September 29, 2026)
+
+The player reported a visible leaf-litter inventory icon but invisible held and dropped items. The pinned Minecraft 1.21.1 source confirms that `ItemRenderer.renderQuadList` reads alpha from the item color handler's ARGB value and forwards it to the vertex consumer. Both Elysium item handlers returned 24-bit RGB, leaving alpha at zero. They now use vanilla's `FastColor.ARGB32.opaque` convention: foliage is `0xFFE8BB39` and relics are `0xFFFFE4A1`. Block biome colors and all texture resources remain unchanged.
+
+The existing dedicated-server tests cannot verify item rendering. In a graphical client, check fallen leaves and golden birch leaves in the inventory, both hands, and as dropped items; repeat for a shard, fragment and sigil. Check placed leaf litter and falling canopy particles as well. This hotfix changes no generation or saved IDs and requires only replacing the jar and restarting.

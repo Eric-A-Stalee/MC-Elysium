@@ -8,6 +8,7 @@ import dev.elysium.portal.ElysiumTravel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -41,9 +42,12 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tint) -> ModBlocks.GOLDEN_LEAF_COLOR,
+        // 1.21.1's ItemRenderer reads ARGB, including alpha. Our biome palette
+        // uses RGB, so pass opaque tints or held/dropped items become invisible.
+        event.register((stack, tint) -> FastColor.ARGB32.opaque(ModBlocks.GOLDEN_LEAF_COLOR),
                 ModBlocks.GOLDEN_BIRCH_LEAVES.get(), ModBlocks.LEAF_LITTER.get());
-        event.register((stack, tint) -> 0xFFE4A1, ModItems.ELYSIUM_SHARD.get(), ModItems.ELYSIUM_FRAGMENT.get(), ModItems.ELYSIUM_SIGIL.get());
+        event.register((stack, tint) -> FastColor.ARGB32.opaque(0xFFE4A1),
+                ModItems.ELYSIUM_SHARD.get(), ModItems.ELYSIUM_FRAGMENT.get(), ModItems.ELYSIUM_SIGIL.get());
     }
 
     @SubscribeEvent
