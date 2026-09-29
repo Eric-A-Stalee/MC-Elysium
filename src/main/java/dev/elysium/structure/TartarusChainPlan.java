@@ -39,7 +39,7 @@ public record TartarusChainPlan(int x, int z, int top, int floor, boolean firstE
                 int index=Math.max(0,Math.floorDiv(y-plan.bottomCenter(),LINK_PITCH));
                 for(int ring=Math.max(0,index-1);ring<=index+1;ring++) {
                     int dy=Math.abs(y-plan.bottomCenter()-ring*LINK_PITCH);
-                    if(dy>=4 && dy<=5 && ringAt(ring,dx,y,dz)) {bends++;break;}
+                    if(dy>=4 && dy<=5 && plan.ringAt(ring,dx,y,dz)) {bends++;break;}
                 }
             }
         }
