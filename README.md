@@ -57,6 +57,8 @@ CI checks both content generators and `tools/generate_ambience.py --check`. The 
 
 [ReTerraForged / FreeTerraForged research](docs/RETERRAFORGED.md) identifies the 1.21.1 Uplift fork and a possible future dimension adapter. Its jar passed a co-installation GameTest smoke test, but its terrain engine is **not integrated into Elysium** and an active FreeTerraForged Overworld preset has not been tested.
 
+For the separately tested older ReTerraForged build with a specific patched Dynamic Height version, [optional pack-compatibility sources](compat/README.md) are available in an independent build. They isolate Elysium from foreign terrain hooks and preserve its declared height; they are not required for standalone Elysium, and the external dependency jars are not included.
+
 The visual target includes rich golden light and dramatic scenery. Vanilla rendering supplies the working baseline. The first player screenshots informed the golden grass and open-field revisions. Alpha 6's tree silhouettes, terrain transitions, grand-town architecture, vault lighting and villager circulation still need a graphical playtest; automated validation uses a headless server.
 
-Original Elysium code and content are currently **All Rights Reserved** pending an explicit project license decision. The NeoForge MDK template retains its separate [MIT notice](TEMPLATE_LICENSE.txt). Minecraft assets remain referenced game assets. Third-party structure files have not been copied.
+Original Elysium code and content are currently **All Rights Reserved** pending an explicit project license decision. The optional adapters under `compat/` retain their separately declared [MIT license](compat/LICENSE); this does not relicense Elysium itself. The NeoForge MDK template retains its separate [MIT notice](TEMPLATE_LICENSE.txt). Minecraft assets remain referenced game assets. Third-party structure files have not been copied.

@@ -1,0 +1,73 @@
+import java.security.MessageDigest
+
+plugins {
+    id 'net.neoforged.moddev' version '2.0.141' apply false
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'net.neoforged.moddev'
+    group = 'local.bbc.compat'
+    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+    neoForge { version = '21.1.238' }
+    repositories { mavenCentral() }
+    tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+    tasks.withType(Jar).configureEach {
+        from(rootProject.file('LICENSE')) { into 'META-INF' }
+    }
+    sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+    sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath
+}
+
+project(':guard') {
+    version = '1.0.0-test'
+    base { archivesName = 'rtf-erosion-dimension-guard' }
+    dependencies {
+        testImplementation platform('org.junit:junit-bom:5.11.4')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+    tasks.named('test', Test) {
+        useJUnitPlatform()
+        enableAssertions = true
+        workingDir = layout.buildDirectory.dir('test-work').get().asFile
+        doFirst { workingDir.mkdirs() }
+    }
+}
+
+project(':elysiumcompat') {
+    version = '1.0.3-alpha6'
+    base { archivesName = 'elysium-pack-compat' }
+
+    // These exact external binaries are compile-only inputs, never redistributed.
+    def externalInputs = [
+        rtfJar: [
+            path: rootProject.providers.gradleProperty('rtfJar').orElse('libs/reterraforged.jar'),
+            sha256: '5e15c2a86136f41e8f6d5f7fe4f2abcecc6bcb5f6972fe90e68aa19ae795baae'
+        ],
+        dynamicHeightJar: [
+            path: rootProject.providers.gradleProperty('dynamicHeightJar').orElse('libs/dynamicheight.jar'),
+            sha256: '98706dd23a385d9df5d4a95717caf66c93ecc458f2acffcabad5d09b27913998'
+        ]
+    ]
+    dependencies {
+        externalInputs.values().each { dependency ->
+            compileOnly files(dependency.path.map { rootProject.file(it) })
+        }
+    }
+    def verifyExternalJars = tasks.register('verifyExternalJars') {
+        doLast {
+            externalInputs.each { propertyName, dependency ->
+                def jar = rootProject.file(dependency.path.get())
+                if (!jar.isFile()) {
+                    throw new GradleException("Missing ${propertyName}; provide -P${propertyName}=/path/to/the/tested.jar (see compat/README.md).")
+                }
+                def digest = MessageDigest.getInstance('SHA-256').digest(jar.bytes).encodeHex().toString()
+                if (digest != dependency.sha256) {
+                    throw new GradleException("Unsupported ${propertyName} SHA-256: ${digest}. This addon targets the exact build documented in compat/README.md.")
+                }
+            }
+        }
+    }
+    tasks.named('compileJava') { dependsOn verifyExternalJars }
+}

@@ -1,0 +1,7 @@
+{
+  "required": true,
+  "package": "local.rtferosion.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["ErodeFeatureMixin"],
+  "injectors": {"defaultRequire": 1}
+}
