@@ -267,8 +267,8 @@ def make_noise(entries: dict[Path, bytes]) -> None:
                     binary("add", binary("mul", 9.0, "elysium:continents"), binary("mul", 3.0, relief)))
     # River banks and mountain shoulders have separate profiles. High peaks no
     # longer multiply a gentle bank into an immediate wall beside the water.
-    shoulder = spline("elysium:river_distance", ((0.0, 0.0), (0.075, 0.0), (0.16, 0.04),
-                       (0.27, 0.30), (0.43, 0.78), (0.62, 1.0), (1.2, 1.0)))
+    shoulder = spline("elysium:river_distance", ((0.0, 0.0), (0.22, 0.0), (0.34, 0.02),
+                       (0.47, 0.30), (0.62, 0.85), (0.80, 1.0), (1.2, 1.0)))
     terrain_height = unary("flat_cache", binary("add", 60.0, binary("add",
                     binary("mul", channel, upland), binary("mul", shoulder, mountains))))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
