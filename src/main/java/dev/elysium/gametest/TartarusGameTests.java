@@ -31,7 +31,7 @@ public final class TartarusGameTests {
     public static void chainRequiresACliffAndReachesItsAnchor(GameTestHelper helper) {
         helper.assertTrue(TartarusChainPlan.find((x,z)->150,0,0,-48,true).isEmpty(),"Flat peaks must not produce exposed chains");
         helper.assertTrue(TartarusChainPlan.find((x,z)->70,0,0,-48,true).isEmpty(),"Lowlands must be rejected");
-        var p = TartarusChainPlan.find((x,z)->150-Math.max(0,x)*6,0,0,-48,true).orElseThrow();
+        var p = TartarusChainPlan.find((x,z)->150-Math.max(0,x)*10,0,0,-48,true).orElseThrow();
         var piece = new TartarusChainPiece(p);
         int lastCenter = p.bottomCenter() + ((p.top()-5-p.bottomCenter())/7)*7;
         for (int y=p.floor()+6;y<=lastCenter+5;y++) {

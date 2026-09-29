@@ -37,15 +37,15 @@ them. Decorations use Minecraft's feature RNG, never global random state.
 
 | Biome | Tree attempts | Grain patches | Flower patches | Grass patches | Tall / fancy / high-canopy shares |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Golden Fields | 0 inland; 0 or 2 near water | 12 | 2 | 2 | 20% / 0% / 0% |
+| Golden Fields | 0 inland; 0 or 2 near water | 7 | 3 | 2 | 20% / 0% / 0% |
 | Golden Birch Woods | 2 in openings; 7 in groves | 3 | 3 | 5 | 50% / 20% / 0% |
 | Golden Watermeadows | 2 | 1 | 9 | 4 | 15% / 0% / 75% |
 | Amber Lakes | 3 | 2 | 3 | 3 | 25% / 20% / 40% |
 | Elysian Highlands | 2 | 2 | 2 | 3 | 70% / 10% / 0% |
 | Ivory Peaks | 1 | 0 | 1 | 1 | 80% / 0% / 0% |
 
-The remaining share uses small birches. Amber Lakes also attempt three patches of fallen leaves. The table describes alpha 4; the catalog is authoritative. A grain
-patch makes 96 survival-checked placement attempts and needs ordinary soil, not
+The remaining share uses small birches. Amber Lakes also attempt three patches of fallen leaves. Ground-cover columns show maximum patch counts; sparse bands use one quarter (rounded down). The catalog is authoritative. A grain
+patch makes 48 survival-checked placement attempts and needs ordinary soil, not
 farmland. Hamlet crops use normal cultivated wheat separately.
 
 Golden Fields retain a zero-count tree feature under their existing resource ID
@@ -65,11 +65,7 @@ of sea level, and find exposed water in one of twelve probes within six blocks.
 This creates intermittent bank groves rather than returning trees to field
 interiors. It reads only available decoration chunks and never loads neighbours.
 
-Small birches have requested trunk heights of 5–8 blocks. Tall birches request
-9–14 blocks and sample a crown radius of 2 or 3, reducing the former uniform
-wide canopy. Branching specimens use vanilla fancy trunk/foliage placers with
-birch logs and golden leaves, producing multiple rounded foliage clusters. The
-shared tree catalog owns their geometry. High-canopy birches request 12–17-block trunks, use vanilla forking limbs and rounded crowns of radius 3–4, and concentrate foliage above a long clear stem. Per-biome shares are absolute selection
+Small birches request 6–9-block trunks, tall birches 10–15, branching birches 9–14, and high-canopy birches 12–18. All share the custom tapered `birch_crown` foliage placer, with radius 2–3 and profile heights 5–7. The branching and high-canopy variants use vanilla fancy trunks to support overlapping crowns; actual trunk/branch lengths follow that placer's geometry. The immutable shared catalog owns the profiles. Per-biome shares are absolute selection
 probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
@@ -276,7 +272,7 @@ All four configured tree IDs now share the registered `elysium:birch_crown` foli
 
 The channel profile reaches full upland height more gradually, creating broader shoulders. A separate X/Z summit noise varies uplift without changing the biome climate signals or introducing natural caves. Steep highland/peak columns use calcite above sea level for continuous exposed faces; underground stone below sea level remains unchanged. Grain patches use 48 attempts over a smaller radius, and coherent density bands leave quieter ground between grain, grass and flower concentrations. Golden Fields still have zero interior tree attempts.
 
-`TartarusChainPlan` owns a vertical route with 11-block-tall, seven-block-wide alternating links spaced seven blocks apart. The route is mostly encased in the existing mountain, without an artificially cleared shaft. A candidate must be in Ivory Peaks above Y 116 with a nearby slope exposing 8–48 blocks beneath the buried top; flat terrain and lowlands are rejected. The structure set uses 28-chunk spacing with separation 12, further reduced by biome/terrain rejection, so these are rare clues rather than common scenery.
+`TartarusChainPlan` owns a vertical route with 11-block-tall, seven-block-wide alternating links spaced seven blocks apart. The route is mostly encased in the existing mountain, without an artificially cleared shaft. A candidate must be in Ivory Peaks above Y 116 with a nearby slope 8–48 blocks beneath the buried top and at least eight actual ring blocks above the original ground; flat terrain and lowlands are rejected. The structure set uses 28-chunk spacing with separation 12, further reduced by biome/terrain rejection, so these are rare clues rather than common scenery.
 
 One `TartarusChainPiece` saves its centre, top, floor and initial link orientation. It places only within the current chunk clip, preserves geology outside the links and chamber, and uses no neighbouring chunk requests. Its radius-12 vaulted chamber starts 16 blocks above the dimension floor (Y -48 in Elysium). The chain pierces the vault and ends in a real central anchor; the chamber has masonry ribs, an open floor and four recessed lights. There is no boss, Forge, timer or sunset trigger in this prototype.
 

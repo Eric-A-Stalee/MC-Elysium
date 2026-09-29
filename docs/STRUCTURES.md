@@ -139,3 +139,7 @@ The bridge and landscape-site `place` commands can fail on unsuitable terrain, i
 and visit a valid naturally generated crossing when assessing bank alignment.
 Check that the approach has dry footing at both ends, that the walkway is
 continuous across chunk borders, and that reloading preserves the crossing.
+
+## Chain of Tartarus (alpha 5)
+
+`TartarusChainStructure` samples only Ivory Peaks candidates and verifies an actual exposed ring footprint. `TartarusChainPlan` defines one complete route to a buried vaulted chamber; `TartarusChainPiece` owns the route and chamber together, persists all variable geometry in NBT, and intersects every placement with the current chunk clip. The rings alternate vertical planes with overlapping heights and connected bevel corners. Surrounding stone and ring interiors remain intact until the chain breaks through the chamber roof. The chamber is the initial Tartarus destination; boss, Forge and crisis progression are future work. See [world generation](WORLDGEN.md#alpha-5-landscape-and-buried-chain) for dimensions, placement and material details.
