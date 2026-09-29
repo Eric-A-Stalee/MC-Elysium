@@ -22,7 +22,9 @@ This repository develops the first playable **paradise** milestone. Hephaestus' 
 
 ## Try it
 
-Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.4.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Use a **new test world** for the complete alpha 4 layout: its river widths and multi-noise biome source have changed. Existing saves can retain their serialized older biome source, and existing chunks keep their terrain and trees. Palette updates apply to existing registered biomes after restarting; the mod does not rewrite old chunks. Mixing terrain revisions can produce chunk-boundary seams.
+Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.4.1.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Alpha 4.1 fixes the fallen-leaf block and inventory textures; existing leaves update after restarting the client, with no world or dimension reset needed for this fix.
+
+For the complete alpha 4 terrain layout, use a new test world or [regenerate only Elysium](docs/WORLDGEN.md#regenerating-elysium). Existing chunks keep their terrain and trees; palette and texture updates apply after restarting. Mixing terrain revisions can produce chunk-boundary seams.
 
 With commands enabled, `/elysium visit` enters safely from the Overworld. `/elysium return` works for any player inside Elysium as an escape route if a return altar is lost. Wait three seconds between crossings. The Elysium creative tab exposes all blocks and progression items. Use `/locate biome elysium:golden_fields` and `/locate structure elysium:harvest_hamlet` inside the dimension to inspect content. Also inspect `/locate biome elysium:golden_watermeadows`, `/locate biome elysium:amber_lakes`, `/locate structure elysium:waterside_cottage` and `/locate structure elysium:mountain_town`. Mountain towns deliberately reject unsuitable terrain, so locate searches can be longer.
 
@@ -43,11 +45,12 @@ When changing content definitions, use Python 3.10+:
 
 ```sh
 python3 tools/generate_assets.py
+python3 tools/validate_client_assets.py
 python3 tools/generate_worldgen.py
 python3 tools/validate_worldgen.py
 ```
 
-CI checks both content generators and `tools/generate_ambience.py --check`. The latter verifies the original leaf sprite and the committed sound asset. Regenerating that sound uses Python synthesis and ffmpeg; players and ordinary builds need neither. The source of truth and extension points are explained in [world generation](docs/WORLDGEN.md), [structures](docs/STRUCTURES.md) and [testing](docs/TESTING.md).
+CI checks both content generators and `tools/generate_ambience.py --check`. The latter verifies the original leaf sprite and the committed sound asset. `tools/validate_client_assets.py` independently verifies that custom model textures are present in the blocks atlas and that model/particle texture files exist. Regenerating the sound uses Python synthesis and ffmpeg; players and ordinary builds need neither. The source of truth and extension points are explained in [world generation](docs/WORLDGEN.md), [structures](docs/STRUCTURES.md) and [testing](docs/TESTING.md).
 
 [ReTerraForged / FreeTerraForged research](docs/RETERRAFORGED.md) identifies the 1.21.1 Uplift fork and a possible future dimension adapter. Its jar passed a co-installation GameTest smoke test, but its terrain engine is **not integrated into Elysium** and an active FreeTerraForged Overworld preset has not been tested.
 

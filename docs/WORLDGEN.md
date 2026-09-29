@@ -74,7 +74,7 @@ probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
 
-Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter retain their original golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour.
+Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter retain their original golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
@@ -85,7 +85,13 @@ Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter 
 | Elysian Highlands | `#BBB28A` | `#DDBB68` | `#527D93` |
 | Ivory Peaks | `#B9B496` | `#D2B66F` | `#496D88` |
 
-The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world; old saves can retain their previous serialized biome source.
+The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world or a regenerated Elysium dimension.
+
+### Regenerating Elysium
+
+Texture and palette fixes apply to existing chunks after restarting and need no reset. To replace old terrain, return all players to the Overworld, fully stop the game/server, and back up the save. Move or delete the entire `<world>/dimensions/elysium/elysium/` directory, including its region, entity, POI and dimension-data files. Elysium regenerates on reopening; its builds and stored items are lost, while the other dimensions remain intact. Do not edit `level.dat` or delete an Overworld/Nether/End directory.
+
+In the pinned Minecraft 1.21.1 loader, the current datapack dimension definition takes precedence over the saved dimension entry when registries are combined. Regenerating this custom dimension therefore picks up Elysium's current biome source and terrain settings without replacing the entire save. Already generated chunks are otherwise retained.
 
 ## Architecture informed by BicBiomeCraft
 

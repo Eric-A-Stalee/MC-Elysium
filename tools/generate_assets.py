@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate authored models/loot/recipes using references to vanilla textures only.
+"""Generate authored models/loot/recipes using vanilla references and original art.
 
 No Mojang texture bytes are copied into the project. Run --check in CI.
 """
@@ -37,6 +37,10 @@ def pool(entries, conditions=None):
 
 SURVIVES = {"condition": "minecraft:survives_explosion"}
 asset("particles/golden_leaf", {"textures": ["elysium:golden_leaf"]})
+# Particles and block/item models use separate atlases. Stitch the same original
+# leaf image into the blocks atlas as well, without duplicating its PNG.
+emit("assets/minecraft/atlases/blocks.json", {"sources": [
+    {"type": "minecraft:single", "resource": "elysium:particle/golden_leaf"}]})
 asset("sounds", {"woodland_breeze": {"sounds": [{"name": "elysium:woodland_breeze", "stream": True, "volume": 0.32}]}})
 for name, texture in [("elysium_shard", "quartz"), ("elysium_fragment", "prismarine_crystals"),
                       ("elysium_sigil", "nether_star")]:

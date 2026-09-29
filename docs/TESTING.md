@@ -7,6 +7,7 @@ Use a Java 21 JDK, Minecraft 1.21.1 and the pinned NeoForge 21.1.233 development
 ```sh
 python3 tools/generate_assets.py --check
 python3 tools/generate_ambience.py --check
+python3 tools/validate_client_assets.py
 python3 tools/generate_worldgen.py --check
 python3 tools/validate_worldgen.py
 ./gradlew build
@@ -102,6 +103,14 @@ The waterside cottage probe found candidate chunk `[-24, -45]` after eight attem
 The independent validator checks 1,925 four-axis climate samples, 26 ordered features and 11 isolated density functions. It decodes five new settlement modules containing 10,578 authored positions, checks paired beds/doors and lantern supports, and finds a geometric route from each resident's starting position to the external path connector. The initial check caught a hall resident intersecting the communal table; the corrected spawn is in the aisle. These checks supplement the original hamlet/landmark validation. The generators reproduce 88 worldgen resources and 46 other JSON assets.
 
 This pass was tested standalone. The older packaged-server and FreeTerraForged co-install results above have not been repeated for alpha 4. No graphical Minecraft client was available; natural settlement frequency across multiple seeds, in-game appearance and actual villager behaviour still need player inspection. Use a fresh world for the full new biome source and terrain layout.
+
+## Alpha 4.1 fallen-leaf texture fix (September 29, 2026)
+
+Player screenshots showed the missing-texture checkerboard on placed leaf litter and its inventory icon. The original PNG was present, but only the particle atlas loaded it. The generated `minecraft:blocks` atlas now adds `elysium:particle/golden_leaf` with a single-sprite source, sharing the image between the ground model, inventory item and falling particles.
+
+The independent client-asset validator reproduces the original failure for both litter models before the atlas entry is added. Corrected resources pass all three custom texture references. Removing the PNG from a temporary resource copy also fails for both models and the particle definition. CI runs this validator alongside the existing generated-resource and worldgen checks. This verifies resource wiring; a graphical client is still needed to confirm the rendered result with the player's resource pack and shaders.
+
+This update changes no world generation or saved block IDs. Existing leaf litter needs only the updated jar and a client restart, not new chunks or a dimension reset.
 
 ## What still needs a client playtest
 
