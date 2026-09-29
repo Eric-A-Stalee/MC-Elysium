@@ -1,0 +1,7 @@
+{
+  "type": "elysium:tartarus_chain",
+  "biomes": "#elysium:has_structure/tartarus_chain",
+  "step": "underground_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

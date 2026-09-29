@@ -126,3 +126,9 @@ No graphical Minecraft client was available in the development environment. The 
 6. If experimenting with FreeTerraForged, test an explicitly enabled Overworld preset in a disposable world. Merely installing its jar is a narrower compatibility check.
 
 Natural ore generation, underground caves, advanced hydrology/waterfalls, custom NPC behavior, custom shaders, and later story realms are outside this first paradise milestone. The independent terrain is a height field with river cuts, not an overhang-capable Uplift integration.
+
+## Alpha 5 validation targets
+
+The new tests grow all four registered birch variants and require a trunk, at least five foliage layers and a tapered top. Chain tests reject unsuitable terrain, trace every vertical level down to the anchor, verify the excavated chamber and intact surrounding geology, round-trip through the registered NBT loader, and reconstruct the complete structure from reversed clipped halves. A seed-0 survey probes actual random-spread chain candidate chunks rather than arbitrary cliff coordinates.
+
+Graphical playtesting must inspect tree silhouettes and leaf retention, chain appearance with resource packs/shaders, exposed-link readability, and excavation into the chamber. Use `/locate structure elysium:tartarus_chain` inside Elysium. New generation needs fresh chunks; the retained texture fix works on existing leaf litter.

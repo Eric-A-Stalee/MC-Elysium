@@ -36,6 +36,11 @@ def pool(entries, conditions=None):
 
 
 SURVIVES = {"condition": "minecraft:survives_explosion"}
+asset("blockstates/tartarus_chain", {"variants": {"": {"model": "elysium:block/tartarus_chain"}}})
+asset("models/block/tartarus_chain", {"parent": "minecraft:block/cube_all",
+      "textures": {"all": "elysium:block/tartarus_chain"}})
+asset("models/item/tartarus_chain", {"parent": "elysium:block/tartarus_chain"})
+loot("tartarus_chain", [pool([item("elysium:tartarus_chain")], [SURVIVES])])
 asset("particles/golden_leaf", {"textures": ["elysium:golden_leaf"]})
 # Particles and block/item models use separate atlases. Stitch the same original
 # leaf image into the blocks atlas as well, without duplicating its PNG.
@@ -121,7 +126,8 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
-                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar"],
+                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain"],
+                    "needs_iron_tool": ["elysium:tartarus_chain"],
                     "bee_growables": ["elysium:golden_birch_sapling"]}.items():
     emit(f"data/minecraft/tags/block/{tag}.json", {"replace": False, "values": values})
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"]}.items():

@@ -83,15 +83,14 @@ class TreeShape:
     radius: tuple[int, int]
     foliage_height: int
     branching: bool = False
-    forking: bool = False
 
 
 TREE_SHAPES = (
-    TreeShape("golden_birch", (5, 2, 1), (2, 2), 3),
+    TreeShape("golden_birch", (6, 2, 1), (2, 3), 5),
     # Narrower variable crowns and a wider height range interrupt the old roof.
-    TreeShape("tall_golden_birch", (9, 3, 2), (2, 3), 4),
-    TreeShape("branching_golden_birch", (8, 4, 0), (2, 2), 4, branching=True),
-    TreeShape("canopy_golden_birch", (12, 3, 2), (3, 4), 4, forking=True),
+    TreeShape("tall_golden_birch", (10, 3, 2), (2, 3), 7),
+    TreeShape("branching_golden_birch", (9, 4, 1), (2, 3), 5, branching=True),
+    TreeShape("canopy_golden_birch", (12, 4, 2), (3, 3), 6, branching=True),
 )
 
 
@@ -139,7 +138,7 @@ def inland_climates(humidity):
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
                     inland_climates((-1.0, 0.10)),
-                    Palette(0xCBB16A), Vegetation(0, 12, 2, 2, 0.20, riverside_attempts=2),
+                    Palette(0xCBB16A), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
@@ -247,9 +246,9 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     emit(entries, "worldgen/density_function/autumn_weight.json",
          spline("elysium:temperature", ((-1.2, 0.0), (0.05, 0.0), (0.30, 1.0), (1.2, 1.0))))
     river = spline("elysium:river_distance",
-                   ((0.0, 0.0), (0.012, 0.0), (0.028, 0.12), (0.065, 0.40), (0.14, 1.0), (1.2, 1.0)))
+                   ((0.0, 0.0), (0.012, 0.0), (0.028, 0.12), (0.065, 0.38), (0.14, 0.82), (0.23, 1.0), (1.2, 1.0)))
     lake = spline("elysium:river_distance",
-                  ((0.0, 0.0), (0.075, 0.0), (0.12, 0.16), (0.19, 0.65), (0.27, 1.0), (1.2, 1.0)))
+                  ((0.0, 0.0), (0.075, 0.0), (0.12, 0.16), (0.19, 0.58), (0.27, 0.84), (0.36, 1.0), (1.2, 1.0)))
     # Broad quiet reaches connect to the brook network. The blend avoids a
     # terrain step at biome borders; neither mask depends on a biome lookup.
     channel = binary("add", river, binary("mul", "elysium:autumn_weight",
@@ -259,6 +258,11 @@ def make_noise(entries: dict[Path, bytes]) -> None:
                         (-0.22, 12.0), (0.0, 3.0), (0.5, 0.0), (1.0, 0.0)))
     relief = {"type": "minecraft:noise", "noise": "elysium:gentle_relief",
               "xz_scale": 0.25, "y_scale": 0.0}
+    # Broad summit variation scales with uplift; fields retain their gentle relief.
+    summit = {"type": "minecraft:noise", "noise": "elysium:summit_relief",
+              "xz_scale": 0.25, "y_scale": 0.0}
+    mountains = binary("mul", mountains, binary("add", 1.0, binary("mul", 0.24, summit)))
+    emit(entries, "worldgen/noise/summit_relief.json", {"firstOctave": -6, "amplitudes": [1.0, 0.5, 0.25]})
     upland = binary("add", 17.0,
                     binary("add", binary("mul", 9.0, "elysium:continents"),
                            binary("add", mountains, binary("mul", 3.0, relief))))
@@ -278,6 +282,10 @@ def make_noise(entries: dict[Path, bytes]) -> None:
         condition({"type": "minecraft:vertical_gradient", "random_name": "elysium:bedrock_floor",
                    "true_at_and_below": {"above_bottom": 0},
                    "false_at_and_above": {"above_bottom": 5}}, block_rule("bedrock")),
+        # Coat complete exposed upland faces, rather than only three blocks
+        # beneath each stair-step. Below sea level, ordinary stone remains.
+        condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL + 1},
+                   "surface_depth_multiplier": 0, "add_stone_depth": False}, pale_cliffs),
         condition(surface_depth(0), sequence(
             pale_cliffs,
             condition({"type": "minecraft:water", "offset": 0,
@@ -319,13 +327,12 @@ def tree(shape: TreeShape) -> dict:
         minimum_size.update(limit=0, upper_size=0)
     return {"type": "minecraft:tree", "config": {
         "trunk_provider": simple_provider("birch_log", axis="y"),
-        "trunk_placer": {"type": "minecraft:fancy_trunk_placer" if shape.branching else (
-                         "minecraft:forking_trunk_placer" if shape.forking else "minecraft:straight_trunk_placer"),
+        "trunk_placer": {"type": "minecraft:fancy_trunk_placer" if shape.branching else "minecraft:straight_trunk_placer",
                          "base_height": base, "height_rand_a": random_a, "height_rand_b": random_b},
         "foliage_provider": simple_provider("elysium:golden_birch_leaves", distance="7",
                                             persistent="false", waterlogged="false"),
-        "foliage_placer": {"type": "minecraft:fancy_foliage_placer" if shape.branching else "minecraft:blob_foliage_placer",
-                           "radius": radius, "offset": 4 if shape.branching else 0,
+        "foliage_placer": {"type": "elysium:birch_crown",
+                           "radius": radius, "offset": 3 if shape.branching else 0,
                            "height": shape.foliage_height},
         "dirt_provider": simple_provider("dirt"), "force_dirt": False, "ignore_vines": True,
         "minimum_size": minimum_size,
@@ -360,7 +367,7 @@ def placed(feature: str, count: int, tree_feature: bool = False, groves: GrovePa
 def make_biomes(entries: dict[Path, bytes]) -> None:
     for shape in TREE_SHAPES:
         emit(entries, f"worldgen/configured_feature/{shape.id}.json", tree(shape))
-    emit(entries, "worldgen/configured_feature/wild_grain_patch.json", patch(simple_provider("elysium:wild_grain"), 96))
+    emit(entries, "worldgen/configured_feature/wild_grain_patch.json", patch(simple_provider("elysium:wild_grain"), 48, 5))
     emit(entries, "worldgen/configured_feature/soft_grass_patch.json", patch(simple_provider("short_grass"), 32))
     flowers = {"type": "minecraft:weighted_state_provider", "entries": [
         {"data": state(name), "weight": weight} for name, weight in
@@ -398,7 +405,10 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
         for suffix, feature, count in (("flowers", "meadow_flowers", vegetation.flower_patches),
                                        ("grain", "wild_grain_patch", vegetation.grain_patches),
                                        ("grass", "soft_grass_patch", vegetation.grass_patches)):
-            emit(entries, f"worldgen/placed_feature/{biome.id}/{suffix}.json", placed(f"elysium:{feature}", count))
+            # Coherent patches create quiet ground between richer stands.
+            clustered = GrovePattern(max(0, count // 4), -0.05 if suffix == "grain" else -0.25)
+            emit(entries, f"worldgen/placed_feature/{biome.id}/{suffix}.json",
+                 placed(f"elysium:{feature}", count, groves=clustered))
         features = [[] for _ in range(11)]
         # Stable order everywhere: trees, flowers, grain, grass. Biome-specific
         # placed-feature IDs keep density choices independent at boundaries.
@@ -735,9 +745,18 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 62419387, "spread_type": "linear",
                       "exclusion_zone": {"other_set": "elysium:harvest_hamlet", "chunk_count": 3}},
     })
+    emit(entries, "worldgen/structure/tartarus_chain.json", {
+        "type": "elysium:tartarus_chain", "biomes": "#elysium:has_structure/tartarus_chain",
+        "step": "underground_structures", "terrain_adaptation": "none", "spawn_overrides": {}})
+    emit(entries, "worldgen/structure_set/tartarus_chain.json", {
+        "structures": [{"structure": "elysium:tartarus_chain", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 28, "separation": 12,
+                      "salt": 813701245, "spread_type": "linear"}})
+    emit(entries, "tags/worldgen/biome/has_structure/tartarus_chain.json",
+         {"replace": False, "values": ["elysium:ivory_peaks"]})
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge", "elysium:tartarus_chain"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:

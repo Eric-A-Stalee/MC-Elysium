@@ -21,6 +21,7 @@ public final class ModItems {
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_SAPLING);
         ITEMS.registerSimpleBlockItem(ModBlocks.WILD_GRAIN);
         ITEMS.registerSimpleBlockItem(ModBlocks.LEAF_LITTER);
+        ITEMS.registerSimpleBlockItem(ModBlocks.TARTARUS_CHAIN_BLOCK);
         ITEMS.registerSimpleBlockItem(ModBlocks.HARVEST_ALTAR);
     }
 
@@ -32,6 +33,7 @@ public final class ModItems {
                         output.accept(ModBlocks.HARVEST_ALTAR); output.accept(ModBlocks.GOLDEN_BIRCH_LEAVES);
                         output.accept(ModBlocks.GOLDEN_BIRCH_SAPLING); output.accept(ModBlocks.WILD_GRAIN);
                         output.accept(ModBlocks.LEAF_LITTER);
+                        output.accept(ModBlocks.TARTARUS_CHAIN_BLOCK);
                     }).build());
 
     private ModItems() {}

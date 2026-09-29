@@ -269,3 +269,15 @@ the production dimension, so climate changes cannot silently diverge between
 tests and the mod. Validation checks their equality. The Gradle jar task excludes
 `data/minecraft/worldgen/world_preset/flat.json`; it must never override a player's
 flat preset in the distributed mod.
+
+## Alpha 5 landscape and buried chain
+
+All four configured tree IDs now share the registered `elysium:birch_crown` foliage placer. Height and radius remain parameters in `TreeShape`; crowns taper vertically, shift slightly near the top and vary at their edges. Branching/canopy variants use collision-checked fancy trunks instead of the old forking umbrella shape. Minecraft still places the trees and updates leaf support distances.
+
+The channel profile reaches full upland height more gradually, creating broader shoulders. A separate X/Z summit noise varies uplift without changing the biome climate signals or introducing natural caves. Steep highland/peak columns use calcite above sea level for continuous exposed faces; underground stone below sea level remains unchanged. Grain patches use 48 attempts over a smaller radius, and coherent density bands leave quieter ground between grain, grass and flower concentrations. Golden Fields still have zero interior tree attempts.
+
+`TartarusChainPlan` owns a vertical route with 11-block-tall, seven-block-wide alternating links spaced seven blocks apart. The route is mostly encased in the existing mountain, without an artificially cleared shaft. A candidate must be in Ivory Peaks above Y 116 with a nearby slope exposing 8–48 blocks beneath the buried top; flat terrain and lowlands are rejected. The structure set uses 28-chunk spacing with separation 12, further reduced by biome/terrain rejection, so these are rare clues rather than common scenery.
+
+One `TartarusChainPiece` saves its centre, top, floor and initial link orientation. It places only within the current chunk clip, preserves geology outside the links and chamber, and uses no neighbouring chunk requests. Its radius-12 vaulted chamber starts 16 blocks above the dimension floor (Y -48 in Elysium). The chain pierces the vault and ends in a real central anchor; the chamber has masonry ribs, an open floor and four recessed lights. There is no boss, Forge, timer or sunset trigger in this prototype.
+
+The `elysium:tartarus_chain` block is named **Chain of Tartarus**, uses an original generated 16px texture, appears in the creative tab and requires an iron-tier pickaxe for drops. `generate_ambience.py --textures-only` reproduces both original textures without resynthesizing the audio. `validate_client_assets.py` checks texture existence and atlas membership.

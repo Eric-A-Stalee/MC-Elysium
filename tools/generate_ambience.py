@@ -52,22 +52,51 @@ def breeze_pcm():
     return rate, b"".join(struct.pack("<h", round(sample * scale * 32767)) for sample in samples)
 
 
+def chain_png():
+    """Original 16px forged metal with pale mineral edges and an inset maker's groove."""
+    rng = random.Random(813701245)
+    rows = []
+    for y in range(16):
+        row = bytearray()
+        for x in range(16):
+            grain = rng.randrange(-10, 11)
+            edge = min(x, y, 15-x, 15-y)
+            mineral = edge < 2 and ((x * 3 + y * 5) % 11 < 8)
+            groove = (x in (5, 10) and 4 <= y <= 11) or (y in (4, 11) and 5 <= x <= 10)
+            base = (180, 174, 151) if mineral else ((48, 44, 40) if groove else (95, 91, 80))
+            row.extend(max(0, min(255, c + grain)) for c in base)
+            row.append(255)
+        rows.append(b"\0" + row)
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 16, 16, 8, 6, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(b"".join(rows), 9)) + chunk(b"IEND", b""))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--textures-only", action="store_true", help="regenerate original sprites without rebuilding audio")
     args = parser.parse_args()
     sprite = ASSETS / "textures/particle/golden_leaf.png"
+    chain = ASSETS / "textures/block/tartarus_chain.png"
     sound = ASSETS / "sounds/woodland_breeze.ogg"
     if args.check:
         assert sprite.read_bytes() == leaf_png(), "Regenerate the original leaf sprite"
+        assert chain.read_bytes() == chain_png(), "Regenerate the original chain texture"
         encoded = sound.read_bytes()
         assert encoded.startswith(b"OggS") and b"\x01vorbis" in encoded[:100], "Missing Vorbis ambience asset"
         assert 10000 < len(encoded) < 1000000
-        print("Checked original leaf sprite and packaged Vorbis ambience.")
+        print("Checked original leaf/chain textures and packaged Vorbis ambience.")
         return
     sprite.parent.mkdir(parents=True, exist_ok=True)
     sound.parent.mkdir(parents=True, exist_ok=True)
     sprite.write_bytes(leaf_png())
+    chain.parent.mkdir(parents=True, exist_ok=True)
+    chain.write_bytes(chain_png())
+    if args.textures_only:
+        print("Generated original leaf and Chain of Tartarus textures.")
+        return
     rate, pcm = breeze_pcm()
     with tempfile.TemporaryDirectory() as folder:
         wav = Path(folder) / "breeze.wav"

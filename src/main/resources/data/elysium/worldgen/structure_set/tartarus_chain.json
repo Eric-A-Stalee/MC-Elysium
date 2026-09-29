@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "elysium:tartarus_chain",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 28,
+    "separation": 12,
+    "salt": 813701245,
+    "spread_type": "linear"
+  }
+}

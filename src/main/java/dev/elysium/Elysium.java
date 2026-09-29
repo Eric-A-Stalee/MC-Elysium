@@ -22,6 +22,7 @@ public final class Elysium {
         WheatShardModifier.SERIALIZERS.register(modBus);
         ModStructures.register(modBus);
         ModWorldgen.PLACEMENTS.register(modBus);
+        ModWorldgen.FOLIAGE.register(modBus);
         ModAmbience.PARTICLES.register(modBus);
         ModAmbience.SOUNDS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ElysiumConfig.SPEC);
