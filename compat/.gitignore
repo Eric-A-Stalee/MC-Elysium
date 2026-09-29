@@ -1,0 +1,3 @@
+# External compile-only dependencies are supplied locally, never committed.
+libs/
+*.jar

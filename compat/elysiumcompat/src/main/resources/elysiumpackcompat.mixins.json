@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "package": "local.elysiumcompat.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["RtfStateAccessor", "ElysiumRandomStateMixin", "ElysiumRtfContextMixin", "ElysiumSnowMixin", "ElysiumBiomeModifierMixin", "HeightDataAccessor", "ElysiumHeightMixin"],
+  "client": ["ClientHeightDataAccessor", "ElysiumClientHeightMixin"],
+  "injectors": {"defaultRequire": 1}
+}

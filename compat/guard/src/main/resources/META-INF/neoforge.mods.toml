@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+[[mods]]
+modId="rtferosionguard"
+version="1.0.0-test"
+displayName="RTF Erosion Dimension Guard"
+description="Restricts RTF erosion to the Overworld and explicitly allowed dimensions."
+[[mixins]]
+config="rtferosionguard.mixins.json"
+[[dependencies.rtferosionguard]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.238,21.2)"
+side="BOTH"
+[[dependencies.rtferosionguard]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+side="BOTH"
+[[dependencies.rtferosionguard]]
+modId="reterraforged"
+type="required"
+versionRange="[0.0.6]"
+side="BOTH"
