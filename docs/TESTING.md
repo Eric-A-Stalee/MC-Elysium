@@ -112,6 +112,8 @@ The independent client-asset validator reproduces the original failure for both 
 
 This update changes no world generation or saved block IDs. Existing leaf litter needs only the updated jar and a client restart, not new chunks or a dimension reset.
 
+[GitHub Actions run 36514620141](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36514620141) built commit `a2455c4b169b8f6633a68e69287f334b9e9f1d03` successfully. All **23 required GameTests passed** in **5.755 seconds**, and the generated-resource, client-atlas and worldgen checks passed. These server tests do not exercise rendering.
+
 ## What still needs a client playtest
 
 No graphical Minecraft client was available in the development environment. The mod is an early alpha, with server and data validation rather than a completed visual playthrough.
