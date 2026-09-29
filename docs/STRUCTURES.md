@@ -57,7 +57,19 @@ The placer first finds a 9 × 9 plaza pad, then chooses a 17 × 17 hall pad and 
 
 Lithostitched's released NeoForge 1.21.1 branch was also inspected at [`38779fe2`](https://github.com/Apollounknowndev/lithostitched/tree/38779fe2059d33cc92d9b8012c6eb73bfcaaac96). Its `DelegatingConfig` supports piece counts, depths, placement conditions and adaptation overrides. Its `AlternateJigsawGenerator` checks conditions at a connector before calculating the rotated footprint and aligns nonrigid pieces from an anchor height. Those tools are useful for a larger pool catalogue, but do not replace this full-footprint and connecting-road planner. No new dependency is needed for alpha 4. A future integration should be optional and tested: Lithostitched also redirects vanilla jigsaw generation globally.
 
-## Elysian bridges
+## Grand mountain towns (alpha 6)
+
+`elysium:grand_mountain_town` is a separate, rarer settlement tier; `mountain_town` retains its smaller village layout. The new `valley_town` codec reads the plaza, hall, tower, house families and population bounds from generated data. Its 52-chunk candidate grid has 20-chunk separation and excludes candidates within eight chunks of the smaller town set. The centre requires actual river water in a mountain biome, with terrain at least 32 blocks above sea level on both sides, sampled in a fan 144 and 192 blocks away beyond the inhabited footprint. At least three houses must stand on each bank, and at least three quarters of the accepted building sites must remain in mountain biomes.
+
+`ValleyTownPlanner` establishes a five-block-wide stone crossing first, anchors a public square at one landing, prefers a higher site for the hall, then grows inhabited districts on both banks. Candidate rows can shift by up to six blocks in either direction to fit nearby terraces. A complete plan requires 14–24 houses, a hall, a watchtower, a square and connected streets. The source chunk's water probes and all lot/path searches are bounded. A route visits at most 4,500 nodes inside a 112-block reach. Every footprint is checked; no large house may hide a submerged corner or an excessive slope. Pads allow up to three blocks of cut and six of fill; their aprons and three-wide streets ease between distinct elevations. A failed complete-town plan places nothing.
+
+`TownTerrainPiece` persists original and final heights per prepared column, then applies clipped cuts, stepped stone retaining foundations and streets before the modules. `LandscapePiece` supplies the existing rotation, clipping and entity handling. The shared bridge piece now persists a stone/birch style flag; older bridges default to birch. The stone variant has masonry decks, stairs, parapets and shallow arch detailing. Unauthored terrain between the lots remains intact. Trees use a bounded settlement-clearance placement filter to keep their crowns away from paving and roofs.
+
+`tools/grand_town_templates.py` owns frozen residence profiles and common building geometry. The three 23 × 23 house templates contain multiple connected rooms, an upper floor reached by a two-block-wide stair, furnished bedrooms, work areas and a ladder-accessible attic. Wings, projecting window sills, supported entrance roofs, a dormer, chimneys, timber framing and intersecting roof surfaces provide depth. The 27 × 27 hall adds a double-height communal space with a guarded upper gallery; a separate 35-block-tall watchtower has accessible landings. The public square is 11 × 11. Two residents start in each home and hall. Templates use referenced vanilla materials and contain no copied third-party geometry.
+
+The independent NBT validator checks door pairs and supports, bed pairs and access, supported lighting, substantial connected upper floors, every resident's route to the street, attic access and the watchtower's top landing. It treats doors as operable and ladders as climbable; it does not claim to simulate villager AI.
+
+## Elysian bridge geometry
 
 `elysium:elysian_bridge` is a registered structure type and a registered saved
 piece type. Its data-pack configuration contains ordinary structure settings;
@@ -132,6 +144,7 @@ With cheats enabled inside a development world:
 /execute in elysium:elysium run locate structure elysium:sunlit_lookout
 /execute in elysium:elysium run locate structure elysium:waterside_cottage
 /execute in elysium:elysium run locate structure elysium:mountain_town
+/execute in elysium:elysium run locate structure elysium:grand_mountain_town
 /execute in elysium:elysium run place structure elysium:elysian_bridge ~ ~ ~
 ```
 

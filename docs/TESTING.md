@@ -120,7 +120,7 @@ No graphical Minecraft client was available in the development environment. The 
 
 1. Install the jar on both client and server with NeoForge 21.1.233+, and create a new world. Use `/elysium visit` with operator permission for a quick inspection.
 2. Inspect all six biomes across several seeds: tree shapes, foliage and item tinting, water and sky colors, mountain slopes, lighting, and frame/chunk-generation performance.
-3. Locate `elysium:harvest_hamlet`, `elysium:elysian_bridge`, `elysium:elder_spring` `elysium:sunlit_lookout`, `elysium:waterside_cottage` and `elysium:mountain_town` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails, bank landings, spring containment and the lookout’s orientation. Harvest hamlets remain complete layouts; mountain towns now connect independently fitted houses. Check their junctions, short retaining walls, door approaches and lanterns on several slopes.
+3. Locate `elysium:harvest_hamlet`, `elysium:elysian_bridge`, `elysium:elder_spring` `elysium:sunlit_lookout`, `elysium:waterside_cottage`, `elysium:mountain_town` and `elysium:grand_mountain_town` inside Elysium. Check cottage doors, beds, villager pathfinding, farms, terrain fit, bridge rails, bank landings, spring containment and the lookout’s orientation. Harvest hamlets remain complete layouts; mountain towns now connect independently fitted houses. Check their junctions, short retaining walls, door approaches and lanterns on several slopes.
 4. Follow [the survival entrance guide](ENTRANCE.md). Check item insertion, the sunset offering, particles, title, cooldown, two-way travel, and inventory on an actual connected player.
 5. Test two players entering from different shrines, reconnecting, dying/respawning, server restarts, rebuilding a return stone, and `/elysium return` after losing it. Safe-position predicates and persistence code have been checked, but these are not automated end-to-end connected-player tests.
 6. If experimenting with FreeTerraForged, test an explicitly enabled Overworld preset in a disposable world. Merely installing its jar is a narrower compatibility check.
@@ -146,3 +146,72 @@ The player reported a visible leaf-litter inventory icon but invisible held and 
 The existing dedicated-server tests cannot verify item rendering. In a graphical client, check fallen leaves and golden birch leaves in the inventory, both hands, and as dropped items; repeat for a shard, fragment and sigil. Check placed leaf litter and falling canopy particles as well. This hotfix changes no generation or saved IDs and requires only replacing the jar and restarting.
 
 [GitHub Actions run 36535195310](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36535195310) built commit `bd80b02c547eee04785d1dd936063e90ecaa496b` successfully. All **27 required GameTests passed** in **6.746 seconds**, along with the generated-resource, client-atlas and worldgen checks. No graphical client test was run.
+
+
+## Alpha 6 grand settlements and vaults (September 29, 2026)
+
+Four additional server tests cover connected grand-town streets, saved terrain
+cuts/fills, the expanded vault's gallery and stairs, and a complete natural town
+candidate. The synthetic valley must have homes on both banks, a real crossing,
+and a route from every doorway over the saved street graph. A cliff-sized house
+cut is rejected. The earthwork test verifies actual block removal, registered
+NBT loading and chunk clipping. Legacy chain NBT retains its original vault
+size; new vaults have a 73-block span and 54-block height.
+
+The natural town survey respects random-spread selection and its small-town
+exclusion zone. Minecraft's GameTest world uses `WorldOptions(0, false, false)`,
+so it disables automatic structure generation. The test therefore calls the
+normal `Structure.generate` API explicitly at the qualifying candidate,
+round-trips the complete `StructureStart` through NBT, and places it onto actual
+Elysium terrain with `placeInChunk`, using reversed chunk order and ordinary
+chunk clips. It checks interior floors in the hall, tower and every home, plus
+the stone crossing and its headroom. The chain survey uses the same path and
+checks the buried anchor and an expanded gallery in a neighbouring chunk.
+This exercises real server terrain and structure placement, but does not replace
+an ordinary-world automatic-generation smoke test, graphical playtest or
+multi-seed frequency survey.
+
+Early runs caught placement constraints that synthetic terrain did not expose:
+the original mountain shoulders were too steep for larger buildings, the
+backdrop check sampled inside the settlement's footprint, and fixed rows could
+miss nearby usable terraces. The revised planner keeps its full-footprint,
+road-grade, cut/fill and minimum-size requirements. It can shift sites and use
+outer terraces, while sampling the enclosing mountains beyond the town.
+
+The independent NBT validator verifies all three larger house families, the
+hall and tower: connected multi-room floor plans, substantial accessible upper
+floors, resident-to-street routes, paired doors and beds, supported lanterns,
+attic ladders and the tower's upper landing. This geometric reachability check
+treats doors as operable; it does not simulate villager decisions. The generators
+reproduce 100 worldgen resources and 52 other JSON assets. Client checks retain
+the four custom texture/atlas references and the alpha 5.1 item-opacity fix.
+
+Player inspection should focus on the town's overall silhouette and mountain
+setting, the transitions between individual terraces and streets, house-room
+proportions, roof intersections, tree crowns near structures, and the scale and
+lighting of the new vault. The generated geometry was inspected outside
+Minecraft, but no graphical Minecraft client, shader comparison, new
+FreeTerraForged co-installation test or connected-player traversal was run.
+
+
+[GitHub Actions run 36557856432](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36557856432)
+built commit `274e1e76d769404f71ef1e6b1e2946b23e993f5b` successfully. All **31 required
+GameTests passed in 29.01 seconds**, including the complete-start placement
+checks above. Seed 0 produced a qualifying grand-town candidate at chunk
+`[1103, -2468]` after 322 candidate probes: **17 houses, hall, tower, square,
+terrain piece and stone crossing** (22 saved pieces). The chain survey selected
+chunk `[-408, -811]` after 906 probes, with centre `(-6519, -12963)`, top Y 117
+and chamber floor Y -48. These search positions are reproducible test candidates,
+not measurements of average settlement spacing or graphical visits.
+
+The explicit placement pass logged one POI/deferred-block-entity warning at a
+position replaced by a door. It places structures over already decorated chunks;
+normal world generation places structures before vegetation. The warning's
+behaviour in a normal world has not been checked in this revision. All required
+geometry, saved-state, floor, bridge, anchor and gallery assertions passed.
+
+The downloaded player jar passed ZIP integrity checks. All **157 shipped source
+resources match** the repository byte for byte, all four custom client texture
+references validate from the jar, and development tests, fixtures and the flat
+world preset are excluded. The alpha 6 jar is 372,031 bytes, with SHA-256
+`69a2cd36a2b28b6abd0e9433c48ffcc15e6f5b74a824407423ea5d63a1b2deeb`.

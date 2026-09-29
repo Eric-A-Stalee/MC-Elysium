@@ -65,7 +65,7 @@ of sea level, and find exposed water in one of twelve probes within six blocks.
 This creates intermittent bank groves rather than returning trees to field
 interiors. It reads only available decoration chunks and never loads neighbours.
 
-Small birches request 6–9-block trunks, tall birches 10–15, branching birches 9–14, and high-canopy birches 12–18. All share the custom tapered `birch_crown` foliage placer, with radius 2–3 and profile heights 5–7. The branching and high-canopy variants use vanilla fancy trunks to support overlapping crowns; actual trunk/branch lengths follow that placer's geometry. The immutable shared catalog owns the profiles. Per-biome shares are absolute selection
+Small birches request 6–9-block trunks, tall birches 10–15, branching birches 9–14, and high-canopy birches 12–18. All share the custom `birch_crown` foliage placer, with radius parameters 2–3 and profile heights 5–7. Alpha 6 builds four offset foliage lobes around each attachment, with a narrow connecting core and small variations at their outer edges. This replaces the stack of identically rounded rows. The branching and high-canopy variants use vanilla fancy trunks to support overlapping crowns; actual trunk/branch lengths follow that placer's geometry. The immutable shared catalog owns the profiles. Per-biome shares are absolute selection
 probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
@@ -128,6 +128,8 @@ boxes follow the same erosion signal: highlands span erosion -0.55 to -0.22, and
 
 The river-distance and autumn-weight functions feed the terrain formula directly; biome boxes use the same raw signals. Climate coverage is checked across humidity, erosion, temperature and ridges, including shared boundaries. This is connected sea-level water shaped by noise, not watershed simulation, flowing upland rivers or a waterfall system.
 
+Alpha 6 separates the lowland bank profile from mountain uplift. Mountain height now enters through a broader shoulder profile, leaving room for flowered banks and settlement terraces before the uplands rise. Highlands and Peaks have a thin soil mantle over pale rock above sea level; calcite can therefore show through stepped cliff faces even where Minecraft's steep-column condition misses a column. The inland field tree budget remains zero. `settlement_clearance` examines available surface columns within six blocks of tree candidates and rejects those close to constructed paving, stairs, slabs, walls or roofs; it never loads a missing chunk.
+
 Every density-function entry point is owned by Elysium: `continents`, `erosion`,
 `ridges`, `temperature`, `vegetation`, and both coordinate shifts. They use raw
 vanilla noise operators and reference Minecraft's normal-noise parameter sets.
@@ -144,8 +146,9 @@ Density is proportional to **terrain height minus Y**. It decreases monotonicall
 upward for each column: there are no 3D noise caves. The settings also disable
 aquifers and ore veins; biome lists contain no carvers, ore features, underground fluid springs,
 lava lakes, geodes, dungeons, or other underground decorators. Below the shallow
-soil and sand, the initial dimension is ordinary stone down to its bedrock floor
-at Y -64. Explicit future forge/Tartarus structures can carve their own space.
+soil and sand, the initial dimension is stone down to its bedrock floor at Y -64,
+with pale calcite replacing upper mountain rock above sea level. Explicit
+Tartarus structures carve their own space; there are no natural cave systems.
 
 This deliberate height-field design produces hills, valleys, and steep slopes,
 but does not yet produce natural arches, overhangs, or floating rocks. It also
@@ -277,3 +280,27 @@ The channel profile reaches full upland height more gradually, creating broader 
 One `TartarusChainPiece` saves its centre, top, floor and initial link orientation. It places only within the current chunk clip, preserves geology outside the links and chamber, and uses no neighbouring chunk requests. Its radius-12 vaulted chamber starts 16 blocks above the dimension floor (Y -48 in Elysium). The chain pierces the vault and ends in a real central anchor; the chamber has masonry ribs, an open floor and four recessed lights. There is no boss, Forge, timer or sunset trigger in this prototype.
 
 The `elysium:tartarus_chain` block is named **Chain of Tartarus**, uses an original generated 16px texture, appears in the creative tab and requires an iron-tier pickaxe for drops. `generate_ambience.py --textures-only` reproduces both original textures without resynthesizing the audio. `validate_client_assets.py` checks texture existence and atlas membership.
+
+## Alpha 6 vault and foliage revision
+
+New chain chambers have a radius of 36 blocks and a 54-block vault height: a
+73-block-wide hall around the buried anchor, with massive basalt piers, an
+elevated gallery, four broad stairways and recessed lighting. The chamber floor
+remains at Y -48. Candidate checks require stone cover over the entire vault.
+The chain stays encased along its descent; no access shaft is carved for the
+player. New saves persist both chamber dimensions. Pieces saved before alpha 6
+retain their original radius-12, 22-block-high vault when loaded, preventing an
+already partly generated chamber from changing size.
+
+The surface clue now requires at least eight exposed ring blocks, including two
+blocks belonging to a rounded bend. The terminal end stays buried, and the
+texture uses subdued hammered metal with small mineral flecks. The texture
+applies to existing blocks after restarting; the larger geometry needs fresh
+chunks.
+
+Birch crowns now combine offset ellipsoid clusters with an irregular outline
+and a connected centre around their trunk attachments. Small, tall, branching
+and canopy forms retain their shared parameterized foliage placer and vanilla
+leaf-support updates. The settlement-clearance filter and broader mountain
+shoulders described above accompany this change. Golden Fields retain their
+open interior tree budget.
