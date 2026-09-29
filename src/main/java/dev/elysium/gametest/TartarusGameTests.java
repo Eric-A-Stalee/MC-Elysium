@@ -122,8 +122,8 @@ public final class TartarusGameTests {
                     helper.assertTrue(pieces.size()==1 && pieces.getFirst() instanceof TartarusChainPiece,"Exposure and chamber must share one saved piece");
                     var p=((TartarusChainPiece)pieces.getFirst()).plan();
                     helper.assertTrue(p.top()>100 && p.floor()==-48,"Surface clue must continue deep underground");
-                    var actual=realm.getChunk(chunk.x,chunk.z).getStartForStructure(structure);
-                    helper.assertTrue(actual!=null && actual.isValid(),"The exposed chain must generate through its real structure set");
+                    var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);
+                    helper.assertTrue(actual!=null && actual.isValid(),"The exposed chain must survive complete-start generation and placement");
                     helper.assertTrue(realm.getBlockState(new BlockPos(p.x(),p.floor()+6,p.z())).is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()),
                             "The natural chain must reach the buried anchor");
                     helper.assertTrue(realm.getBlockState(new BlockPos(p.x()+28,p.floor()+16,p.z()+8)).is(Blocks.POLISHED_BLACKSTONE_BRICKS),

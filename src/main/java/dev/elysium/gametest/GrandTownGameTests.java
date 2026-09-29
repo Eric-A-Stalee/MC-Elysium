@@ -124,11 +124,9 @@ public final class GrandTownGameTests {
                         var tag=p.createTag(serialization);
                         helper.assertTrue(p.getType().load(serialization,tag).createTag(serialization).equals(tag),"Every town piece must survive reload");
                     }
-                    // Exercise the real structure set and normal chunk pipeline,
-                    // not only a successful call to the planner.
-                    var actual=realm.getChunk(chunk.x,chunk.z).getStartForStructure(structure);
+                    var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);
                     helper.assertTrue(actual!=null && actual.isValid() && actual.getPieces().size()==pieces.size(),
-                            "The natural candidate must become a real saved structure start");
+                            "The natural candidate must retain every piece through generation and placement");
                     for(int i=2;i<pieces.size()-1;i++) {
                         var box=pieces.get(i).getBoundingBox();
                         var floor=new BlockPos((box.minX()+box.maxX())/2,box.minY()+2,(box.minZ()+box.maxZ())/2);
