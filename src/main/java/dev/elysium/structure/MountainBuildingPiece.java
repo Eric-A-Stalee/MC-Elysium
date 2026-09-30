@@ -42,13 +42,16 @@ public final class MountainBuildingPiece extends StructurePiece {
         var rooms=new ArrayList<MountainBuildingPlan.Room>();var ground=new ArrayList<MountainBuildingPlan.Ground>();
         for(int i=0;i<data.length;i+=7)rooms.add(new MountainBuildingPlan.Room(data[i],data[i+1],data[i+2],data[i+3],data[i+4],data[i+5],data[i+6]!=0));
         for(int i=0;i<profile.length;i+=3)ground.add(new MountainBuildingPlan.Ground(profile[i],profile[i+1],profile[i+2]));
-        return new MountainBuildingPlan(tag.getInt("X"),tag.getInt("Z"),tag.getInt("Turn"),tag.getLong("Seed"),
+        var plan=new MountainBuildingPlan(tag.getInt("X"),tag.getInt("Z"),tag.getInt("Turn"),tag.getLong("Seed"),
                 MountainBuildingPlan.Style.valueOf(tag.getString("Style")),rooms,
                 new MountainBuildingPlan.Entry(entry[0],entry[1],entry[2],entry[3],entry[4]),ground,tag.getBoolean("Cellar"));
+        return tag.contains("GallerySide")?new MountainBuildingPlan(plan.x(),plan.z(),plan.rotation(),plan.seed(),plan.style(),plan.rooms(),
+                plan.entry(),plan.ground(),plan.cellar(),tag.getInt("GallerySide")):plan;
     }
     @Override protected void addAdditionalSaveData(StructurePieceSerializationContext context,CompoundTag tag) {
         tag.putInt("Grammar",1);tag.putInt("X",plan.x());tag.putInt("Z",plan.z());tag.putInt("Turn",plan.rotation());
         tag.putLong("Seed",plan.seed());tag.putString("Style",plan.style().name());tag.putBoolean("Cellar",plan.cellar());tag.putInt("Residents",residents);
+        tag.putInt("GallerySide",plan.gallerySide());
         int[] rooms=new int[plan.rooms().size()*7],ground=new int[plan.ground().size()*3];int i=0;
         for(var r:plan.rooms()) {rooms[i++]=r.u();rooms[i++]=r.v();rooms[i++]=r.width();rooms[i++]=r.depth();rooms[i++]=r.floor();rooms[i++]=r.storeys();rooms[i++]=r.crossRoof()?1:0;}
         i=0;for(var g:plan.ground()){ground[i++]=g.u();ground[i++]=g.v();ground[i++]=g.original();}

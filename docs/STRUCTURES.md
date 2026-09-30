@@ -57,7 +57,57 @@ The placer first finds a 9 × 9 plaza pad, then chooses a 17 × 17 hall pad and 
 
 Lithostitched's released NeoForge 1.21.1 branch was also inspected at [`38779fe2`](https://github.com/Apollounknowndev/lithostitched/tree/38779fe2059d33cc92d9b8012c6eb73bfcaaac96). Its `DelegatingConfig` supports piece counts, depths, placement conditions and adaptation overrides. Its `AlternateJigsawGenerator` checks conditions at a connector before calculating the rotated footprint and aligns nonrigid pieces from an anchor height. Those tools are useful for a larger pool catalogue, but do not replace this full-footprint and connecting-road planner. No new dependency is needed for alpha 4. A future integration should be optional and tested: Lithostitched also redirects vanilla jigsaw generation globally.
 
-## Grand mountain towns (alpha 6)
+## Adaptive grand mountain towns (alpha 7)
+
+The existing `elysium:grand_mountain_town` locator now uses the `contour_town`
+codec. Its data selects four architectural families and a 14–24 house range.
+The smaller `mountain_town` tier and the old `valley_town` codec, piece loaders
+and template IDs remain available. Existing buildings are not retrofitted.
+
+`ContourTownPlanner` surveys 240 irregularly distributed sites within 110
+blocks of an actual river crossing. A higher hall anchors a street leading
+into the slope; a timber watch lodge and homes then grow beside the connected
+street network. Site ranking responds to nearby roads, elevation and relief.
+Eight-direction path searches allow diagonal contour paths, with at most 5,000
+visited nodes per route, three-block-wide walking space and one-block steps.
+Roads permit at most three blocks of local cutting or filling. Only the 11 × 11
+public square receives a level pad. The rest of the earthwork is inside actual
+rooms, foundations and porches; no 23 × 23 lawns are prepared.
+
+A complete town must inhabit both banks, include at least four elevated homes,
+put at least two buildings beside terrain seven blocks higher, use at least
+three house families, and keep three quarters of its sites in mountain biomes.
+Nearby peaks are checked inside the settlement survey. A distant mountainous
+backdrop around an otherwise flat neighborhood is insufficient. A failed
+complete plan writes no blocks.
+
+`MountainBuildingPlan` surveys a narrow core in four orientations, one or two
+attached wings, and alternative gable-end or side entrances. Core widths,
+lengths, wing sizes and roof proportions vary by family and seed. Wing floors
+can differ by two blocks, connected by internal steps. Main floors allow three
+blocks of cut and eight of fill; a five-block cellar can occupy the downhill
+lower storey, with additional excavation confined to the house interior.
+Covered galleries favour the lower free side and require clearance above the
+surveyed ground. They use timber brackets, without a raised lawn underneath.
+
+`MountainArchitecture` is a shared, pure block grammar: spruce and dark-oak
+logs, stripped beams, variable plank cladding, limited pale infill, stone lower
+walls, framed windows, deep gables, crossing roofs, occasional dormers, ridge
+timbers and chimneys. The hall is a larger member of this grammar; the watch
+lodge has three storeys and a covered viewing gallery. Upper rooms, split-level
+connections, cellars, beds, lights and entrances are checked for usable
+circulation. The geometry and block palette adapter are separate so the same
+plans can be inspected without a graphical client.
+
+`MountainBuildingPiece` saves the complete room and ground survey, entrance,
+gallery side, seed, rotation, grammar version and resident flags. Placement is
+clipped and never resamples modified terrain. Supports and the shell precede
+doors, beds and hanging attachments, preventing intermediate block updates
+from removing them. Two persistent residents start in each house and the hall;
+the watch lodge is unstaffed. This is a controlled architectural grammar, not a
+general-purpose procedural city or a third-party structure dependency.
+
+## Grand mountain towns (alpha 6, retained save support)
 
 `elysium:grand_mountain_town` is a separate, rarer settlement tier; `mountain_town` retains its smaller village layout. The new `valley_town` codec reads the plaza, hall, tower, house families and population bounds from generated data. Its 52-chunk candidate grid has 20-chunk separation and excludes candidates within eight chunks of the smaller town set. The centre requires actual river water in a mountain biome, with terrain at least 32 blocks above sea level on both sides, sampled in a fan 144 and 192 blocks away beyond the inhabited footprint. At least three houses must stand on each bank, and at least three quarters of the accepted building sites must remain in mountain biomes.
 

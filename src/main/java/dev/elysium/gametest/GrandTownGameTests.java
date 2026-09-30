@@ -144,6 +144,19 @@ public final class GrandTownGameTests {
                             "The naturally generated town needs an unobstructed stone crossing");
                     LogUtils.getLogger().info("Elysium grand mountain town candidate: seed={}, chunk={}, pieces={}, candidates={}",realm.getSeed(),chunk,pieces.size(),attempt+1);
                     LogUtils.getLogger().info("Elysium grand town survey: {}",survey);
+                    // A reproducible terrain/footprint report supports visual inspection without pretending it is a client screenshot.
+                    var report=new java.util.LinkedHashMap<String,Object>();
+                    report.put("seed",realm.getSeed());report.put("chunk",new int[]{chunk.x,chunk.z});report.put("candidates",attempt+1);
+                    report.put("buildings",pieces.stream().filter(p->p instanceof MountainBuildingPiece).map(p->((MountainBuildingPiece)p).plan()).toList());
+                    report.put("streets",((TownTerrainPiece)pieces.getFirst()).columns());report.put("crossing",crossing);
+                    var heights=new java.util.ArrayList<int[]>();var sampler=new dev.elysium.worldgen.TerrainSampler(context);
+                    int cx=crossing.x(middle,0),cz=crossing.z(middle,0);
+                    for(int dx=-112;dx<=112;dx+=4)for(int dz=-112;dz<=112;dz+=4)heights.add(new int[]{cx+dx,sampler.height(cx+dx,cz+dz)-1,cz+dz});
+                    report.put("terrain",heights);
+                    try {
+                        var output=java.nio.file.Path.of("logs","contour-town.json");java.nio.file.Files.createDirectories(output.getParent());
+                        java.nio.file.Files.writeString(output,new com.google.gson.GsonBuilder().create().toJson(report));
+                    } catch(java.io.IOException error){throw new IllegalStateException("Cannot save terrain inspection report",error);}
                     helper.succeed();return;
                 }
                 if(attempt>=12000)LogUtils.getLogger().info("Elysium grand town survey: {}",survey);

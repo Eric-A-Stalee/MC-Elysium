@@ -9,7 +9,7 @@ import java.util.Random;
 
 /** A surveyed building, not a leveled lot. Coordinates in rooms are local; heights are absolute. */
 public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style style,
-        List<Room> rooms, Entry entry, List<Ground> ground, boolean cellar) {
+        List<Room> rooms, Entry entry, List<Ground> ground, boolean cellar, int gallerySide) {
     public enum Style { LONGHOUSE, CROSS_GABLE, HILLSIDE_LODGE, COURTYARD, GREAT_HALL, WATCH_LODGE }
     public record Point(int x, int z) {}
     public record Room(int u, int v, int width, int depth, int floor, int storeys, boolean crossRoof) {
@@ -41,11 +41,14 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     }
     public MountainBuildingPlan {
         rooms=List.copyOf(rooms); ground=List.copyOf(ground);
-        if(rotation<0 || rotation>3 || rooms.isEmpty() || rooms.size()>3 || ground.size()>1200 || ground.isEmpty())
+        if(rotation<0 || rotation>3 || rooms.isEmpty() || rooms.size()>3 || ground.size()>1200 || ground.isEmpty() || Math.abs(gallerySide)>1)
             throw new IllegalArgumentException("Invalid mountain building plan");
         var main=rooms.getFirst();
         if(entry.floor()!=main.floor() || !main.contains(entry.u(),entry.v(),0))throw new IllegalArgumentException("Detached entry");
         for(var r:rooms)if(Math.abs(r.floor()-main.floor())>2)throw new IllegalArgumentException("Disconnected split level");
+    }
+    public MountainBuildingPlan(int x,int z,int rotation,long seed,Style style,List<Room> rooms,Entry entry,List<Ground> ground,boolean cellar) {
+        this(x,z,rotation,seed,style,rooms,entry,ground,cellar,defaultGallerySide(rooms,style,seed));
     }
     public Room main() { return rooms.getFirst(); }
     public int worldX(int u,int v) { return x+switch(rotation){case 1->-v;case 2->-u;case 3->v;default->u;}; }
@@ -61,9 +64,16 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
                 || gallery().map(g->g.contains(u,v,margin)).orElse(false);
     }
     public Optional<Gallery> gallery() {
-        if(style==Style.COURTYARD || ((seed&2)!=0 && style!=Style.LONGHOUSE && style!=Style.GREAT_HALL && style!=Style.WATCH_LODGE))return Optional.empty();
-        var r=main();
-        for(int side:new int[]{1,-1}) {
+        return gallerySide==0?Optional.empty():gallery(rooms,style,gallerySide);
+    }
+    private static int defaultGallerySide(List<Room> rooms,Style style,long seed) {
+        if(style==Style.COURTYARD || ((seed&2)!=0 && style!=Style.LONGHOUSE && style!=Style.GREAT_HALL && style!=Style.WATCH_LODGE))return 0;
+        for(int side:new int[]{1,-1})if(gallery(rooms,style,side).isPresent())return side;
+        return 0;
+    }
+    private static Optional<Gallery> gallery(List<Room> rooms,Style style,int side) {
+        var r=rooms.getFirst();
+        {
             int wall=side>0?r.maxU():r.u(),start=r.v()+3,end=r.maxV()-2;
             boolean clear=true;
             int lo=Math.min(wall+side,wall+side*2),hi=Math.max(wall+side,wall+side*2);
@@ -146,8 +156,18 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
                 if(a<=3)ground.put(new Point(u,v),new Ground(u,v,h));
             }
             if(!valid)continue;
+            int gallerySide=0,best=Integer.MAX_VALUE;
+            if(defaultGallerySide(rooms,style,seed)!=0)for(int direction:new int[]{1,-1}) {
+                var proposed=gallery(rooms,style,direction);if(proposed.isEmpty())continue;
+                var g=proposed.get();int score=0;boolean clear=true;
+                for(int v=g.start();v<=g.end();v++)for(int a=1;a<=2;a++) {
+                    var p=transform(x,z,rotation,g.wall()+g.side()*a,v);int h=terrain.height(p.x(),p.z())-1;
+                    score+=h;if(h>=g.floor())clear=false;
+                }
+                if(clear && score<best){best=score;gallerySide=direction;}
+            }
             return Optional.of(new MountainBuildingPlan(x,z,rotation,seed,style,rooms,entry,new ArrayList<>(ground.values()),
-                    sample.getFirst()<=floor-3 && style!=Style.WATCH_LODGE));
+                    sample.getFirst()<=floor-3 && style!=Style.WATCH_LODGE,gallerySide));
         }
         return Optional.empty();
     }

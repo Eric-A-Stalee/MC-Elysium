@@ -304,3 +304,20 @@ and canopy forms retain their shared parameterized foliage placer and vanilla
 leaf-support updates. The settlement-clearance filter and broader mountain
 shoulders described above accompany this change. Golden Fields retain their
 open interior tree budget.
+
+## Alpha 7 mountain shoulders and settlements
+
+Adaptive buildings replace the large rigid plots introduced in alpha 6. The
+river's immediate banks retain the gentle channel profile, while mountain
+uplift starts closer to the river: the separate shoulder mask now rises through
+river-distance points 0.12, 0.22, 0.35 and 0.50 before reaching full uplift at
+0.70. Lowland biome palettes, rivers, lakes, the golden-field tree budget and
+the Tartarus chamber are unchanged. This revises terrain in newly generated
+chunks and can produce seams beside older chunks.
+
+Grand towns must climb into this terrain, with higher homes and nearby natural
+outcrops inside the inhabited area. Narrow cores, independently fitted wings,
+stone cellars and contour roads replace a grid of leveled square plots. See
+[the structure design](STRUCTURES.md#adaptive-grand-mountain-towns-alpha-7).
+Saved alpha 6 pieces still load with their existing geometry. Use new chunks or
+a backed-up dimension reset to inspect alpha 7's complete composition.
