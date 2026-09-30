@@ -36,7 +36,7 @@ project(':guard') {
 }
 
 project(':elysiumcompat') {
-    version = '1.0.3-alpha6'
+    version = '1.0.0'
     base { archivesName = 'elysium-pack-compat' }
 
     // These exact external binaries are compile-only inputs, never redistributed.

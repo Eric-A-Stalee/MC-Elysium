@@ -3,7 +3,7 @@ loaderVersion="[4,)"
 license="MIT"
 [[mods]]
 modId="elysiumpackcompat"
-version="1.0.3-alpha6"
+version="1.0.0"
 displayName="Elysium Pack Compatibility"
 description="Preserves Elysium's independent terrain context and declared height in the private BBC pack."
 [[mixins]]
@@ -21,7 +21,7 @@ side="BOTH"
 [[dependencies.elysiumpackcompat]]
 modId="elysium"
 type="required"
-versionRange="[0.1.0-alpha.6]"
+versionRange="[0,)"
 side="BOTH"
 [[dependencies.elysiumpackcompat]]
 modId="reterraforged"

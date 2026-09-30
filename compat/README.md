@@ -1,12 +1,12 @@
 # Elysium pack compatibility
 
-Optional, version-specific adapters for **Minecraft 1.21.1 / NeoForge 21.1.238 / Java 21**. Elysium does not need these for standalone use. This is a separate Gradle build: the repository's normal Elysium build and jar do not include either adapter.
+Optional pack adapters for **Minecraft 1.21.1 / NeoForge 21.1.238 / Java 21**. Elysium does not need these for standalone use. This is a separate Gradle build: the repository's normal Elysium build and jar do not include either adapter.
 
 ## Modules and scope
 
 | Module | Output | Purpose |
 | --- | --- | --- |
-| `elysiumcompat` | `elysium-pack-compat-1.0.3-alpha6.jar` | Keeps `elysium:elysium` independent of the tested ReTerraForged hooks and preserves its declared height with the tested Dynamic Height build. |
+| `elysiumcompat` | `elysium-pack-compat-1.0.0.jar` | Keeps `elysium:elysium` independent of the tested ReTerraForged hooks and preserves its declared height with the tested Dynamic Height build. |
 | `guard` | `rtf-erosion-dimension-guard-1.0.0-test.jar` | Allows ReTerraForged erosion in the Overworld by default; other dimensions require explicit opt-in. This is a required runtime dependency of `elysiumcompat`, and is also usable separately with the tested RTF build. |
 
 The Elysium adapter:
@@ -18,13 +18,19 @@ The Elysium adapter:
 
 It does **not** make RTF generate Elysium, replace Elysium's terrain, change its gameplay values, or repair already-generated terrain. Dimension-specific checks leave other dimensions on their existing paths; the separate erosion guard deliberately has a broader Overworld-only default.
 
-## Exact supported inputs
+## Elysium version policy
+
+The adapter has its own stable `1.0.0` version. Elysium is required, but its version is not pinned or capped (`[0,)`). Routine Elysium releases do not require rebuilding or renumbering this adapter. This intentionally replaces the earlier alpha-specific metadata releases; its implementation is unchanged.
+
+Record tested Elysium versions here rather than enforcing a release-by-release gate. A substantial release such as Elysium 1.1 may warrant inspection if it changes dimension identity, biome namespaces, generator integration or height handling, but it is not automatically blocked. Change the adapter version only for actual adapter changes, not because Elysium released another build. Accepting a version is not a claim that every future release has been tested.
+
+## Tested inputs and external constraints
 
 This source publishes the existing pack adapters, not a general compatibility promise for every RTF or Dynamic Height release. The addon uses internal fields/methods, and its required mixins should fail visibly if those targets change.
 
 | Component | Tested identity |
 | --- | --- |
-| Elysium | `0.1.0-alpha.6` (required exact dependency) |
+| Elysium | Latest pack-tested release: `0.1.0-alpha.7`; required, with no release-specific pin or upper bound |
 | NeoForge | Tested on `21.1.238`; metadata allows `[21.1.238,21.2)` |
 | ReTerraForged | `reterraforged-0.0.6003R2-neoforge-1.21.1.jar`; embedded mod version `0.0.6` |
 | Dynamic Height | `dynamicheight-0.3.5+neoforge-1.21.1-biomefix-local.4.jar`, a separately maintained private patched build |
@@ -58,7 +64,7 @@ Outputs are under `compat/guard/build/libs/` and `compat/elysiumcompat/build/lib
 
 Both adapter jars include this directory's MIT notice at `META-INF/LICENSE`.
 
-Do not add the compatibility build to Elysium's root `settings.gradle`. Keeping it separate lets Elysium build and run without these external inputs. When Elysium or either dependency changes, review the targets and repeat the relevant integration checks before changing the exact version pin or accepted hashes.
+Do not add the compatibility build to Elysium's root `settings.gradle`. Keeping it separate lets Elysium build and run without these external inputs. Routine Elysium updates leave this adapter untouched. RTF and Dynamic Height still have exact external-build constraints because the adapter hooks their internal implementation; inspect those targets and repeat relevant integration checks before changing their constraints or accepted hashes.
 
 ## Install and configure
 
