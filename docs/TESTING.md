@@ -273,3 +273,65 @@ The downloaded player jar passed ZIP integrity and Java 21 class checks. All
 fixtures and the GameTest flat-world override are excluded. The jar is
 **428,186 bytes**, with SHA-256
 `965631cb0789e8b90f1600254d09f11934451e9d3c1803fd6db58f71c65e9cab`.
+
+## Alpha 8 composed houses and settlement atmosphere (September 30, 2026)
+
+[GitHub Actions run 36666361371](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36666361371)
+built commit `c4fd92b729a4687b3702155016c4948a28b6374a` successfully. All **38
+required server GameTests passed in 1.260 minutes**. Generated assets, client
+texture references, 101 worldgen resources, packaging and the separate optional
+erosion-guard checks also passed.
+
+The revised building grammar passes **613 fitted plans**, covering 311 distinct
+room/height combinations, 211 cellars and 313 split-level cases. Circulation
+checks require access to every inhabited floor, including taller wings on
+single-storey longhouses; they also cover paired beds, doors, supported lights
+and standing lanterns beside real exterior windows. Early geometry checks
+caught stairs intersecting room junctions and too-small upper wings. The final
+plans move those stairs and provide enough usable floor space.
+
+Three synthetic valley seeds produce 24, 24 and 23 homes, each with a hall and
+watch lodge. The added server tests verify broad tree crowns and clear lower
+trunks, deterministic landscape planning, registered landscape save/load,
+chunk clipping, persisted building clearances and persistent placed leaves.
+Frozen grammar-1 geometry survives the old seven-value room NBT format, while
+new pieces retain their extended attributes. Actual placed window tables use
+top slabs with supported standing lanterns.
+
+The seed-0 natural-candidate survey selected chunk **[-2986, -1351]** after
+2,883 candidate probes: **16 homes, hall, watch lodge, square, streets, stone
+crossing and landscape**, represented by 22 saved pieces. Main floors span
+**Y 63–92**; the surrounding surveyed ground spans **Y 58–124**. House families
+include two longhouses, five cross-gabled homes, five hillside lodges and four
+courtyard houses. Eight mature birches are reserved before buildings and roads.
+The saved landscape includes 41 stone edging blocks with 41 caps, 50 exposed
+rock blocks, 124 flower positions, 47 leaf-litter positions, 30 post blocks and
+10 lanterns. An initial run found that the town's gently graded roads never
+triggered two-block retaining edges; the final planner also admits intermittent
+one-block accents, and the natural-town test requires some masonry or rock.
+
+The complete saved start is reloaded and explicitly placed in reversed chunk
+order over real generated terrain. Its layout is available in
+`run/logs/contour-town.json` in the CI log artifact. This respects natural
+candidate selection, but GameTest disables ordinary automatic structure
+generation. It does not establish average town frequency or replace an
+ordinary-world generation smoke test. The Tartarus test still finds and places
+the vaulted chain chamber; its seed-0 candidate is chunk [-332, -778], with
+centre (-5307, -12443), top Y 165 and floor Y -48.
+
+Explicit placement over completed chunks logs 289 unsupported deferred
+post-processing warnings and one stale deferred block entity at a position
+replaced by spruce planks. This test path differs from normal generation into
+ProtoChunks; ordinary-world behaviour has not been rechecked in this revision.
+The synchronous terrain searches also cause two server tick-lag warnings.
+Required block, attachment, circulation and saved-state assertions all pass.
+There was no graphical client run, shader comparison, villager-AI traversal or
+new ReTerraForged co-installation test. Player inspection should assess roof
+intersections, upper-floor projections, trees against buildings, vanilla gold
+colours, riverbed readability and the light seen through windows.
+
+The downloaded player jar passed ZIP integrity and Java 21 class checks. All
+**158 shipped source resources match** the repository; development tests,
+fixtures and the GameTest flat-world override are excluded. The jar is
+**464,808 bytes**, with SHA-256
+`309a75cba1b8d22870d8f1257af0b5e2ee49d4c9f95cc129d689c85368c3e5b8`.

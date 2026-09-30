@@ -41,8 +41,8 @@ them. Decorations use Minecraft's feature RNG, never global random state.
 | Golden Birch Woods | 2 in openings; 7 in groves | 3 | 3 | 5 | 50% / 20% / 0% |
 | Golden Watermeadows | 2 | 1 | 9 | 4 | 15% / 0% / 75% |
 | Amber Lakes | 3 | 2 | 3 | 3 | 25% / 20% / 40% |
-| Elysian Highlands | 2 | 2 | 2 | 3 | 70% / 10% / 0% |
-| Ivory Peaks | 1 | 0 | 1 | 1 | 80% / 0% / 0% |
+| Elysian Highlands | 2 | 2 | 2 | 3 | 45% / 10% / 30% |
+| Ivory Peaks | 1 | 0 | 1 | 1 | 55% / 0% / 25% |
 
 The remaining share uses small birches. Amber Lakes also attempt three patches of fallen leaves. Ground-cover columns show maximum patch counts; sparse bands use one quarter (rounded down). The catalog is authoritative. A grain
 patch makes 48 survival-checked placement attempts and needs ordinary soil, not
@@ -74,12 +74,12 @@ Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter 
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
-| Golden Fields | `#CBB16A` | `#E8BB39` | `#55A6AE` |
-| Golden Birch Woods | `#B99B59` | `#E8BB39` | `#55A6AE` |
-| Golden Watermeadows | `#C4AA60` | `#EAC34C` | `#65AEB3` |
-| Amber Lakes | `#A58D52` | `#CC8537` | `#386C79` |
-| Elysian Highlands | `#BBB28A` | `#DDBB68` | `#527D93` |
-| Ivory Peaks | `#B9B496` | `#D2B66F` | `#496D88` |
+| Golden Fields | `#DCC277` | `#FFCF50` | `#55A6AE` |
+| Golden Birch Woods | `#C9AC61` | `#FFCF50` | `#55A6AE` |
+| Golden Watermeadows | `#D6BA71` | `#FFD95F` | `#65AEB3` |
+| Amber Lakes | `#C4A05F` | `#F3AC4F` | `#386C79` |
+| Elysian Highlands | `#DAC17B` | `#FFD360` | `#527D93` |
+| Ivory Peaks | `#D8C992` | `#FFDC80` | `#496D88` |
 
 The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world or a regenerated Elysium dimension.
 
@@ -321,3 +321,31 @@ stone cellars and contour roads replace a grid of leveled square plots. See
 [the structure design](STRUCTURES.md#adaptive-grand-mountain-towns-alpha-7).
 Saved alpha 6 pieces still load with their existing geometry. Use new chunks or
 a backed-up dimension reset to inspect alpha 7's complete composition.
+
+
+## Alpha 8 atmosphere and rocky shoulders
+
+The gold palettes have brighter red/yellow channels and less grey in upland
+grass. Vanilla rendering is the calibration target; shaders can add directional
+lighting and bloom. All leaves still use the original vanilla texture reference,
+and the six biome colours remain owned by the immutable catalog.
+
+A small channel-centre depression adds roughly one to two blocks of depth,
+fading out within the existing river corridor. Sand remains in the shallow
+margins. Deeper beds select coherent gravel, stone and andesite patches from
+vanilla surface noise, giving transparent water a readable bottom. Surface
+levels still meet at sea level 63; this is not a flowing river simulation.
+
+A separate horizontal crag noise adds local rock shoulders in proportion to
+mountain uplift. It fades at the waterline and contributes very little in
+lowland fields. The existing steep-face calcite rule exposes the sharper
+faces. Density remains monotone with height, preserving solid underground
+stone and the authored Tartarus chamber. Grand towns now require a peak at
+least 48 blocks above sea level within their nearby terrain survey.
+
+Grand-town mature birches are separate saved structure geometry: 24–28-block
+heights, overlapping broad crowns, and clear lower trunks. Their reserved roots
+shape streets and house placement. Crowns respect saved building clearances,
+and persistent leaves retain their broad branch tips. Ordinary biome tree
+attempt budgets remain sparse; highlands and peaks gain a share of the existing
+canopy feature rather than a higher global tree count.

@@ -206,3 +206,35 @@ continuous across chunk borders, and that reloading preserves the crossing.
 ## Chain of Tartarus (alpha 5)
 
 `TartarusChainStructure` samples only Ivory Peaks candidates and verifies an actual exposed ring footprint. `TartarusChainPlan` defines one complete route to a buried vaulted chamber; `TartarusChainPiece` owns the route and chamber together, persists all variable geometry in NBT, and intersects every placement with the current chunk clip. The rings alternate vertical planes with overlapping heights and connected bevel corners. Surrounding stone and ring interiors remain intact until the chain breaks through the chamber roof. The chamber is the initial Tartarus destination; boss, Forge and crisis progression are future work. See [world generation](WORLDGEN.md#alpha-5-landscape-and-buried-chain) for dimensions, placement and material details.
+
+
+## Alpha 8 composed buildings and settlement landscape
+
+The adaptive building grammar now composes unequal masses. Longhouses use a
+lower elongated main section with a taller attached section; offset parallel
+gables, long downhill wings, and unequal courtyard arms create different
+recesses and rooflines. Upper floors can project one block on an unobstructed
+side. Each section persists its ridge offset and facade treatment: horizontal
+logs, different framing rhythms, timber cladding and limited pale upper infill.
+Ridge tips are reserved for selected main roofs rather than repeated everywhere.
+
+Window-side top-slab tables support actual standing lanterns at the lower glass
+band. Furnishing happens after doors, stairs and beds; candidates must have a
+real exterior window and an open adjoining aisle. Additional upper-floor and
+wing lamps are selective. Ceiling lights remain for usable interiors; shader
+bloom is not required to see the fixtures.
+
+`TownLandscapePlan` reserves up to eight mature birches before house placement
+and street routing. Houses leave their trunks room, and streets route around
+them. A saved `TownLandscapePiece` builds overlapping crowns, trims them against
+building envelopes, adds short retaining masonry beside falling path edges,
+exposes stone on uphill path cuts, and places occasional lamps, flowers and
+fallen leaves. Decisions use surveyed heights; no rectangular lawns are added.
+The hall ranking favours a higher slope with backing terrain over a bare summit.
+
+Building grammar 2 saves the new room attributes. Grammar-1 pieces retain a
+frozen `LegacyMountainArchitecture`, including their old clearing height and
+bounds, so partially generated alpha-7 buildings keep their original geometry.
+Landscape geometry is versioned independently and remains clipped to the
+current generation chunk. There are no world caches or neighboring-chunk
+surveys during piece placement.
