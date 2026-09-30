@@ -50,6 +50,7 @@ public final class MountainArchitecture {
         }
         put(0,main.eaves(),ladderV,Material.LADDER,0);
         chimney(main);
+        plan.gallery().ifPresent(this::gallery);
         furnishBeds();
     }
     private Material foundation(int u,int y,int v) { return Math.floorMod(u*13+v*7+y,11)<3?Material.RUBBLE:Material.STONE; }
@@ -221,5 +222,26 @@ public final class MountainArchitecture {
         put(u,r.floor()+1,v+1,Material.FURNACE);
         put(u,r.eaves()+6,v,Material.CAMPFIRE);
         put(u,r.eaves()+7,v,Material.ROOF_SLAB);
+    }
+    private void gallery(MountainBuildingPlan.Gallery g) {
+        for(int v=g.start();v<=g.end();v++)for(int a=1;a<=2;a++) {
+            int u=g.wall()+g.side()*a;
+            put(u,g.floor(),v,Material.PLANK);
+            for(int y=g.floor()+1;y<=g.floor()+3;y++)put(u,y,v,Material.AIR);
+            put(u,g.floor()+4,v,Material.ROOF_SLAB);
+            if(a==2 || v==g.start() || v==g.end())put(u,g.floor()+1,v,Material.FENCE);
+            if(v==g.start() || v==g.end()) {
+                for(int y=g.floor()+1;y<=g.floor()+3;y++)put(u,y,v,Material.LOG);
+                put(u,g.floor()-1,v,Material.BEAM_U);
+            }
+        }
+        int v=plan.main().maxV()-4,face=g.side()>0?3:1;
+        put(g.wall(),g.floor()+1,v,Material.DOOR_LOW,face);
+        put(g.wall(),g.floor()+2,v,Material.DOOR_HIGH,face);
+        for(int a=-2;a<=1;a++)for(int y=g.floor()+1;y<=g.floor()+2;y++) {
+            var c=new Cell(g.wall()+g.side()*a,y,v);passages.add(c);
+            if(a!=0)put(c.u(),c.y(),c.v(),Material.AIR);
+        }
+        put(g.wall()+g.side(),g.floor()+3,g.start()+1,Material.HANGING_LANTERN);
     }
 }

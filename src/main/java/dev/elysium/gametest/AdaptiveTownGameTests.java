@@ -88,8 +88,11 @@ public final class AdaptiveTownGameTests {
             var at=helper.absolutePos(new BlockPos(1600+turn*64,140,1600));
             var terrain=new LandscapePlanner.Terrain(){public int height(int x,int z){return at.getY()+Math.floorDiv((x-at.getX())*4,10);}
                 public boolean water(int x,int z){return false;}};
-            var plan=MountainBuildingPlan.fit(terrain,at.getX(),at.getZ(),turn,0,MountainBuildingPlan.Style.CROSS_GABLE,0,
-                    new MountainBuildingPlan.Point(at.getX(),at.getZ()+30)).orElseThrow();
+            java.util.Optional<MountainBuildingPlan> fitted=java.util.Optional.empty();
+            for(long variant=0;variant<32 && fitted.isEmpty();variant++)fitted=MountainBuildingPlan.fit(terrain,at.getX(),at.getZ(),turn,variant,
+                    MountainBuildingPlan.Style.CROSS_GABLE,0,new MountainBuildingPlan.Point(at.getX(),at.getZ()+30));
+            helper.assertTrue(fitted.isPresent(),"Fixture needs a valid surveyed plan for rotation "+turn);
+            var plan=fitted.orElseThrow();
             var piece=new MountainBuildingPiece(plan);var tag=piece.createTag(context);
             var saved=(MountainBuildingPiece)ModStructures.MOUNTAIN_BUILDING_PIECE.get().load(context,tag);
             helper.assertTrue(saved.plan().equals(plan) && saved.createTag(context).equals(tag),"Room levels, door, seed and ground profile must round-trip exactly");
@@ -115,7 +118,8 @@ public final class AdaptiveTownGameTests {
             var e=plan.entry();var door=new BlockPos(plan.worldX(e.u(),e.v()),e.floor()+1,plan.worldZ(e.u(),e.v()));
             var expected=saved.state(new MountainArchitecture.Voxel(MountainArchitecture.Material.DOOR_LOW,e.du()>0?3:e.du()<0?1:e.dv()>0?0:2));
             helper.assertTrue(level.getBlockState(door).is(Blocks.SPRUCE_DOOR)
-                    && level.getBlockState(door).getValue(DoorBlock.FACING)==expected.getValue(DoorBlock.FACING),"Rotated door must survive actual chunk placement");
+                    && level.getBlockState(door).getValue(DoorBlock.FACING)==expected.getValue(DoorBlock.FACING),
+                    "Rotated door must survive actual chunk placement: turn="+turn+", entry="+e+", got="+level.getBlockState(door));
             for(var b:blueprint.entrySet())if(b.getValue().material()==MountainArchitecture.Material.BED_FOOT || b.getValue().material()==MountainArchitecture.Material.BED_HEAD) {
                 var c=b.getKey();var p=new BlockPos(plan.worldX(c.u(),c.v()),c.y(),plan.worldZ(c.u(),c.v()));
                 helper.assertTrue(level.getBlockState(p).is(Blocks.YELLOW_BED),"Both rotated bed halves need to survive placement: "+p);

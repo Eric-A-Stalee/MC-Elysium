@@ -58,10 +58,19 @@ public final class MountainBuildingPiece extends StructurePiece {
     @Override public void postProcess(WorldGenLevel level,StructureManager manager,ChunkGenerator generator,RandomSource random,
             BoundingBox clip,ChunkPos chunk,BlockPos pivot) {
         // Local, ephemeral geometry: no static world cache and no neighboring chunk reads.
-        for(var entry:MountainArchitecture.build(plan).entrySet()) {
+        var geometry=MountainArchitecture.build(plan);
+        // Place the shell before attachments. Door halves, beds and hanging lights
+        // must not react to an intermediate air column while their support is being built.
+        for(int pass=0;pass<2;pass++)for(var entry:geometry.entrySet()) {
+            boolean attachment=switch(entry.getValue().material()) {
+                case DOOR_LOW,DOOR_HIGH,BED_FOOT,BED_HEAD,LANTERN,HANGING_LANTERN,LADDER,TRAPDOOR,TABLE_TOP->true;
+                default->false;
+            };
+            if(attachment!=(pass==1))continue;
             var c=entry.getKey();int x=plan.worldX(c.u(),c.v()),z=plan.worldZ(c.u(),c.v());
             if(x<clip.minX() || x>clip.maxX() || z<clip.minZ() || z>clip.maxZ() || c.y()<clip.minY() || c.y()>clip.maxY())continue;
-            placeBlock(level,state(entry.getValue()),x,c.y(),z,clip);
+            if(attachment)level.setBlock(new BlockPos(x,c.y(),z),state(entry.getValue()),Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE);
+            else placeBlock(level,state(entry.getValue()),x,c.y(),z,clip);
         }
         if(plan.style()==MountainBuildingPlan.Style.WATCH_LODGE)return;
         var main=plan.main();

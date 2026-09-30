@@ -23,6 +23,8 @@ public final class MountainPlanChecks {
     public static Set<Cell> verifyGeometry(MountainBuildingPlan plan) {
         var blocks=MountainArchitecture.build(plan);var e=plan.entry();
         Cell start=new Cell(e.u()+e.du()*2,e.floor()+1,e.v()+e.dv()*2);
+        require(material(blocks,new Cell(e.u(),e.floor()+1,e.v()))==Material.DOOR_LOW
+                && material(blocks,new Cell(e.u(),e.floor()+2,e.v()))==Material.DOOR_HIGH,"Missing entry door",plan);
         require(walkable(blocks,start),"Blocked porch",plan);
         var seen=new HashSet<Cell>();var queue=new ArrayDeque<Cell>();queue.add(start);
         int low=plan.minFloor(),high=plan.maxY();
@@ -45,6 +47,7 @@ public final class MountainPlanChecks {
             require(reached>=18,"Unreachable room/floor ("+reached+" cells): "+room+" storey "+s,plan);
         }
         if(plan.cellar())require(seen.stream().anyMatch(c->c.y()==plan.main().floor()-4),"Inaccessible cellar",plan);
+        plan.gallery().ifPresent(g->require(seen.contains(new Cell(g.wall()+g.side(),g.floor()+1,plan.main().maxV()-4)),"Inaccessible timber gallery",plan));
         int beds=0;
         for(var b:blocks.entrySet()) {
             var p=b.getKey();var m=b.getValue().material();

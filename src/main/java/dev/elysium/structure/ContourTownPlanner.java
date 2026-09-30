@@ -120,8 +120,8 @@ public final class ContourTownPlanner {
     }
     private static boolean available(MountainBuildingPlan b,List<MountainBuildingPlan> buildings,TerracePlanner.Lot square,
             Map<Point,Column> roads,int cx,int cz) {
-        for(var g:b.ground()) {
-            int x=b.worldX(g.u(),g.v()),z=b.worldZ(g.u(),g.v());
+        for(var point:b.projection()) {
+            int x=point.x(),z=point.z();
             if(Math.abs(x-cx)>REACH-3 || Math.abs(z-cz)>REACH-3 || square.distance(x,z)<=3)return false;
             for(var other:buildings)if(other.occupies(x,z,3))return false;
             for(int dx=-2;dx<=2;dx++)for(int dz=-2;dz<=2;dz++)if(roads.containsKey(new Point(x+dx,z+dz)))return false;

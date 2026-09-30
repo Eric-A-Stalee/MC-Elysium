@@ -32,6 +32,13 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
         }
     }
     public record Ground(int u,int v,int original) {}
+    /** A cantilevered timber gallery changes the silhouette without excavating a yard underneath. */
+    public record Gallery(int wall,int side,int start,int end,int floor) {
+        public boolean contains(int u,int v,int margin) {
+            int a=(u-wall)*side;
+            return a>=1-margin && a<=2+margin && v>=start-margin && v<=end+margin;
+        }
+    }
     public MountainBuildingPlan {
         rooms=List.copyOf(rooms); ground=List.copyOf(ground);
         if(rotation<0 || rotation>3 || rooms.isEmpty() || rooms.size()>3 || ground.size()>1200 || ground.isEmpty())
@@ -50,7 +57,28 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     public Point point(int u,int v) { return new Point(worldX(u,v),worldZ(u,v)); }
     public boolean occupies(int wx,int wz,int margin) {
         int u=localU(wx,wz),v=localV(wx,wz);
-        return entry.porch(u,v,margin) || rooms.stream().anyMatch(r->r.contains(u,v,margin));
+        return entry.porch(u,v,margin) || rooms.stream().anyMatch(r->r.contains(u,v,margin))
+                || gallery().map(g->g.contains(u,v,margin)).orElse(false);
+    }
+    public Optional<Gallery> gallery() {
+        if(style==Style.COURTYARD || ((seed&2)!=0 && style!=Style.LONGHOUSE && style!=Style.GREAT_HALL && style!=Style.WATCH_LODGE))return Optional.empty();
+        var r=main();
+        for(int side:new int[]{1,-1}) {
+            int wall=side>0?r.maxU():r.u(),start=r.v()+3,end=r.maxV()-2;
+            boolean clear=true;
+            int lo=Math.min(wall+side,wall+side*2),hi=Math.max(wall+side,wall+side*2);
+            for(int i=1;i<rooms.size();i++) {
+                var other=rooms.get(i);
+                if(lo<=other.maxU()+1 && hi>=other.u()-1 && start<=other.maxV()+1 && end>=other.v()-1)clear=false;
+            }
+            if(clear)return Optional.of(new Gallery(wall,side,start,end,r.floor()+(style==Style.WATCH_LODGE?10:5)));
+        }
+        return Optional.empty();
+    }
+    public List<Point> projection() {
+        var points=new ArrayList<Point>();for(var g:ground)points.add(point(g.u(),g.v()));
+        gallery().ifPresent(g->{for(int v=g.start();v<=g.end();v++)for(int a=1;a<=2;a++)points.add(point(g.wall()+g.side()*a,v));});
+        return points;
     }
     public boolean access(int wx,int wz) {
         int u=localU(wx,wz)-entry.u(),v=localV(wx,wz)-entry.v();
