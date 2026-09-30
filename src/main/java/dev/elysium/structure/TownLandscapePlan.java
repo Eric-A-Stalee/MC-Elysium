@@ -70,10 +70,11 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
         for(var c:streets)if(c.kind()==ValleyTownPlanner.ROAD)for(int[] d:new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) {
             int x=c.x()+d[0],z=c.z()+d[1],ground=terrain.height(x,z)-1;
             if(roads.contains(new Point(x,z)) || !free(buildings,trees,square,x,z))continue;
-            if(ground>=sea && c.ground()-ground>=2 && c.ground()-ground<=5) {
+            boolean accent=Math.floorMod(Math.floorDiv(x,6)+Math.floorDiv(z,6),3)==0;
+            if(ground>=sea && c.ground()-ground>=1 && c.ground()-ground<=5 && (c.ground()-ground>=2 || accent)) {
                 for(int y=ground;y<c.ground();y++)detail(details,x,y,z,Kind.STONE);
                 detail(details,x,c.ground(),z,Kind.CAP);
-            } else if(ground>=c.ground()+2 && ground<=c.ground()+5) {
+            } else if(ground>=c.ground()+1 && ground<=c.ground()+5 && (ground-c.ground()>=2 || accent)) {
                 for(int y=c.ground();y<=ground;y++)detail(details,x,y,z,Kind.ROCK);
             }
             int px=x+d[0],pz=z+d[1],py=terrain.height(px,pz);

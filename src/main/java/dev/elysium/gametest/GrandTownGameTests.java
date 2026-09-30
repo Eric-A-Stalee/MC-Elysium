@@ -125,6 +125,9 @@ public final class GrandTownGameTests {
                         helper.assertTrue(p.getType().load(serialization,tag).createTag(serialization).equals(tag),"Every town piece must survive reload");
                     }
                     var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);
+                    var landscape=pieces.stream().filter(p->p instanceof TownLandscapePiece).map(p->((TownLandscapePiece)p).plan()).findFirst().orElseThrow();
+                    helper.assertTrue(landscape.details().stream().anyMatch(d->d.kind()==TownLandscapePlan.Kind.STONE || d.kind()==TownLandscapePlan.Kind.ROCK),
+                            "A complete hillside town must include actual path-edge masonry or exposed rock");
                     helper.assertTrue(actual!=null && actual.isValid() && actual.getPieces().size()==pieces.size(),
                             "The natural candidate must retain every piece through generation and placement");
                     for(int i=2;i<pieces.size();i++) {
