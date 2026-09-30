@@ -104,7 +104,7 @@ public final class GrandTownGameTests {
     public static void naturalGrandTownCandidateHasCrossingAndCompleteDistricts(GameTestHelper helper) {
         var realm=helper.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);var generator=realm.getChunkSource().getGenerator();
         var id=ResourceLocation.fromNamespaceAndPath("elysium","grand_mountain_town");
-        var structure=(ValleyTownStructure)realm.registryAccess().registryOrThrow(Registries.STRUCTURE).get(id);
+        var structure=(ContourTownStructure)realm.registryAccess().registryOrThrow(Registries.STRUCTURE).get(id);
         var placement=(RandomSpreadStructurePlacement)realm.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).get(id).placement();
         class Probe implements Runnable {
             int attempt;
@@ -128,10 +128,13 @@ public final class GrandTownGameTests {
                     helper.assertTrue(actual!=null && actual.isValid() && actual.getPieces().size()==pieces.size(),
                             "The natural candidate must retain every piece through generation and placement");
                     for(int i=2;i<pieces.size()-1;i++) {
-                        var box=pieces.get(i).getBoundingBox();
-                        var floor=new BlockPos((box.minX()+box.maxX())/2,box.minY()+2,(box.minZ()+box.maxZ())/2);
+                        var b=((MountainBuildingPiece)pieces.get(i)).plan();
+                        MountainPlanChecks.verifyGeometry(b);
+                        var floor=new BlockPos(b.worldX(0,0),b.main().floor(),b.worldZ(0,0));
                         helper.assertTrue(realm.getBlockState(floor).is(Blocks.SPRUCE_PLANKS),
-                                "Generated halls, tower and homes must retain their interior floors: "+floor);
+                                "Generated halls, watch lodge and homes must retain their surveyed interior floors: "+floor);
+                        var e=b.entry();var door=new BlockPos(b.worldX(e.u(),e.v()),e.floor()+1,b.worldZ(e.u(),e.v()));
+                        helper.assertTrue(realm.getBlockState(door).is(Blocks.SPRUCE_DOOR),"Every saved entry needs a real door: "+door);
                     }
                     var crossing=((ElysianBridgePiece)pieces.getLast()).span();int middle=crossing.length()/2;
                     var deck=new BlockPos(crossing.x(middle,0),crossing.walkingHeight(middle)-1,crossing.z(middle,0));

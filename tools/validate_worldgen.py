@@ -390,8 +390,14 @@ def validate_grand_modules() -> int:
     from collections import deque
     town = read_json("worldgen/structure/grand_mountain_town.json")
     assert 14 <= town["minimum_houses"] <= town["maximum_houses"] <= 26
+    assert town["type"] == "elysium:contour_town"
+    assert set(town["styles"]) == {"longhouse", "cross_gable", "hillside_lodge", "courtyard"}
     total = 0
-    for module in [town["hall"], town["tower"], *town["houses"]]:
+    # Old template IDs stay shipped for partially generated alpha 6 structures.
+    legacy = [{"template": "elysium:"+name, "radius": radius} for name,radius in (
+        ("mountain_great_hall",13), ("mountain_watchtower",6), ("mountain_manor",11),
+        ("mountain_manor_workshop",11), ("mountain_manor_gabled",11))]
+    for module in legacy:
         name = module["template"].split(":")[1]
         root = NbtReader(gzip.decompress((DATA / f"structure/{name}.nbt").read_bytes())).root()
         size = root["size"]

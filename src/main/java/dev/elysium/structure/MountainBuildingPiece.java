@@ -1,0 +1,130 @@
+package dev.elysium.structure;
+
+import dev.elysium.registry.ModStructures;
+import java.util.ArrayList;
+import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+
+/** Versioned plans are saved in full; chunk order and later terrain changes cannot move their rooms. */
+public final class MountainBuildingPiece extends StructurePiece {
+    private static final Direction[] FACES={Direction.SOUTH,Direction.WEST,Direction.NORTH,Direction.EAST};
+    private final MountainBuildingPlan plan;
+    private int residents;
+    public MountainBuildingPiece(MountainBuildingPlan plan) {
+        super(ModStructures.MOUNTAIN_BUILDING_PIECE.get(),0,bounds(plan));this.plan=plan;setOrientation(null);
+    }
+    public MountainBuildingPiece(CompoundTag tag) {
+        this(read(tag));residents=tag.getInt("Residents");
+    }
+    public MountainBuildingPlan plan() { return plan; }
+    private static MountainBuildingPlan read(CompoundTag tag) {
+        if(tag.getInt("Grammar")!=1)throw new IllegalArgumentException("Unknown mountain building grammar");
+        int[] data=tag.getIntArray("Rooms"),profile=tag.getIntArray("Ground"),entry=tag.getIntArray("Entry");
+        if(data.length==0 || data.length>21 || data.length%7!=0 || profile.length==0 || profile.length>3600
+                || profile.length%3!=0 || entry.length!=5)throw new IllegalArgumentException("Invalid saved mountain building");
+        var rooms=new ArrayList<MountainBuildingPlan.Room>();var ground=new ArrayList<MountainBuildingPlan.Ground>();
+        for(int i=0;i<data.length;i+=7)rooms.add(new MountainBuildingPlan.Room(data[i],data[i+1],data[i+2],data[i+3],data[i+4],data[i+5],data[i+6]!=0));
+        for(int i=0;i<profile.length;i+=3)ground.add(new MountainBuildingPlan.Ground(profile[i],profile[i+1],profile[i+2]));
+        return new MountainBuildingPlan(tag.getInt("X"),tag.getInt("Z"),tag.getInt("Turn"),tag.getLong("Seed"),
+                MountainBuildingPlan.Style.valueOf(tag.getString("Style")),rooms,
+                new MountainBuildingPlan.Entry(entry[0],entry[1],entry[2],entry[3],entry[4]),ground,tag.getBoolean("Cellar"));
+    }
+    @Override protected void addAdditionalSaveData(StructurePieceSerializationContext context,CompoundTag tag) {
+        tag.putInt("Grammar",1);tag.putInt("X",plan.x());tag.putInt("Z",plan.z());tag.putInt("Turn",plan.rotation());
+        tag.putLong("Seed",plan.seed());tag.putString("Style",plan.style().name());tag.putBoolean("Cellar",plan.cellar());tag.putInt("Residents",residents);
+        int[] rooms=new int[plan.rooms().size()*7],ground=new int[plan.ground().size()*3];int i=0;
+        for(var r:plan.rooms()) {rooms[i++]=r.u();rooms[i++]=r.v();rooms[i++]=r.width();rooms[i++]=r.depth();rooms[i++]=r.floor();rooms[i++]=r.storeys();rooms[i++]=r.crossRoof()?1:0;}
+        i=0;for(var g:plan.ground()){ground[i++]=g.u();ground[i++]=g.v();ground[i++]=g.original();}
+        var e=plan.entry();tag.putIntArray("Entry",new int[]{e.u(),e.v(),e.du(),e.dv(),e.floor()});
+        tag.putIntArray("Rooms",rooms);tag.putIntArray("Ground",ground);
+    }
+    @Override public void postProcess(WorldGenLevel level,StructureManager manager,ChunkGenerator generator,RandomSource random,
+            BoundingBox clip,ChunkPos chunk,BlockPos pivot) {
+        // Local, ephemeral geometry: no static world cache and no neighboring chunk reads.
+        for(var entry:MountainArchitecture.build(plan).entrySet()) {
+            var c=entry.getKey();int x=plan.worldX(c.u(),c.v()),z=plan.worldZ(c.u(),c.v());
+            if(x<clip.minX() || x>clip.maxX() || z<clip.minZ() || z>clip.maxZ() || c.y()<clip.minY() || c.y()>clip.maxY())continue;
+            placeBlock(level,state(entry.getValue()),x,c.y(),z,clip);
+        }
+        if(plan.style()==MountainBuildingPlan.Style.WATCH_LODGE)return;
+        var main=plan.main();
+        for(int i=0;i<2;i++) {
+            var at=new BlockPos(plan.worldX(i==0?0:2,main.maxV()-(i==0?1:4)),main.floor()+1+i*5,
+                    plan.worldZ(i==0?0:2,main.maxV()-(i==0?1:4)));
+            if((residents&(1<<i))!=0 || !clip.isInside(at) || !level.getBlockState(at).isAir() || !level.getBlockState(at.above()).isAir())continue;
+            var villager=EntityType.VILLAGER.create(level.getLevel());
+            if(villager!=null) {
+                villager.setPersistenceRequired();villager.moveTo(at.getX()+.5,at.getY(),at.getZ()+.5,0,0);
+                villager.finalizeSpawn(level,level.getCurrentDifficultyAt(at),MobSpawnType.STRUCTURE,null);
+                villager.setVillagerData(villager.getVillagerData().setType(VillagerType.TAIGA));
+                level.addFreshEntityWithPassengers(villager);residents|=1<<i;
+            }
+        }
+    }
+    public BlockState state(MountainArchitecture.Voxel voxel) {
+        int palette=(int)((plan.seed()>>>16)&3);var facing=FACES[(voxel.facing()+plan.rotation())%4];
+        Block roof=palette==2?Blocks.STONE_BRICKS:palette==1?Blocks.DEEPSLATE_BRICKS:Blocks.DEEPSLATE_TILES;
+        Block roofStair=palette==2?Blocks.STONE_BRICK_STAIRS:palette==1?Blocks.DEEPSLATE_BRICK_STAIRS:Blocks.DEEPSLATE_TILE_STAIRS;
+        Block roofSlab=palette==2?Blocks.STONE_BRICK_SLAB:palette==1?Blocks.DEEPSLATE_BRICK_SLAB:Blocks.DEEPSLATE_TILE_SLAB;
+        return switch(voxel.material()) {
+            case AIR->Blocks.AIR.defaultBlockState();
+            case STONE->Blocks.STONE_BRICKS.defaultBlockState();
+            case RUBBLE->Blocks.COBBLESTONE.defaultBlockState();
+            case PLANK->Blocks.SPRUCE_PLANKS.defaultBlockState();
+            case CLADDING->(palette==1?Blocks.DARK_OAK_PLANKS:palette==2?Blocks.OAK_PLANKS:Blocks.SPRUCE_PLANKS).defaultBlockState();
+            case PALE->(palette==2?Blocks.SMOOTH_SANDSTONE:Blocks.CALCITE).defaultBlockState();
+            case LOG->Blocks.SPRUCE_LOG.defaultBlockState();
+            case STRIPPED->Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState();
+            case LOG_U,BEAM_U->(voxel.material()==MountainArchitecture.Material.BEAM_U?Blocks.DARK_OAK_LOG:Blocks.SPRUCE_LOG)
+                    .defaultBlockState().setValue(RotatedPillarBlock.AXIS,plan.rotation()%2==0?Direction.Axis.X:Direction.Axis.Z);
+            case LOG_V,BEAM_V->(voxel.material()==MountainArchitecture.Material.BEAM_V?Blocks.DARK_OAK_LOG:Blocks.SPRUCE_LOG)
+                    .defaultBlockState().setValue(RotatedPillarBlock.AXIS,plan.rotation()%2==0?Direction.Axis.Z:Direction.Axis.X);
+            case ROOF->roof.defaultBlockState();
+            case ROOF_STAIR->roofStair.defaultBlockState().setValue(StairBlock.FACING,facing);
+            case ROOF_SLAB->roofSlab.defaultBlockState();
+            case WOOD_STAIR->Blocks.DARK_OAK_STAIRS.defaultBlockState().setValue(StairBlock.FACING,facing);
+            case WOOD_SLAB->Blocks.DARK_OAK_SLAB.defaultBlockState();
+            case FENCE->Blocks.SPRUCE_FENCE.defaultBlockState();
+            case GLASS->Blocks.LIGHT_GRAY_STAINED_GLASS.defaultBlockState();
+            case DOOR_LOW,DOOR_HIGH->Blocks.SPRUCE_DOOR.defaultBlockState().setValue(DoorBlock.FACING,facing)
+                    .setValue(DoorBlock.HALF,voxel.material()==MountainArchitecture.Material.DOOR_LOW?DoubleBlockHalf.LOWER:DoubleBlockHalf.UPPER);
+            case BED_FOOT,BED_HEAD->Blocks.YELLOW_BED.defaultBlockState().setValue(BedBlock.FACING,facing)
+                    .setValue(BedBlock.PART,voxel.material()==MountainArchitecture.Material.BED_FOOT?BedPart.FOOT:BedPart.HEAD);
+            case LANTERN,HANGING_LANTERN->Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING,voxel.material()==MountainArchitecture.Material.HANGING_LANTERN);
+            case BARREL->Blocks.BARREL.defaultBlockState();
+            case BOOKSHELF->Blocks.BOOKSHELF.defaultBlockState();
+            case FURNACE->Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING,facing);
+            case CRAFTING->Blocks.CRAFTING_TABLE.defaultBlockState();
+            case TABLE_TOP->Blocks.SPRUCE_PRESSURE_PLATE.defaultBlockState();
+            case LADDER->Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING,facing);
+            case TRAPDOOR->Blocks.SPRUCE_TRAPDOOR.defaultBlockState();
+            case CHIMNEY->Blocks.COBBLED_DEEPSLATE.defaultBlockState();
+            case CAMPFIRE->Blocks.CAMPFIRE.defaultBlockState();
+        };
+    }
+    private static BoundingBox bounds(MountainBuildingPlan b) {
+        int minX=b.x(),maxX=b.x(),minZ=b.z(),maxZ=b.z(),minY=b.minFloor()-2;
+        for(var g:b.ground()) {
+            int x=b.worldX(g.u(),g.v()),z=b.worldZ(g.u(),g.v());
+            minX=Math.min(minX,x-2);maxX=Math.max(maxX,x+2);minZ=Math.min(minZ,z-2);maxZ=Math.max(maxZ,z+2);minY=Math.min(minY,g.original()-1);
+        }
+        return new BoundingBox(minX,minY,minZ,maxX,b.maxY(),maxZ);
+    }
+}

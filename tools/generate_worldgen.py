@@ -265,10 +265,10 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     emit(entries, "worldgen/noise/summit_relief.json", {"firstOctave": -6, "amplitudes": [1.0, 0.5, 0.25]})
     upland = binary("add", 17.0,
                     binary("add", binary("mul", 9.0, "elysium:continents"), binary("mul", 3.0, relief)))
-    # River banks and mountain shoulders have separate profiles. High peaks no
-    # longer multiply a gentle bank into an immediate wall beside the water.
-    shoulder = spline("elysium:river_distance", ((0.0, 0.0), (0.22, 0.0), (0.34, 0.02),
-                       (0.47, 0.30), (0.62, 0.85), (0.80, 1.0), (1.2, 1.0)))
+    # Keep a gentle waterline, then let inhabited shoulders climb back into the
+    # peaks. Adaptive, narrow footprints no longer need alpha 6's broad flat apron.
+    shoulder = spline("elysium:river_distance", ((0.0, 0.0), (0.12, 0.0), (0.22, 0.12),
+                       (0.35, 0.45), (0.50, 0.86), (0.70, 1.0), (1.2, 1.0)))
     terrain_height = unary("flat_cache", binary("add", 60.0, binary("add",
                     binary("mul", channel, upland), binary("mul", shoulder, mountains))))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
@@ -714,12 +714,10 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
             for x, y, z in module.residents]
         entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
     emit(entries, "worldgen/structure/grand_mountain_town.json", {
-        "type": "elysium:valley_town", "biomes": "#elysium:has_structure/mountain_town",
+        "type": "elysium:contour_town", "biomes": "#elysium:has_structure/mountain_town",
         "step": "surface_structures", "spawn_overrides": {}, "terrain_adaptation": "none",
         "plaza": "elysium:grand_mountain_plaza",
-        "hall": {"template": "elysium:mountain_great_hall", "radius": 13, "max_relief": 8},
-        "tower": {"template": "elysium:mountain_watchtower", "radius": 6, "max_relief": 6},
-        "houses": [{"template": "elysium:" + p.name, "radius": p.radius, "max_relief": 8} for p in RESIDENCES if not p.hall],
+        "styles": ["longhouse", "cross_gable", "hillside_lodge", "courtyard"],
         "minimum_houses": 14, "maximum_houses": 24})
     emit(entries, "worldgen/structure_set/grand_mountain_town.json", {
         "structures": [{"structure": "elysium:grand_mountain_town", "weight": 1}],

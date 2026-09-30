@@ -12,6 +12,8 @@ import dev.elysium.structure.TartarusChainStructure;
 import dev.elysium.structure.TartarusChainPiece;
 import dev.elysium.structure.ValleyTownStructure;
 import dev.elysium.structure.TownTerrainPiece;
+import dev.elysium.structure.ContourTownStructure;
+import dev.elysium.structure.MountainBuildingPiece;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -22,6 +24,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModStructures {
     private static final DeferredRegister<StructureType<?>> STRUCTURES = DeferredRegister.create(Registries.STRUCTURE_TYPE, Elysium.MOD_ID);
     private static final DeferredRegister<StructurePieceType> PIECES = DeferredRegister.create(Registries.STRUCTURE_PIECE, Elysium.MOD_ID);
+    public static final DeferredHolder<StructureType<?>, StructureType<ContourTownStructure>> CONTOUR_TOWN =
+            STRUCTURES.register("contour_town", () -> () -> ContourTownStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> MOUNTAIN_BUILDING_PIECE =
+            PIECES.register("mountain_building", () -> (StructurePieceType.ContextlessType) MountainBuildingPiece::new);
     public static final DeferredHolder<StructureType<?>, StructureType<ValleyTownStructure>> VALLEY_TOWN =
             STRUCTURES.register("valley_town", () -> () -> ValleyTownStructure.CODEC);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> TOWN_TERRAIN_PIECE =
