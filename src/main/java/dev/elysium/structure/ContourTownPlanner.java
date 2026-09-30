@@ -170,7 +170,12 @@ public final class ContourTownPlanner {
     private static int distance(Point a,Point b) { return Math.abs(a.x()-b.x())+Math.abs(a.z()-b.z()); }
     private static int grade(LandscapePlanner.Terrain terrain,Map<Point,Column> roads,Access access,Point p) {
         var existing=roads.get(p);if(existing!=null)return existing.ground();
-        int original=terrain.height(p.x(),p.z())-1,d=distance(p,access.street());
+        int original=terrain.height(p.x(),p.z())-1;
+        int du=access.approach().x()-access.street().x(),dv=access.approach().z()-access.street().z();
+        int px=p.x()-access.street().x(),pz=p.z()-access.street().z();
+        // The entire five-block porch edge has the saved floor height. Measuring
+        // from its centre allowed a diagonal road to meet a short porch two blocks high.
+        int d=Math.abs(px*du+pz*dv)+Math.max(0,Math.abs(px*dv-pz*du)-2);
         return d<=4?Math.clamp(original,access.floor()-d,access.floor()+d):original;
     }
     private static boolean passable(LandscapePlanner.Terrain terrain,Map<Point,Column> roads,List<MountainBuildingPlan> buildings,List<TownLandscapePlan.Tree> trees,
@@ -203,7 +208,12 @@ public final class ContourTownPlanner {
                 var additions=new LinkedHashMap<Point,Column>();
                 for(var step=p;step!=null;step=parents.get(step))for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++) {
                     var q=new Point(step.x()+dx,step.z()+dz);
-                    if(roads.containsKey(q) || square.contains(q.x(),q.z()) || (candidate!=null && candidate.occupies(q.x(),q.z(),0)))continue;
+                    if(roads.containsKey(q) || square.contains(q.x(),q.z()))continue;
+                    if(candidate!=null && candidate.occupies(q.x(),q.z(),0)) {
+                        // A short porch may end beneath the upper gallery. Its approach
+                        // still needs a ground-level road, even inside that overhead footprint.
+                        if(!candidate.access(q.x(),q.z()) || candidate.entry().porch(candidate.localU(q.x(),q.z()),candidate.localV(q.x(),q.z()),0))continue;
+                    }
                     additions.put(q,new Column(q.x(),q.z(),grade(terrain,roads,access,q),terrain.height(q.x(),q.z())-1,ValleyTownPlanner.ROAD));
                 }
                 roads.putAll(additions);return true;
