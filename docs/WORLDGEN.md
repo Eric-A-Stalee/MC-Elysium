@@ -1,6 +1,6 @@
 # Elysium world generation
 
-The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 11000. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
+The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 12000. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
 raids, ordinary hostile biome spawns, and zombified piglins from lit nether
 portals are disabled in Elysium while its sun is fixed. This does not
 override the rest of a player's world or promise that another mod cannot spawn
@@ -349,3 +349,30 @@ shape streets and house placement. Crowns respect saved building clearances,
 and persistent leaves retain their broad branch tips. Ordinary biome tree
 attempt budgets remain sparse; highlands and peaks gain a share of the existing
 canopy feature rather than a higher global tree count.
+
+
+## Alpha 9 later sunset and lower branching trees
+
+The fixed dimension time advances from 11000 to **12000** ticks. This is a
+controlled first step toward a later sunset and stronger contrast with lit
+windows; the biome RGB palettes remain as recorded above. Moving the sun does
+not reproduce a shader's coloured directional lighting or bloom. Compare the
+new build with default textures and shaders disabled before retuning palettes.
+The fixed time changes after a world restart; the Overworld ritual timing is
+unchanged.
+
+New grand-town birches use 16–20-block height parameters and fork at 4–6 blocks,
+with unequal upright leaders and separate rounded crowns. A small root flare
+supports the base. Every log has a face-connected route to the trunk. Planning
+tries alternate branch orientations before accepting a tree near a building;
+if its limbs cannot fit, that tree is omitted. Foliage respects saved building
+clearances. Alpha-8 trees retain their old geometry through landscape version 1.
+
+Grand-town placement now searches for close slopes rising at least nine blocks
+across eight horizontal blocks, with crests at least 40 blocks above sea level.
+At least three buildings must lie within 42 blocks of such a face and at least
+16 blocks below its crest. These checks distinguish nearby steep backdrops from
+a high but smoothly rounded or distant hill. House and hall selection favour
+positions below the surveyed faces while retaining the existing cut/fill and
+road-access limits. New town placement is intentionally more selective; these
+local rules do not establish its average discovery distance.

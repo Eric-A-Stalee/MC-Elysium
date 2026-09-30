@@ -335,3 +335,59 @@ The downloaded player jar passed ZIP integrity and Java 21 class checks. All
 fixtures and the GameTest flat-world override are excluded. The jar is
 **464,808 bytes**, with SHA-256
 `309a75cba1b8d22870d8f1257af0b5e2ee49d4c9f95cc129d689c85368c3e5b8`.
+
+
+## Alpha 9 cliff districts, branching trees and sunset windows (September 30, 2026)
+
+The pure building matrix exercises **669 fitted plans**, covering 426 distinct
+room/height combinations, 261 cellars and 367 split-level cases. Three synthetic
+valley seeds each retain 24 homes plus a hall and watch lodge. Their final
+street graphs contain 2,802, 3,052 and 2,769 saved columns respectively; every
+porch is reachable from the bridge with at most one-block steps. Eight, four
+and seven mature trees remain after branch-clearance checks.
+
+The first server run exposed a missing approach underneath an upper gallery.
+A shorter porch ended inside that overhead footprint, which the road writer
+mistakenly treated as a ground-level obstruction. Road placement now permits
+the entrance approach underneath the gallery, and grading measures distance
+from the entire porch edge. The existing complete street-graph assertion found
+the issue; the graph was reproduced locally and all three valley seeds pass
+with the correction.
+
+Server coverage additionally checks connected branching logs, lower forks,
+clear trunk bases, save/load and clipping, real glowstone window centres with
+clear upper panes and quartz sills, and preservation of both older house
+grammars and the alpha-8 tree geometry. The natural-town survey requires nearby
+steep faces overlooking at least three buildings. Smooth, high hills alone do
+not satisfy the backdrop test. Geometry inspections use generated blocks and
+terrain reports, not a graphical Minecraft client.
+
+
+[GitHub Actions run 36672261255](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36672261255)
+built commit `96de20162b548ec1191d26aadf9651d2f3d9ddf3` and passed **all 39
+required GameTests in 1.404 minutes**. Generated resources, client assets,
+packaging and the independent optional compatibility-adapter checks passed too.
+This build includes the newer compatibility change that removes the Elysium
+release pin.
+
+The final seed-0 survey found chunk **[-2335, -2316]** after 616 candidate
+probes: **16 homes, a hall and watch lodge**, plus square, streets, crossing and
+landscape, for 22 saved pieces. Main floors span **Y 65–113** and the surrounding
+survey spans **Y 58–176**. Six buildings meet the close-cliff relationship; six
+branching birches remain, with height parameters 16–19. The complete reloaded
+start passes placement in reversed chunk order. The CI log artifact contains
+`run/logs/contour-town.json`, including surveyed cliff-foot and crest positions.
+These are reproducible candidate results, not average discovery distances.
+
+The explicit structure-placement test writes into completed chunks and logs
+302 unsupported deferred post-processing warnings; normal world generation
+uses ProtoChunks. The synchronous searches also log two tick-lag warnings.
+No required assertion failed. An ordinary-world automatic-generation smoke
+test, graphical client comparison, villager-AI traversal and full ReTerraForged
+co-installation run were not repeated. In particular, the later sun and new
+windows remain a visual trial with the player's shaders enabled and disabled.
+
+The downloaded player jar passes ZIP integrity and Java 21 class checks; all
+**158 shipped source resources match**, and development tests, fixtures and the
+flat-world override are excluded. The jar is **486,344 bytes**, SHA-256
+`0db8248486922e6c79e27bd1a413881118ba1f943d2959495b2c07b03d27e18e`.

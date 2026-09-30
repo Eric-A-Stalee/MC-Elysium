@@ -238,3 +238,28 @@ bounds, so partially generated alpha-7 buildings keep their original geometry.
 Landscape geometry is versioned independently and remains clipped to the
 current generation chunk. There are no world caches or neighboring-chunk
 surveys during piece placement.
+
+
+## Alpha 9 slope-fitted additions and window materials
+
+The planner evaluates wings on alternative sides of the core, shifts their
+positions along it, and considers shorter lengths. It scores the actual cut and
+fill under each option; room-floor differences remain bounded and every
+accepted plan must preserve circulation. Unequal wings can use a lower shed
+roof rising toward the core. Porch depth varies from one to three blocks, and
+smaller groups are preferred along shared streets. Collision clearances still
+leave space between roof envelopes. Main shapes remain assembled from
+orthogonal rooms; this revision does not implement arbitrary polygonal rooms.
+
+Facade windows use smaller pairs and **clear glass**. Selected lower window
+cells become actual glowstone, retaining clear glass directly above and quartz
+sills below; some also have quartz lintels. Table lanterns remain visible through
+their own panes. These use ordinary game blocks and need no emissive resource
+pack. Most ridges now use roof slabs rather than repeating bark across every
+roof, and uphill cladding can become stone where the ground meets the wall.
+
+Grammar 3 serializes the shed direction and porch length. Grammar 2 delegates
+to the frozen `MountainArchitectureV2`, including its grey stained glass, while
+grammar 1 retains the earlier frozen implementation. Old pieces are not migrated
+on load. The new tree form uses landscape version 2; version-1 trees likewise
+keep their original trunks and crowns in partially generated chunks.
