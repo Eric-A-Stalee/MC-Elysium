@@ -7,7 +7,14 @@
     },
     "features": [
       {
-        "chance": 0.8,
+        "chance": 0.25,
+        "feature": {
+          "feature": "elysium:canopy_golden_birch",
+          "placement": []
+        }
+      },
+      {
+        "chance": 0.7333333333333334,
         "feature": {
           "feature": "elysium:tall_golden_birch",
           "placement": []

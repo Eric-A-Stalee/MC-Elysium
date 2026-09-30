@@ -117,7 +117,7 @@ public final class GrandTownGameTests {
                             realm.getServer().getStructureManager(),realm.getSeed(),chunk,realm,structure.biomes()::contains);
                     var stub=structure.surveyGenerationPoint(context,key->survey.merge(key,1,Integer::sum));if(stub.isEmpty())continue;
                     var pieces=stub.get().getPiecesBuilder().build().pieces();
-                    helper.assertTrue(pieces.size()>=19 && pieces.getFirst() instanceof TownTerrainPiece && pieces.getLast() instanceof ElysianBridgePiece,
+                    helper.assertTrue(pieces.size()>=19 && pieces.getFirst() instanceof TownTerrainPiece && pieces.stream().anyMatch(p->p instanceof ElysianBridgePiece) && pieces.stream().anyMatch(p->p instanceof TownLandscapePiece),
                             "A real town needs complete districts, saved terraces and a crossing");
                     var serialization=StructurePieceSerializationContext.fromLevel(realm);
                     for(var p:pieces) {
@@ -127,7 +127,8 @@ public final class GrandTownGameTests {
                     var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);
                     helper.assertTrue(actual!=null && actual.isValid() && actual.getPieces().size()==pieces.size(),
                             "The natural candidate must retain every piece through generation and placement");
-                    for(int i=2;i<pieces.size()-1;i++) {
+                    for(int i=2;i<pieces.size();i++) {
+                        if(!(pieces.get(i) instanceof MountainBuildingPiece))continue;
                         var b=((MountainBuildingPiece)pieces.get(i)).plan();
                         helper.assertTrue(b.equals(((MountainBuildingPiece)actual.getPieces().get(i)).plan()),"Survey and saved StructureStart must choose identical rooms and doors");
                         MountainPlanChecks.verifyGeometry(b);
@@ -138,7 +139,7 @@ public final class GrandTownGameTests {
                         helper.assertTrue(realm.getBlockState(door).is(Blocks.SPRUCE_DOOR),"Every saved entry needs a real door: "+door
                                 +", got="+realm.getBlockState(door)+", style="+b.style()+", entry="+b.entry());
                     }
-                    var crossing=((ElysianBridgePiece)pieces.getLast()).span();int middle=crossing.length()/2;
+                    var crossing=pieces.stream().filter(p->p instanceof ElysianBridgePiece).map(p->((ElysianBridgePiece)p).span()).findFirst().orElseThrow();int middle=crossing.length()/2;
                     var deck=new BlockPos(crossing.x(middle,0),crossing.walkingHeight(middle)-1,crossing.z(middle,0));
                     helper.assertTrue(realm.getBlockState(deck).is(Blocks.STONE_BRICKS) && realm.getBlockState(deck.above()).isAir(),
                             "The naturally generated town needs an unobstructed stone crossing");
@@ -153,6 +154,7 @@ public final class GrandTownGameTests {
                     int cx=crossing.x(middle,0),cz=crossing.z(middle,0);
                     for(int dx=-112;dx<=112;dx+=4)for(int dz=-112;dz<=112;dz+=4)heights.add(new int[]{cx+dx,sampler.height(cx+dx,cz+dz)-1,cz+dz});
                     report.put("terrain",heights);
+                    report.put("landscape",pieces.stream().filter(p->p instanceof TownLandscapePiece).map(p->((TownLandscapePiece)p).plan()).findFirst().orElseThrow());
                     try {
                         var output=java.nio.file.Path.of("logs","contour-town.json");java.nio.file.Files.createDirectories(output.getParent());
                         java.nio.file.Files.writeString(output,new com.google.gson.GsonBuilder().create().toJson(report));

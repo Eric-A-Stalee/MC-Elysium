@@ -48,7 +48,7 @@ public final class MountainPlanChecks {
         }
         if(plan.cellar())require(seen.stream().anyMatch(c->c.y()==plan.main().floor()-4),"Inaccessible cellar",plan);
         plan.gallery().ifPresent(g->require(seen.contains(new Cell(g.wall()+g.side(),g.floor()+1,plan.main().maxV()-4)),"Inaccessible timber gallery",plan));
-        int beds=0;
+        int beds=0,windowLights=0;
         for(var b:blocks.entrySet()) {
             var p=b.getKey();var m=b.getValue().material();
             if(m==Material.BED_FOOT) {
@@ -59,8 +59,15 @@ public final class MountainPlanChecks {
             }
             if(m==Material.BED_HEAD)require(material(blocks,new Cell(p.u(),p.y(),p.v()-1))==Material.BED_FOOT,"Orphan bed head",plan);
             if(m==Material.HANGING_LANTERN)require(solid(material(blocks,new Cell(p.u(),p.y()+1,p.v()))),"Unsupported lantern "+p,plan);
+            if(m==Material.LANTERN) {
+                windowLights++;
+                require(material(blocks,new Cell(p.u(),p.y()-1,p.v()))==Material.SIDE_TABLE,"Window lantern needs a supporting table",plan);
+                require(java.util.Arrays.stream(DIRS).anyMatch(d->material(blocks,new Cell(p.u()+d[0],p.y(),p.v()+d[1]))==Material.GLASS),
+                        "Table lantern must be visible directly through a window",plan);
+            }
         }
         require(beds>=1,"House without beds",plan);
+        require(windowLights>=1,"House without a lit window",plan);
         return seen;
     }
     public static void grammarMatrix() {

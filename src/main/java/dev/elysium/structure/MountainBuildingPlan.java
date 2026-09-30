@@ -12,16 +12,25 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
         List<Room> rooms, Entry entry, List<Ground> ground, boolean cellar, int gallerySide) {
     public enum Style { LONGHOUSE, CROSS_GABLE, HILLSIDE_LODGE, COURTYARD, GREAT_HALL, WATCH_LODGE }
     public record Point(int x, int z) {}
-    public record Room(int u, int v, int width, int depth, int floor, int storeys, boolean crossRoof) {
+    /** Each mass has its own upper-floor projection, ridge and construction treatment. */
+    public record Room(int u, int v, int width, int depth, int floor, int storeys, boolean crossRoof,
+            int jetty, int roofShift, int facade) {
         public Room {
             if (width<7 || width>15 || depth<7 || depth>25 || storeys<1 || storeys>3
-                    || Math.abs(u)>24 || Math.abs(v)>24) throw new IllegalArgumentException("Invalid mountain room");
+                    || Math.abs(u)>30 || Math.abs(v)>30 || Math.abs(jetty)>1 || Math.abs(roofShift)>1
+                    || facade<0 || facade>3) throw new IllegalArgumentException("Invalid mountain room");
+        }
+        public Room(int u,int v,int width,int depth,int floor,int storeys,boolean crossRoof) {
+            this(u,v,width,depth,floor,storeys,crossRoof,0,0,0);
         }
         public int maxU() { return u+width-1; }
         public int maxV() { return v+depth-1; }
         public boolean contains(int a,int b,int margin) { return a>=u-margin && a<=maxU()+margin && b>=v-margin && b<=maxV()+margin; }
         public int eaves() { return floor+storeys*5; }
-        public int ridge() { return eaves()+(crossRoof?depth:width)/2+2; }
+        public int ridge() { return eaves()+(crossRoof?depth:width)/2+4; }
+        public int upperU() { return u+(storeys>1?Math.min(0,jetty):0); }
+        public int upperMaxU() { return maxU()+(storeys>1?Math.max(0,jetty):0); }
+        public boolean envelope(int a,int b,int margin) {return a>=upperU()-margin && a<=upperMaxU()+margin && b>=v-margin && b<=maxV()+margin;}
     }
     /** Wall opening; (du,dv) is the outward normal. Its three-block porch ends at the street. */
     public record Entry(int u,int v,int du,int dv,int floor) {
@@ -41,7 +50,7 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     }
     public MountainBuildingPlan {
         rooms=List.copyOf(rooms); ground=List.copyOf(ground);
-        if(rotation<0 || rotation>3 || rooms.isEmpty() || rooms.size()>3 || ground.size()>1200 || ground.isEmpty() || Math.abs(gallerySide)>1)
+        if(rotation<0 || rotation>3 || rooms.isEmpty() || rooms.size()>4 || ground.size()>1600 || ground.isEmpty() || Math.abs(gallerySide)>1)
             throw new IllegalArgumentException("Invalid mountain building plan");
         var main=rooms.getFirst();
         if(entry.floor()!=main.floor() || !main.contains(entry.u(),entry.v(),0))throw new IllegalArgumentException("Detached entry");
@@ -60,21 +69,21 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     public Point point(int u,int v) { return new Point(worldX(u,v),worldZ(u,v)); }
     public boolean occupies(int wx,int wz,int margin) {
         int u=localU(wx,wz),v=localV(wx,wz);
-        return entry.porch(u,v,margin) || rooms.stream().anyMatch(r->r.contains(u,v,margin))
+        return entry.porch(u,v,margin) || rooms.stream().anyMatch(r->r.envelope(u,v,margin))
                 || gallery().map(g->g.contains(u,v,margin)).orElse(false);
     }
     public Optional<Gallery> gallery() {
         return gallerySide==0?Optional.empty():gallery(rooms,style,gallerySide);
     }
     private static int defaultGallerySide(List<Room> rooms,Style style,long seed) {
-        if(style==Style.COURTYARD || ((seed&2)!=0 && style!=Style.LONGHOUSE && style!=Style.GREAT_HALL && style!=Style.WATCH_LODGE))return 0;
+        if(rooms.getFirst().storeys()<2 || style==Style.COURTYARD || ((seed&2)!=0 && style!=Style.LONGHOUSE && style!=Style.GREAT_HALL && style!=Style.WATCH_LODGE))return 0;
         for(int side:new int[]{1,-1})if(gallery(rooms,style,side).isPresent())return side;
         return 0;
     }
     private static Optional<Gallery> gallery(List<Room> rooms,Style style,int side) {
         var r=rooms.getFirst();
         {
-            int wall=side>0?r.maxU():r.u(),start=r.v()+3,end=r.maxV()-2;
+            int wall=side>0?r.upperMaxU():r.upperU(),start=r.v()+3,end=r.maxV()-2;
             boolean clear=true;
             int lo=Math.min(wall+side,wall+side*2),hi=Math.max(wall+side,wall+side*2);
             for(int i=1;i<rooms.size();i++) {
@@ -87,6 +96,7 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     }
     public List<Point> projection() {
         var points=new ArrayList<Point>();for(var g:ground)points.add(point(g.u(),g.v()));
+        for(var r:rooms)for(int u=r.upperU();u<=r.upperMaxU();u++)for(int v=r.v();v<=r.maxV();v++)points.add(point(u,v));
         gallery().ifPresent(g->{for(int v=g.start();v<=g.end();v++)for(int a=1;a<=2;a++)points.add(point(g.wall()+g.side()*a,v));});
         return points;
     }
@@ -103,13 +113,13 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
     public static Optional<MountainBuildingPlan> fit(LandscapePlanner.Terrain terrain,int x,int z,int rotation,
             long seed,Style style,int sea,Point streetTarget) {
         var random=new Random(seed); var rooms=new ArrayList<Room>();
-        int width=9+2*random.nextInt(3),depth=13+2*random.nextInt(4),storeys=2;
+        int width=9+2*random.nextInt(2),depth=13+2*random.nextInt(3),storeys=2;
         switch(style) {
-            case LONGHOUSE -> {width=9+2*random.nextInt(2);depth=19+2*random.nextInt(2);}
-            case HILLSIDE_LODGE -> {width=9;depth=15+2*random.nextInt(3);}
-            case COURTYARD -> {width=11;depth=13+2*random.nextInt(2);}
-            case GREAT_HALL -> {width=15;depth=23;}
-            case WATCH_LODGE -> {width=9;depth=15;storeys=3;}
+            case LONGHOUSE -> {width=11+2*random.nextInt(2);depth=19+2*random.nextInt(3);storeys=1;}
+            case HILLSIDE_LODGE -> {width=9;depth=13+2*random.nextInt(2);}
+            case COURTYARD -> {width=9+2*random.nextInt(2);depth=15+2*random.nextInt(2);}
+            case GREAT_HALL -> {width=13;depth=21;}
+            case WATCH_LODGE -> {width=9;depth=11;storeys=3;}
             default -> {}
         }
         // Only a narrow core spans the slope; a long axis can follow its contour.
@@ -117,23 +127,37 @@ public record MountainBuildingPlan(int x, int z, int rotation, long seed, Style 
         var sample=sample(terrain,x,z,rotation,shell);
         int floor=sample.get((sample.size()*3)/4);
         if(!fits(sample,floor,sea))return Optional.empty();
-        var main=new Room(shell.u(),shell.v(),width,depth,floor,storeys,false);rooms.add(main);
+        int facade=random.nextInt(4);
+        var main=new Room(shell.u(),shell.v(),width,depth,floor,storeys,false,0,random.nextInt(3)-1,facade);rooms.add(main);
         int side=random.nextBoolean()?1:-1;
-        int wings=switch(style){case LONGHOUSE->0;case COURTYARD->2;default->1;};
+        int wings=switch(style){case COURTYARD,GREAT_HALL->2;default->1;};
         for(int i=0;i<wings;i++) {
             int sign=i==0?side:-side,ww=7+2*random.nextInt(2),dd=9+2*random.nextInt(2);
             int wu=sign>0?main.maxU():main.u()-ww+1;
-            int wv=style==Style.COURTYARD?main.maxV()-5:main.v()+2+random.nextInt(Math.max(1,depth-dd-2));
-            var wing=new Room(wu,wv,ww,dd,0,1,true);
+            int wv=main.v()+Math.max(1,depth-dd-2);
+            boolean cross=true;
+            if(style==Style.COURTYARD){dd=13+2*random.nextInt(3);wv=main.maxV()-5;cross=i==0;}
+            if(style==Style.CROSS_GABLE){dd=11+2*random.nextInt(3);wv=main.v()-2-random.nextInt(3);cross=false;}
+            if(style==Style.HILLSIDE_LODGE){ww=7;wu=sign>0?main.maxU():main.u()-ww+1;dd=15;wv=main.maxV()-6;cross=false;}
+            if(style==Style.GREAT_HALL){dd=i==0?13:9;wv=i==0?main.v()-3:main.maxV()-5;}
+            if(style==Style.LONGHOUSE){dd=9;wv=main.maxV()-6;}
+            int ws=(style==Style.LONGHOUSE || (style==Style.CROSS_GABLE && (seed&1)==0)
+                    || (style==Style.GREAT_HALL && i==0) || (style==Style.COURTYARD && i==0))?2:1;
+            if(ws==2){ww=Math.max(9,ww);dd=Math.max(11,dd);wu=sign>0?main.maxU():main.u()-ww+1;}
+            var wing=new Room(wu,wv,ww,dd,0,1,cross);
             var heights=sample(terrain,x,z,rotation,wing);
             int wf=Math.clamp(heights.get(heights.size()*3/4),floor-2,floor+2);
             if(!fits(heights,wf,sea))return Optional.empty();
-            int ws=(style==Style.CROSS_GABLE || style==Style.GREAT_HALL || (style==Style.COURTYARD && i==0))?2:1;
-            rooms.add(new Room(wu,wv,ww,dd,wf,ws,true));
+            rooms.add(new Room(wu,wv,ww,dd,wf,ws,cross,ws>1?sign:0,random.nextInt(3)-1,(facade+i+1)%4));
+        }
+        // Project only into the free side, retaining rock below rather than widening the excavation.
+        if(wings==1 && storeys>1) {
+            main=new Room(main.u(),main.v(),width,depth,floor,storeys,false,-side,main.roofShift(),facade);
+            rooms.set(0,main);
         }
         // An uphill side entry is often a better fit than a door fixed to the gable end.
         var entrances=new ArrayList<Entry>();
-        entrances.add(new Entry(0,main.maxV(),0,1,floor));
+        entrances.add(new Entry((seed&4)==0?0:1,main.maxV(),0,1,floor));
         entrances.add(new Entry(0,main.v(),0,-1,floor));
         entrances.add(new Entry(main.maxU(),main.maxV()-3,1,0,floor));
         entrances.add(new Entry(main.u(),main.maxV()-3,-1,0,floor));

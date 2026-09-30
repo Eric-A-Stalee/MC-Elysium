@@ -37,6 +37,11 @@ public final class AdaptiveTownGameTests {
         for(long seed=0;seed<3;seed++) {
             var plan=ContourTownPlanner.plan(terrain,bridge,63,seed,STYLES,14,24,ignored->{}).orElseThrow();
             helper.assertTrue(plan.buildings().size()>=16,"The adaptive layout must remain a substantial settlement");
+            helper.assertTrue(plan.landscape().trees().size()>=4,"Town needs substantial reserved trees between its districts");
+            for(var tree:plan.landscape().trees()) {
+                helper.assertTrue(plan.buildings().stream().noneMatch(b->b.occupies(tree.x(),tree.z(),3)),"House footprints must respect reserved tree roots");
+                helper.assertTrue(plan.streets().stream().noneMatch(c->tree.root(c.x(),c.z(),1)),"Streets must curve around reserved trunks");
+            }
             helper.assertTrue(plan.streets().stream().filter(c->c.kind()==ValleyTownPlanner.COURT).count()==121,
                     "Only the public square receives a level pad; no house gets a square yard");
             var walk=new HashMap<MountainBuildingPlan.Point,Integer>();
@@ -65,7 +70,7 @@ public final class AdaptiveTownGameTests {
             helper.assertTrue(plan.buildings().stream().mapToInt(b->b.main().floor()).max().orElseThrow()-63>=20,
                     "The town must climb beyond the flat riverbank");
             var repeat=ContourTownPlanner.plan(terrain,bridge,63,seed,STYLES,14,24,ignored->{}).orElseThrow();
-            helper.assertTrue(plan.buildings().equals(repeat.buildings()) && plan.streets().equals(repeat.streets()),
+            helper.assertTrue(plan.buildings().equals(repeat.buildings()) && plan.streets().equals(repeat.streets()) && plan.landscape().equals(repeat.landscape()),
                     "Site selection and street routing must be deterministic");
         }
         helper.succeed();
@@ -123,6 +128,11 @@ public final class AdaptiveTownGameTests {
             for(var b:blueprint.entrySet())if(b.getValue().material()==MountainArchitecture.Material.BED_FOOT || b.getValue().material()==MountainArchitecture.Material.BED_HEAD) {
                 var c=b.getKey();var p=new BlockPos(plan.worldX(c.u(),c.v()),c.y(),plan.worldZ(c.u(),c.v()));
                 helper.assertTrue(level.getBlockState(p).is(Blocks.YELLOW_BED),"Both rotated bed halves need to survive placement: "+p);
+            }
+            for(var b:blueprint.entrySet())if(b.getValue().material()==MountainArchitecture.Material.LANTERN) {
+                var c=b.getKey();var p=new BlockPos(plan.worldX(c.u(),c.v()),c.y(),plan.worldZ(c.u(),c.v()));
+                helper.assertTrue(level.getBlockState(p).is(Blocks.LANTERN) && level.getBlockState(p.below()).is(Blocks.SPRUCE_SLAB),
+                        "Window lanterns and their table supports must survive real block placement");
             }
             helper.assertTrue(saved.createTag(context).getInt("Residents")==3,"Both residents must spawn at usable saved locations");
         }

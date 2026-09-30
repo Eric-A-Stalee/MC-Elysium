@@ -43,7 +43,7 @@ public final class ContourTownStructure extends Structure {
             int nearby=0;
             for(int u:new int[]{-88,-44,0,44,88})for(int v:new int[]{-88,-44,0,44,88})
                 nearby=Math.max(nearby,terrain.height(x+u,z+v));
-            if(nearby<sea+36)continue;
+            if(nearby<sea+48)continue;
             survey.accept("nearby_peaks");
             for(boolean axis:new boolean[]{true,false}) {
                 var bridge=BridgePlanner.find(terrain,x,z,axis,sea);if(bridge.isEmpty())continue;
@@ -62,6 +62,7 @@ public final class ContourTownStructure extends Structure {
                             new BlockPos(square.x()-5,square.ground()-1,square.z()-5),MountainTownStructure.fromSouth(square.face()),5,0));
                     for(var b:plan.buildings())builder.addPiece(new MountainBuildingPiece(b));
                     builder.addPiece(new ElysianBridgePiece(plan.bridge(),true));
+                    if(!plan.landscape().trees().isEmpty() || !plan.landscape().details().isEmpty())builder.addPiece(new TownLandscapePiece(plan.landscape()));
                 }));
             }
         }

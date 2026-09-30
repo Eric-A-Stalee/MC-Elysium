@@ -14,6 +14,7 @@ import dev.elysium.structure.ValleyTownStructure;
 import dev.elysium.structure.TownTerrainPiece;
 import dev.elysium.structure.ContourTownStructure;
 import dev.elysium.structure.MountainBuildingPiece;
+import dev.elysium.structure.TownLandscapePiece;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
@@ -28,6 +29,8 @@ public final class ModStructures {
             STRUCTURES.register("contour_town", () -> () -> ContourTownStructure.CODEC);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> MOUNTAIN_BUILDING_PIECE =
             PIECES.register("mountain_building", () -> (StructurePieceType.ContextlessType) MountainBuildingPiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> TOWN_LANDSCAPE_PIECE =
+            PIECES.register("town_landscape", () -> (StructurePieceType.ContextlessType) TownLandscapePiece::new);
     public static final DeferredHolder<StructureType<?>, StructureType<ValleyTownStructure>> VALLEY_TOWN =
             STRUCTURES.register("valley_town", () -> () -> ValleyTownStructure.CODEC);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> TOWN_TERRAIN_PIECE =
