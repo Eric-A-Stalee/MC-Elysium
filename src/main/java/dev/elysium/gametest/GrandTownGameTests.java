@@ -155,6 +155,11 @@ public final class GrandTownGameTests {
                     report.put("streets",((TownTerrainPiece)pieces.getFirst()).columns());report.put("crossing",crossing);
                     var heights=new java.util.ArrayList<int[]>();var sampler=new dev.elysium.worldgen.TerrainSampler(context);
                     int cx=crossing.x(middle,0),cz=crossing.z(middle,0);
+                    var faces=ContourTownPlanner.cliffBackdrops(sampler,stub.get().position().getX(),stub.get().position().getZ(),63);
+                    long sheltered=pieces.stream().filter(p->p instanceof MountainBuildingPiece).map(p->((MountainBuildingPiece)p).plan())
+                            .filter(b->faces.stream().anyMatch(f->Math.hypot(b.x()-f.x(),b.z()-f.z())<=42 && f.crest()-b.main().floor()>=16)).count();
+                    helper.assertTrue(sheltered>=3,"A natural mountain town needs several buildings below close, steep backdrops");
+                    report.put("cliffBackdrops",faces);
                     for(int dx=-112;dx<=112;dx+=4)for(int dz=-112;dz<=112;dz+=4)heights.add(new int[]{cx+dx,sampler.height(cx+dx,cz+dz)-1,cz+dz});
                     report.put("terrain",heights);
                     report.put("landscape",pieces.stream().filter(p->p instanceof TownLandscapePiece).map(p->((TownLandscapePiece)p).plan()).findFirst().orElseThrow());

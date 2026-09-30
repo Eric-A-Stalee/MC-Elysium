@@ -77,6 +77,11 @@ public final class AdaptiveTownGameTests {
     }
     @GameTest(template="portal_test_empty",timeoutTicks=100)
     public static void adaptiveBuildingsRejectCliffsAndRemoteMountainBackdrops(GameTestHelper helper) {
+        helper.assertTrue(ContourTownPlanner.cliffBackdrops(MountainPlanChecks.slope(6),0,0,63).isEmpty(),
+                "A high, smooth hillside is not a close cliff backdrop");
+        var escarpment=new LandscapePlanner.Terrain(){public int height(int x,int z){return 84+(x>=20?24:0);}
+            public boolean water(int x,int z){return false;}};
+        helper.assertTrue(!ContourTownPlanner.cliffBackdrops(escarpment,0,0,63).isEmpty(),"A nearby exposed escarpment must be recognized");
         for(var style:STYLES)for(int turn=0;turn<4;turn++)
             helper.assertTrue(MountainBuildingPlan.fit(MountainPlanChecks.slope(30),0,0,turn,0,style,63,
                     new MountainBuildingPlan.Point(0,30)).isEmpty(),"An unbuildable cliff must be rejected, not graded away");
@@ -133,6 +138,11 @@ public final class AdaptiveTownGameTests {
                 var c=b.getKey();var p=new BlockPos(plan.worldX(c.u(),c.v()),c.y(),plan.worldZ(c.u(),c.v()));
                 helper.assertTrue(level.getBlockState(p).is(Blocks.LANTERN) && level.getBlockState(p.below()).is(Blocks.SPRUCE_SLAB),
                         "Window lanterns and their table supports must survive real block placement");
+            }
+            for(var b:blueprint.entrySet())if(b.getValue().material()==MountainArchitecture.Material.WINDOW_LIGHT) {
+                var c=b.getKey();var p=new BlockPos(plan.worldX(c.u(),c.v()),c.y(),plan.worldZ(c.u(),c.v()));
+                helper.assertTrue(level.getBlockState(p).is(Blocks.GLOWSTONE) && level.getBlockState(p.above()).is(Blocks.GLASS)
+                        && level.getBlockState(p.below()).is(Blocks.SMOOTH_QUARTZ),"Luminous window centres must retain clear upper glass and quartz sills");
             }
             helper.assertTrue(saved.createTag(context).getInt("Residents")==3,"Both residents must spawn at usable saved locations");
         }

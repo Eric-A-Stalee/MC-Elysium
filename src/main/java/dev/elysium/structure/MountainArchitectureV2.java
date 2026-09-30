@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 import dev.elysium.structure.MountainBuildingPlan.Room;
 
-/** Deterministic Nordic building grammar. Pure geometry can be inspected without starting Minecraft. */
-public final class MountainArchitecture {
+/** Frozen alpha-8 geometry for partially generated grammar-2 saves. */
+public final class MountainArchitectureV2 {
     public enum Material {
         AIR, STONE, RUBBLE, PLANK, CLADDING, PALE, LOG, STRIPPED, LOG_U, LOG_V, BEAM_U, BEAM_V,
         ROOF, ROOF_STAIR, ROOF_SLAB, WOOD_STAIR, WOOD_SLAB, FENCE, GLASS, DOOR_LOW, DOOR_HIGH,
         BED_FOOT, BED_HEAD, LANTERN, HANGING_LANTERN, BARREL, BOOKSHELF, FURNACE, CRAFTING, TABLE_TOP,
-        LADDER, TRAPDOOR, CHIMNEY, CAMPFIRE, SIDE_TABLE, WINDOW_LIGHT, QUARTZ
+        LADDER, TRAPDOOR, CHIMNEY, CAMPFIRE, SIDE_TABLE
     }
     public record Cell(int u,int y,int v) {}
     /** Facing is local: south=0, west=1, north=2, east=3. */
@@ -20,9 +20,9 @@ public final class MountainArchitecture {
     private final MountainBuildingPlan plan;
     private final Map<Cell,Voxel> blocks=new LinkedHashMap<>();
     private final Set<Cell> passages=new HashSet<>();
-    private MountainArchitecture(MountainBuildingPlan plan) { this.plan=plan; }
+    private MountainArchitectureV2(MountainBuildingPlan plan) { this.plan=plan; }
     public static Map<Cell,Voxel> build(MountainBuildingPlan plan) {
-        var b=new MountainArchitecture(plan);b.build();return b.blocks;
+        var b=new MountainArchitectureV2(plan);b.build();return b.blocks;
     }
     private void put(int u,int y,int v,Material m) { put(u,y,v,m,0); }
     private void put(int u,int y,int v,Material m,int facing) { blocks.put(new Cell(u,y,v),new Voxel(m,facing)); }
@@ -53,7 +53,6 @@ public final class MountainArchitecture {
         plan.gallery().ifPresent(this::gallery);
         furnishBeds();
         windowTables();
-        windowCores();
     }
     private Material foundation(int u,int y,int v) { return Math.floorMod(u*13+v*7+y,11)<3?Material.RUBBLE:Material.STONE; }
     private void shell(Room r,boolean cellar) {
@@ -84,10 +83,9 @@ public final class MountainArchitecture {
                     if(r.facade()==2 && s>0 && along<span/2)m=Material.PALE;
                     if(post)m=corner?Material.LOG:Material.STRIPPED;
                     if(!post && !corner && along>0 && along<span-1 && (band==2 || band==3)) {
-                        int bay=along/rhythm,phase=Math.floorMod(along+s, rhythm);
-                        if((bay+r.facade()+s)%4!=3 && (phase==1 || phase==2))m=Material.GLASS;
+                        int bay=along/rhythm;
+                        if((bay+r.facade()+s)%4!=3)m=Material.GLASS;
                     }
-                    if(s==0 && band<=Math.min(3,plan.original(u,v)-r.floor()) && m==Material.CLADDING)m=foundation(u,floor+band,v);
                     put(u,floor+band,v,m);
                 }
                 put(u,floor,v,longWall?Material.LOG_V:Material.LOG_U);
@@ -100,7 +98,6 @@ public final class MountainArchitecture {
         }
     }
     private void roof(Room r) {
-        if(r.shed()!=0){shedRoof(r);return;}
         int lo=r.crossRoof()?r.v()-1:r.upperU()-1,hi=r.crossRoof()?r.maxV()+1:r.upperMaxU()+1;
         int start=r.crossRoof()?r.upperU()-1:r.v()-1,end=r.crossRoof()?r.upperMaxU()+1:r.maxV()+1;
         int middle=(lo+hi)/2+r.roofShift(),peak=Math.max(middle-lo,hi-middle);
@@ -115,7 +112,7 @@ public final class MountainArchitecture {
                 boolean verge=along==start || along==end;
                 if(r.roofShift()!=0 && a>lo && a<hi)put(u,height-1,v,Material.ROOF);
                 put(u,height,v,a==middle?Material.ROOF:(verge?Material.WOOD_STAIR:Material.ROOF_STAIR),facing);
-                if(a==middle)put(u,height+1,v,(plan.seed()&3)==0?(r.crossRoof()?Material.LOG_U:Material.LOG_V):Material.ROOF_SLAB);
+                if(a==middle)put(u,height+1,v,r.crossRoof()?Material.LOG_U:Material.LOG_V);
                 if(along==start+1 || along==end-1 || a==lo+1 || a==hi-1)for(int y=r.eaves();y<height;y++) {
                     if(plan.rooms().stream().anyMatch(other->other!=r && other.contains(u,v,0) && other.eaves()>r.eaves()))continue;
                     put(u,y,v,(a==middle || (y-r.eaves())%4==0)?Material.STRIPPED:Material.CLADDING);
@@ -130,20 +127,6 @@ public final class MountainArchitecture {
             put(u,ridge+3,v,Material.WOOD_SLAB);
         }
         if(r==plan.main() && (plan.seed()&1)==0)dormer(r);
-    }
-    /** A low attached workshop has a roof rising toward the older, taller core. */
-    private void shedRoof(Room r) {
-        int lo=r.u()-1,hi=r.maxU()+1;
-        for(int u=lo;u<=hi;u++) {
-            int column=u;
-            int rise=(r.shed()>0?hi-u:u-lo)/2,height=r.eaves()+rise;
-            for(int v=r.v()-1;v<=r.maxV()+1;v++) {
-                int row=v;
-                if(plan.rooms().stream().anyMatch(other->other!=r && other.envelope(column,row,0) && height<=other.eaves()))continue;
-                put(u,height,v,Material.ROOF_STAIR,r.shed()>0?1:3);
-                if(v==r.v() || v==r.maxV() || u==r.u() || u==r.maxU())for(int y=r.eaves();y<height;y++)put(u,y,v,Material.CLADDING);
-            }
-        }
     }
     private void dormer(Room r) {
         int u=r.upperMaxU()-1,v=r.v()+5,y=r.eaves()+1;
@@ -223,35 +206,9 @@ public final class MountainArchitecture {
             roomIndex++;
         }
     }
-    /** Small luminous centres keep surrounding panes transparent and leave table lamps visible. */
-    private void windowCores() {
-        int index=0;
-        for(var r:plan.rooms()) {
-            for(int s=0;s<r.storeys();s++) {
-                if(index>0 && Math.floorMod(plan.seed()+index+s,3)!=0)continue;
-                int y=r.floor()+s*5+2,left=s==0?r.u():r.upperU(),right=s==0?r.maxU():r.upperMaxU();
-                var candidates=new java.util.ArrayList<Cell>();
-                for(int u=left+1;u<right;u++){candidates.add(new Cell(u,y,r.v()));candidates.add(new Cell(u,y,r.maxV()));}
-                for(int v=r.v()+1;v<r.maxV();v++){candidates.add(new Cell(left,y,v));candidates.add(new Cell(right,y,v));}
-                java.util.Collections.rotate(candidates,(int)Math.floorMod(plan.seed()+s*31+index*17,candidates.size()));
-                for(var c:candidates) {
-                    if(material(c)!=Material.GLASS || material(new Cell(c.u(),y+1,c.v()))!=Material.GLASS)continue;
-                    int du=c.u()==left?-1:c.u()==right?1:0,dv=du!=0?0:c.v()==r.v()?-1:1;
-                    if(material(new Cell(c.u()-du,y,c.v()-dv))==Material.LANTERN || !isAir(new Cell(c.u()+du,y,c.v()+dv)))continue;
-                    if(plan.rooms().stream().anyMatch(other->other!=r && other.envelope(c.u()+du,c.v()+dv,0)))continue;
-                    put(c.u(),y,c.v(),Material.WINDOW_LIGHT);
-                    put(c.u(),y-1,c.v(),Material.QUARTZ);
-                    if((plan.seed()+s+index)%2==0)put(c.u(),y+2,c.v(),Material.QUARTZ);
-                    break;
-                }
-            }
-            index++;
-        }
-    }
     private int stairLeft(Room r) {
         if(r!=plan.main())return r.u()>=plan.main().maxU()?r.maxU()-2:r.u()+1;
-        boolean leftWing=plan.rooms().stream().anyMatch(w->w!=r && w.maxU()==r.u()
-                && Math.min(w.maxV()-2,r.maxV()-3)<=r.v()+7);
+        boolean leftWing=plan.rooms().stream().anyMatch(w->w!=r && w.maxU()==r.u() && w.v()<r.v()+2);
         return leftWing?r.maxU()-2:r.u()+1;
     }
     private void stair(Room r,int floor) {
@@ -286,13 +243,13 @@ public final class MountainArchitecture {
     }
     private void entrance() {
         var e=plan.entry();int face=e.du()>0?3:e.du()<0?1:e.dv()>0?0:2;
-        for(int a=1;a<=e.length();a++)for(int b=-2;b<=2;b++) {
+        for(int a=1;a<=3;a++)for(int b=-2;b<=2;b++) {
             int u=e.u()+e.du()*a+e.dv()*b,v=e.v()+e.dv()*a-e.du()*b;
             for(int y=plan.original(u,v)-1;y<e.floor();y++)put(u,y,v,foundation(u,y,v));
             put(u,e.floor(),v,Material.PLANK);
             for(int y=e.floor()+1;y<=e.floor()+3;y++)put(u,y,v,Material.AIR);
             put(u,e.floor()+4,v,Material.ROOF_SLAB);
-            if(a==e.length() && Math.abs(b)==2)for(int y=e.floor()+1;y<=e.floor()+3;y++)put(u,y,v,Material.LOG);
+            if(a==3 && Math.abs(b)==2)for(int y=e.floor()+1;y<=e.floor()+3;y++)put(u,y,v,Material.LOG);
         }
         put(e.u(),e.floor()+1,e.v(),Material.DOOR_LOW,face);
         put(e.u(),e.floor()+2,e.v(),Material.DOOR_HIGH,face);
@@ -303,7 +260,7 @@ public final class MountainArchitecture {
             if(a==0 && b==0 && y<=e.floor()+2)continue;
             put(e.u()+e.du()*a+e.dv()*b,y,e.v()+e.dv()*a-e.du()*b,Material.AIR);
         }
-        put(e.u()+e.du()*e.length(),e.floor()+3,e.v()+e.dv()*e.length(),Material.HANGING_LANTERN);
+        put(e.u()+e.du()*2,e.floor()+3,e.v()+e.dv()*2,Material.HANGING_LANTERN);
     }
     private void chimney(Room r) {
         int u=stairLeft(r)==r.u()+1?r.maxU()-2:r.u()+2,v=r.v()+2;

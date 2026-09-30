@@ -21,24 +21,29 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 /** Saved landscape decisions generate identically in either chunk order without surveying neighbors. */
 public final class TownLandscapePiece extends StructurePiece {
     private final TownLandscapePlan plan;
+    private final int version;
     public TownLandscapePiece(TownLandscapePlan plan) {
-        super(ModStructures.TOWN_LANDSCAPE_PIECE.get(),0,bounds(plan));this.plan=plan;setOrientation(null);
+        this(plan,plan.trees().isEmpty()?2:plan.trees().getFirst().form());
     }
-    public TownLandscapePiece(CompoundTag tag) {this(read(tag));}
+    private TownLandscapePiece(TownLandscapePlan plan,int version) {
+        super(ModStructures.TOWN_LANDSCAPE_PIECE.get(),0,bounds(plan));this.plan=plan;this.version=version;setOrientation(null);
+    }
+    public TownLandscapePiece(CompoundTag tag) {this(read(tag),tag.getInt("Version"));}
     public TownLandscapePlan plan() {return plan;}
     private static TownLandscapePlan read(CompoundTag tag) {
-        if(tag.getInt("Version")!=1)throw new IllegalArgumentException("Unknown town landscape version");
+        int version=tag.getInt("Version");
+        if(version<1 || version>2)throw new IllegalArgumentException("Unknown town landscape version");
         int[] ts=tag.getIntArray("Trees"),ds=tag.getIntArray("Details"),os=tag.getIntArray("Obstacles");long[] seeds=tag.getLongArray("Seeds");
         if(ts.length%5!=0 || ts.length>60 || seeds.length!=ts.length/5 || ds.length%4!=0 || ds.length>80000 || os.length%6!=0 || os.length>1200)
             throw new IllegalArgumentException("Invalid saved town landscape");
         var trees=new ArrayList<TownLandscapePlan.Tree>();var details=new ArrayList<TownLandscapePlan.Detail>();var obstacles=new ArrayList<TownLandscapePlan.Obstacle>();
-        for(int i=0;i<ts.length;i+=5)trees.add(new TownLandscapePlan.Tree(ts[i],ts[i+1],ts[i+2],ts[i+3],ts[i+4],seeds[i/5]));
+        for(int i=0;i<ts.length;i+=5)trees.add(new TownLandscapePlan.Tree(ts[i],ts[i+1],ts[i+2],ts[i+3],ts[i+4],seeds[i/5],version));
         for(int i=0;i<ds.length;i+=4)details.add(new TownLandscapePlan.Detail(ds[i],ds[i+1],ds[i+2],TownLandscapePlan.Kind.values()[ds[i+3]]));
         for(int i=0;i<os.length;i+=6)obstacles.add(new TownLandscapePlan.Obstacle(os[i],os[i+1],os[i+2],os[i+3],os[i+4],os[i+5]));
         return new TownLandscapePlan(trees,details,obstacles);
     }
     @Override protected void addAdditionalSaveData(StructurePieceSerializationContext context,CompoundTag tag) {
-        tag.putInt("Version",1);
+        tag.putInt("Version",version);
         int[] trees=new int[plan.trees().size()*5],details=new int[plan.details().size()*4],obstacles=new int[plan.obstacles().size()*6];
         long[] seeds=new long[plan.trees().size()];int i=0,j=0;
         for(var t:plan.trees()){trees[i++]=t.x();trees[i++]=t.y();trees[i++]=t.z();trees[i++]=t.height();trees[i++]=t.radius();seeds[j++]=t.seed();}

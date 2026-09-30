@@ -15,10 +15,12 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
     public record Obstacle(int minX,int minY,int minZ,int maxX,int maxY,int maxZ) {
         public boolean contains(Cell p) {return p.x()>=minX && p.x()<=maxX && p.z()>=minZ && p.z()<=maxZ && p.y()>=minY && p.y()<=maxY;}
     }
-    public record Tree(int x,int y,int z,int height,int radius,long seed) {
-        public Tree {if(height<18 || height>32 || radius<4 || radius>7)throw new IllegalArgumentException("Invalid settlement birch");}
+    public record Tree(int x,int y,int z,int height,int radius,long seed,int form) {
+        public Tree {if(height<14 || height>32 || radius<4 || radius>7 || form<1 || form>2)throw new IllegalArgumentException("Invalid settlement birch");}
+        public Tree(int x,int y,int z,int height,int radius,long seed){this(x,y,z,height,radius,seed,2);}
         public boolean root(int px,int pz,int margin) {return Math.abs(px-x)<=margin && Math.abs(pz-z)<=margin;}
         public Map<Cell,Kind> geometry() {
+            if(form==2)return branchingGeometry();
             var out=new LinkedHashMap<Cell,Kind>();var random=new Random(seed);
             // Overlapping full crowns and a tall clear trunk leave usable space below.
             crown(out,x,y+height-4,z,radius,5,radius);
@@ -34,6 +36,34 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             for(int h=0;h<height-2;h++)out.put(new Cell(x,y+h,z),Kind.BIRCH_Y);
             return out;
         }
+        private Map<Cell,Kind> branchingGeometry() {
+            var out=new LinkedHashMap<Cell,Kind>();var random=new Random(seed);
+            int fork=4+random.nextInt(3),arms=3+random.nextInt(2);
+            double turn=random.nextDouble()*Math.PI*2;
+            // Unequal upright leaders carry separate crowns. Their first forks stay visible
+            // below foliage instead of ending a long pole in a single flat canopy.
+            for(int i=0;i<arms;i++) {
+                double angle=turn+i*Math.PI*2/arms+random.nextDouble()*.45;
+                int dx=(int)Math.round(Math.cos(angle)*(radius-1)),dz=(int)Math.round(Math.sin(angle)*(radius-1));
+                int tip=y+height-4-random.nextInt(4),rx=radius-2+random.nextInt(2),rz=radius-2+random.nextInt(2);
+                crown(out,x+dx,tip,z+dz,rx,3+random.nextInt(2),rz);
+                branch(out,x,y+fork+i%2,z,x+dx,tip-1,z+dz);
+            }
+            for(int h=0;h<=fork+1;h++)out.put(new Cell(x,y+h,z),Kind.BIRCH_Y);
+            int side=(seed&1)==0?1:-1;
+            for(int h=0;h<3;h++)out.put(new Cell(x+side,y+h,z),Kind.BIRCH_Y);
+            return out;
+        }
+        private static void branch(Map<Cell,Kind> out,int x,int y,int z,int tx,int ty,int tz) {
+            int sx=x,sy=y,sz=z,n=Math.max(Math.max(Math.abs(tx-x),Math.abs(tz-z)),ty-y);
+            out.put(new Cell(x,y,z),Kind.BIRCH_Y);
+            for(int i=1;i<=n;i++) {
+                int nx=sx+(tx-sx)*i/n,ny=sy+(ty-sy)*i/n,nz=sz+(tz-sz)*i/n;
+                while(y<ny)out.put(new Cell(x,++y,z),Kind.BIRCH_Y);
+                while(x!=nx){x+=Integer.signum(nx-x);out.put(new Cell(x,y,z),Kind.BIRCH_X);}
+                while(z!=nz){z+=Integer.signum(nz-z);out.put(new Cell(x,y,z),Kind.BIRCH_Z);}
+            }
+        }
         private static void crown(Map<Cell,Kind> out,int x,int y,int z,int rx,int ry,int rz) {
             for(int dx=-rx;dx<=rx;dx++)for(int dy=-ry;dy<=ry;dy++)for(int dz=-rz;dz<=rz;dz++) {
                 double d=dx*dx/(double)(rx*rx)+dy*dy/(double)(ry*ry)+dz*dz/(double)(rz*rz);
@@ -41,7 +71,10 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             }
         }
     }
-    public TownLandscapePlan {trees=List.copyOf(trees);details=List.copyOf(details);obstacles=List.copyOf(obstacles);}
+    public TownLandscapePlan {
+        trees=List.copyOf(trees);details=List.copyOf(details);obstacles=List.copyOf(obstacles);
+        if(trees.stream().map(Tree::form).distinct().count()>1)throw new IllegalArgumentException("Mixed tree grammars in one piece");
+    }
     public static List<Tree> reserve(LandscapePlanner.Terrain terrain,int cx,int cz,int sea,long seed) {
         var trees=new ArrayList<Tree>();var random=new Random(seed^0x5EEDB1A7L);double angle=random.nextDouble()*6.28;
         for(int i=0;i<120 && trees.size()<8;i++) {
@@ -51,7 +84,7 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             boolean clear=true;
             for(var tree:trees)if(Math.hypot(x-tree.x(),z-tree.z())<24)clear=false;
             for(int dx:new int[]{-2,0,2})for(int dz:new int[]{-2,0,2})if(Math.abs(terrain.height(x+dx,z+dz)-y)>3)clear=false;
-            if(clear)trees.add(new Tree(x,y,z,24+random.nextInt(5),5+random.nextInt(2),random.nextLong()));
+            if(clear)trees.add(new Tree(x,y,z,16+random.nextInt(5),5+random.nextInt(2),random.nextLong()));
         }
         return List.copyOf(trees);
     }
@@ -64,7 +97,8 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
                     Math.max(a.x(),c.x()),r.ridge()+2,Math.max(a.z(),c.z())));
         }
         obstacles.add(new Obstacle(square.x()-6,square.ground(),square.z()-6,square.x()+6,square.ground()+8,square.z()+6));
-        var trees=reserved.stream().filter(t->!square.contains(t.x(),t.z()) && buildings.stream().noneMatch(b->b.occupies(t.x(),t.z(),3))).toList();
+        var trees=reserved.stream().filter(t->!square.contains(t.x(),t.z()) && buildings.stream().noneMatch(b->b.occupies(t.x(),t.z(),3)))
+                .map(t->clearBranches(t,obstacles)).flatMap(java.util.Optional::stream).toList();
         var roads=new java.util.HashSet<Point>();for(var c:streets)roads.add(new Point(c.x(),c.z()));
         var details=new LinkedHashMap<Cell,Detail>();
         for(var c:streets)if(c.kind()==ValleyTownPlanner.ROAD)for(int[] d:new int[][]{{1,0},{-1,0},{0,1},{0,-1}}) {
@@ -99,6 +133,15 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
     }
     private static boolean free(List<MountainBuildingPlan> buildings,List<Tree> trees,TerracePlanner.Lot square,int x,int z) {
         return square.distance(x,z)>2 && buildings.stream().noneMatch(b->b.occupies(x,z,1)) && trees.stream().noneMatch(t->t.root(x,z,1));
+    }
+    private static java.util.Optional<Tree> clearBranches(Tree tree,List<Obstacle> obstacles) {
+        for(int n=0;n<8;n++) {
+            var t=new Tree(tree.x(),tree.y(),tree.z(),tree.height(),tree.radius(),tree.seed()+n*0x5DEECE66DL,tree.form());
+            boolean clear=t.geometry().entrySet().stream().filter(e->e.getValue()!=Kind.LEAVES)
+                    .noneMatch(e->obstacles.stream().anyMatch(o->o.contains(e.getKey())));
+            if(clear)return java.util.Optional.of(t);
+        }
+        return java.util.Optional.empty();
     }
     private static void detail(Map<Cell,Detail> out,int x,int y,int z,Kind kind) {out.put(new Cell(x,y,z),new Detail(x,y,z,kind));}
 }

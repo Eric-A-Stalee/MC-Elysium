@@ -26,10 +26,33 @@ public final class ContourTownPlanner {
     private record Site(Point at,long seed,int height,int relief) {}
     private record Access(Point street,Point approach,int floor) {}
     private record Node(Point at,int cost,int score) {}
+    public record Backdrop(int x,int z,int foot,int crest) {}
     private ContourTownPlanner() {}
+
+    /** Close steep faces matter independently of a distant or smoothly rounded summit. */
+    public static List<Backdrop> cliffBackdrops(LandscapePlanner.Terrain terrain,int cx,int cz,int sea) {
+        var faces=new ArrayList<Backdrop>();
+        for(int dx=-84;dx<=84;dx+=12)for(int dz=-84;dz<=84;dz+=12) {
+            int x=cx+dx,z=cz+dz,foot=terrain.height(x,z)-1;
+            if(foot<sea+6 || foot>sea+65)continue;
+            for(int[] d:new int[][]{{8,0},{-8,0},{0,8},{0,-8}}) {
+                int crest=terrain.height(x+d[0],z+d[1])-1;
+                if(crest-foot>=9 && crest>=sea+40)faces.add(new Backdrop(x,z,foot,crest));
+            }
+        }
+        return List.copyOf(faces);
+    }
+    public static boolean enclosed(Plan plan,List<Backdrop> faces) {
+        return plan.buildings().stream().filter(b->faces.stream().anyMatch(f->Math.hypot(b.x()-f.x(),b.z()-f.z())<=42
+                && f.crest()-b.main().floor()>=16)).count()>=3;
+    }
 
     public static Optional<Plan> plan(LandscapePlanner.Terrain terrain,BridgePlanner.Span bridge,int sea,long seed,
             List<Style> styles,int minimum,int maximum,Consumer<String> survey) {
+        return plan(terrain,bridge,sea,seed,styles,minimum,maximum,survey,List.of());
+    }
+    public static Optional<Plan> plan(LandscapePlanner.Terrain terrain,BridgePlanner.Span bridge,int sea,long seed,
+            List<Style> styles,int minimum,int maximum,Consumer<String> survey,List<Backdrop> faces) {
         int cx=bridge.x(bridge.length()/2,0),cz=bridge.z(bridge.length()/2,0);
         var roads=new LinkedHashMap<Point,Column>();var buildings=new ArrayList<MountainBuildingPlan>();
         var trees=TownLandscapePlan.reserve(terrain,cx,cz,sea,seed);
@@ -64,7 +87,7 @@ public final class ContourTownPlanner {
         }
         var halls=new ArrayList<>(sites);
         halls.removeIf(s->s.height()<sea+11 || s.relief()>20);
-        halls.sort(Comparator.comparingInt((Site s)->s.height()+backing(terrain,s)*4-Math.abs(s.relief()-9)).reversed());
+        halls.sort(Comparator.comparingInt((Site s)->s.height()+backing(terrain,s)*4-Math.abs(s.relief()-9)+shelter(s,faces)).reversed());
         for(var s:halls)if(add(terrain,roads,buildings,trees,square,s,Style.GREAT_HALL,cx,cz,sea))break;
         if(buildings.isEmpty()){survey.accept("no_hillside_hall");return Optional.empty();}
         var lookouts=new ArrayList<>(sites);
@@ -75,7 +98,7 @@ public final class ContourTownPlanner {
         while(!remaining.isEmpty() && houses<maximum) {
             // Prefer the growing street edge, retaining a bias toward inhabited slopes and outcrops.
             int best=0,bestScore=Integer.MAX_VALUE;
-            for(int i=0;i<remaining.size();i++) {int score=siteScore(remaining.get(i),roads,sea);if(score<bestScore){best=i;bestScore=score;}}
+            for(int i=0;i<remaining.size();i++) {int score=siteScore(remaining.get(i),roads,buildings,sea)-shelter(remaining.get(i),faces);if(score<bestScore){best=i;bestScore=score;}}
             var site=remaining.remove(best);
             var family=styles.get(Math.floorMod((int)site.seed(),styles.size()));
             if(add(terrain,roads,buildings,trees,square,site,family,cx,cz,sea))houses++;
@@ -94,9 +117,18 @@ public final class ContourTownPlanner {
         for(var c:roads.values())if(c.kind()!=ValleyTownPlanner.CROSSING)saved.add(c);
         return Optional.of(new Plan(buildings,saved,square,bridge,TownLandscapePlan.finish(terrain,trees,buildings,saved,square,sea)));
     }
-    private static int siteScore(Site s,Map<Point,Column> roads,int sea) {
+    private static int siteScore(Site s,Map<Point,Column> roads,List<MountainBuildingPlan> buildings,int sea) {
         int distance=roads.keySet().stream().mapToInt(p->distance(p,s.at())).min().orElseThrow();
-        return distance*3+Math.max(0,s.relief()-12)*3-(s.height()>sea+8?14:0);
+        int nearest=buildings.stream().mapToInt(b->distance(new Point(b.x(),b.z()),s.at())).min().orElse(60);
+        long neighbors=buildings.stream().filter(b->distance(new Point(b.x(),b.z()),s.at())<46).count();
+        // Grow small groups around their shared lanes, then leave a breathing space
+        // before the next group. A close neighbor is desirable while a crowded knot is not.
+        int group=neighbors<4?Math.abs(nearest-25)*2:35;
+        return distance*3+group+Math.max(0,s.relief()-12)*3-(s.height()>sea+8?14:0);
+    }
+    private static int shelter(Site site,List<Backdrop> faces) {
+        return faces.stream().filter(f->f.crest()-site.height()>=16 && Math.hypot(site.at().x()-f.x(),site.at().z()-f.z())<=42)
+                .mapToInt(f->42-(int)Math.hypot(site.at().x()-f.x(),site.at().z()-f.z())).max().orElse(0);
     }
     private static int backing(LandscapePlanner.Terrain terrain,Site site) {
         int hi=site.height();
@@ -111,7 +143,7 @@ public final class ContourTownPlanner {
     }
     private static boolean add(LandscapePlanner.Terrain terrain,Map<Point,Column> roads,List<MountainBuildingPlan> buildings,List<TownLandscapePlan.Tree> trees,
             TerracePlanner.Lot square,Site site,Style style,int cx,int cz,int sea) {
-        if(buildings.stream().anyMatch(b->b.occupies(site.at().x(),site.at().z(),6)))return false;
+        if(buildings.stream().anyMatch(b->b.occupies(site.at().x(),site.at().z(),3)))return false;
         var target=roads.keySet().stream().min(Comparator.comparingInt(p->distance(p,site.at()))).orElseThrow();
         for(int n=0;n<4;n++) {
             int rotation=Math.floorMod((int)site.seed()+n,4);
@@ -130,7 +162,7 @@ public final class ContourTownPlanner {
             int x=point.x(),z=point.z();
             if(Math.abs(x-cx)>REACH-3 || Math.abs(z-cz)>REACH-3 || square.distance(x,z)<=3)return false;
             for(var tree:trees)if(tree.root(x,z,3))return false;
-            for(var other:buildings)if(other.occupies(x,z,3))return false;
+            for(var other:buildings)if(other.occupies(x,z,2))return false;
             for(int dx=-2;dx<=2;dx++)for(int dz=-2;dz<=2;dz++)if(roads.containsKey(new Point(x+dx,z+dz)))return false;
         }
         return true;

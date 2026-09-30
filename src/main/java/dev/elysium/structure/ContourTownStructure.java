@@ -45,11 +45,14 @@ public final class ContourTownStructure extends Structure {
                 nearby=Math.max(nearby,terrain.height(x+u,z+v));
             if(nearby<sea+48)continue;
             survey.accept("nearby_peaks");
+            var faces=ContourTownPlanner.cliffBackdrops(terrain,x,z,sea);
+            if(faces.isEmpty()){survey.accept("no_close_cliff");continue;}
             for(boolean axis:new boolean[]{true,false}) {
                 var bridge=BridgePlanner.find(terrain,x,z,axis,sea);if(bridge.isEmpty())continue;
                 survey.accept("crossing");
-                var result=ContourTownPlanner.plan(terrain,bridge.get(),sea,seed,styles,minimum,maximum,survey);
+                var result=ContourTownPlanner.plan(terrain,bridge.get(),sea,seed,styles,minimum,maximum,survey,faces);
                 if(result.isEmpty())continue;var plan=result.get();
+                if(!ContourTownPlanner.enclosed(plan,faces)){survey.accept("no_cliff_district");continue;}
                 if(plan.buildings().stream().filter(b->validBiome(context,b.x(),b.main().floor(),b.z())).count()*4<plan.buildings().size()*3L) {
                     survey.accept("biome_extent");continue;
                 }

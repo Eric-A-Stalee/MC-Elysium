@@ -22,7 +22,7 @@ public final class MountainPlanChecks {
     }
     public static Set<Cell> verifyGeometry(MountainBuildingPlan plan) {
         var blocks=MountainArchitecture.build(plan);var e=plan.entry();
-        Cell start=new Cell(e.u()+e.du()*2,e.floor()+1,e.v()+e.dv()*2);
+        Cell start=new Cell(e.u()+e.du()*e.length(),e.floor()+1,e.v()+e.dv()*e.length());
         require(material(blocks,new Cell(e.u(),e.floor()+1,e.v()))==Material.DOOR_LOW
                 && material(blocks,new Cell(e.u(),e.floor()+2,e.v()))==Material.DOOR_HIGH,"Missing entry door",plan);
         require(walkable(blocks,start),"Blocked porch",plan);

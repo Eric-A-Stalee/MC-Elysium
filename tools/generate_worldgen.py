@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/main/resources/data/elysium"
 WORLDGEN = DATA / "worldgen"
 MIN_Y, HEIGHT, SEA_LEVEL = -64, 384, 63
-GOLDEN_HOUR = 11000
+GOLDEN_HOUR = 12000
 
 
 @dataclass(frozen=True)
