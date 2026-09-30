@@ -215,3 +215,61 @@ resources match** the repository byte for byte, all four custom client texture
 references validate from the jar, and development tests, fixtures and the flat
 world preset are excluded. The alpha 6 jar is 372,031 bytes, with SHA-256
 `69a2cd36a2b28b6abd0e9433c48ffcc15e6f5b74a824407423ea5d63a1b2deeb`.
+
+## Alpha 7 adaptive Nordic settlements (September 30, 2026)
+
+[GitHub Actions run 36659749968](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36659749968)
+built commit `3abe45bfe6bb4fe9cb5ebaa2085f759436ae7a0f` successfully. All **35
+required server GameTests passed**, along with generated resources, worldgen,
+texture/atlas validation, and the separate optional erosion-guard CI job.
+
+The new pure grammar checks traverse **617 fitted building configurations**
+across six architectural families, four rotations and flat/sloping terrain.
+They cover 311 distinct room/height combinations, 218 cellar cases and 228
+split-level cases. They require access from the porch to every inhabited floor,
+cellars and covered galleries, reachable paired beds, supported hanging lights
+and complete entrance doors. Doors are treated as operable; this is geometric
+circulation, not a simulation of villager AI.
+
+Three synthetic valley seeds each produce 24 homes plus their hall and watch
+lodge. Tests traverse the saved street/porch graph from the bridge to every
+building, enforce three-block road earthwork limits and exactly 121 square-pad
+columns, require buildings beside higher natural terrain, and verify repeatable
+planning. A cliff-sized cut and a flat neighborhood fail. No per-house square
+pad is permitted. Registered save/load and real block placement check all four
+rotations, chunk clips, untouched ground inside irregular bounding boxes,
+resident creation, doors and both halves of beds.
+
+The natural-candidate survey still respects the structure set's random spread
+and exclusion rules. At seed 0, chunk **[230, -2369]** qualifies after 545
+candidate probes: **24 homes, hall, watch lodge, square, streets and stone
+crossing**, represented by 29 saved pieces. The 26 building plans span main
+floors **Y 64–99**, with **15 cellars, 19 buildings with split-level wings and
+13 covered galleries**. House families comprise four longhouses, seven
+cross-gabled homes, six hillside lodges and seven courtyard houses. A saved
+terrain/footprint report, `run/logs/contour-town.json` in the CI log artifact,
+supports inspection of the actual surveyed layout.
+
+An initial placement run caught doors reacting to incomplete supports during
+construction. Shells and supports now precede attached blocks, with paired
+attachments placed using Minecraft's known-shape update flag. The final run
+checks actual doors, beds and interior floors after a complete StructureStart
+is reloaded and placed in reversed chunk order. A test fixture was also revised
+to select a valid surveyed building in each orientation, since a single fixed
+plan deliberately cannot fit every orientation on a slope.
+
+As in alpha 6, GameTest disables ordinary automatic structure generation. The
+natural survey therefore places the saved start explicitly on real generated
+terrain. Four deferred block-entity warnings occurred at positions overwritten
+in already decorated chunks. Normal generation places structures before trees;
+an ordinary-world automatic-generation smoke test has not been repeated for
+this revision. There was no graphical Minecraft client, shader comparison,
+multi-seed natural-frequency study or new full ReTerraForged pack test. Client
+inspection should assess the settlement silhouette, rock between buildings,
+roof intersections, galleries, street steps and villagers' actual behaviour.
+
+The downloaded player jar passed ZIP integrity and Java 21 class checks. All
+**157 shipped source resources match** the repository. Development tests,
+fixtures and the GameTest flat-world override are excluded. The jar is
+**428,186 bytes**, with SHA-256
+`965631cb0789e8b90f1600254d09f11934451e9d3c1803fd6db58f71c65e9cab`.
