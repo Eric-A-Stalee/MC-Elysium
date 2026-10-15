@@ -12,7 +12,7 @@ public final class MountainArchitecture {
         AIR, STONE, RUBBLE, PLANK, CLADDING, PALE, LOG, STRIPPED, LOG_U, LOG_V, BEAM_U, BEAM_V,
         ROOF, ROOF_STAIR, ROOF_SLAB, WOOD_STAIR, WOOD_SLAB, FENCE, GLASS, DOOR_LOW, DOOR_HIGH,
         BED_FOOT, BED_HEAD, LANTERN, HANGING_LANTERN, BARREL, BOOKSHELF, FURNACE, CRAFTING, TABLE_TOP,
-        LADDER, TRAPDOOR, CHIMNEY, CAMPFIRE, SIDE_TABLE, WINDOW_LIGHT, QUARTZ
+        LADDER, TRAPDOOR, CHIMNEY, CAMPFIRE, SIDE_TABLE, WINDOW_LIGHT, QUARTZ, CLIFF_ROCK
     }
     public record Cell(int u,int y,int v) {}
     /** Facing is local: south=0, west=1, north=2, east=3. */
@@ -21,13 +21,17 @@ public final class MountainArchitecture {
     private final int grammar;
     private final Map<Cell,Voxel> blocks=new LinkedHashMap<>();
     private final Set<Cell> passages=new HashSet<>();
-    private MountainArchitecture(MountainBuildingPlan plan,int grammar) { this.plan=plan;this.grammar=grammar; }
-    public static Map<Cell,Voxel> build(MountainBuildingPlan plan) {
-        return build(plan,4);
+    private final Map<MountainBuildingPlan.Point,Integer> originalGround=new java.util.HashMap<>();
+    private MountainArchitecture(MountainBuildingPlan plan,int grammar) {
+        this.plan=plan;this.grammar=grammar;
+        if(grammar>=5)for(var g:plan.ground())originalGround.put(new MountainBuildingPlan.Point(g.u(),g.v()),g.original());
     }
-    /** Grammar 3 remains byte-for-byte geometry compatible with saved alpha-9 pieces. */
+    public static Map<Cell,Voxel> build(MountainBuildingPlan plan) {
+        return build(plan,5);
+    }
+    /** Grammars 3 and 4 retain exact geometry for saved alpha-9/10 pieces. */
     public static Map<Cell,Voxel> build(MountainBuildingPlan plan,int grammar) {
-        if(grammar<3 || grammar>4)throw new IllegalArgumentException("Unsupported live building grammar");
+        if(grammar<3 || grammar>5)throw new IllegalArgumentException("Unsupported live building grammar");
         var b=new MountainArchitecture(plan,grammar);b.build();return b.blocks;
     }
     private void put(int u,int y,int v,Material m) { put(u,y,v,m,0); }
@@ -62,7 +66,15 @@ public final class MountainArchitecture {
         windowTables();
         windowCores();
     }
-    private Material foundation(int u,int y,int v) { return Math.floorMod(u*13+v*7+y,11)<3?Material.RUBBLE:Material.STONE; }
+    private Material foundation(int u,int y,int v) {
+        if(grammar<5)return Math.floorMod(u*13+v*7+y,11)<3?Material.RUBBLE:Material.STONE;
+        int ground=originalGround.getOrDefault(new MountainBuildingPlan.Point(u,v),plan.main().floor());
+        // Leave the buried base visually continuous with the ivory hillside.
+        // Coherent rubble courses rise unevenly into dressed masonry above it.
+        if(y<ground-1)return Material.CLIFF_ROCK;
+        int seam=Math.floorMod(Math.floorDiv(u,3)+Math.floorDiv(v,4)*2+(int)(plan.seed()&7),5);
+        return y<=ground+(seam<2?2-seam:0)?Material.RUBBLE:Material.STONE;
+    }
     private void shell(Room r,boolean cellar) {
         int low=cellar?r.floor()-5:r.floor();
         if(cellar)box(r.u(),low,r.v(),r.maxU(),low,r.maxV(),Material.STONE);

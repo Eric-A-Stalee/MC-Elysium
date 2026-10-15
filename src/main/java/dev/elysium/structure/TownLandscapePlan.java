@@ -9,18 +9,23 @@ import dev.elysium.structure.MountainBuildingPlan.Point;
 
 /** Trees are reserved before houses; small edge works retain surveyed terrain heights. */
 public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obstacle> obstacles) {
-    public enum Kind { BIRCH_Y, BIRCH_X, BIRCH_Z, LEAVES, STONE, CAP, ROCK, FLOWER, LITTER, POST, LANTERN, ROCK_SHADE }
+    // Append only: saved landscape details store these ordinals.
+    public enum Kind {
+        BIRCH_Y, BIRCH_X, BIRCH_Z, LEAVES, STONE, CAP, ROCK, FLOWER, LITTER, POST, LANTERN, ROCK_SHADE,
+        GRASS, WHITE_FLOWER, GRAIN, RUBBLE;
+        public boolean groundCover() {return this==FLOWER || this==LITTER || this==GRASS || this==WHITE_FLOWER || this==GRAIN;}
+    }
     public record Cell(int x,int y,int z) {}
     public record Detail(int x,int y,int z,Kind kind) {}
     public record Obstacle(int minX,int minY,int minZ,int maxX,int maxY,int maxZ) {
         public boolean contains(Cell p) {return p.x()>=minX && p.x()<=maxX && p.z()>=minZ && p.z()<=maxZ && p.y()>=minY && p.y()<=maxY;}
     }
     public record Tree(int x,int y,int z,int height,int radius,long seed,int form) {
-        public Tree {if(height<14 || height>32 || radius<4 || radius>7 || form<1 || form>3)throw new IllegalArgumentException("Invalid settlement birch");}
-        public Tree(int x,int y,int z,int height,int radius,long seed){this(x,y,z,height,radius,seed,3);}
+        public Tree {if(height<14 || height>32 || radius<4 || radius>7 || form<1 || form>4)throw new IllegalArgumentException("Invalid settlement birch");}
+        public Tree(int x,int y,int z,int height,int radius,long seed){this(x,y,z,height,radius,seed,4);}
         public boolean root(int px,int pz,int margin) {return Math.abs(px-x)<=margin && Math.abs(pz-z)<=margin;}
         public Map<Cell,Kind> geometry() {
-            if(form==3)return layeredGeometry();
+            if(form>=3)return layeredGeometry();
             if(form==2)return branchingGeometry();
             var out=new LinkedHashMap<Cell,Kind>();var random=new Random(seed);
             // Overlapping full crowns and a tall clear trunk leave usable space below.
@@ -44,22 +49,51 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             // A tall, offset leader and lower side crowns give the tree depth.
             // Fractional centres and unequal heights avoid shared flat canopy rows.
             int leaderX=x+random.nextInt(3)-1,leaderZ=z+random.nextInt(3)-1;
-            lobe(out,leaderX+.3,y+height-4.6,leaderZ-.2,3.1,4.7,3.4,seed);
+            foliage(out,leaderX+.3,y+height-4.6,leaderZ-.2,3.1,4.7,3.4,seed);
             branch(out,x,y+fork,z,leaderX,y+height-6,leaderZ);
             for(int i=0;i<3;i++) {
                 double angle=turn+i*2.12+random.nextDouble()*.35;
                 int dx=(int)Math.round(Math.cos(angle)*(radius-1)),dz=(int)Math.round(Math.sin(angle)*(radius-1));
                 double cy=y+Math.max(9.0,height-6.5-i*1.6+random.nextDouble());
                 double rx=2.6+random.nextDouble(),rz=2.8+random.nextDouble(),ry=3.6+random.nextDouble();
-                lobe(out,x+dx+.25,cy,z+dz-.3,rx,ry,rz,seed+i*37);
+                foliage(out,x+dx+.25,cy,z+dz-.3,rx,ry,rz,seed+i*37);
                 // A lower, smaller cluster breaks the outline without widening the crown.
-                lobe(out,x+dx*.7,cy-2.0,z+dz*.7,rx*.72,2.6,rz*.74,seed+i*71);
+                foliage(out,x+dx*.7,cy-2.0,z+dz*.7,rx*.72,2.6,rz*.74,seed+i*71);
+                if(form>=4)foliage(out,x+dx*1.12,cy-ry+1.0,z+dz*1.12,1.1,2.0,1.2,seed+i*113);
                 branch(out,x,y+fork+i%2,z,x+dx,(int)cy-1,z+dz);
             }
             for(int h=0;h<=fork+1;h++)out.put(new Cell(x,y+h,z),Kind.BIRCH_Y);
             int side=(seed&1)==0?1:-1;
             for(int h=0;h<3;h++)out.put(new Cell(x+side,y+h,z),Kind.BIRCH_Y);
+            if(form>=4)removeDetachedLeaves(out);
             return out;
+        }
+        private void foliage(Map<Cell,Kind> out,double cx,double cy,double cz,double rx,double ry,double rz,long salt) {
+            if(form==3){lobe(out,cx,cy,cz,rx,ry,rz,salt);return;}
+            // Tilt and taper the undersides separately for each limb. Small hanging
+            // tips interrupt the broad level bottom row of an ordinary ellipsoid.
+            double tiltX=((salt&7)-3)*.065,tiltZ=(((salt>>>3)&7)-3)*.065;
+            for(int a=(int)Math.floor(cx-rx-1);a<=Math.ceil(cx+rx+1);a++)
+                for(int b=Math.max(y+4,(int)Math.floor(cy-ry-1));b<=Math.ceil(cy+ry+1);b++)
+                    for(int c=(int)Math.floor(cz-rz-1);c<=Math.ceil(cz+rz+1);c++) {
+                        double dx=(a-cx)/rx,dz=(c-cz)/rz,dy=(b-cy-tiltX*(a-cx)-tiltZ*(c-cz))/ry;
+                        double taper=dy<0?1-.8*dy:1;
+                        double edge=1+.12*Math.sin((a-cx)*1.1+(b-cy)*.7+(salt&15))+.08*Math.cos((c-cz)*1.3-(b-cy)*.9);
+                        if((dx*dx+dz*dz)*taper+dy*dy<=edge && b<=y+height+2)
+                            out.putIfAbsent(new Cell(a,b,c),Kind.LEAVES);
+                    }
+        }
+        private void removeDetachedLeaves(Map<Cell,Kind> out) {
+            var seen=new java.util.HashSet<Cell>();var queue=new java.util.ArrayDeque<Cell>();queue.add(new Cell(x,y,z));
+            int[][] directions={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+            while(!queue.isEmpty()) {
+                var p=queue.remove();if(!seen.add(p))continue;
+                for(var d:directions) {
+                    var q=new Cell(p.x()+d[0],p.y()+d[1],p.z()+d[2]);
+                    if(out.containsKey(q) && !seen.contains(q))queue.add(q);
+                }
+            }
+            out.entrySet().removeIf(e->e.getValue()==Kind.LEAVES && !seen.contains(e.getKey()));
         }
         private static void lobe(Map<Cell,Kind> out,double x,double y,double z,double rx,double ry,double rz,long seed) {
             for(int a=(int)Math.floor(x-rx-1);a<=Math.ceil(x+rx+1);a++)
@@ -145,19 +179,8 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             } else if(ground>=c.ground()+1 && ground<=c.ground()+5 && (ground-c.ground()>=2 || accent)) {
                 for(int y=c.ground();y<=ground;y++)detail(details,x,y,z,Kind.ROCK);
             }
-            int px=x+d[0],pz=z+d[1],py=terrain.height(px,pz);
-            if(py>=sea && Math.floorMod(px*31+pz*17,13)==0 && free(buildings,trees,square,px,pz)
-                    && !roads.contains(new Point(px,pz)))detail(details,px,py,pz,Kind.FLOWER);
         }
         buildingEdges(terrain,buildings,trees,square,roads,details,sea);
-        for(var tree:trees)for(int dx=-5;dx<=5;dx++)for(int dz=-5;dz<=5;dz++) {
-            int x=tree.x()+dx,z=tree.z()+dz,y=terrain.height(x,z);
-            if(dx*dx+dz*dz>25 || dx*dx+dz*dz<3 || y<sea || Math.abs(y-tree.y())>4 || roads.contains(new Point(x,z))
-                    || buildings.stream().anyMatch(b->b.occupies(x,z,2)))continue;
-            int choice=Math.floorMod(x*17+z*31,11);
-            if(choice<2 && details.keySet().stream().noneMatch(p->p.x()==x && p.z()==z && p.y()>=y))
-                detail(details,x,y,z,choice==0?Kind.FLOWER:Kind.LITTER);
-        }
         // Occasional lamps stand beside, never on, the circulation graph.
         for(var c:streets)if(c.kind()==ValleyTownPlanner.ROAD && Math.floorMod(c.x()*7+c.z()*13,67)==0) {
             int x=c.x()+2,z=c.z(),y=terrain.height(x,z);
@@ -165,13 +188,14 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
             for(int h=0;h<3;h++)detail(details,x,y+h,z,Kind.POST);
             detail(details,x,y+3,z,Kind.LANTERN);
         }
+        TownPlanting.add(terrain,buildings,trees,streets,square,roads,details,sea);
         // Edge works must also respect overhanging eaves, bays and open galleries,
         // which are not ground footprints. Remove conflicts with the exact grammar.
         for(var b:buildings)for(var cell:MountainArchitecture.build(b).keySet())
             details.remove(new Cell(b.worldX(cell.u(),cell.v()),cell.y(),b.worldZ(cell.u(),cell.v())));
         return new TownLandscapePlan(trees,new ArrayList<>(details.values()),obstacles);
     }
-    /** Narrow retaining shelves and exposed uphill rock follow the surveyed house edges. */
+    /** Stepped foundation toes and exposed uphill rock follow the surveyed house edges. */
     private static void buildingEdges(LandscapePlanner.Terrain terrain,List<MountainBuildingPlan> buildings,List<Tree> trees,
             TerracePlanner.Lot square,java.util.Set<Point> roads,Map<Cell,Detail> details,int sea) {
         for(var b:buildings)for(var r:b.rooms())for(int side:new int[]{-1,1}) {
@@ -185,10 +209,12 @@ public record TownLandscapePlan(List<Tree> trees,List<Detail> details,List<Obsta
                     // Reface only existing soil/stone: preserve the actual hill's silhouette.
                     Kind rock=Math.floorMod(Math.floorDiv(x,4)+Math.floorDiv(z,5),7)==0?Kind.ROCK_SHADE:Kind.ROCK;
                     for(int y=Math.max(r.floor()-1,ground-6);y<=ground;y++)detail(details,x,y,z,rock);
-                } else if(a<=2 && r.jetty()!=side && difference<=-2 && difference>=-5 && Math.abs(v-centre)<=3+(int)(b.seed()&1)) {
-                    // A short terrace extends the foundation, never a level plot around the house.
-                    for(int y=ground;y<=r.floor();y++)detail(details,x,y,z,Kind.STONE);
-                    if(a==2)detail(details,x,r.floor()+1,z,Kind.CAP);
+                } else if(a<=2 && r.jetty()!=side && difference<=-2 && difference>=-6
+                        && Math.floorMod(v-r.v()+(int)(b.seed()&3),7)<3) {
+                    // Unequal short footings descend toward the existing slope. They
+                    // never extend a floor-height platform or railing around the house.
+                    int top=Math.min(r.floor()-a*2,ground+3-a);
+                    for(int y=ground;y<=top;y++)detail(details,x,y,z,y<=ground+1?Kind.RUBBLE:Kind.STONE);
                 }
             }
         }

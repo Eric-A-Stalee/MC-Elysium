@@ -115,7 +115,13 @@ public final class ContourTownPlanner {
         for(int x=square.x()-5;x<=square.x()+5;x++)for(int z=square.z()-5;z<=square.z()+5;z++)
             saved.add(new Column(x,z,square.ground(),terrain.height(x,z)-1,ValleyTownPlanner.COURT));
         for(var c:roads.values())if(c.kind()!=ValleyTownPlanner.CROSSING)saved.add(c);
-        return Optional.of(new Plan(buildings,saved,square,bridge,TownLandscapePlan.finish(terrain,trees,buildings,saved,square,sea)));
+        // Bridge voxels belong to their own piece, but landscaping still needs
+        // the complete crossing footprint, including rails and dry approaches.
+        var landscapeStreets=new ArrayList<>(saved);
+        for(int a=0;a<bridge.length();a++)for(int b=-BridgePlanner.HALF_WIDTH;b<=BridgePlanner.HALF_WIDTH;b++)
+            landscapeStreets.add(new Column(bridge.x(a,b),bridge.z(a,b),bridge.walkingHeight(a)-1,
+                    bridge.floorHeight(a,b)-1,ValleyTownPlanner.CROSSING));
+        return Optional.of(new Plan(buildings,saved,square,bridge,TownLandscapePlan.finish(terrain,trees,buildings,landscapeStreets,square,sea)));
     }
     private static int siteScore(Site s,Map<Point,Column> roads,List<MountainBuildingPlan> buildings,int sea) {
         int distance=roads.keySet().stream().mapToInt(p->distance(p,s.at())).min().orElseThrow();

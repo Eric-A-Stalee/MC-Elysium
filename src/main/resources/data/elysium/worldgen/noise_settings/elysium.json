@@ -376,8 +376,8 @@
                   "if_true": {
                     "type": "minecraft:noise_threshold",
                     "noise": "elysium:crag_relief",
-                    "min_threshold": 0.08,
-                    "max_threshold": 1.7976931348623157e+308
+                    "min_threshold": -0.03,
+                    "max_threshold": 0.04
                   },
                   "then_run": {
                     "type": "minecraft:block",
@@ -525,8 +525,8 @@
                   "if_true": {
                     "type": "minecraft:noise_threshold",
                     "noise": "elysium:crag_relief",
-                    "min_threshold": 0.08,
-                    "max_threshold": 1.7976931348623157e+308
+                    "min_threshold": -0.03,
+                    "max_threshold": 0.04
                   },
                   "then_run": {
                     "type": "minecraft:block",

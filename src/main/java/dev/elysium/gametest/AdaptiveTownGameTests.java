@@ -47,6 +47,18 @@ public final class AdaptiveTownGameTests {
             var details=plan.landscape().details().stream().map(d->new TownLandscapePlan.Cell(d.x(),d.y(),d.z()))
                     .collect(java.util.stream.Collectors.toSet());
             helper.assertTrue(details.size()<=20000,"Landscape must remain inside its saved detail budget");
+            var cover=plan.landscape().details().stream().filter(d->d.kind().groundCover()).toList();
+            helper.assertTrue(cover.size()>=100 && cover.stream().map(TownLandscapePlan.Detail::kind).distinct().count()>=4,
+                    "The settlement needs substantial mixed planting, not isolated flower dots");
+            for(var d:cover)helper.assertTrue(d.y()==terrain.height(d.x(),d.z()) && !terrain.water(d.x(),d.z())
+                    && plan.streets().stream().noneMatch(c->c.x()==d.x() && c.z()==d.z())
+                    && plan.buildings().stream().noneMatch(b->b.occupies(d.x(),d.z(),1)),
+                    "Ground cover must follow dry terrain and leave streets, porches and rooms clear");
+            for(int a=0;a<bridge.length();a++)for(int b=-BridgePlanner.HALF_WIDTH;b<=BridgePlanner.HALF_WIDTH;b++) {
+                int x=bridge.x(a,b),z=bridge.z(a,b);
+                helper.assertTrue(plan.landscape().details().stream().noneMatch(d->d.x()==x && d.z()==z),
+                        "Landscaping must reserve the bridge's rails and dry landings as well as its wet span");
+            }
             for(var b:plan.buildings())for(var c:MountainArchitecture.build(b).keySet())
                 helper.assertTrue(!details.contains(new TownLandscapePlan.Cell(b.worldX(c.u(),c.v()),c.y(),b.worldZ(c.u(),c.v()))),
                         "Retaining works may not overwrite roofs, bays, interiors or gallery air");

@@ -23,7 +23,7 @@ public final class TownLandscapePiece extends StructurePiece {
     private final TownLandscapePlan plan;
     private final int version;
     public TownLandscapePiece(TownLandscapePlan plan) {
-        this(plan,plan.trees().isEmpty()?3:plan.trees().getFirst().form());
+        this(plan,plan.trees().isEmpty()?4:plan.trees().getFirst().form());
     }
     private TownLandscapePiece(TownLandscapePlan plan,int version) {
         super(ModStructures.TOWN_LANDSCAPE_PIECE.get(),0,bounds(plan));this.plan=plan;this.version=version;setOrientation(null);
@@ -32,7 +32,7 @@ public final class TownLandscapePiece extends StructurePiece {
     public TownLandscapePlan plan() {return plan;}
     private static TownLandscapePlan read(CompoundTag tag) {
         int version=tag.getInt("Version");
-        if(version<1 || version>3)throw new IllegalArgumentException("Unknown town landscape version");
+        if(version<1 || version>4)throw new IllegalArgumentException("Unknown town landscape version");
         int[] ts=tag.getIntArray("Trees"),ds=tag.getIntArray("Details"),os=tag.getIntArray("Obstacles");long[] seeds=tag.getLongArray("Seeds");
         if(ts.length%5!=0 || ts.length>60 || seeds.length!=ts.length/5 || ds.length%4!=0 || ds.length>80000 || os.length%6!=0 || os.length>1200)
             throw new IllegalArgumentException("Invalid saved town landscape");
@@ -66,8 +66,8 @@ public final class TownLandscapePiece extends StructurePiece {
         for(var d:plan.details()) {
             var pos=new BlockPos(d.x(),d.y(),d.z());if(!clip.isInside(pos))continue;
             var state=state(d.kind());
-            if(d.kind()==TownLandscapePlan.Kind.FLOWER || d.kind()==TownLandscapePlan.Kind.LITTER) {
-                if(!level.getBlockState(pos).canBeReplaced() || !state.canSurvive(level,pos))continue;
+            if(d.kind().groundCover()) {
+                if(!level.getFluidState(pos).isEmpty() || !level.getBlockState(pos).canBeReplaced() || !state.canSurvive(level,pos))continue;
             }
             placeBlock(level,state,pos.getX(),pos.getY(),pos.getZ(),clip);
         }
@@ -81,7 +81,11 @@ public final class TownLandscapePiece extends StructurePiece {
             case CAP->Blocks.STONE_BRICK_WALL.defaultBlockState();
             case ROCK->Blocks.CALCITE.defaultBlockState();
             case ROCK_SHADE->Blocks.ANDESITE.defaultBlockState();
+            case RUBBLE->Blocks.COBBLESTONE.defaultBlockState();
             case FLOWER->Blocks.DANDELION.defaultBlockState();
+            case WHITE_FLOWER->Blocks.OXEYE_DAISY.defaultBlockState();
+            case GRASS->Blocks.SHORT_GRASS.defaultBlockState();
+            case GRAIN->ModBlocks.WILD_GRAIN.get().defaultBlockState();
             case LITTER->ModBlocks.LEAF_LITTER.get().defaultBlockState();
             case POST->Blocks.SPRUCE_FENCE.defaultBlockState();
             case LANTERN->Blocks.LANTERN.defaultBlockState();

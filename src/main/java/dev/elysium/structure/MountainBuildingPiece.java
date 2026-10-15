@@ -30,7 +30,7 @@ public final class MountainBuildingPiece extends StructurePiece {
     private final int grammar;
     private int residents;
     public MountainBuildingPiece(MountainBuildingPlan plan) {
-        this(plan,4);
+        this(plan,5);
     }
     private MountainBuildingPiece(MountainBuildingPlan plan,int grammar) {
         super(ModStructures.MOUNTAIN_BUILDING_PIECE.get(),0,bounds(plan,grammar));this.plan=plan;this.grammar=grammar;setOrientation(null);
@@ -41,7 +41,7 @@ public final class MountainBuildingPiece extends StructurePiece {
     public MountainBuildingPlan plan() { return plan; }
     private static MountainBuildingPlan read(CompoundTag tag) {
         int grammar=tag.getInt("Grammar"),stride=grammar==1?7:grammar==2?10:11;
-        if(grammar<1 || grammar>4)throw new IllegalArgumentException("Unknown mountain building grammar");
+        if(grammar<1 || grammar>5)throw new IllegalArgumentException("Unknown mountain building grammar");
         int[] data=tag.getIntArray("Rooms"),profile=tag.getIntArray("Ground"),entry=tag.getIntArray("Entry");
         if(data.length==0 || data.length>stride*4 || data.length%stride!=0 || profile.length==0 || profile.length>4800
                 || profile.length%3!=0 || entry.length!=(grammar>=3?6:5))throw new IllegalArgumentException("Invalid saved mountain building");
@@ -128,6 +128,7 @@ public final class MountainBuildingPiece extends StructurePiece {
             case AIR->Blocks.AIR.defaultBlockState();
             case STONE->Blocks.STONE_BRICKS.defaultBlockState();
             case RUBBLE->Blocks.COBBLESTONE.defaultBlockState();
+            case CLIFF_ROCK->Blocks.CALCITE.defaultBlockState();
             case PLANK->Blocks.SPRUCE_PLANKS.defaultBlockState();
             case CLADDING->(palette==1?Blocks.DARK_OAK_PLANKS:palette==2?Blocks.OAK_PLANKS:Blocks.SPRUCE_PLANKS).defaultBlockState();
             case PALE->(palette==2?Blocks.SMOOTH_SANDSTONE:Blocks.CALCITE).defaultBlockState();

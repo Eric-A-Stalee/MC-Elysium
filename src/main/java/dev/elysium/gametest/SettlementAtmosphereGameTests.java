@@ -44,6 +44,35 @@ public final class SettlementAtmosphereGameTests {
         helper.succeed();
     }
     @GameTest(template="portal_test_empty",timeoutTicks=100)
+    public static void savedPlantingRespectsWaterSupportAndChunkClips(GameTestHelper helper) {
+        var level=helper.getLevel();var at=helper.absolutePos(new BlockPos(3300,100,3300));
+        var kinds=List.of(TownLandscapePlan.Kind.FLOWER,TownLandscapePlan.Kind.WHITE_FLOWER,TownLandscapePlan.Kind.GRASS,
+                TownLandscapePlan.Kind.GRAIN,TownLandscapePlan.Kind.LITTER);
+        var expected=List.of(Blocks.DANDELION,Blocks.OXEYE_DAISY,Blocks.SHORT_GRASS,ModBlocks.WILD_GRAIN.get(),ModBlocks.LEAF_LITTER.get());
+        var details=new java.util.ArrayList<TownLandscapePlan.Detail>();
+        for(int i=0;i<kinds.size();i++)for(int z:new int[]{0,3}) {
+            var p=at.offset(i*3,0,z);details.add(new TownLandscapePlan.Detail(p.getX(),p.getY(),p.getZ(),kinds.get(i)));
+            level.setBlock(p.below(),Blocks.GRASS_BLOCK.defaultBlockState(),2);
+            level.setBlock(p,z==0?Blocks.AIR.defaultBlockState():Blocks.WATER.defaultBlockState(),2);
+        }
+        var rock=at.offset(18,0,0);level.setBlock(rock.below(),Blocks.STONE.defaultBlockState(),2);
+        details.add(new TownLandscapePlan.Detail(rock.getX(),rock.getY(),rock.getZ(),TownLandscapePlan.Kind.GRASS));
+        var context=StructurePieceSerializationContext.fromLevel(level);
+        var tag=new TownLandscapePiece(new TownLandscapePlan(List.of(),details,List.of())).createTag(context);
+        var saved=(TownLandscapePiece)ModStructures.TOWN_LANDSCAPE_PIECE.get().load(context,tag);
+        helper.assertTrue(saved.createTag(context).equals(tag),"All new planting kinds must round-trip through saved structure data");
+        var box=saved.getBoundingBox();var clip=new BoundingBox(box.minX(),box.minY(),box.minZ(),at.getX()+5,box.maxY(),box.maxZ());
+        saved.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,new ChunkPos(at),at);
+        helper.assertTrue(level.getBlockState(at.offset(6,0,0)).isAir(),"Unprocessed planting columns must remain untouched");
+        saved.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,box,new ChunkPos(at),at);
+        for(int i=0;i<kinds.size();i++) {
+            helper.assertTrue(level.getBlockState(at.offset(i*3,0,0)).is(expected.get(i)),"Ground cover must survive on its real support: "+kinds.get(i));
+            helper.assertTrue(level.getBlockState(at.offset(i*3,0,3)).is(Blocks.WATER),"Planting must never replace water");
+        }
+        helper.assertTrue(level.getBlockState(rock).isAir(),"Grass must not be placed on exposed stone");
+        helper.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=100)
     public static void townLandscapeSurvivesReloadAndRespectsClipsAndBuildings(GameTestHelper helper) {
         var level=helper.getLevel();var at=helper.absolutePos(new BlockPos(3200,90,3200));
         var tree=new TownLandscapePlan.Tree(at.getX(),at.getY(),at.getZ(),20,6,77);
@@ -131,6 +160,19 @@ public final class SettlementAtmosphereGameTests {
         helper.assertTrue(treeTag.getInt("Version")==2 && saved.createTag(context).equals(treeTag)
                 && geometryHash(saved.plan().trees().getFirst().geometry()).equals("9ca98a90f51bb8ae8e12e19e0109ec1499f36fc3c214aedc552a1d41ba842d8f"),
                 "Saved alpha-9 crowns and branches must not change when neighboring chunks generate");
+        // Same fixed fixture, captured from the published alpha-10 code before
+        // adding foundation grammar 5 and feathered tree form 4.
+        tag.putInt("Grammar",4);
+        var alphaTen=(MountainBuildingPiece)ModStructures.MOUNTAIN_BUILDING_PIECE.get().load(context,tag);
+        helper.assertTrue(alphaTen.createTag(context).equals(tag)
+                && geometryHash(alphaTen.geometry()).equals("f75b2adef682fac94326f6f98d558b7e0c9b5b2ff71e3f6f65024d66e07ce708"),
+                "Saved alpha-10 foundations and architecture must retain their original blocks");
+        var alphaTenTree=new TownLandscapePlan.Tree(0,100,0,18,6,77,3);
+        var alphaTenTag=new TownLandscapePiece(new TownLandscapePlan(List.of(alphaTenTree),List.of(),List.of())).createTag(context);
+        var alphaTenSaved=(TownLandscapePiece)ModStructures.TOWN_LANDSCAPE_PIECE.get().load(context,alphaTenTag);
+        helper.assertTrue(alphaTenSaved.createTag(context).equals(alphaTenTag)
+                && geometryHash(alphaTenSaved.plan().trees().getFirst().geometry()).equals("d60e5801f308d363d321e39c98473bc06832231f14274e18debfb2b7f7a5f343"),
+                "Saved alpha-10 tree crowns must not change in partially generated towns");
         helper.succeed();
     }
     private static String geometryHash(java.util.Map<?,?> geometry) {
