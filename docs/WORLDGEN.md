@@ -1,6 +1,6 @@
 # Elysium world generation
 
-The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 12000. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
+The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 11500. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
 raids, ordinary hostile biome spawns, and zombified piglins from lit nether
 portals are disabled in Elysium while its sun is fixed. This does not
 override the rest of a player's world or promise that another mod cannot spawn
@@ -65,7 +65,7 @@ of sea level, and find exposed water in one of twelve probes within six blocks.
 This creates intermittent bank groves rather than returning trees to field
 interiors. It reads only available decoration chunks and never loads neighbours.
 
-Small birches request 6–9-block trunks, tall birches 10–15, branching birches 9–14, and high-canopy birches 12–18. All share the custom `birch_crown` foliage placer, with radius parameters 2–3 and profile heights 5–7. Alpha 6 builds four offset foliage lobes around each attachment, with a narrow connecting core and small variations at their outer edges. This replaces the stack of identically rounded rows. The branching and high-canopy variants use vanilla fancy trunks to support overlapping crowns; actual trunk/branch lengths follow that placer's geometry. The immutable shared catalog owns the profiles. Per-biome shares are absolute selection
+Small birches request 6–9-block trunks, tall birches 9–13, branching birches 9–14, and high-canopy birches 10–15. All share the custom `birch_crown` foliage placer, with radius parameters 2–3 and profile heights 5–7. Alpha 6 builds four offset foliage lobes around each attachment, with a narrow connecting core and small variations at their outer edges. This replaces the stack of identically rounded rows. The branching and high-canopy variants use vanilla fancy trunks to support overlapping crowns; actual trunk/branch lengths follow that placer's geometry. The immutable shared catalog owns the profiles. Per-biome shares are absolute selection
 probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
@@ -74,12 +74,12 @@ Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter 
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
-| Golden Fields | `#DCC277` | `#FFCF50` | `#55A6AE` |
-| Golden Birch Woods | `#C9AC61` | `#FFCF50` | `#55A6AE` |
-| Golden Watermeadows | `#D6BA71` | `#FFD95F` | `#65AEB3` |
-| Amber Lakes | `#C4A05F` | `#F3AC4F` | `#386C79` |
-| Elysian Highlands | `#DAC17B` | `#FFD360` | `#527D93` |
-| Ivory Peaks | `#D8C992` | `#FFDC80` | `#496D88` |
+| Golden Fields | `#F6DB86` | `#FFDF58` | `#55A6AE` |
+| Golden Birch Woods | `#E5C575` | `#FFDA56` | `#55A6AE` |
+| Golden Watermeadows | `#F0D188` | `#FFE66C` | `#65AEB3` |
+| Amber Lakes | `#E4B66A` | `#FFC05E` | `#386C79` |
+| Elysian Highlands | `#F2D797` | `#FFE178` | `#527D93` |
+| Ivory Peaks | `#F4DEAB` | `#FFEA94` | `#496D88` |
 
 The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world or a regenerated Elysium dimension.
 
@@ -376,3 +376,32 @@ a high but smoothly rounded or distant hill. House and hall selection favour
 positions below the surveyed faces while retaining the existing cut/fill and
 road-access limits. New town placement is intentionally more selective; these
 local rules do not establish its average discovery distance.
+
+
+## Alpha 10 vanilla-light palette and deeper crowns
+
+The fixed sun is **11500** ticks, halfway between alpha 8's 11000 and alpha 9's
+12000. The six palettes above are brighter while preserving pale uplands and
+copper-toned Amber Lakes. The leaf model still binds Minecraft's birch texture
+and uses the biome tint. It disables ambient occlusion, retains directional
+face shading and ordinary sky/block lighting, and does not emit light. This
+removes one source of muddy corner shading without adding a texture copy or a
+client rendering dependency. These palette, model and time changes apply to
+existing Elysium chunks after restarting.
+
+New settlement trees use saved landscape version 3. A taller offset leader and
+three lower, unequal clusters replace the broad crowns at similar heights.
+Fractional centres and small coherent boundary variations avoid repeated level
+rows. Heights remain 16–20 blocks; roots, connected branches, collision-tested
+seeds and building exclusions remain. Versions 1 and 2 keep their prior geometry.
+Ordinary tall and canopy trees use shorter trunk parameters and fuller foliage
+lobes; the vegetation attempt budgets remain unchanged.
+
+Mountain crag relief rises more sharply, and coherent patches of exposed calcite
+above Y88 supplement the old narrow steep-column stripes. Lowland bank grass is
+outside this extra rock rule. River centre channels deepen by roughly two more
+blocks, with relief-dependent pools; only the shallowest shore band keeps sand.
+Deeper beds use andesite, stone and tuff. This remains a solid height field with
+sea-level connected water, not a watershed or flowing upland river simulation.
+New terrain needs fresh chunks; regenerating Elysium avoids joins between the
+old and new terrain profiles.

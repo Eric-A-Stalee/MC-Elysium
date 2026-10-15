@@ -391,3 +391,61 @@ The downloaded player jar passes ZIP integrity and Java 21 class checks; all
 **158 shipped source resources match**, and development tests, fixtures and the
 flat-world override are excluded. The jar is **486,344 bytes**, SHA-256
 `0db8248486922e6c79e27bd1a413881118ba1f943d2959495b2c07b03d27e18e`.
+
+
+## Alpha 10 palette, crowns and hillside building edges (October 15, 2026)
+
+[GitHub Actions run 38684483376](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38684483376)
+built commit `3633f4a573859ee6f1fae0dabab6078270adea4d` and passed **all 40
+required GameTests in 1.708 minutes**. The generated-resource checks, Java 21
+NeoForge package and optional compatibility guard checks passed.
+
+The 669-plan building matrix retains usable doors, rooms, stairs, beds, galleries
+and table lanterns. The three complete synthetic towns keep 24 homes plus hall
+and watch lodge, with every porch connected to the bridge. Landscape checks
+now verify that hillside details cannot overwrite any authored building block
+or its cleared interior/gallery air, that exposed rock does not raise the
+surveyed hill, and that saved detail counts stay within the format's budget.
+The pure checks caught a projecting bay replacing a table lantern's window;
+placing bays before window furnishings resolves that conflict without relaxing
+the window-visibility assertion.
+
+New tree checks require at least ten blocks of vertical canopy depth alongside
+face-connected branches, clear lower trunks, saved bounds and chunk clipping.
+An additional regression test loads grammar-3 buildings and version-2 trees,
+round-trips their NBT, and compares geometry hashes captured from alpha 9 before
+these edits. Older grammar and tree fixtures still run. Flat-colour renders of
+actual generated blocks were inspected for the new crowns and roof variants;
+these are geometry inspections, not Minecraft client screenshots.
+
+The natural seed-0 survey again finds chunk **[-2335, -2316]** after 616
+candidates. The revised terrain supports **14 homes, a hall and watch lodge**,
+plus square, streets, bridge and landscape, for 20 saved pieces. Floors span
+**Y65–115**; the surrounding height survey spans **Y55–181**. Seven buildings
+sit beneath close cliff backdrops. Six version-3 mature birches remain, with
+height parameters 16–18. The 2,624 saved landscape details include 1,573 pale or
+andesite rock-facing blocks, 722 masonry blocks, 143 wall caps, 120 flowers,
+26 leaf-litter positions and ten post lamps. The complete start survives reload
+and reversed-chunk placement on real generated terrain. The CI log artifact
+contains `run/logs/contour-town.json` with the exact plans and height samples.
+
+The chain candidate is now seed 0, chunk **[-70, -938]**, at X−1111/Z−15003,
+with surface top Y129 and the unchanged chamber floor Y−48. Terrain changes
+can alter which candidate is discovered first; the chain geometry and its
+progression remain unchanged.
+
+The completed-chunk placement probe reports 273 unsupported PostProcessing
+warnings and the synchronous searches report two tick-lag warnings. Ordinary
+world generation uses ProtoChunks, and this explicit placement test does not
+exercise that deferred-update path. There are no DUMMY block-entity warnings.
+The standard first-boot missing `server.properties` message is unrelated to
+the required tests. A graphical client, ordinary automatic structure-generation
+smoke test, villager-AI traversal and full ReTerraForged co-installation were
+not run for this revision. The player comparison should specifically judge
+11,500-tick vanilla lighting, foliage shading, new roof intersections, cliff
+exposure and shader-water readability.
+
+The downloaded player jar passes ZIP integrity and Java 21 class checks. All
+**158 shipped source resources match** the tested code; development tests,
+fixtures and the flat-world override are excluded. The jar is **490,689 bytes**,
+SHA-256 `61d54bfae8f4fd667870b48a965c041329b9b3dbb6ab84e1b1fcc1c6e483016b`.

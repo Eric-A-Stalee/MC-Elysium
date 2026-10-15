@@ -263,3 +263,27 @@ to the frozen `MountainArchitectureV2`, including its grey stained glass, while
 grammar 1 retains the earlier frozen implementation. Old pieces are not migrated
 on load. The new tree form uses landscape version 2; version-1 trees likewise
 keep their original trunks and crowns in partially generated chunks.
+
+
+## Alpha 10 facade projections and hillside edges
+
+Building grammar 4 adds selected upper-storey projecting window bays with real
+interior recesses, glass surrounding a glowstone centre, and quartz sills.
+Bays are fitted to an unobstructed gable end, avoid saved passages, and precede
+window-table placement so each table lantern still faces an actual pane.
+Selected main roofs have one clipped gable end; dormers vary side and count and
+are rejected where another room's roof would overlap. Extra horizontal log
+construction and bounded pale infill vary facade composition. Main room shapes
+and the terrain-fitting planner remain unchanged in this pass.
+
+The live grammar takes an explicit version rather than copying another whole
+renderer. Saved grammar-3 buildings follow the alpha-9 branches exactly; older
+versions still use their frozen implementations. The alpha-9 regression fixture
+checks every block and orientation against a hash captured before this change.
+
+Landscape details add short, at most two-block-wide retaining shelves beside
+selected downhill walls. Uphill rock facing replaces existing surface columns
+without raising or flattening the slope. Roads, doors, reserved trunks and
+other rooms remain protected. A final comparison against each building's exact
+block geometry also excludes eaves, projecting bays and the open air of galleries.
+These saved decorations are chunk-clipped and do not resurvey terrain on reload.
