@@ -449,3 +449,67 @@ The downloaded player jar passes ZIP integrity and Java 21 class checks. All
 **158 shipped source resources match** the tested code; development tests,
 fixtures and the flat-world override are excluded. The jar is **490,689 bytes**,
 SHA-256 `61d54bfae8f4fd667870b48a965c041329b9b3dbb6ab84e1b1fcc1c6e483016b`.
+
+
+## Alpha 11 golden planting and mountain ribs (October 15, 2026)
+
+[GitHub Actions run 38692951262](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38692951262)
+built commit `b1bdeeaa3cfa432165cca7ba3574a081a60dfa66` and passed **all 41
+required GameTests in 1.451 minutes**. Generated resources, client-asset
+validation, the Java 21 NeoForge package and optional compatibility guard
+checks passed.
+
+The 669-plan building matrix retains connected rooms, doors, stairs, galleries,
+beds and window lanterns. All three complete synthetic towns retain 24 homes,
+hall and watch lodge, with connected circulation. Expanded landscape checks
+require mixed planting, saved-height fidelity, dry supported ground and clear
+streets, porches, tree roots and bridge approaches. They caught planting on the
+separately generated bridge's dry landings; reserving its full five-block
+footprint fixes that conflict. Each town remains within the landscape save
+budget, and exact building geometry takes priority over landscape details.
+
+The added server test round-trips every ground-cover kind through NBT and
+places it on real blocks. It checks valid grass support, water preservation,
+rejection of unsupported plants and chunk clipping. Existing regression tests
+now also hash alpha-10 house grammar 4 and tree form 3 against geometry captured
+before this revision. Older saved plans retain their geometry. Flat-colour
+renders of actual form-3 and form-4 blocks were inspected for the tapered crown
+undersides; these are geometry inspections, not Minecraft screenshots.
+
+The natural seed-0 survey again finds chunk **[-2335, -2316]** after 616
+candidates. The new rib profile supports **15 homes, a hall and watch lodge**,
+plus square, streets, bridge and landscape, for 21 saved pieces. Main floors
+span **Y66–92** and the surrounding height survey spans **Y55–183**. Nine
+buildings have close cliff backdrops. Eight form-4 birches remain, with height
+parameters 16–19. The 4,856 saved landscape details include 2,904 ground-cover
+positions: 892 yellow flowers, 443 white flowers, 1,020 short-grass patches,
+231 wild-grain plants and 318 leaf-litter positions. These are planned
+positions; final placement still requires suitable support and dry replaceable
+space. The report is reproducible candidate evidence, not an average discovery
+distance or guarantee of the same composition in other seeds.
+
+The seed-0 chain candidate is chunk **[-278, -1033]**, at X−4439/Z−16523,
+with surface top Y123 and chamber floor Y−48. Its geometry and progression
+are unchanged. Terrain changes can alter which candidate is discovered first.
+
+The complete town start survives NBT reload and reversed-chunk placement on
+real generated terrain. The added furnishing checks verify the state and
+block entity of every authored bed, barrel and other block-entity furnishing
+after the entire town is placed. The explicit test writes into completed
+chunks, unlike ordinary world generation. Its diagnostic identifies a
+pre-existing bee nest at X−37424/Y69/Z−37062 replaced with air by the town's
+clearance; a subsequent DUMMY block-entity warning names that same position.
+No authored furnishing is lost. Unsupported deferred PostProcessing and
+synchronous-search tick-lag warnings remain limitations of this test setup.
+The CI artifact includes the full log and `run/logs/contour-town.json`.
+
+No graphical client, ordinary automatic structure-generation smoke test,
+villager-AI traversal or full ReTerraForged co-installation was run for this
+revision. The player comparison should judge the more saturated vanilla
+palette, bank planting, tree undersides, foundation transitions and narrow
+mountain ribs. Fixed time remains 11,500 ticks and channel depth is unchanged.
+
+The downloaded player jar passes ZIP integrity and Java 21 class checks. All
+**158 shipped source resources match**, and GameTests, fixtures and the flat
+test preset are excluded. The jar is **498,760 bytes**, SHA-256
+`dbd57a9bc3f0527abd4e1057e94018ec4a93dab88eb6f5ade50d8113a648f937`.

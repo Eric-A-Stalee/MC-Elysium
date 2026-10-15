@@ -287,3 +287,32 @@ without raising or flattening the slope. Roads, doors, reserved trunks and
 other rooms remain protected. A final comparison against each building's exact
 block geometry also excludes eaves, projecting bays and the open air of galleries.
 These saved decorations are chunk-clipped and do not resurvey terrain on reload.
+
+
+## Alpha 11 planted banks and foundations meeting rock
+
+`TownPlanting` owns three parameterized planting mixes for banks, groves and
+verges. Uneven elliptical pockets contain short grass, dandelions, oxeye daisies,
+wild grain and leaf litter. Groves favour litter; banks favour flowers and
+grass. A bounded bank survey follows actual dry terrain near water; streets
+select spaced pockets rather than a continuous row of individual flowers.
+Planting follows each surveyed column and rejects steep ledges, submerged
+positions, tree roots, the square, building footprints, porches and streets.
+The complete five-block crossing footprint is also reserved, including its
+rails and dry approaches, even though the bridge is a separate structure piece.
+
+Positions and plant kinds are saved in the landscape piece, so reload and
+chunk order do not rerun the survey. Placement still requires replaceable dry
+space and a real surviving support. Existing retaining details take priority,
+and the final exact building-geometry exclusion also protects projections and
+gallery air. Planting stops at an 18,000-detail budget inside the existing
+20,000-detail save limit. New enum entries are appended to preserve old saved
+ordinals; no new plant blocks or external dependencies are introduced.
+
+Building grammar 5 keeps room shapes, circulation, roofs and windows. Its base
+uses ivory stone below the surveyed original ground and coherent rubble
+courses meeting dressed stone above. The narrow downhill landscape additions
+now descend in unequal short footings rather than extending a level platform
+at floor height. Uphill facing still replaces existing material only. Grammars
+1–4 retain their original geometry; hashes captured before this revision guard
+alpha-10 buildings and tree form 3 against accidental changes.

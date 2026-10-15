@@ -70,16 +70,16 @@ probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
 
-Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter retain their original golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
+Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter use a fixed golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
-| Golden Fields | `#F6DB86` | `#FFDF58` | `#55A6AE` |
-| Golden Birch Woods | `#E5C575` | `#FFDA56` | `#55A6AE` |
-| Golden Watermeadows | `#F0D188` | `#FFE66C` | `#65AEB3` |
-| Amber Lakes | `#E4B66A` | `#FFC05E` | `#386C79` |
-| Elysian Highlands | `#F2D797` | `#FFE178` | `#527D93` |
-| Ivory Peaks | `#F4DEAB` | `#FFEA94` | `#496D88` |
+| Golden Fields | `#F5D65A` | `#FFDA30` | `#55A6AE` |
+| Golden Birch Woods | `#E7C75C` | `#FFD234` | `#55A6AE` |
+| Golden Watermeadows | `#E4CE68` | `#FFDF42` | `#65AEB3` |
+| Amber Lakes | `#E9B74E` | `#FFC132` | `#386C79` |
+| Elysian Highlands | `#F3D662` | `#FFDF38` | `#527D93` |
+| Ivory Peaks | `#F4DC81` | `#FFE64C` | `#496D88` |
 
 The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world or a regenerated Elysium dimension.
 
@@ -405,3 +405,28 @@ Deeper beds use andesite, stone and tuff. This remains a solid height field with
 sea-level connected water, not a watershed or flowing upland river simulation.
 New terrain needs fresh chunks; regenerating Elysium avoids joins between the
 old and new terrain profiles.
+
+
+## Alpha 11 saturated gold and exposed mountain ribs
+
+The current palette table reduces blue substantially in mountain foliage and
+grass while retaining high red/yellow channels. This is a saturation adjustment,
+not emissive foliage: the existing birch texture, directional face shading and
+normal world lighting still apply. Ambient occlusion remains disabled for the
+custom leaf model. The fallback/inventory tint is `#FFD43A`. Time stays at 11500,
+and water colours and channel depth are unchanged.
+
+The former broad calcite shelf mask is replaced by narrow exposed rib crests.
+The crag density signal now uses X/Z scale 1, matching the surface noise's
+coordinates. Its asymmetric profile peaks at 28 blocks before mountain and
+river-distance weighting, declining on both sides rather than forming a broad
+raised plateau. Only its narrow central band (-0.03 to 0.04) exposes crest stone
+above Y88; steep faces retain calcite and intervening ledges retain soil. The
+terrain remains a solid height field, without overhangs or caves. Fresh chunks
+are required, and adjoining older terrain may leave seams.
+
+Saved settlement tree form 4 retains the 16–20-block height range and connected
+branches, but tilts and tapers each crown's lower surface and adds small hanging
+tips. Disconnected leaf fragments are discarded. Forms 1–3 retain their exact
+geometry on reload. This change affects new authored settlement trees; ordinary
+biome tree profiles and their attempt budgets remain as in alpha 10.
