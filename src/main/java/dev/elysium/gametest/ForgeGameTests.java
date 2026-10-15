@@ -79,7 +79,7 @@ public final class ForgeGameTests {
             }
             int b=fitted.floor();
             for(var goal:List.of(new BlockPos(0,b+1,60),new BlockPos(-37,b+1,51),new BlockPos(37,b+1,60),
-                    new BlockPos(0,b+1,111),new BlockPos(-22,b+9,70),new BlockPos(22,b+9,70)))
+                    new BlockPos(0,b+3,71),new BlockPos(0,b+1,111),new BlockPos(-22,b+9,70),new BlockPos(22,b+9,70)))
                 helper.assertTrue(seen.contains(goal),"A player-sized path must connect the entrance to "+goal);
             helper.assertTrue(loaded.materialAt(0,b+13,76).is(Blocks.POLISHED_BLACKSTONE),"The hammer must hang above the crucible");
             helper.assertTrue(loaded.materialAt(0,fitted.entranceFloor()+10,70)==null,"Unexcavated mountain roof must remain natural rock");
@@ -205,11 +205,12 @@ public final class ForgeGameTests {
         var candidates=StructureSurvey.candidates(placement,realm.getSeed(),new BlockPos(0,120,0));
         helper.assertTrue(candidates.size()==StructureSurvey.MAX_CANDIDATES&&new HashSet<>(candidates).size()==candidates.size(),"The survey must have a bounded unique candidate list");
         class Probe implements Runnable {
-            int index;
+            int index,eligible;
             @Override public void run() {
                 for(int batch=0;batch<3&&index<candidates.size();batch++,index++) {
                     var chunk=candidates.get(index);
                     if(!placement.isStructureChunk(realm.getChunkSource().getGeneratorState(),chunk.x,chunk.z))continue;
+                    eligible++;
                     var context=new Structure.GenerationContext(realm.registryAccess(),generator,generator.getBiomeSource(),
                             realm.getChunkSource().randomState(),realm.getServer().getStructureManager(),realm.getSeed(),chunk,realm,structure.biomes()::contains);
                     if(structure.findGenerationPoint(context).isEmpty())continue;
@@ -231,6 +232,7 @@ public final class ForgeGameTests {
                             realm.getSeed(),chunk,target.get(),p.turn(),p.floor(),index+1);
                     helper.succeed();return;
                 }
+                if(index>=candidates.size())LogUtils.getLogger().info("Forge survey exhausted {} eligible placements of {} candidates",eligible,index);
                 helper.assertTrue(index<candidates.size(),"No buried Forge was discoverable within the actual folio search radius");
                 helper.runAfterDelay(1,()->run());
             }

@@ -24,15 +24,15 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
             // A genuine slope into a mountain, with open ground in front of the doorway.
             if(p.height(heights,0,68)<entry+12 || p.height(heights,0,-8)>entry+3) continue;
             boolean fits=true;
-            for(int u=-5;u<=5;u+=2) for(int v=-5;v<=2;v++) {
+            entrance: for(int u=-5;u<=5;u+=2) for(int v=-5;v<=2;v++) {
                 int y=p.height(heights,u,v);
-                if(y<entry-2 || y>entry+3) fits=false;
+                if(y<entry-2 || y>entry+3) {fits=false;break entrance;}
             }
             if(!fits) continue;
             // Every room is checked against base terrain, never a loaded neighbouring chunk.
-            for(int u=MIN_U;u<=MAX_U;u+=3) for(int v=8;v<=MAX_V;v+=3) {
+            cover: for(int u=MIN_U;u<=MAX_U;u+=3) for(int v=8;v<=MAX_V;v+=3) {
                 int roof=p.roof(u,v);
-                if(roof!=Integer.MIN_VALUE && p.height(heights,u,v)<roof+(v<19?2:6)) fits=false;
+                if(roof!=Integer.MIN_VALUE && p.height(heights,u,v)<roof+(v<19?2:6)) {fits=false;break cover;}
             }
             if(fits) return Optional.of(p);
         }

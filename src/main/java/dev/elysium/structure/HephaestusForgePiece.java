@@ -92,6 +92,7 @@ public final class HephaestusForgePiece extends StructurePiece {
 
         // The foundry's central crucible and the missing heart: no lava and no activation timer.
         int du=Math.abs(u),dv=Math.abs(v-76);
+        if(du<=2 && v==68 && h==1)return stair(Direction.SOUTH);
         if(du<=6 && dv<=7) {
             if(h<=2) return block(du>=5 || dv>=6?Blocks.POLISHED_BLACKSTONE_BRICKS:Blocks.POLISHED_BASALT);
             if(h<=5 && (du==6 || dv==7) && !(v==69 && du<=2)) return block(h==5?Blocks.WAXED_CUT_COPPER:Blocks.CHISELED_DEEPSLATE);
@@ -112,6 +113,9 @@ public final class HephaestusForgePiece extends StructurePiece {
         // Fixtures stand on full supports; no neighbour-dependent attachment can fall during clipping.
         if(du==23 && v>=63 && v<=79 && v%8==7 && h==9) return lamp();
         if(du==12 && (v==50 || v==89) && h<=3) return h==3?lamp():block(Blocks.CHISELED_DEEPSLATE);
+        if((du==3 && (v==38 || v==44 || v==98 || v==102)
+                || du==4 && v==58 || du==9 && v==76 || du==32 && v==60) && h<=3)
+            return h==3?lamp():block(Blocks.CHISELED_DEEPSLATE);
 
         // West: archive alcove, anvils and work benches. East: bellows, retorts and quench trough.
         if(u<=-30 && u>=-44 && v>=48 && v<=80) {

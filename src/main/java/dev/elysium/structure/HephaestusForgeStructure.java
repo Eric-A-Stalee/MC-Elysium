@@ -14,7 +14,10 @@ public final class HephaestusForgeStructure extends Structure {
     public HephaestusForgeStructure(StructureSettings settings) { super(settings); }
     @Override public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         var terrain=new TerrainSampler(context);
-        for(int dx:new int[]{4,12}) for(int dz:new int[]{4,12}) {
+        // A doorway needs a narrow shoulder, not an arbitrary point near the chunk
+        // centre. Search its immediate neighbourhood; even the far end of a
+        // rotated vault remains within vanilla's eight-chunk reference radius.
+        for(int dx=-8;dx<=20;dx+=4) for(int dz=-8;dz<=20;dz+=4) {
             int x=context.chunkPos().getMinBlockX()+dx,z=context.chunkPos().getMinBlockZ()+dz;
             int y=terrain.height(x,z);
             if(y>context.heightAccessor().getMaxBuildHeight()-12)continue;
