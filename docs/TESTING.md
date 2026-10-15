@@ -590,3 +590,26 @@ palette and sprite changes; no regeneration is required. The remaining visual
 check is the same mountain-town view with vanilla lighting and the preferred
 shader/resource pack, especially ground warmth, leaf brightness and the
 contrast against the intentionally pale rock.
+
+## Alpha 14 selected warmer-amber B (October 15, 2026)
+
+[GitHub Actions run 38714086972](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38714086972)
+built commit `cb226cc244fcf61c778226935c1434f9ff14dbac`. The Java 21 build,
+generated-content checks, existing sprite/model probes, independent
+compatibility guard and **all 41 required server GameTests passed**.
+
+The reference biome and inventory foliage tint matches the selected V4 B
+preview exactly: `#FFB947`, on the existing L3 curve. The six biome-resource
+diffs contain only foliage-colour changes; their grass, sky, fog, water and
+worldgen settings are unchanged. Regional foliage preserves red/blue and
+applies the same `185/208` green-channel ratio. The atlas and dimension-type
+resources are byte-identical to alpha 13. No new rendering code or graphical
+client test was added for this palette-only revision.
+
+The downloaded CI artifact matches its published ZIP digest. The player jar
+passes ZIP integrity checks, contains **100 Java 21 classes**, and matches all
+**158 shipped source resources**; test classes and fixtures are excluded.
+It is **508,557 bytes**, SHA-256
+`2b4c9b59103b0ce41659a08764940612ef355394a57c30ba78727cc5da3f48cb`.
+Existing chunks receive the foliage update after replacing the jar on client
+and server and restarting; no dimension reset is required.
