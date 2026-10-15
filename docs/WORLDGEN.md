@@ -70,16 +70,16 @@ probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
 
-Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter use a fixed golden tint; inventory items remain gold. Birch leaf models still reference vanilla textures. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
+Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter use a fixed golden tint; inventory items remain gold. Birch leaf models use a derived sprite based on the active pack's vanilla birch texture, with the alpha-12 tonal treatment described below. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
-| Golden Fields | `#F5D65A` | `#FFDA30` | `#55A6AE` |
-| Golden Birch Woods | `#E7C75C` | `#FFD234` | `#55A6AE` |
-| Golden Watermeadows | `#E4CE68` | `#FFDF42` | `#65AEB3` |
-| Amber Lakes | `#E9B74E` | `#FFC132` | `#386C79` |
-| Elysian Highlands | `#F3D662` | `#FFDF38` | `#527D93` |
-| Ivory Peaks | `#F4DC81` | `#FFE64C` | `#496D88` |
+| Golden Fields | `#F0D58B` | `#FFD062` | `#55A6AE` |
+| Golden Birch Woods | `#DCC286` | `#FBC155` | `#55A6AE` |
+| Golden Watermeadows | `#DFCE98` | `#FFD76B` | `#65AEB3` |
+| Amber Lakes | `#DEBB80` | `#F5AF54` | `#386C79` |
+| Elysian Highlands | `#E8CF91` | `#FFCA59` | `#527D93` |
+| Ivory Peaks | `#EDDBAB` | `#FFD879` | `#496D88` |
 
 The autumn atmosphere is geographic, not a moving season. The sun remains fixed and even Ivory Peaks avoid snow/ice temperatures. Resource packs and shaders can change the final appearance. New terrain and the revised biome source are best inspected in a fresh world or a regenerated Elysium dimension.
 
@@ -409,7 +409,7 @@ old and new terrain profiles.
 
 ## Alpha 11 saturated gold and exposed mountain ribs
 
-The current palette table reduces blue substantially in mountain foliage and
+The alpha-11 palette reduced blue substantially in mountain foliage and
 grass while retaining high red/yellow channels. This is a saturation adjustment,
 not emissive foliage: the existing birch texture, directional face shading and
 normal world lighting still apply. Ambient occlusion remains disabled for the
@@ -430,3 +430,36 @@ branches, but tilts and tapers each crown's lower surface and adds small hanging
 tips. Disconnected leaf fragments are discarded. Forms 1–3 retain their exact
 geometry on reload. This change affects new authored settlement trees; ordinary
 biome tree profiles and their attempt budgets remain as in alpha 10.
+
+
+## Alpha 12 warm gold and leaf sprite midtones
+
+The selected sprite-study direction is B (warm gold), with a small saturation
+reduction. The current table separates warmer foliage from quieter straw grass.
+The highland and inventory foliage tint is `#FFCA59`; woods are deeper, Amber
+Lakes remain warmer and Ivory Peaks remain paler. The same regional foliage
+palette continues to colour fallen leaves and leaf particles.
+
+`elysium:tone_mapped` is a client-only atlas source registered through NeoForge.
+The blocks atlas derives `elysium:block/golden_birch_leaves` from the active
+resource pack's `minecraft:block/birch_leaves`. At resource reload, it applies
+`round(255 * (channel / 255)^0.72)` to each RGB channel of visible texels. Alpha
+is preserved exactly, including partial alpha; fully transparent pixels remain
+byte-for-byte unchanged. Black and white endpoints remain fixed. A 256-entry
+lookup table avoids per-pixel power calculations, and the transform runs once
+per loaded sprite, before normal mip generation, rather than per frame or block.
+
+Minecraft's normal sprite loader retains source dimensions, animation frames
+and metadata. A pack that explicitly supplies
+`assets/elysium/textures/block/golden_birch_leaves.png` takes precedence and is
+loaded without the tonal transform. That artwork still receives the normal
+foliage tint from Elysium's model. The runtime-derived sprite follows the
+vanilla-asset reuse approach explored in BicBiomeCraft; no Minecraft texture
+bytes are distributed in this repository and no additional mod is required.
+
+Normal world lighting, directional shading and biome blending remain active.
+This treatment does not add emission or simulate shader illumination. Grass
+continues to use the vanilla texture with its independent regional tint.
+Terrain, structures, tree geometry, fixed time and water are unchanged from
+alpha 11. The snowlike ivory faces are intentional. Restarting with alpha 12
+updates existing chunks; no regeneration is needed for this revision.

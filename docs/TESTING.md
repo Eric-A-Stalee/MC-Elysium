@@ -513,3 +513,42 @@ The downloaded player jar passes ZIP integrity and Java 21 class checks. All
 **158 shipped source resources match**, and GameTests, fixtures and the flat
 test preset are excluded. The jar is **498,760 bytes**, SHA-256
 `dbd57a9bc3f0527abd4e1057e94018ec4a93dab88eb6f5ade50d8113a648f937`.
+
+
+## Alpha 12 warm-gold sprite treatment (October 15, 2026)
+
+[GitHub Actions run 38699775953](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38699775953)
+built commit `98dfe98f34932e22a8abc00a52c47fb986af8eab` and passed **all 41
+required GameTests**. Generated assets and worldgen, client-resource validation,
+the Java 21 NeoForge package and the independent compatibility guard checks
+passed. This revision changes six biome colour pairs, the fallback foliage
+tint and the client leaf-sprite loading path. Terrain, structures, tree geometry,
+fixed time and water remain unchanged from alpha 11.
+
+`./gradlew verifyClientSprites` is now part of `check` and therefore `build`.
+It exercises the real client registration handler, atlas-source codec,
+Minecraft sprite decoder and mip generator without opening a window or GL
+context. Minecraft's actual 16-by-16 birch texture retains all 144 opaque
+pixels and every transparent pixel; mean red-channel value rises from 130.6
+to 157.2. Five mip levels are generated successfully. A separate coloured,
+partially transparent pack fixture verifies 32-by-32 frames, both animation
+frames, timing, interpolation metadata and mip generation. An explicit Elysium
+texture override bypasses the tonal transform and retains its original pixels.
+The probe also checks every alpha value, monotone tone order, exact transparent
+padding, missing-source handling and invalid gamma rejection. The isolated
+client-test source set is excluded from the player jar.
+
+These checks cover sprite decoding and pixel integrity; they do not exercise
+GPU atlas stitching, held/dropped item rendering or shader integration. No
+graphical client was run for this revision. The existing opaque item-tint
+handling remains unchanged. Player comparison should judge the selected B
+direction with slightly reduced saturation, quieter grass and lifted leaf
+midtones, using both vanilla lighting and the preferred shader/resource pack.
+Snowlike ivory mountain faces remain intentional. Existing chunks receive
+these changes after restarting; no dimension reset is needed.
+
+The downloaded CI player jar passes ZIP integrity checks and contains **99
+Java 21 classes**. All **158 shipped source resources match**; server/client
+tests, fixtures and the flat test preset are excluded. The jar is **502,856
+bytes**, SHA-256
+`c880041ee3028d39ddec1f08cdb7c0fb976d20ac52d46096eb64e66364e9cf4b`.
