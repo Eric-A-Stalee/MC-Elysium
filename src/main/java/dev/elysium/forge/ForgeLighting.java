@@ -3,73 +3,47 @@ package dev.elysium.forge;
 import dev.elysium.block.ForgeServiceBlock;
 import dev.elysium.block.ForgeServiceBlockEntity;
 import dev.elysium.structure.ForgeFixtures;
-import dev.elysium.structure.ForgePlan;
-import java.util.HashMap;
-import java.util.Map;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import java.util.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.saveddata.SavedData;
 
-/** Shared, per-foundry service power. No chunk tickets, continuous scans or main-hearth activation. */
-public final class ForgeLighting extends SavedData {
-    public static final int CIRCUITS = 3;
-    private final Map<Long, Integer> circuits = new HashMap<>();
-
-    public static ForgeLighting get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(new Factory<>(ForgeLighting::new, ForgeLighting::load), "elysium_forge_lighting");
+/** Bounded flood through existing, loaded, intact blocks. No address-list activation or chunk tickets. */
+public final class ForgeLighting {
+    public static ForgeServiceBlockEntity loadedService(ServerLevel level,BlockPos pos) {
+        var chunk=level.getChunkSource().getChunkNow(pos.getX()>>4,pos.getZ()>>4);
+        return chunk!=null&&chunk.getBlockEntity(pos) instanceof ForgeServiceBlockEntity service?service:null;
     }
-
-    public boolean active(ForgePlan plan, int circuit) {
-        return valid(circuit) && (circuits.getOrDefault(plan.key(), 0) & (1 << circuit)) != 0;
-    }
-
-    public boolean restore(ForgePlan plan, int circuit) {
-        if (!valid(circuit) || active(plan, circuit)) return false;
-        circuits.merge(plan.key(), 1 << circuit, (a, b) -> a | b);
-        setDirty();
-        return true;
-    }
-
-    public static boolean valid(int circuit) { return circuit >= 0 && circuit < CIRCUITS; }
-
-    /** Loaded lamps wake in sequence. Unloaded lamps reconcile once when their block entity loads. */
-    public static boolean restore(ServerLevel level, ForgePlan plan, int circuit) {
-        boolean changed = get(level).restore(plan, circuit);
-        int delay = 1;
-        for (var fixture : ForgeFixtures.ALL) {
-            if (fixture.circuit() != circuit) continue;
-            var pos = fixture.worldPosition(plan);
-            var chunk = level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4);
-            if (chunk != null && chunk.getBlockEntity(pos) instanceof ForgeServiceBlockEntity service
-                    && service.belongsTo(plan, circuit) && chunk.getBlockState(pos).getBlock() instanceof ForgeServiceBlock) {
-                level.scheduleTick(pos, chunk.getBlockState(pos).getBlock(), delay);
-                delay += 3;
+    public static void advance(ServerLevel level,ForgeServiceBlockEntity source,int elapsed) {
+        var p=source.plan();if(p==null)return;
+        Set<BlockPos> reachable=new HashSet<>();
+        if(source.burning()) {
+            var queue=new ArrayDeque<BlockPos>();queue.add(source.getBlockPos());
+            while(!queue.isEmpty()) {
+                var pos=queue.remove();if(reachable.contains(pos))continue;
+                var service=loadedService(level,pos);
+                if(service==null||!service.belongsTo(p)||service.getBlockState().getValue(ForgeServiceBlock.DECAY)!=0
+                        ||ForgeFixtures.at(p,pos)==null)continue;
+                reachable.add(pos);
+                for(var d:Direction.values())if(ForgeFixtures.at(p,pos.relative(d))!=null)queue.add(pos.relative(d));
             }
         }
-        return changed;
-    }
-
-    public static ForgeLighting load(CompoundTag tag, HolderLookup.Provider provider) {
-        var data = new ForgeLighting();
-        for (var value : tag.getList("Forges", Tag.TAG_COMPOUND)) {
-            var row = (CompoundTag) value;
-            data.circuits.put(row.getLong("Entrance"), row.getInt("Circuits") & 7);
+        var previous=new HashSet<>(source.energized());
+        var next=new HashSet<>(previous);next.retainAll(reachable);
+        if(!reachable.isEmpty())next.add(source.getBlockPos());
+        // Six blocks per second: a branch catches from its burning neighbour, including after repair.
+        for(int wave=0;wave<3;wave++) {
+            var additions=new HashSet<BlockPos>();
+            for(var pos:next)for(var d:Direction.values())if(reachable.contains(pos.relative(d)))additions.add(pos.relative(d));
+            next.addAll(additions);
         }
-        return data;
+        source.setEnergized(next);
+        previous.addAll(next);
+        for(var pos:previous) {
+            var service=loadedService(level,pos);
+            if(service!=null&&service.belongsTo(p))service.reconcile(level);
+        }
+        source.consume(elapsed);
     }
-
-    @Override public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
-        var rows = new ListTag();
-        circuits.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
-            var row = new CompoundTag();
-            row.putLong("Entrance", entry.getKey());
-            row.putInt("Circuits", entry.getValue());
-            rows.add(row);
-        });
-        tag.put("Forges", rows);
-        return tag;
-    }
+    private ForgeLighting() {}
 }

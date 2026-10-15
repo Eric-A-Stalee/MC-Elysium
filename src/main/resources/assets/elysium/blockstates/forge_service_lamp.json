@@ -1,36 +1,10 @@
 {
   "variants": {
-    "facing=north,lit=false": {
-      "model": "elysium:block/forge_service_lamp",
-      "y": 0
+    "lit=false": {
+      "model": "elysium:block/forge_service_lamp"
     },
-    "facing=north,lit=true": {
-      "model": "elysium:block/forge_service_lamp_lit",
-      "y": 0
-    },
-    "facing=east,lit=false": {
-      "model": "elysium:block/forge_service_lamp",
-      "y": 90
-    },
-    "facing=east,lit=true": {
-      "model": "elysium:block/forge_service_lamp_lit",
-      "y": 90
-    },
-    "facing=south,lit=false": {
-      "model": "elysium:block/forge_service_lamp",
-      "y": 180
-    },
-    "facing=south,lit=true": {
-      "model": "elysium:block/forge_service_lamp_lit",
-      "y": 180
-    },
-    "facing=west,lit=false": {
-      "model": "elysium:block/forge_service_lamp",
-      "y": 270
-    },
-    "facing=west,lit=true": {
-      "model": "elysium:block/forge_service_lamp_lit",
-      "y": 270
+    "lit=true": {
+      "model": "elysium:block/forge_service_lamp_lit"
     }
   }
 }

@@ -5,7 +5,7 @@
       "id": "elysium:forge_service_switch"
     },
     "title": "A Little Light Remains",
-    "description": "Restore a service circuit in the buried Forge. Its hearth still waits for the First Flame.",
+    "description": "Fuel and ignite the service brazier, then open its draught. The great hearth still waits for the First Flame.",
     "frame": "goal",
     "announce_to_chat": false
   },

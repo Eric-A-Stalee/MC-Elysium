@@ -116,40 +116,68 @@ asset("models/block/forge_iron", {"parent":"minecraft:block/cube_all", "textures
 asset("models/item/forge_iron", {"parent":"elysium:block/forge_iron"})
 loot("forge_iron",[pool([item("elysium:forge_iron")],[SURVIVES])])
 
-# Original inset fixtures and handwheel geometry. Active-pack textures supply all surfaces.
+# Recessed ember conduits and open coal bowls use the active resource pack's vanilla materials.
 for name in ("forge_service_lamp", "forge_service_switch", "forge_pilot_light"):
     for lit in (False, True) if name != "forge_pilot_light" else (True,):
-        pieces = [cuboid([0, 0, 0], [16, 16, 16], "#stone")]
-        size = 3 if name == "forge_pilot_light" else 5
-        lo, hi = 8-size, 8+size
-        for a,bounds in [([lo, lo, -.03], [hi, hi, .03]), ([lo, lo, 15.97], [hi, hi, 16.03]),
-                         ([-.03, lo, lo], [.03, hi, hi]), ([15.97, lo, lo], [16.03, hi, hi]),
-                         ([lo, 15.97, lo], [hi, 16.03, hi])]:
-            pieces.append(cuboid(a, bounds, "#lens"))
-        if name == "forge_service_switch":
-            # A thick square handwheel with open centre, spindle and grip is readable in vanilla.
-            pieces += [cuboid([3,3,-1],[5,13,0],"#metal"), cuboid([11,3,-1],[13,13,0],"#metal"),
-                       cuboid([5,3,-1],[11,5,0],"#metal"), cuboid([5,11,-1],[11,13,0],"#metal"),
-                       cuboid([7,5,-1],[9,11,0],"#metal"), cuboid([7,7,-2],[9,9,-1],"#stone")]
+        pieces=[cuboid([0,0,0],[16,16,16],"#stone")]
+        if name == "forge_pilot_light":
+            pieces += [cuboid([6,6,-.02],[10,10,.02],"#ember"),cuboid([6,15.98,6],[10,16.02,10],"#ember")]
         else:
-            pieces += [cuboid([lo-1,lo-1,-.2],[lo,hi+1,.1],"#metal"),
-                       cuboid([hi,lo-1,-.2],[hi+1,hi+1,.1],"#metal"),
-                       cuboid([lo,lo-1,-.2],[hi,lo,.1],"#metal"),
-                       cuboid([lo,hi,-.2],[hi,hi+1,.1],"#metal"),
-                       cuboid([7,lo,-.15],[9,hi,.1],"#metal")]
-        suffix = "_lit" if lit else ""
-        asset(f"models/block/{name}{suffix}", {"parent":"minecraft:block/block",
-              "textures":{"stone":"minecraft:block/polished_blackstone", "metal":"minecraft:block/weathered_copper",
-                          "lens":"minecraft:block/weathered_copper_bulb_lit" if lit else "minecraft:block/oxidized_copper_bulb",
-                          "particle":"#metal"}, "elements":pieces})
-    if name == "forge_pilot_light":
-        asset(f"blockstates/{name}", {"variants":{"":{"model":f"elysium:block/{name}_lit"}}})
+            pieces += [cuboid([3,16,3],[13,16.4,13],"#ember"),
+                       cuboid([1,15,1],[3,19,15],"#metal"),cuboid([13,15,1],[15,19,15],"#metal"),
+                       cuboid([3,15,1],[13,19,3],"#metal"),cuboid([3,15,13],[13,19,15],"#metal")]
+            # Slits expose the glowing coals from the floor as well as the galleries.
+            for lo,hi in [([4,9,-.02],[12,13,.02]),([4,9,15.98],[12,13,16.02]),
+                          ([-.02,9,4],[.02,13,12]),([15.98,9,4],[16.02,13,12])]:
+                pieces.append(cuboid(lo,hi,"#ember"))
+        if name == "forge_service_switch":
+            pieces += [cuboid([3,3,-1],[5,13,0],"#metal"),cuboid([11,3,-1],[13,13,0],"#metal"),
+                       cuboid([5,3,-1],[11,5,0],"#metal"),cuboid([5,11,-1],[11,13,0],"#metal"),
+                       cuboid([7,5,-1],[9,11,0],"#metal"),cuboid([7,7,-2],[9,9,-1],"#stone")]
+        suffix="_lit" if lit else ""
+        asset(f"models/block/{name}{suffix}",{"parent":"minecraft:block/block",
+              "textures":{"stone":"minecraft:block/polished_blackstone","metal":"minecraft:block/weathered_copper",
+                          "ember":"minecraft:block/magma" if lit else "minecraft:block/coal_block","particle":"#stone"},"elements":pieces})
+    if name=="forge_pilot_light":
+        asset(f"blockstates/{name}",{"variants":{"":{"model":f"elysium:block/{name}_lit"}}})
     else:
-        asset(f"blockstates/{name}", {"variants":{
-            f"facing={facing},lit={str(lit).lower()}":{"model":f"elysium:block/{name}"+("_lit" if lit else ""),"y":rotation}
-            for facing,rotation in (("north",0),("east",90),("south",180),("west",270)) for lit in (False,True)}})
-    asset(f"models/item/{name}", {"parent":f"elysium:block/{name}"+("_lit" if name=="forge_pilot_light" else "")})
+        asset(f"blockstates/{name}",{"variants":{f"lit={str(lit).lower()}":{"model":f"elysium:block/{name}"+("_lit" if lit else "")} for lit in (False,True)}})
+    asset(f"models/item/{name}",{"parent":f"elysium:block/{name}"+("_lit" if name=="forge_pilot_light" else "")})
     loot(name,[pool([item(f"elysium:{name}")],[SURVIVES])])
+
+channel_parts=[]
+for decay in range(3):
+    for lit in (False,True):
+        name=f"forge_ember_channel_{decay}"+("_lit" if lit else "")
+        pieces=[cuboid([0,0,0],[16,16,16],"#stone"),cuboid([5,16,5],[11,16.04,11],"#ember")]
+        if decay==1:
+            pieces += [cuboid([2,16,2],[14,18,14],"#ash"),cuboid([4,18,6],[9,19,11],"#ash")]
+        if decay==2:
+            pieces += [cuboid([6,16.05,3],[9,16.1,13],"#ash")]
+        asset(f"models/block/{name}",{"parent":"minecraft:block/block","textures":{
+            "stone":"minecraft:block/polished_blackstone","ember":"minecraft:block/magma" if lit else "minecraft:block/weathered_copper",
+            "ash":"minecraft:block/basalt_top" if decay==1 else "minecraft:block/obsidian","particle":"#stone"},"elements":pieces})
+        channel_parts.append({"when":{"decay":str(decay),"lit":str(lit).lower()},"apply":{"model":f"elysium:block/{name}"}})
+for direction,(lo,hi) in {
+    "north":([6,16.01,0],[10,16.05,8]),"south":([6,16.01,8],[10,16.05,16]),
+    "west":([0,16.01,6],[8,16.05,10]),"east":([8,16.01,6],[16,16.05,10]),
+    "up":([6,8,-.02],[10,16,.02]),"down":([6,0,-.02],[10,8,.02])}.items():
+    for lit in (False,True):
+        name=f"forge_channel_{direction}"+("_lit" if lit else "")
+        pieces=[cuboid(lo,hi,"#ember")]
+        if direction in ("up","down"):
+            pieces += [cuboid([6,lo[1],15.98],[10,hi[1],16.02],"#ember"),
+                       cuboid([-.02,lo[1],6],[.02,hi[1],10],"#ember"),cuboid([15.98,lo[1],6],[16.02,hi[1],10],"#ember")]
+        asset(f"models/block/{name}",{"parent":"minecraft:block/block","textures":{
+            "ember":"minecraft:block/magma" if lit else "minecraft:block/weathered_copper","particle":"#ember"},"elements":pieces})
+        channel_parts.append({"when":{direction:"true","lit":str(lit).lower()},"apply":{"model":f"elysium:block/{name}"}})
+asset("blockstates/forge_ember_channel",{"multipart":channel_parts})
+asset("models/item/forge_ember_channel",{"parent":"elysium:block/forge_ember_channel_0"})
+loot("forge_ember_channel",[pool([item("elysium:forge_ember_channel")],[SURVIVES])])
+data("recipe/forge_ember_channel",{"type":"minecraft:crafting_shaped","category":"building","pattern":["I I","CCC"],
+     "key":{"I":{"item":"minecraft:iron_ingot"},"C":{"item":"minecraft:copper_ingot"}},"result":{"id":"elysium:forge_ember_channel","count":8}})
+data("advancement/recipes/forge_ember_channel",{"parent":"minecraft:recipes/root","criteria":{"copper":{"trigger":"minecraft:inventory_changed",
+     "conditions":{"items":[{"items":"minecraft:copper_ingot"}]}}},"rewards":{"recipes":["elysium:forge_ember_channel"]}})
 
 for kind,texture in enumerate(("basalt_top","cobbled_deepslate","blackstone","calcite")):
     pieces = [cuboid([1,0,2],[7,1,7],"#dust"), cuboid([8,0,8],[15,.7,15],"#dust"),
@@ -231,7 +259,7 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
-                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris", "elysium:forge_iron"],
+                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris", "elysium:forge_iron", "elysium:forge_ember_channel"],
                     "mineable/axe": ["elysium:forge_archive"],
                     "needs_iron_tool": ["elysium:tartarus_chain", "elysium:forge_iron"],
                     "bee_growables": ["elysium:golden_birch_sapling"]}.items():
@@ -259,7 +287,7 @@ for result, ingredient in [("elysium_fragment", "elysium_shard"), ("elysium_sigi
 for name, parent, icon, title, description in [
         ("forge_survey", "elysium", "forge_survey", "An Older Craft", "Read the mountain archive and recover a survey of the old Forge."),
         ("cold_hearth", "forge_survey", "forge_hearth", "The Unfinished Work", "Examine the dormant hearth of Hephaestus and recover a Chain Resonator."),
-        ("borrowed_light", "forge_survey", "forge_service_switch", "A Little Light Remains", "Restore a service circuit in the buried Forge. Its hearth still waits for the First Flame."),
+        ("borrowed_light", "forge_survey", "forge_service_switch", "A Little Light Remains", "Fuel and ignite the service brazier, then open its draught. The great hearth still waits for the First Flame."),
         ("voice_in_iron", "cold_hearth", "chain_resonator", "A Voice in the Iron", "Listen to the terminal anchor of a Chain of Tartarus.")]:
     data(f"advancement/{name}", {"parent": f"elysium:{parent}",
          "display": {"icon": {"id": f"elysium:{icon}"}, "title": title, "description": description,

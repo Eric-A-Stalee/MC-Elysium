@@ -10,6 +10,7 @@
     "elysium:forge_service_switch",
     "elysium:forge_pilot_light",
     "elysium:forge_debris",
-    "elysium:forge_iron"
+    "elysium:forge_iron",
+    "elysium:forge_ember_channel"
   ]
 }

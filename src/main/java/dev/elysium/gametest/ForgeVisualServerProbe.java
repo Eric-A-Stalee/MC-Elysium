@@ -4,6 +4,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.logging.LogUtils;
 import dev.elysium.Elysium;
 import dev.elysium.forge.ForgeLighting;
+import dev.elysium.block.ForgeServiceBlock;
+import dev.elysium.block.ForgeServiceBlockEntity;
+import dev.elysium.structure.ForgeFixtures;
+import dev.elysium.registry.ModBlocks;
 import dev.elysium.portal.ElysiumTravel;
 import dev.elysium.structure.ForgePlan;
 import dev.elysium.structure.HephaestusForgePiece;
@@ -65,18 +69,20 @@ public final class ForgeVisualServerProbe {
         player.setGameMode(GameType.SPECTATOR);
         switch(scene) {
             case "entrance" -> camera(player,level,-7,PLAN.entranceFloor()+5,-18,-2,PLAN.entranceFloor()+3,1);
+            case "shaft" -> camera(player,level,-10,PLAN.floor()+48,22,4,PLAN.floor()+26,20);
+            case "overlook" -> camera(player,level,0,PLAN.floor()+13,49,0,PLAN.floor()+6,76);
             case "dark" -> camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
             case "foundry" -> {
-                ForgeLighting.restore(level,PLAN,0);
+                ignite(level);
                 camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
             }
             case "workshop" -> {
-                ForgeLighting.restore(level,PLAN,1);
+                repair(level,ForgeFixtures.ASH);
                 camera(player,level,-36,PLAN.floor()+2,59,-41,PLAN.floor()+3,72);
             }
-            case "retorts" -> camera(player,level,34,PLAN.floor()+2,69,43,PLAN.floor()+4,79);
+            case "retorts" -> {repair(level,ForgeFixtures.CRACK);camera(player,level,34,PLAN.floor()+2,69,43,PLAN.floor()+4,79);}
             case "lit" -> {
-                for(int i=0;i<ForgeLighting.CIRCUITS;i++)ForgeLighting.restore(level,PLAN,i);
+                repair(level,ForgeFixtures.MISSING);
                 camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
             }
             case "gallery" -> camera(player,level,22,PLAN.floor()+9,66,0,PLAN.floor()+8,79);
@@ -84,6 +90,16 @@ public final class ForgeVisualServerProbe {
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);
         }
         LogUtils.getLogger().info("ELYSIUM_FORGE_SCENE {}",scene);
+    }
+
+    private static void ignite(ServerLevel level) {
+        var source=(ForgeServiceBlockEntity)level.getBlockEntity(ForgeFixtures.source(PLAN));
+        source.addFuel(24000);source.ignite();if(!source.airflow())source.toggleAirflow();
+    }
+    private static void repair(ServerLevel level,BlockPos local) {
+        var f=ForgeFixtures.NETWORK.get(local);var pos=f.worldPosition(PLAN);
+        level.setBlock(pos,ForgeFixtures.state(PLAN,f).setValue(ForgeServiceBlock.DECAY,0),3);
+        ((ForgeServiceBlockEntity)level.getBlockEntity(pos)).bind(PLAN);
     }
 
     private static void camera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {

@@ -3,8 +3,8 @@
   "textures": {
     "stone": "minecraft:block/polished_blackstone",
     "metal": "minecraft:block/weathered_copper",
-    "lens": "minecraft:block/weathered_copper_bulb_lit",
-    "particle": "#metal"
+    "ember": "minecraft:block/magma",
+    "particle": "#stone"
   },
   "elements": [
     {
@@ -41,321 +41,65 @@
     },
     {
       "from": [
-        5,
-        5,
-        -0.03
+        6,
+        6,
+        -0.02
       ],
       "to": [
-        11,
-        11,
-        0.03
+        10,
+        10,
+        0.02
       ],
       "faces": {
         "down": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "up": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "north": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "south": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "west": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "east": {
-          "texture": "#lens"
+          "texture": "#ember"
         }
       }
     },
     {
       "from": [
-        5,
-        5,
-        15.97
+        6,
+        15.98,
+        6
       ],
       "to": [
-        11,
-        11,
-        16.03
+        10,
+        16.02,
+        10
       ],
       "faces": {
         "down": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "up": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "north": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "south": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "west": {
-          "texture": "#lens"
+          "texture": "#ember"
         },
         "east": {
-          "texture": "#lens"
-        }
-      }
-    },
-    {
-      "from": [
-        -0.03,
-        5,
-        5
-      ],
-      "to": [
-        0.03,
-        11,
-        11
-      ],
-      "faces": {
-        "down": {
-          "texture": "#lens"
-        },
-        "up": {
-          "texture": "#lens"
-        },
-        "north": {
-          "texture": "#lens"
-        },
-        "south": {
-          "texture": "#lens"
-        },
-        "west": {
-          "texture": "#lens"
-        },
-        "east": {
-          "texture": "#lens"
-        }
-      }
-    },
-    {
-      "from": [
-        15.97,
-        5,
-        5
-      ],
-      "to": [
-        16.03,
-        11,
-        11
-      ],
-      "faces": {
-        "down": {
-          "texture": "#lens"
-        },
-        "up": {
-          "texture": "#lens"
-        },
-        "north": {
-          "texture": "#lens"
-        },
-        "south": {
-          "texture": "#lens"
-        },
-        "west": {
-          "texture": "#lens"
-        },
-        "east": {
-          "texture": "#lens"
-        }
-      }
-    },
-    {
-      "from": [
-        5,
-        15.97,
-        5
-      ],
-      "to": [
-        11,
-        16.03,
-        11
-      ],
-      "faces": {
-        "down": {
-          "texture": "#lens"
-        },
-        "up": {
-          "texture": "#lens"
-        },
-        "north": {
-          "texture": "#lens"
-        },
-        "south": {
-          "texture": "#lens"
-        },
-        "west": {
-          "texture": "#lens"
-        },
-        "east": {
-          "texture": "#lens"
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        4,
-        -0.2
-      ],
-      "to": [
-        5,
-        12,
-        0.1
-      ],
-      "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
-        "north": {
-          "texture": "#metal"
-        },
-        "south": {
-          "texture": "#metal"
-        },
-        "west": {
-          "texture": "#metal"
-        },
-        "east": {
-          "texture": "#metal"
-        }
-      }
-    },
-    {
-      "from": [
-        11,
-        4,
-        -0.2
-      ],
-      "to": [
-        12,
-        12,
-        0.1
-      ],
-      "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
-        "north": {
-          "texture": "#metal"
-        },
-        "south": {
-          "texture": "#metal"
-        },
-        "west": {
-          "texture": "#metal"
-        },
-        "east": {
-          "texture": "#metal"
-        }
-      }
-    },
-    {
-      "from": [
-        5,
-        4,
-        -0.2
-      ],
-      "to": [
-        11,
-        5,
-        0.1
-      ],
-      "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
-        "north": {
-          "texture": "#metal"
-        },
-        "south": {
-          "texture": "#metal"
-        },
-        "west": {
-          "texture": "#metal"
-        },
-        "east": {
-          "texture": "#metal"
-        }
-      }
-    },
-    {
-      "from": [
-        5,
-        11,
-        -0.2
-      ],
-      "to": [
-        11,
-        12,
-        0.1
-      ],
-      "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
-        "north": {
-          "texture": "#metal"
-        },
-        "south": {
-          "texture": "#metal"
-        },
-        "west": {
-          "texture": "#metal"
-        },
-        "east": {
-          "texture": "#metal"
-        }
-      }
-    },
-    {
-      "from": [
-        7,
-        5,
-        -0.15
-      ],
-      "to": [
-        9,
-        11,
-        0.1
-      ],
-      "faces": {
-        "down": {
-          "texture": "#metal"
-        },
-        "up": {
-          "texture": "#metal"
-        },
-        "north": {
-          "texture": "#metal"
-        },
-        "south": {
-          "texture": "#metal"
-        },
-        "west": {
-          "texture": "#metal"
-        },
-        "east": {
-          "texture": "#metal"
+          "texture": "#ember"
         }
       }
     }

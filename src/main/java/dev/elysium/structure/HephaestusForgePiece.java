@@ -24,7 +24,7 @@ public final class HephaestusForgePiece extends StructurePiece {
     }
     public HephaestusForgePiece(CompoundTag tag) {
         this(new ForgePlan(tag.getInt("X"),tag.getInt("Z"),tag.getInt("EntranceFloor"),tag.getInt("Turn")));
-        if(tag.getInt("Version")!=2) throw new IllegalArgumentException("Regenerate alpha-15 Forge chunks for the alpha-16 ruin");
+        if(tag.getInt("Version")!=3) throw new IllegalArgumentException("Regenerate older Forge chunks for the alpha-17 descent");
     }
     public ForgePlan plan() { return plan; }
     public BlockPos hearth() { return at(0,plan.floor()+1,61); }
@@ -38,7 +38,7 @@ public final class HephaestusForgePiece extends StructurePiece {
         return new BoundingBox(x1,p.floor()-2,z1,x2,p.entranceFloor()+11,z2);
     }
     @Override protected void addAdditionalSaveData(StructurePieceSerializationContext c,CompoundTag tag) {
-        tag.putInt("Version",2);tag.putInt("X",plan.x());tag.putInt("Z",plan.z());
+        tag.putInt("Version",3);tag.putInt("X",plan.x());tag.putInt("Z",plan.z());
         tag.putInt("EntranceFloor",plan.entranceFloor());tag.putInt("Turn",plan.turn());
     }
     public BlockState materialAt(int u,int y,int v) { return geometry.at(u,y,v); }
@@ -55,7 +55,7 @@ public final class HephaestusForgePiece extends StructurePiece {
         for(var fixture:ForgeFixtures.ALL) {
             var pos=fixture.worldPosition(plan);
             if(clip.isInside(pos)&&level.getBlockEntity(pos) instanceof ForgeServiceBlockEntity service)
-                service.bind(plan,fixture.circuit());
+                service.bind(plan);
         }
     }
 }

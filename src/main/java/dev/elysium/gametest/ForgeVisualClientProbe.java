@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID,value=Dist.CLIENT)
 public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
-    private static final String[] SCENES={"entrance","dark","foundry","workshop","retorts","lit","gallery","collapse"};
+    private static final String[] SCENES={"entrance","shaft","overlook","dark","foundry","workshop","retorts","lit","gallery","collapse"};
     private static boolean connecting,requested,captured;
     private static int index;
     private static long next;
@@ -43,7 +43,7 @@ public final class ForgeVisualClientProbe {
         }
         if(!requested) {
             mc.player.connection.sendCommand("forge_probe "+SCENES[index]);
-            next=now+15_000_000_000L;requested=true;captured=false;
+            next=now+(SCENES[index].equals("foundry")?45_000_000_000L:20_000_000_000L);requested=true;captured=false;
         } else if(now>=next&&!captured) {
             String name=String.format("%02d-%s.png",index+1,SCENES[index]);
             Screenshot.grab(mc.gameDirectory,name,mc.getMainRenderTarget(),message->LogUtils.getLogger().info("Forge capture: {}",message.getString()));

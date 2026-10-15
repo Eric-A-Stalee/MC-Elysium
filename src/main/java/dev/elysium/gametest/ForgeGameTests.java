@@ -80,7 +80,7 @@ public final class ForgeGameTests {
             int b=fitted.floor();
             for(var goal:List.of(new BlockPos(0,b+1,60),new BlockPos(-37,b+1,51),new BlockPos(37,b+1,60),
                     new BlockPos(-8,b+1,76),new BlockPos(0,b+1,111),new BlockPos(-22,b+9,70),new BlockPos(22,b+9,70),
-                    new BlockPos(-2,b+1,40),new BlockPos(-39,b+1,55),new BlockPos(34,b+1,65)))
+                    new BlockPos(-4,b+1,52),new BlockPos(-39,b+1,55),new BlockPos(34,b+1,65)))
                 helper.assertTrue(seen.contains(goal),"A player-sized path must connect the entrance to "+goal);
             helper.assertTrue(loaded.materialAt(0,b+13,76).is(Blocks.POLISHED_BLACKSTONE),"The hammer must hang above the striking bed");
             helper.assertTrue(loaded.materialAt(0,fitted.entranceFloor()+10,70)==null,"Unexcavated mountain roof must remain natural rock");

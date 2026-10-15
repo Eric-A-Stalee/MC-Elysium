@@ -38,14 +38,13 @@ public final class ForgeGeometry {
     /** Null leaves the mountain untouched; cave air deliberately excavates an authored space. */
     public BlockState at(int u,int y,int v) {
         int h=y-plan.floor();
-        if(v>=ForgePlan.MIN_V&&v<=7)return entrance(u,y,v);
-        int roof=plan.roof(u,v),floor=plan.floorAt(u,v);
+        if(v>=ForgePlan.MIN_V&&v<=7&&y>=plan.entranceFloor()-3)return entrance(u,y,v);
+        var descent=ForgeDescent.at(plan,u,h,v);if(descent!=null)return descent;
+        int roof=plan.hallRoof(u,v),floor=plan.floor();
         if(roof==Integer.MIN_VALUE||y<floor-2||y>roof)return null;
         var fixture=fixtures.get(BlockPos.asLong(u,h,v));
-        if(fixture!=null)return (fixture.controller()?ModBlocks.FORGE_SERVICE_SWITCH:ModBlocks.FORGE_SERVICE_LAMP)
-                .get().defaultBlockState().setValue(ForgeServiceBlock.FACING,direction(fixture.facing()));
+        if(fixture!=null)return fixture.local().equals(ForgeFixtures.MISSING)?b(Blocks.CAVE_AIR):ForgeFixtures.state(plan,fixture);
         if(y<=floor)return floor(u,y,v,floor);
-        if(v<=33)return descent(u,y,v,floor,roof);
         if(u==0&&v==61&&h==1)return b(ModBlocks.FORGE_HEARTH.get());
         if(u==-37&&v==50&&h==1)return b(ModBlocks.FORGE_LEDGER.get());
         if(u==0&&v==112&&h==1)return b(ModBlocks.TARTARUS_INSCRIPTION.get());
@@ -58,7 +57,7 @@ public final class ForgeGeometry {
         state=rearShrine(u,h,v);if(state!=null)return state;
         // Low niches flank the last bend; the central approach has no lamp pillars.
         if((u==-5&&v==40||u==5&&v==45)&&h<=5)return masonry(u,h,v);
-        if(u==-3&&v==40&&h==2)return slab(Blocks.WAXED_WEATHERED_CUT_COPPER_SLAB);
+        
         if(v==39&&u>=-5&&u<=-3&&h<=2)return b(Blocks.CHISELED_DEEPSLATE);
         if(Math.abs(u)==24&&(v==64||v==76)&&h<=10)return b(Blocks.POLISHED_BASALT);
         // Surviving overhead duct connects the workshops; broken branches end in bare metal.
@@ -86,13 +85,12 @@ public final class ForgeGeometry {
             if(v<0&&e<=0)return b(e<0?Blocks.STONE:noise(u,0,v,2)%3==0?Blocks.GRAVEL:Blocks.TUFF);
             if(v<0&&e==1&&noise(u,0,v,12)%3==0)return debris(3);
             if(e<=0)return e==0&&v>=7?stair(Blocks.COBBLED_DEEPSLATE_STAIRS,Direction.NORTH):b(Blocks.COBBLED_DEEPSLATE);
-            if(e<=3)return b(Blocks.CAVE_AIR);
+            if(e<=2)return b(Blocks.CAVE_AIR);
+            if(v>=-1&&e==3)return b(Blocks.STONE);
         }
         // Only a broken jamb and short lintel survive the blocked original doorway.
-        if(u==-5&&v>=0&&v<=2&&e>=0&&e<=6)
-            return b(e==4?Blocks.WAXED_OXIDIZED_CUT_COPPER:Blocks.CRACKED_DEEPSLATE_BRICKS);
-        if(u>=-5&&u<=-2&&v>=0&&v<=2&&e==6)
-            return b(u==-3?Blocks.WAXED_WEATHERED_CHISELED_COPPER:Blocks.DEEPSLATE_BRICKS);
+        if(u==1&&v>=3&&v<=4&&e>=0&&e<=2)
+            return b(e==2?Blocks.WAXED_OXIDIZED_CUT_COPPER:Blocks.CRACKED_DEEPSLATE_BRICKS);
         double r=(u-2.0)*(u-2.0)/100.0+(v-3.0)*(v-3.0)/121.0;
         int height=r<1?Math.max(0,(int)(8*(1-r))+noise(u/2,0,v/2,5)%2):0;
         // Roots follow the shallow breach only; they do not overgrow the deep foundry.
@@ -108,30 +106,12 @@ public final class ForgeGeometry {
 
     private BlockState floor(int u,int y,int v,int floor) {
         if(y<floor)return b(Blocks.DEEPSLATE);
-        if(v<=32&&Math.abs(u)<3)return stair(Blocks.DEEPSLATE_BRICK_STAIRS,Direction.NORTH);
-        if(v<=33)return b(Blocks.COBBLED_DEEPSLATE);
-        if(v>=48&&v<=92&&(u==-6||u==6))return b(Blocks.WAXED_WEATHERED_COPPER_GRATE);
+                if(v>=48&&v<=92&&(u==-6||u==6))return b(Blocks.WAXED_WEATHERED_COPPER_GRATE);
         if(grime(u,v)&&noise(Math.floorDiv(u,3),0,Math.floorDiv(v,4),3)%4!=0)
             return b(u>29&&v>65?Blocks.BLACKSTONE:Blocks.TUFF);
         if(Math.abs(u)<=4&&v>=44&&v<=65)return pillar(Blocks.BASALT,Direction.Axis.X);
         int patch=noise(Math.floorDiv(u,4),0,Math.floorDiv(v,5),7)%11;
         return b(patch<2?Blocks.CRACKED_DEEPSLATE_TILES:patch==2?Blocks.COBBLED_DEEPSLATE:Blocks.DEEPSLATE_TILES);
-    }
-
-    private BlockState descent(int u,int y,int v,int floor,int roof) {
-        int e=y-floor;
-        if(u==-2&&v==11&&e==1)return b(ModBlocks.FORGE_ARCHIVE.get());
-        if(u==-2&&v==11&&e==2)return b(ModBlocks.FORGE_PILOT_LIGHT.get());
-        if(u==-3&&v==29&&e==3)return b(ModBlocks.FORGE_PILOT_LIGHT.get());
-        if(u==-3&&v==29&&e<=2)return b(Blocks.COBBLED_DEEPSLATE);
-        if(v>=14&&v<=22&&u>=2&&e<=Math.max(1,4-Math.abs(v-18)/2))return b(Blocks.STONE);
-        if(plan.edge(u,v)||y>=roof-1) {
-            if(v>=13&&v<=23&&u>0)return b(noise(u,e,v,4)%3==0?Blocks.TUFF:Blocks.STONE);
-            return masonry(u,y-plan.floor(),v);
-        }
-        if(v%6==0&&(Math.abs(u)==3||y>=roof-2)&&!(u>1&&v==18))return b(Blocks.POLISHED_BASALT);
-        if(e==1&&Math.abs(u)>=2&&v%7==0)return debris(1);
-        return b(Blocks.CAVE_AIR);
     }
 
     private boolean grime(int u,int v) { return u<-12&&v>74&&v<94||u>29&&v>65||u<-40&&v>54||Math.abs(u)>22||v>106; }

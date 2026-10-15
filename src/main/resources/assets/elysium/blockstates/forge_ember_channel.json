@@ -1,0 +1,166 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "decay": "0",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_0"
+      }
+    },
+    {
+      "when": {
+        "decay": "0",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_0_lit"
+      }
+    },
+    {
+      "when": {
+        "decay": "1",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_1"
+      }
+    },
+    {
+      "when": {
+        "decay": "1",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_1_lit"
+      }
+    },
+    {
+      "when": {
+        "decay": "2",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_2"
+      }
+    },
+    {
+      "when": {
+        "decay": "2",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_2_lit"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_north"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_north_lit"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_south"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_south_lit"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_west"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_west_lit"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_east"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_east_lit"
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_up"
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_up_lit"
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_down"
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_down_lit"
+      }
+    }
+  ]
+}

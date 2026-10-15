@@ -9,22 +9,22 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
     public ForgePlan {
         if (turn < 0 || turn > 3) throw new IllegalArgumentException("Invalid forge orientation");
     }
-    public int floor() { return entranceFloor - 26; }
+    public int floor() { return entranceFloor - ForgeDescent.DROP; }
     public long key() { return new net.minecraft.core.BlockPos(x, entranceFloor, z).asLong(); }
     public net.minecraft.core.BlockPos entrance() {
         return new net.minecraft.core.BlockPos(worldX(approachCenter(-6),-6),stairFloor(-6)+1,worldZ(approachCenter(-6),-6));
     }
     /** A narrow survivor's route winds around the buried original doorway. */
-    public static int approachCenter(int v) { return v <= 1 ? -3 : v <= 4 ? -2 : v <= 6 ? -1 : 0; }
+    public static int approachCenter(int v) { return v<=-4?-7:v<=-2?-6:v<=0?-5:v<=2?-4:v<=4?-3:v<=6?-2:-1; }
     public int worldX(int u, int v) { return x + switch (turn) { case 0 -> u; case 1 -> -v; case 2 -> -u; default -> v; }; }
     public int worldZ(int u, int v) { return z + switch (turn) { case 0 -> v; case 1 -> u; case 2 -> -v; default -> -u; }; }
     public int localU(int wx, int wz) { int a=wx-x,b=wz-z; return switch(turn) { case 0->a;case 1->b;case 2->-a;default->-b; }; }
     public int localV(int wx, int wz) { int a=wx-x,b=wz-z; return switch(turn) { case 0->b;case 1->-a;case 2->-b;default->a; }; }
-    public int stairFloor(int v) { return v< -2?entranceFloor-1:entranceFloor-Math.min(26,Math.max(0,v-6)); }
+    public int stairFloor(int v) { return v< -2?entranceFloor-1:entranceFloor-Math.min(16,Math.max(0,v-7)); }
 
     public static Optional<ForgePlan> find(IntBinaryOperator heights, int x, int z, int sea, int minY) {
         int entry=heights.applyAsInt(x,z)-1;
-        if(entry<sea+30 || entry-28<minY+32) return Optional.empty();
+        if(entry<sea+30 || entry-ForgeDescent.DROP<minY+80) return Optional.empty();
         for(int turn=0;turn<4;turn++) {
             var p=new ForgePlan(x,z,entry,turn);
             // A genuine slope into a mountain, with open ground in front of the doorway.
@@ -48,8 +48,11 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
 
     /** The union of vaulted spaces. Negative infinity leaves natural rock completely intact. */
     public int roof(int u,int v) {
+        int descent=ForgeDescent.roof(u,v);
+        return Math.max(hallRoof(u,v),descent==Integer.MIN_VALUE?descent:floor()+descent);
+    }
+    public int hallRoof(int u,int v) {
         int roof=Integer.MIN_VALUE;
-        if(Math.abs(u)<=4 && v>=0 && v<=40) roof=stairFloor(v)+7-Math.abs(u)/2;
         if(Math.abs(u)<=10 && v>=34 && v<=49) roof=Math.max(roof,floor()+12-Math.abs(u)/3);
         double main=(double)(u*u)/(27*27)+(double)((v-70)*(v-70))/(26*26);
         if(main<=1) roof=Math.max(roof,floor()+12+(int)Math.round(16*Math.sqrt(1-main)));
@@ -61,7 +64,7 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
         if(rear<=1) roof=Math.max(roof,floor()+9+(int)Math.round(9*Math.sqrt(1-rear)));
         return roof;
     }
-    public int floorAt(int u,int v) { return v<34 ? stairFloor(v) : floor(); }
-    public boolean inside(int u,int v) { return roof(u,v)!=Integer.MIN_VALUE; }
+    public int floorAt(int u,int v) { return floor(); }
+    public boolean inside(int u,int v) { return hallRoof(u,v)!=Integer.MIN_VALUE; }
     public boolean edge(int u,int v) { return !inside(u-1,v)||!inside(u+1,v)||!inside(u,v-1)||!inside(u,v+1); }
 }

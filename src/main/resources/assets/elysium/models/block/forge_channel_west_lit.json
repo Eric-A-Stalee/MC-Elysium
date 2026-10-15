@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "ember": "minecraft:block/magma",
+    "particle": "#ember"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        16.01,
+        6
+      ],
+      "to": [
+        8,
+        16.05,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ember"
+        },
+        "up": {
+          "texture": "#ember"
+        },
+        "north": {
+          "texture": "#ember"
+        },
+        "south": {
+          "texture": "#ember"
+        },
+        "west": {
+          "texture": "#ember"
+        },
+        "east": {
+          "texture": "#ember"
+        }
+      }
+    }
+  ]
+}
