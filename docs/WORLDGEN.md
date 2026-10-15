@@ -520,3 +520,28 @@ existing saves keep vanilla behaviour. Replacing the jar on client and server
 and restarting updates existing chunks, with **no Elysium reset**. Terrain,
 settlement layout, tree geometry, water, pale rock and fixed time remain as in
 alpha 12.
+
+## Alpha 14 warmer-amber B foliage
+
+The selected **B** option from the V4 actual-sprite comparison changes the
+reference foliage tint from `#FFD047` to `#FFB947`. It retains the L3 curve
+(gamma 0.40, contrast 1.80, pivot 195), so the tint matches the reviewed sprite
+without changing the texture treatment. Red and blue remain fixed; the green
+component changes from 208 to 185. This preserves maximum-channel values,
+though perceived luminance is slightly lower as the hue shifts toward orange.
+
+| Biome / context | Foliage tint |
+| --- | --- |
+| Golden Fields, Elysian Highlands, Ivory Peaks | `#FFB947` |
+| Golden Birch Woods | `#FBAC42` |
+| Golden Watermeadows | `#FFBF57` |
+| Amber Lakes | `#F59C45` |
+| Inventory and outside-Elysium fallback | `#FFB947` |
+
+The regional variants retain their previous red/blue channels and scale green
+by the same `185/208` ratio, rounded to the nearest integer. Fallen-leaf
+particles and litter use the corresponding foliage tint through the existing
+handlers; their original grayscale artwork is retained. G4.1 grass, both
+texture curves, sky, water, fog, time, terrain, trees and structures remain as
+in alpha 13. Existing chunks receive this palette after restarting with the
+updated jar on client and server; no regeneration is required.

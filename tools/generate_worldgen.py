@@ -20,10 +20,10 @@ DATA = ROOT / "src/main/resources/data/elysium"
 WORLDGEN = DATA / "worldgen"
 MIN_Y, HEIGHT, SEA_LEVEL = -64, 384, 63
 GOLDEN_HOUR = 11500
-# Approved actual-sprite preview: L3 foliage and G4.1 grass. Grass's 0.95
+# Approved V4 preview: warmer-amber B foliage on the L3 curve, and G4.1 grass. Grass's 0.95
 # common RGB gain is folded into its 8-bit biome tint (#FFD34A -> #F2C846).
 GOLDEN_GRASS = 0xF2C846
-GOLDEN_FOLIAGE = 0xFFD047
+GOLDEN_FOLIAGE = 0xFFB947
 
 
 @dataclass(frozen=True)
@@ -140,6 +140,8 @@ def inland_climates(humidity):
 
 
 BIOMES = (
+    # Regional foliage keeps its alpha-13 red/blue channels; green is scaled by
+    # B's 185/208 ratio, preserving regional differences around the selected tint.
     BiomeDefinition("golden_fields", "Golden Fields",
                     inland_climates((-1.0, 0.10)),
                     Palette(GOLDEN_GRASS), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
@@ -147,17 +149,17 @@ BIOMES = (
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
                     inland_climates((0.10, 1.0)),
-                    Palette(0xE7BC43, foliage=0xFBC142, fog=0xE6D6AA),
+                    Palette(0xE7BC43, foliage=0xFBAC42, fog=0xE6D6AA),
                     Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze"),
     BiomeDefinition("golden_watermeadows", "Golden Watermeadows",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(-1.0, 0.25), weirdness=(-0.10, 0.10)),),
-                    Palette(0xF2CD55, foliage=0xFFD757, water=0x65AEB3),
+                    Palette(0xF2CD55, foliage=0xFFBF57, water=0x65AEB3),
                     Vegetation(2, 1, 9, 4, 0.15, canopy_tree_chance=0.75), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("amber_lakes", "Amber Lakes",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(0.25, 1.0), weirdness=(-0.22, 0.22)),),
-                    Palette(0xECC04C, foliage=0xF5AF45, sky=0xB9CEDD, fog=0xDFC39C,
+                    Palette(0xECC04C, foliage=0xF59C45, sky=0xB9CEDD, fog=0xDFC39C,
                             water=0x386C79, water_fog=0x264B59),
                     Vegetation(3, 2, 3, 3, 0.25, 0.20, canopy_tree_chance=0.40, leaf_patches=3),
                     FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),

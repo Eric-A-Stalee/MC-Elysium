@@ -48,7 +48,7 @@ public final class SpriteSourceProbe {
         for (var definition : definitions) verifySource(definition, types);
         verifyBiomeTints();
         GrassModelProbe.run();
-        System.out.println("Client sprite/model checks passed: approved L3/G4.1, six real sprites, alpha, mipmaps, animation, pack overrides and dimension isolation.");
+        System.out.println("Client sprite/model checks passed: approved B foliage/G4.1, six real sprites, alpha, mipmaps, animation, pack overrides and dimension isolation.");
     }
 
     private static void verifySource(com.google.gson.JsonObject definition,
@@ -139,10 +139,10 @@ public final class SpriteSourceProbe {
             var effects = JsonParser.parseString(Files.readString(Path.of(
                     "src/main/resources/data/elysium/worldgen/biome/" + biome + ".json")))
                     .getAsJsonObject().getAsJsonObject("effects");
-            check(effects.get("foliage_color").getAsInt() == 0xFFD047, "Reference biomes must use L3 foliage");
+            check(effects.get("foliage_color").getAsInt() == 0xFFB947, "Reference biomes must use selected warmer-amber B foliage");
             check(effects.get("grass_color").getAsInt() == 0xF2C846, "Reference biomes must use G4.1 grass");
         }
-        check(dev.elysium.registry.ModBlocks.GOLDEN_LEAF_COLOR == 0xFFD047, "Inventory foliage must use L3 too");
+        check(dev.elysium.registry.ModBlocks.GOLDEN_LEAF_COLOR == 0xFFB947, "Inventory foliage must use selected warmer-amber B too");
         int[] original = {255, 211, 74}, folded = {242, 200, 70};
         int largestDifference = 0;
         for (int channel = 0; channel < 3; channel++) for (int value = 0; value < 256; value++) {
