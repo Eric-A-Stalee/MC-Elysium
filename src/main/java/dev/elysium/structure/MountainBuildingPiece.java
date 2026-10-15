@@ -30,7 +30,7 @@ public final class MountainBuildingPiece extends StructurePiece {
     private final int grammar;
     private int residents;
     public MountainBuildingPiece(MountainBuildingPlan plan) {
-        this(plan,3);
+        this(plan,4);
     }
     private MountainBuildingPiece(MountainBuildingPlan plan,int grammar) {
         super(ModStructures.MOUNTAIN_BUILDING_PIECE.get(),0,bounds(plan,grammar));this.plan=plan;this.grammar=grammar;setOrientation(null);
@@ -41,17 +41,17 @@ public final class MountainBuildingPiece extends StructurePiece {
     public MountainBuildingPlan plan() { return plan; }
     private static MountainBuildingPlan read(CompoundTag tag) {
         int grammar=tag.getInt("Grammar"),stride=grammar==1?7:grammar==2?10:11;
-        if(grammar<1 || grammar>3)throw new IllegalArgumentException("Unknown mountain building grammar");
+        if(grammar<1 || grammar>4)throw new IllegalArgumentException("Unknown mountain building grammar");
         int[] data=tag.getIntArray("Rooms"),profile=tag.getIntArray("Ground"),entry=tag.getIntArray("Entry");
         if(data.length==0 || data.length>stride*4 || data.length%stride!=0 || profile.length==0 || profile.length>4800
-                || profile.length%3!=0 || entry.length!=(grammar==3?6:5))throw new IllegalArgumentException("Invalid saved mountain building");
+                || profile.length%3!=0 || entry.length!=(grammar>=3?6:5))throw new IllegalArgumentException("Invalid saved mountain building");
         var rooms=new ArrayList<MountainBuildingPlan.Room>();var ground=new ArrayList<MountainBuildingPlan.Ground>();
         for(int i=0;i<data.length;i+=stride)rooms.add(new MountainBuildingPlan.Room(data[i],data[i+1],data[i+2],data[i+3],data[i+4],data[i+5],data[i+6]!=0,
-                grammar==1?0:data[i+7],grammar==1?0:data[i+8],grammar==1?0:data[i+9],grammar==3?data[i+10]:0));
+                grammar==1?0:data[i+7],grammar==1?0:data[i+8],grammar==1?0:data[i+9],grammar>=3?data[i+10]:0));
         for(int i=0;i<profile.length;i+=3)ground.add(new MountainBuildingPlan.Ground(profile[i],profile[i+1],profile[i+2]));
         var plan=new MountainBuildingPlan(tag.getInt("X"),tag.getInt("Z"),tag.getInt("Turn"),tag.getLong("Seed"),
                 MountainBuildingPlan.Style.valueOf(tag.getString("Style")),rooms,
-                new MountainBuildingPlan.Entry(entry[0],entry[1],entry[2],entry[3],entry[4],grammar==3?entry[5]:3),ground,tag.getBoolean("Cellar"));
+                new MountainBuildingPlan.Entry(entry[0],entry[1],entry[2],entry[3],entry[4],grammar>=3?entry[5]:3),ground,tag.getBoolean("Cellar"));
         return tag.contains("GallerySide")?new MountainBuildingPlan(plan.x(),plan.z(),plan.rotation(),plan.seed(),plan.style(),plan.rooms(),
                 plan.entry(),plan.ground(),plan.cellar(),tag.getInt("GallerySide")):plan;
     }
@@ -61,9 +61,9 @@ public final class MountainBuildingPiece extends StructurePiece {
         tag.putInt("GallerySide",plan.gallerySide());
         int[] rooms=new int[plan.rooms().size()*(grammar==1?7:grammar==2?10:11)],ground=new int[plan.ground().size()*3];int i=0;
         for(var r:plan.rooms()) {rooms[i++]=r.u();rooms[i++]=r.v();rooms[i++]=r.width();rooms[i++]=r.depth();rooms[i++]=r.floor();rooms[i++]=r.storeys();rooms[i++]=r.crossRoof()?1:0;
-            if(grammar>=2){rooms[i++]=r.jetty();rooms[i++]=r.roofShift();rooms[i++]=r.facade();}if(grammar==3)rooms[i++]=r.shed();}
+            if(grammar>=2){rooms[i++]=r.jetty();rooms[i++]=r.roofShift();rooms[i++]=r.facade();}if(grammar>=3)rooms[i++]=r.shed();}
         i=0;for(var g:plan.ground()){ground[i++]=g.u();ground[i++]=g.v();ground[i++]=g.original();}
-        var e=plan.entry();tag.putIntArray("Entry",grammar==3?new int[]{e.u(),e.v(),e.du(),e.dv(),e.floor(),e.length()}:new int[]{e.u(),e.v(),e.du(),e.dv(),e.floor()});
+        var e=plan.entry();tag.putIntArray("Entry",grammar>=3?new int[]{e.u(),e.v(),e.du(),e.dv(),e.floor(),e.length()}:new int[]{e.u(),e.v(),e.du(),e.dv(),e.floor()});
         tag.putIntArray("Rooms",rooms);tag.putIntArray("Ground",ground);
     }
     @Override public void postProcess(WorldGenLevel level,StructureManager manager,ChunkGenerator generator,RandomSource random,
@@ -108,7 +108,7 @@ public final class MountainBuildingPiece extends StructurePiece {
         }
     }
     public Map<MountainArchitecture.Cell,MountainArchitecture.Voxel> geometry() {
-        if(grammar==3)return MountainArchitecture.build(plan);
+        if(grammar>=3)return MountainArchitecture.build(plan,grammar);
         var blocks=new java.util.LinkedHashMap<MountainArchitecture.Cell,MountainArchitecture.Voxel>();
         if(grammar==2) {
             MountainArchitectureV2.build(plan).forEach((p,b)->blocks.put(new MountainArchitecture.Cell(p.u(),p.y(),p.v()),

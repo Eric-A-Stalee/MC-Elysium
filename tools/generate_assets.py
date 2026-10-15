@@ -55,6 +55,9 @@ faces = {side: {"texture": "#all", "cullface": side, "tintindex": 0}
          for side in ["down", "up", "north", "south", "west", "east"]}
 asset("models/block/golden_birch_leaves", {
     "parent": "minecraft:block/block", "render_type": "minecraft:cutout_mipped",
+    # Keep sky/block light and directional face shading, but avoid the extra
+    # dark corner shading that makes dense golden crowns muddy in vanilla.
+    "ambientocclusion": False,
     "textures": {"all": "minecraft:block/birch_leaves", "particle": "#all"},
     "elements": [{"from": [0, 0, 0], "to": [16, 16, 16], "faces": faces}]})
 asset("models/block/golden_birch_sapling", {"parent": "minecraft:block/cross",

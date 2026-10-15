@@ -24,6 +24,8 @@ public final class SettlementAtmosphereGameTests {
             var tree=new TownLandscapePlan.Tree(0,0,0,height,radius,42);var geometry=tree.geometry();
             long leaves=geometry.values().stream().filter(k->k==TownLandscapePlan.Kind.LEAVES).count();
             helper.assertTrue(leaves>200,"Branching settlement trees need substantial separate crowns");
+            var leafHeights=geometry.entrySet().stream().filter(e->e.getValue()==TownLandscapePlan.Kind.LEAVES).mapToInt(e->e.getKey().y()).summaryStatistics();
+            helper.assertTrue(leafHeights.getMax()-leafHeights.getMin()>=10,"Crowns must have substantial vertical depth, not a shared flat canopy");
             helper.assertTrue(geometry.entrySet().stream().filter(e->e.getKey().y()<4).allMatch(e->Math.abs(e.getKey().x())<=1 && e.getKey().z()==0
                     && e.getValue()!=TownLandscapePlan.Kind.LEAVES),"Only a narrow root flare belongs below the branching trunk");
             var logs=geometry.entrySet().stream().filter(e->e.getValue()!=TownLandscapePlan.Kind.LEAVES).map(java.util.Map.Entry::getKey).collect(java.util.stream.Collectors.toSet());
@@ -105,6 +107,38 @@ public final class SettlementAtmosphereGameTests {
         helper.assertTrue(treeTag.getInt("Version")==1 && reloaded.createTag(context).equals(treeTag)
                 && reloaded.plan().trees().getFirst().geometry().equals(tree.geometry()),"Partially generated alpha-8 trees must keep their original crowns");
         helper.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=100)
+    public static void alphaNineBuildingsAndTreesKeepTheirSavedGeometry(GameTestHelper helper) {
+        var rooms=List.of(new MountainBuildingPlan.Room(-4,-7,9,15,99,2,false,1,1,1,0),
+                new MountainBuildingPlan.Room(-10,-5,7,11,99,1,false,0,0,2,-1));
+        var entry=new MountainBuildingPlan.Entry(0,7,0,1,99,2);var ground=new java.util.ArrayList<MountainBuildingPlan.Ground>();
+        for(int u=-10;u<=4;u++)for(int v=-7;v<=9;v++) {
+            final int x=u,z=v;
+            if(rooms.stream().anyMatch(r->r.contains(x,z,0)) || entry.porch(u,v,0))ground.add(new MountainBuildingPlan.Ground(u,v,99));
+        }
+        var plan=new MountainBuildingPlan(0,0,0,77,MountainBuildingPlan.Style.CROSS_GABLE,rooms,entry,ground,false,0);
+        var context=StructurePieceSerializationContext.fromLevel(helper.getLevel());var tag=new MountainBuildingPiece(plan).createTag(context);
+        tag.putInt("Grammar",3);
+        var reloaded=(MountainBuildingPiece)ModStructures.MOUNTAIN_BUILDING_PIECE.get().load(context,tag);
+        // Captured from the published alpha-9 implementation before adding grammar 4.
+        helper.assertTrue(geometryHash(reloaded.geometry()).equals("86ba49a914acfd81bc60fabed32fcbdbe3ab6d0eb7d98b85306a52be109e1fd1"),
+                "Saved alpha-9 houses must retain every block and orientation");
+        helper.assertTrue(reloaded.createTag(context).equals(tag),"An older building must retain its saved grammar on resave");
+        var oldTree=new TownLandscapePlan.Tree(0,100,0,18,6,77,2);
+        var piece=new TownLandscapePiece(new TownLandscapePlan(List.of(oldTree),List.of(),List.of()));var treeTag=piece.createTag(context);
+        var saved=(TownLandscapePiece)ModStructures.TOWN_LANDSCAPE_PIECE.get().load(context,treeTag);
+        helper.assertTrue(treeTag.getInt("Version")==2 && saved.createTag(context).equals(treeTag)
+                && geometryHash(saved.plan().trees().getFirst().geometry()).equals("9ca98a90f51bb8ae8e12e19e0109ec1499f36fc3c214aedc552a1d41ba842d8f"),
+                "Saved alpha-9 crowns and branches must not change when neighboring chunks generate");
+        helper.succeed();
+    }
+    private static String geometryHash(java.util.Map<?,?> geometry) {
+        try {
+            var lines=geometry.entrySet().stream().map(e->e.getKey()+"="+e.getValue()).sorted().toList();
+            return java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(
+                    String.join("\n",lines).getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch(java.security.NoSuchAlgorithmException error){throw new IllegalStateException(error);}
     }
     private SettlementAtmosphereGameTests() {}
 }

@@ -44,6 +44,14 @@ public final class AdaptiveTownGameTests {
             }
             helper.assertTrue(plan.streets().stream().filter(c->c.kind()==ValleyTownPlanner.COURT).count()==121,
                     "Only the public square receives a level pad; no house gets a square yard");
+            var details=plan.landscape().details().stream().map(d->new TownLandscapePlan.Cell(d.x(),d.y(),d.z()))
+                    .collect(java.util.stream.Collectors.toSet());
+            helper.assertTrue(details.size()<=20000,"Landscape must remain inside its saved detail budget");
+            for(var b:plan.buildings())for(var c:MountainArchitecture.build(b).keySet())
+                helper.assertTrue(!details.contains(new TownLandscapePlan.Cell(b.worldX(c.u(),c.v()),c.y(),b.worldZ(c.u(),c.v()))),
+                        "Retaining works may not overwrite roofs, bays, interiors or gallery air");
+            for(var d:plan.landscape().details())if(d.kind()==TownLandscapePlan.Kind.ROCK || d.kind()==TownLandscapePlan.Kind.ROCK_SHADE)
+                helper.assertTrue(d.y()<terrain.height(d.x(),d.z()),"Rock facing must preserve the surveyed hillside, without building artificial cliffs");
             var walk=new HashMap<MountainBuildingPlan.Point,Integer>();
             for(var c:plan.streets()) {
                 helper.assertTrue(Math.abs(c.ground()-c.original())<=3,"Street cutting and filling may not exceed three blocks");

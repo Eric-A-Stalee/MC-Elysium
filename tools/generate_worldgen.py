@@ -19,13 +19,13 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/main/resources/data/elysium"
 WORLDGEN = DATA / "worldgen"
 MIN_Y, HEIGHT, SEA_LEVEL = -64, 384, 63
-GOLDEN_HOUR = 12000
+GOLDEN_HOUR = 11500
 
 
 @dataclass(frozen=True)
 class Palette:
     grass: int
-    foliage: int = 0xFFCF50
+    foliage: int = 0xFFDF58
     sky: int = 0xB5D2E7
     fog: int = 0xF0DAB1
     water: int = 0x55A6AE
@@ -88,9 +88,9 @@ class TreeShape:
 TREE_SHAPES = (
     TreeShape("golden_birch", (6, 2, 1), (2, 3), 5),
     # Narrower variable crowns and a wider height range interrupt the old roof.
-    TreeShape("tall_golden_birch", (10, 3, 2), (2, 3), 7),
+    TreeShape("tall_golden_birch", (9, 2, 2), (2, 3), 7),
     TreeShape("branching_golden_birch", (9, 4, 1), (2, 3), 5, branching=True),
-    TreeShape("canopy_golden_birch", (12, 4, 2), (3, 3), 6, branching=True),
+    TreeShape("canopy_golden_birch", (10, 3, 2), (3, 3), 6, branching=True),
 )
 
 
@@ -138,35 +138,35 @@ def inland_climates(humidity):
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
                     inland_climates((-1.0, 0.10)),
-                    Palette(0xDCC277), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
+                    Palette(0xF6DB86), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
                     inland_climates((0.10, 1.0)),
-                    Palette(0xC9AC61, fog=0xE6D6AA),
+                    Palette(0xE5C575, foliage=0xFFDA56, fog=0xE6D6AA),
                     Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze"),
     BiomeDefinition("golden_watermeadows", "Golden Watermeadows",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(-1.0, 0.25), weirdness=(-0.10, 0.10)),),
-                    Palette(0xD6BA71, foliage=0xFFD95F, water=0x65AEB3),
+                    Palette(0xF0D188, foliage=0xFFE66C, water=0x65AEB3),
                     Vegetation(2, 1, 9, 4, 0.15, canopy_tree_chance=0.75), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("amber_lakes", "Amber Lakes",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(0.25, 1.0), weirdness=(-0.22, 0.22)),),
-                    Palette(0xC4A05F, foliage=0xF3AC4F, sky=0xB9CEDD, fog=0xDFC39C,
+                    Palette(0xE4B66A, foliage=0xFFC05E, sky=0xB9CEDD, fog=0xDFC39C,
                             water=0x386C79, water_fog=0x264B59),
                     Vegetation(3, 2, 3, 3, 0.25, 0.20, canopy_tree_chance=0.40, leaf_patches=3),
                     FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
                     (ClimateBox((-1.0, 1.0), (-0.55, -0.22)),),
-                    Palette(0xDAC17B, foliage=0xFFD360, sky=0xAFC6DF, fog=0xD7DCE2,
+                    Palette(0xF2D797, foliage=0xFFE178, sky=0xAFC6DF, fog=0xD7DCE2,
                             water=0x527D93, water_fog=0x354F68),
                     Vegetation(2, 2, 2, 3, 0.45, 0.10, canopy_tree_chance=0.30),
                     (Spawn("sheep", 10), Spawn("rabbit", 5, 2, 3)),
                     temperature=0.45, downfall=0.35, pale_cliffs=True, settlements=("mountain_town",)),
     BiomeDefinition("ivory_peaks", "Ivory Peaks",
                     (ClimateBox((-1.0, 1.0), (-1.0, -0.55)),),
-                    Palette(0xD8C992, foliage=0xFFDC80, sky=0xA7BDD5, fog=0xCDD6E1,
+                    Palette(0xF4DEAB, foliage=0xFFEA94, sky=0xA7BDD5, fog=0xCDD6E1,
                             water=0x496D88, water_fog=0x334962),
                     Vegetation(1, 0, 1, 1, 0.55, canopy_tree_chance=0.25), (Spawn("sheep", 8), Spawn("rabbit", 4, 2, 3)),
                     temperature=0.35, downfall=0.25, pale_cliffs=True, settlements=("mountain_town",)),
@@ -274,12 +274,12 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     crag_noise = {"type": "minecraft:noise", "noise": "elysium:crag_relief",
                   "xz_scale": 0.6, "y_scale": 0.0}
     crag_shape = spline(crag_noise, ((-1.2, -2.0), (-0.20, -2.0), (-0.08, 0.0),
-                                   (0.05, 0.0), (0.13, 13.0), (0.28, 18.0), (1.2, 18.0)))
+                                   (0.05, 0.0), (0.11, 17.0), (0.22, 24.0), (1.2, 24.0)))
     mountains = binary("add", mountains, binary("mul", binary("mul", mountains, 1.0 / 118.0), crag_shape))
     emit(entries, "worldgen/noise/crag_relief.json", {"firstOctave": -5, "amplitudes": [1.0, 0.5]})
     channel_depth = binary("mul", spline("elysium:river_distance",
                         ((0.0, 1.0), (0.012, 1.0), (0.035, 0.0), (1.2, 0.0))),
-                    binary("add", 1.5, binary("mul", 0.8, relief)))
+                    binary("add", 3.5, binary("mul", 1.5, relief)))
     terrain_height = unary("flat_cache", binary("add", binary("add", 60.0, binary("mul", -1.0, channel_depth)), binary("add",
                     binary("mul", channel, upland), binary("mul", shoulder, mountains))))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
@@ -291,19 +291,26 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     cliff_biomes = [biome.key for biome in BIOMES if biome.pale_cliffs]
     pale_cliffs = condition({"type": "minecraft:biome", "biome_is": cliff_biomes},
                             condition({"type": "minecraft:steep"}, block_rule("calcite")))
+    # Coherent exposed shelves supplement the narrow steep-column stripes.
+    # Restrict them to uplands above the inhabited riverbanks; no terrain is filled.
+    exposed_shelves = condition({"type": "minecraft:biome", "biome_is": cliff_biomes},
+        condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL + 25},
+                   "surface_depth_multiplier": 0, "add_stone_depth": False},
+            condition({"type": "minecraft:noise_threshold", "noise": "elysium:crag_relief",
+                       "min_threshold": 0.08, "max_threshold": 1.7976931348623157e308}, block_rule("calcite"))))
     # Pale bedrock beneath a thin soil mantle also shows through vertical faces
     # between Minecraft's sparse steep-column detections.
     upland_rock = condition({"type": "minecraft:biome", "biome_is": cliff_biomes}, block_rule("calcite"))
     # Keep pale shallows at the shore; deeper channels have coherent gravel and
     # stone patches so clear shader water does not visually erase the river.
     submerged_bed = sequence(
-        condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL - 2},
+        condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL - 1},
                    "surface_depth_multiplier": 0, "add_stone_depth": False}, block_rule("sand")),
         condition({"type": "minecraft:noise_threshold", "noise": "minecraft:surface",
                    "min_threshold": 0.15, "max_threshold": 1.7976931348623157e308}, block_rule("andesite")),
         condition({"type": "minecraft:noise_threshold", "noise": "minecraft:surface",
                    "min_threshold": -1.7976931348623157e308, "max_threshold": -0.2}, block_rule("stone")),
-        block_rule("gravel"))
+        block_rule("tuff"))
     # Land keeps biome-tinted grass and dirt. No deepslate,
     # ore veins, lakes, aquifers, springs or carvers obscure the buried future.
     surface = sequence(
@@ -315,12 +322,12 @@ def make_noise(entries: dict[Path, bytes]) -> None:
         condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL + 1},
                    "surface_depth_multiplier": 0, "add_stone_depth": False}, pale_cliffs),
         condition(surface_depth(0), sequence(
-            pale_cliffs,
+            pale_cliffs, exposed_shelves,
             condition({"type": "minecraft:water", "offset": 0,
                        "surface_depth_multiplier": 0, "add_stone_depth": False},
                       block_rule("grass_block", snowy="false")),
             submerged_bed)),
-        condition(surface_depth(1), sequence(pale_cliffs, block_rule("dirt"))),
+        condition(surface_depth(1), sequence(pale_cliffs, exposed_shelves, block_rule("dirt"))),
         condition({"type": "minecraft:y_above", "anchor": {"absolute": SEA_LEVEL + 3},
                    "surface_depth_multiplier": 0, "add_stone_depth": False}, upland_rock),
         condition(surface_depth(3), block_rule("dirt")),

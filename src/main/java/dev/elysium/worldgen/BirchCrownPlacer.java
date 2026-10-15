@@ -29,13 +29,13 @@ public final class BirchCrownPlacer extends FoliagePlacer {
             TreeConfiguration config, int trunkHeight, FoliageAttachment attachment, int crownHeight, int radius, int offset) {
         double angle=random.nextDouble()*Math.PI*2;
         double[][] lobes=new double[4][6];
-        lobes[0]=new double[]{0, -1.0, 0, 1.65, 1.75, 1.65};
+        lobes[0]=new double[]{.3, -1.2, -.2, 1.9, 2.1, 1.8};
         for(int i=1;i<4;i++) {
             double direction=angle+i*2.15;
             lobes[i]=new double[]{Math.cos(direction)*(radius*0.60),-1.5-i*(crownHeight-2.0)/3,
-                    Math.sin(direction)*(radius*0.60),1.5+random.nextDouble()*0.45,1.65+random.nextDouble()*0.45,1.5+random.nextDouble()*0.45};
+                    Math.sin(direction)*(radius*0.60),1.8+random.nextDouble()*0.55,1.9+random.nextDouble()*0.65,1.8+random.nextDouble()*0.55};
         }
-        int extent=radius+1;
+        int extent=radius+2;
         for(int y=-crownHeight-1;y<=1;y++)for(int x=-extent;x<=extent;x++)for(int z=-extent;z<=extent;z++) {
             double best=Double.MAX_VALUE;
             for(double[] l:lobes) {

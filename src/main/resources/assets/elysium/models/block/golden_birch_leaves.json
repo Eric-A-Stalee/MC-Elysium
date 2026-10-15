@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout_mipped",
+  "ambientocclusion": false,
   "textures": {
     "all": "minecraft:block/birch_leaves",
     "particle": "#all"

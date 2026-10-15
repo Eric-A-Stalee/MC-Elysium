@@ -40,10 +40,10 @@
           },
           "argument2": {
             "type": "minecraft:add",
-            "argument1": 1.5,
+            "argument1": 3.5,
             "argument2": {
               "type": "minecraft:mul",
-              "argument1": 0.8,
+              "argument1": 1.5,
               "argument2": {
                 "type": "minecraft:noise",
                 "noise": "elysium:gentle_relief",
@@ -429,18 +429,18 @@
                     "derivative": 0.0
                   },
                   {
-                    "location": 0.13,
-                    "value": 13.0,
+                    "location": 0.11,
+                    "value": 17.0,
                     "derivative": 0.0
                   },
                   {
-                    "location": 0.28,
-                    "value": 18.0,
+                    "location": 0.22,
+                    "value": 24.0,
                     "derivative": 0.0
                   },
                   {
                     "location": 1.2,
-                    "value": 18.0,
+                    "value": 24.0,
                     "derivative": 0.0
                   }
                 ]
