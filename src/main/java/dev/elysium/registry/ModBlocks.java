@@ -4,6 +4,9 @@ import dev.elysium.Elysium;
 import dev.elysium.block.WildGrainBlock;
 import dev.elysium.block.GoldenBirchLeavesBlock;
 import dev.elysium.block.LeafLitterBlock;
+import dev.elysium.block.ForgeRecordBlock;
+import dev.elysium.block.DormantHearthBlock;
+import dev.elysium.forge.ForgeLore;
 import dev.elysium.portal.HarvestAltarBlock;
 import java.util.Optional;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +26,15 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Elysium.MOD_ID);
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
+    public static final DeferredBlock<ForgeRecordBlock> FORGE_ARCHIVE = BLOCKS.register("forge_archive",
+            () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BOOKSHELF).strength(2.5F),ForgeLore.Record.SURVEY));
+    public static final DeferredBlock<ForgeRecordBlock> FORGE_LEDGER = BLOCKS.register("forge_ledger",
+            () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_DEEPSLATE).strength(4.0F),ForgeLore.Record.LEDGER));
+    public static final DeferredBlock<ForgeRecordBlock> TARTARUS_INSCRIPTION = BLOCKS.register("tartarus_inscription",
+            () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_POLISHED_BLACKSTONE).strength(4.0F),ForgeLore.Record.BINDINGS));
+    public static final DeferredBlock<DormantHearthBlock> FORGE_HEARTH = BLOCKS.register("forge_hearth",
+            () -> new DormantHearthBlock(BlockBehaviour.Properties.of().strength(12.0F,1200.0F).requiresCorrectToolForDrops()
+                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->3)));
     public static final DeferredBlock<Block> TARTARUS_CHAIN_BLOCK = BLOCKS.register("tartarus_chain",
             () -> new Block(BlockBehaviour.Properties.of().strength(8.0F, 1200.0F).requiresCorrectToolForDrops()
                     .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY)));

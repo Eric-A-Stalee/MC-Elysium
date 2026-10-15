@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:elysium",
+  "display": {
+    "icon": {
+      "id": "elysium:forge_survey"
+    },
+    "title": "An Older Craft",
+    "description": "Read the mountain archive and recover a survey of the old Forge.",
+    "frame": "task",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

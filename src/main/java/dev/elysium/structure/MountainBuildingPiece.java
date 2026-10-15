@@ -1,6 +1,7 @@
 package dev.elysium.structure;
 
 import dev.elysium.registry.ModStructures;
+import dev.elysium.registry.ModBlocks;
 import java.util.ArrayList;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -29,14 +30,15 @@ public final class MountainBuildingPiece extends StructurePiece {
     private final MountainBuildingPlan plan;
     private final int grammar;
     private int residents;
+    private boolean forgeRecord;
     public MountainBuildingPiece(MountainBuildingPlan plan) {
-        this(plan,5);
+        this(plan,5);forgeRecord=true;
     }
     private MountainBuildingPiece(MountainBuildingPlan plan,int grammar) {
         super(ModStructures.MOUNTAIN_BUILDING_PIECE.get(),0,bounds(plan,grammar));this.plan=plan;this.grammar=grammar;setOrientation(null);
     }
     public MountainBuildingPiece(CompoundTag tag) {
-        this(read(tag),tag.getInt("Grammar"));residents=tag.getInt("Residents");
+        this(read(tag),tag.getInt("Grammar"));residents=tag.getInt("Residents");forgeRecord=tag.getBoolean("ForgeRecord");
     }
     public MountainBuildingPlan plan() { return plan; }
     private static MountainBuildingPlan read(CompoundTag tag) {
@@ -59,6 +61,7 @@ public final class MountainBuildingPiece extends StructurePiece {
         tag.putInt("Grammar",grammar);tag.putInt("X",plan.x());tag.putInt("Z",plan.z());tag.putInt("Turn",plan.rotation());
         tag.putLong("Seed",plan.seed());tag.putString("Style",plan.style().name());tag.putBoolean("Cellar",plan.cellar());tag.putInt("Residents",residents);
         tag.putInt("GallerySide",plan.gallerySide());
+        if(forgeRecord)tag.putBoolean("ForgeRecord",true);
         int[] rooms=new int[plan.rooms().size()*(grammar==1?7:grammar==2?10:11)],ground=new int[plan.ground().size()*3];int i=0;
         for(var r:plan.rooms()) {rooms[i++]=r.u();rooms[i++]=r.v();rooms[i++]=r.width();rooms[i++]=r.depth();rooms[i++]=r.floor();rooms[i++]=r.storeys();rooms[i++]=r.crossRoof()?1:0;
             if(grammar>=2){rooms[i++]=r.jetty();rooms[i++]=r.roofShift();rooms[i++]=r.facade();}if(grammar>=3)rooms[i++]=r.shed();}
@@ -82,6 +85,13 @@ public final class MountainBuildingPiece extends StructurePiece {
             if(x<clip.minX() || x>clip.maxX() || z<clip.minZ() || z>clip.maxZ() || c.y()<clip.minY() || c.y()>clip.maxY())continue;
             if(attachment)level.setBlock(new BlockPos(x,c.y(),z),state(entry.getValue()),Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE);
             else placeBlock(level,state(entry.getValue()),x,c.y(),z,clip);
+        }
+        if(forgeRecord && plan.style()==MountainBuildingPlan.Style.GREAT_HALL) {
+            geometry.entrySet().stream().filter(e->e.getValue().material()==MountainArchitecture.Material.BOOKSHELF)
+                    .sorted(java.util.Comparator.<Map.Entry<MountainArchitecture.Cell,MountainArchitecture.Voxel>>comparingInt(e->e.getKey().y())
+                            .thenComparingInt(e->e.getKey().u()).thenComparingInt(e->e.getKey().v()))
+                    .findFirst().ifPresent(e->{var p=e.getKey();placeBlock(level,ModBlocks.FORGE_ARCHIVE.get().defaultBlockState(),
+                            plan.worldX(p.u(),p.v()),p.y(),plan.worldZ(p.u(),p.v()),clip);});
         }
         if(plan.style()==MountainBuildingPlan.Style.WATCH_LODGE)return;
         var spawns=new ArrayList<BlockPos>();

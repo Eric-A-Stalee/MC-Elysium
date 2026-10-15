@@ -1,6 +1,7 @@
 package dev.elysium.registry;
 
 import dev.elysium.Elysium;
+import dev.elysium.item.ResonanceItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -15,6 +16,8 @@ public final class ModItems {
     public static final DeferredItem<Item> ELYSIUM_SHARD = ITEMS.registerSimpleItem("elysium_shard");
     public static final DeferredItem<Item> ELYSIUM_FRAGMENT = ITEMS.registerSimpleItem("elysium_fragment");
     public static final DeferredItem<Item> ELYSIUM_SIGIL = ITEMS.registerSimpleItem("elysium_sigil", new Item.Properties().stacksTo(1).fireResistant());
+    public static final DeferredItem<ResonanceItem> FORGE_SURVEY = ITEMS.register("forge_survey", () -> new ResonanceItem(new Item.Properties().stacksTo(1),true));
+    public static final DeferredItem<ResonanceItem> CHAIN_RESONATOR = ITEMS.register("chain_resonator", () -> new ResonanceItem(new Item.Properties().stacksTo(1).fireResistant(),false));
 
     static {
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_LEAVES);
@@ -23,6 +26,10 @@ public final class ModItems {
         ITEMS.registerSimpleBlockItem(ModBlocks.LEAF_LITTER);
         ITEMS.registerSimpleBlockItem(ModBlocks.TARTARUS_CHAIN_BLOCK);
         ITEMS.registerSimpleBlockItem(ModBlocks.HARVEST_ALTAR);
+        ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_ARCHIVE);
+        ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_LEDGER);
+        ITEMS.registerSimpleBlockItem(ModBlocks.TARTARUS_INSCRIPTION);
+        ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_HEARTH);
     }
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ELYSIUM_TAB = TABS.register("elysium",
@@ -34,6 +41,9 @@ public final class ModItems {
                         output.accept(ModBlocks.GOLDEN_BIRCH_SAPLING); output.accept(ModBlocks.WILD_GRAIN);
                         output.accept(ModBlocks.LEAF_LITTER);
                         output.accept(ModBlocks.TARTARUS_CHAIN_BLOCK);
+                        output.accept(FORGE_SURVEY);output.accept(CHAIN_RESONATOR);
+                        output.accept(ModBlocks.FORGE_ARCHIVE);output.accept(ModBlocks.FORGE_LEDGER);
+                        output.accept(ModBlocks.TARTARUS_INSCRIPTION);output.accept(ModBlocks.FORGE_HEARTH);
                     }).build());
 
     private ModItems() {}

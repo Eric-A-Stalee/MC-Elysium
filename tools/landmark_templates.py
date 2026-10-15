@@ -103,3 +103,38 @@ def lookout(state):
         t.put(x, 6, 6, "lantern", hanging="true", waterlogged="false")
         t.put(x, 7, 6, "birch_slab", type="bottom", waterlogged="false")
     return t
+
+
+def forge_waystation(state):
+    """An abandoned survey workshop: a surviving archive beneath a partial copper roof."""
+    t = Template(state, (17, 11, 17), "forge_waystation")
+    for x in range(3, 14):
+        for z in range(3, 13):
+            t.ground(x, z, "stone_bricks" if (x + z) % 5 else "cracked_stone_bricks")
+            t.fill(x, 2, z, x, 8, z, "air")
+    for x, z in ((3, 3), (13, 3), (3, 12), (13, 12)):
+        t.fill(x, 2, z, x, 6 if z == 3 else 4, z, "polished_basalt", axis="y")
+    for z in range(4, 12):
+        for x in (3, 13):
+            t.fill(x, 2, z, x, 3 if z > 7 else 5, z, "stone_bricks")
+    t.fill(4, 2, 3, 12, 4, 3, "stone_bricks")
+    t.fill(4, 5, 3, 12, 5, 3, "waxed_exposed_cut_copper")
+    # The rear half retains its roof; the front opens to the sky and golden plants.
+    for x in range(2, 15):
+        for z in range(2, 8):
+            t.put(x, 6 + max(0, 3 - abs(x - 8) // 2), z, "waxed_exposed_cut_copper_slab", type="bottom", waterlogged="false")
+    t.put(8, 2, 4, "elysium:forge_archive")
+    t.put(5, 2, 4, "smithing_table")
+    t.put(11, 2, 4, "chipped_anvil", facing="north")
+    t.put(4, 2, 7, "blast_furnace", facing="east", lit="false")
+    t.put(12, 2, 7, "crafting_table")
+    t.put(6, 2, 4, "waxed_cut_copper")
+    t.put(6, 3, 4, "lantern", hanging="false", waterlogged="false")
+    for x in range(7, 10):
+        for z in range(12, 17):
+            t.ground(x, z, "dirt_path")
+            t.fill(x, 2, z, x, 4, z, "air")
+    for x, z in ((4, 10), (11, 11), (5, 13), (12, 14)):
+        t.ground(x, z)
+        t.put(x, 2, z, "elysium:leaf_litter")
+    return t

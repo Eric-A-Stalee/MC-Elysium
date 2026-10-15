@@ -86,6 +86,47 @@ def cuboid(start, end, texture):
             "faces": {s: {"texture": texture} for s in ["down", "up", "north", "south", "west", "east"]}}
 
 
+# The Forge's models are original block geometry with active-pack vanilla references.
+# Distinct in-world plaques and a three-dimensional tuning fork need no copied art.
+for name, surface, emblem in [
+        ("forge_archive", "bookshelf", "waxed_copper_block"),
+        ("forge_ledger", "chiseled_deepslate", "gold_block"),
+        ("tartarus_inscription", "chiseled_polished_blackstone", "amethyst_block"),
+        ("forge_hearth", "polished_blackstone", "copper_block")]:
+    # Waxing is a block state/material choice; vanilla's texture is named copper_block.
+    emblem = emblem.removeprefix("waxed_")
+    pieces = [cuboid([0, 0, 0], [16, 16, 16], "#stone")]
+    for a, b in [([3, 3, -0.02], [13, 13, 0.12]), ([3, 3, 15.88], [13, 13, 16.02]),
+                 ([-0.02, 3, 3], [0.12, 13, 13]), ([15.88, 3, 3], [16.02, 13, 13])]:
+        pieces.append(cuboid(a, b, "#emblem"))
+    pieces += [cuboid([5, 15.9, 5], [11, 16.1, 11], "#socket"),
+               cuboid([7, 5, -0.1], [9, 11, 0.15], "#socket"),
+               cuboid([5, 9, -0.1], [11, 11, 0.15], "#socket")]
+    asset(f"models/block/{name}", {"parent": "minecraft:block/block",
+          "textures": {"stone": f"minecraft:block/{surface}", "emblem": f"minecraft:block/{emblem}",
+                       "socket": "minecraft:block/crying_obsidian" if name == "forge_hearth" else "minecraft:block/deepslate_tiles", "particle": "#stone"},
+          "elements": pieces})
+    asset(f"blockstates/{name}", {"variants": {"": {"model": f"elysium:block/{name}"}}})
+    asset(f"models/item/{name}", {"parent": f"elysium:block/{name}"})
+    loot(name, [pool([item(f"elysium:{name}")], [SURVIVES])])
+
+asset("models/item/forge_survey", {"parent": "minecraft:item/generated", "textures": {"layer0": "minecraft:item/written_book"}})
+asset("models/item/chain_resonator", {
+    "parent": "minecraft:block/block", "gui_light": "front",
+    "textures": {"metal": "minecraft:block/netherite_block", "copper": "minecraft:block/copper_block",
+                 "crystal": "minecraft:block/amethyst_block", "particle": "#copper"},
+    "elements": [cuboid([7, 0, 7], [9, 8, 9], "#copper"), cuboid([4, 7, 7], [12, 9, 9], "#metal"),
+                 cuboid([3, 8, 7], [5, 15, 9], "#metal"), cuboid([11, 8, 7], [13, 15, 9], "#metal"),
+                 cuboid([2.5, 13, 6.5], [5.5, 16, 9.5], "#crystal"), cuboid([10.5, 13, 6.5], [13.5, 16, 9.5], "#crystal"),
+                 cuboid([6.5, 2, 6.5], [9.5, 4, 9.5], "#metal")],
+    "display": {"gui": {"rotation": [0, 0, -25], "translation": [0, 0, 0], "scale": [0.9, 0.9, 0.9]},
+                "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.5, 0.5, 0.5]},
+                "firstperson_righthand": {"rotation": [0, -20, 15], "translation": [1, 3, 1], "scale": [0.75, 0.75, 0.75]},
+                "firstperson_lefthand": {"rotation": [0, 20, -15], "translation": [1, 3, 1], "scale": [0.75, 0.75, 0.75]},
+                "thirdperson_righthand": {"rotation": [0, 0, 0], "translation": [0, 2, 1], "scale": [0.75, 0.75, 0.75]},
+                "thirdperson_lefthand": {"rotation": [0, 0, 0], "translation": [0, 2, 1], "scale": [0.75, 0.75, 0.75]}}})
+
+
 for active in [False, True]:
     for sigil in [False, True]:
         suffix = ("_active" if active else "") + ("_sigil" if sigil else "")
@@ -139,7 +180,8 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
-                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain"],
+                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription"],
+                    "mineable/axe": ["elysium:forge_archive"],
                     "needs_iron_tool": ["elysium:tartarus_chain"],
                     "bee_growables": ["elysium:golden_birch_sapling"]}.items():
     emit(f"data/minecraft/tags/block/{tag}.json", {"replace": False, "values": values})
@@ -162,6 +204,15 @@ for result, ingredient in [("elysium_fragment", "elysium_shard"), ("elysium_sigi
     data(f"advancement/recipes/{result}", {"parent": "minecraft:recipes/root", "criteria": {"has_item": {
          "trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": f"elysium:{ingredient}"}]}}},
          "rewards": {"recipes": [f"elysium:{result}"]}})
+
+for name, parent, icon, title, description in [
+        ("forge_survey", "elysium", "forge_survey", "An Older Craft", "Read the mountain archive and recover a survey of the old Forge."),
+        ("cold_hearth", "forge_survey", "forge_hearth", "The Unfinished Work", "Examine the dormant hearth of Hephaestus and recover a Chain Resonator."),
+        ("voice_in_iron", "cold_hearth", "chain_resonator", "A Voice in the Iron", "Listen to the terminal anchor of a Chain of Tartarus.")]:
+    data(f"advancement/{name}", {"parent": f"elysium:{parent}",
+         "display": {"icon": {"id": f"elysium:{icon}"}, "title": title, "description": description,
+                     "frame": "goal" if name != "forge_survey" else "task", "announce_to_chat": False},
+         "criteria": {"discovered": {"trigger": "minecraft:impossible"}}})
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

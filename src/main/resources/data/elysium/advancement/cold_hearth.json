@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:forge_survey",
+  "display": {
+    "icon": {
+      "id": "elysium:forge_hearth"
+    },
+    "title": "The Unfinished Work",
+    "description": "Examine the dormant hearth of Hephaestus and recover a Chain Resonator.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

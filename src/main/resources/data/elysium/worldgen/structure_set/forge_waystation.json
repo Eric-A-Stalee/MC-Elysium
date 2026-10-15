@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "elysium:forge_waystation",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 32,
+    "separation": 12,
+    "salt": 370519827,
+    "exclusion_zone": {
+      "other_set": "elysium:grand_mountain_town",
+      "chunk_count": 8
+    }
+  }
+}

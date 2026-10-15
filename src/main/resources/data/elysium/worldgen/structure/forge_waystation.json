@@ -1,0 +1,16 @@
+{
+  "type": "elysium:landscape_site",
+  "biomes": "#elysium:has_structure/mountain_town",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "none",
+  "templates": [
+    "elysium:forge_waystation"
+  ],
+  "radius": 8,
+  "max_relief": 3,
+  "min_height_above_sea": 12,
+  "view_drop": 0,
+  "water_approach": false,
+  "require_water_approach": false
+}

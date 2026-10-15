@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "elysium:harvest_altar",
-    "elysium:tartarus_chain"
+    "elysium:tartarus_chain",
+    "elysium:forge_hearth",
+    "elysium:forge_ledger",
+    "elysium:tartarus_inscription"
   ]
 }

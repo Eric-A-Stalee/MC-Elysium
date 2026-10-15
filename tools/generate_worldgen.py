@@ -724,6 +724,10 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
             "nbt": nbt_compound({"id": Tag(8, "minecraft:villager"), "PersistenceRequired": Tag(1, 1),
                 "VillagerData": nbt_compound({"type": Tag(8, "minecraft:taiga" if module.name.startswith("mountain") else "minecraft:plains"),
                     "profession": Tag(8, "minecraft:none"), "level": Tag(3, 1)})})}]
+        if module.name == "mountain_hall":
+            shelves = sorted(pos for pos, (block, _) in module.blocks.items() if block["Name"] == "minecraft:bookshelf")
+            if shelves:
+                module.blocks[shelves[0]] = (state("elysium:forge_archive"), None)
         entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
     emit_site(entries, SiteDefinition("waterside_cottage", ("waterside_cottage",),
               "#elysium:has_structure/waterside_cottage", 6, 2, require_water_approach=True))
@@ -820,9 +824,25 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 813701245, "spread_type": "linear"}})
     emit(entries, "tags/worldgen/biome/has_structure/tartarus_chain.json",
          {"replace": False, "values": ["elysium:ivory_peaks"]})
+    emit(entries, "worldgen/structure/hephaestus_forge.json", {
+        "type": "elysium:hephaestus_forge", "biomes": "#elysium:has_structure/mountain_town",
+        "step": "underground_structures", "terrain_adaptation": "none", "spawn_overrides": {}})
+    emit(entries, "worldgen/structure_set/hephaestus_forge.json", {
+        "structures": [{"structure": "elysium:hephaestus_forge", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 48, "separation": 18,
+                      "salt": 570196243, "spread_type": "linear",
+                      "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
+    from landmark_templates import forge_waystation
+    waystation = forge_waystation(state)
+    entries[DATA / "structure" / "forge_waystation.nbt"] = encode_template(waystation.blocks, waystation.size, waystation.name)
+    emit_site(entries, SiteDefinition("forge_waystation", ("forge_waystation",), "#elysium:has_structure/mountain_town", 8, 3, min_height=12))
+    emit(entries, "worldgen/structure_set/forge_waystation.json", {
+        "structures": [{"structure": "elysium:forge_waystation", "weight": 1}],
+        "placement": {"type": "minecraft:random_spread", "spacing": 32, "separation": 12,
+                      "salt": 370519827, "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town", "elysium:hephaestus_forge", "elysium:forge_waystation"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:
