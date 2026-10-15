@@ -356,3 +356,31 @@ matching fixtures, and late-loaded fixtures reconcile on their next scheduled
 tick. Lights do not reconstruct mined blocks or load distant chunks. The main
 hearth remains dormant. This alpha deliberately replaces the previous Forge
 geometry without maintaining the old structure-save format.
+
+## Alpha 17 deep approach and physical ember service
+
+The entrance is a low, winding cleft under pale scree, with only a small buried
+copper/masonry fragment. `ForgeDescent` supplies a separate three-dimensional
+route: upper stairs, switchbacks around a ruined hauling shaft, a lower adit,
+and an overlook that joins the west gallery. The hall floor is 72 blocks below
+the entrance. The route contains narrowed rubble sections, broken rails,
+a partial timber lift, hanging counterweight, raw rock and a failed shaft wall.
+The gallery connection stays outside the surviving stair lane, and low broken
+parapets preserve the first view into the hall. The planner requires the hall
+floor to remain at least 80 blocks above the dimension's minimum build height,
+leaving it above the current Tartarus anchor vault.
+
+`ForgeFixtures` now describes a connected network of physical channel blocks,
+terminal braziers and one fuelled source. The generation plan, circuit bounds
+and replacement binding all use the same authored local coordinates. The
+source consumes coal/charcoal and propagates a visible ember front through
+loaded, intact adjacent connections. Ash, cracked metal and a missing section
+interrupt three branches; clearing, priming or replacing the damaged blocks
+restores only the routes actually connected to the source. Mining a channel
+cuts its downstream fire. `ForgeLighting` no longer stores permanent circuit
+bits or wakes lamps from an address list. See [the player guide](FORGE.md) for
+fuel duration, repairs and saved-state behavior.
+
+The structure save is version 3. Earlier Forge geometry is intentionally not
+migrated; use a new alpha test dimension or regenerate Elysium. There is no
+ReTerraForged dependency or dimension-height change in this revision.

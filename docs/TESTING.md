@@ -743,3 +743,46 @@ Use a fresh alpha world or regenerate Elysium. This pass does not maintain
 alpha-15 Forge structure-save compatibility; it verifies the new design's own
 save/load behavior. See [the player guide](FORGE.md) for the discovery and
 lighting controls.
+
+## Alpha 17 fuelled ember routes and deep descent (October 15, 2026)
+
+Verified implementation: `29b8ae0c9436a4af717f44e30376ebde39b8c92a`.
+[GitHub Actions run 38817522050](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38817522050)
+passed the build, generated-resource checks, optional compatibility guard and
+**all 53 required dedicated-server GameTests**. The downloadable jar is
+`elysium-0.1.0-alpha.17.jar` (617,275 bytes), SHA-256
+`d799d97360d05be5badded84e25c3cb91a490de76e04201f496d75a08a512afb`.
+Its 126 shipped class files target Java 21; 234 packaged resources match the
+committed files byte-for-byte, and development probes/GameTests are excluded.
+
+The tests exercise fuel and flint-and-steel consumption through block
+interactions, an empty/unignited/closed source, banking fuel, exhaustion,
+progressive ignition, all three damaged branches, repairs, complete connectivity
+after repairs, downstream extinguishing after mining, source removal, fuel
+capacity, real Minecraft block-entity NBT, unbound fixtures and unloaded branch
+isolation. Physical routes are surveyed through actual existing blocks, with
+no chunk tickets. Fuel is stored only in the central brazier. A late-loaded
+isolated terminal cannot recover light merely from a shared permanent flag.
+
+Geometry checks cover the 72-block drop, substantial multi-stage route, hidden
+entrance, physical network placement, four rotations, saved structure loading,
+chunk clipping and the connected path through the gallery to the foundry and
+its records. The seed-zero natural survey found a Forge in chunk `[123, 163]`,
+entrance `(1983,124,2606)`, turn 2, foundry floor Y=52, after 59 candidates.
+The independent visual fixture uses a real seed-zero mountain shoulder at
+`(-3524,-3804)`, entrance floor Y=100 and foundry floor Y=28.
+
+A real Minecraft client captured **eleven unmodified 1280×720 frames**:
+entrance, hauling shaft, overlook, dark foundry, initial ignition, supplied
+foundry, cleared west workshop, repaired east retorts, fully repaired network,
+gallery and collapse. The client uses vanilla textures, gamma 0.5, no external
+shader pack, Xvfb and Mesa software OpenGL. An initial ten-frame review led to
+lower broken parapets at the first vista and a damaged shaft wall/talus. The
+final captures were inspected again after those changes. This is actual game
+rendering, not concept imagery or a synthetic block preview.
+
+The final jar was built in CI: this workspace's offline NeoForm cache could
+not create the Minecraft compilation artifact. The client probes use scripted
+cameras and service interactions; they are not a manual survival playthrough,
+a shader-pack comparison or an audio listening test. The existing surface
+palette, fixed time, towns and Tartarus chamber design remain unchanged.
