@@ -613,3 +613,63 @@ It is **508,557 bytes**, SHA-256
 `2b4c9b59103b0ce41659a08764940612ef355394a57c30ba78727cc5da3f48cb`.
 Existing chunks receive the foliage update after replacing the jar on client
 and server and restarting; no dimension reset is required.
+
+## Alpha 15 dormant Forge chapter (October 15, 2026)
+
+[GitHub Actions run 38730244394](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38730244394)
+built commit `2c9819e78e396c94e778f5d0092e5eb75038f39b`. The Java 21 build,
+generated assets/worldgen, existing client sprite/model probes, independent
+compatibility guard and **all 47 required dedicated-server GameTests passed**.
+The 41 existing tests remain enabled, alongside six new Forge tests.
+
+New checks cover four terrain orientations and registered piece NBT loading;
+player-sized paths through the descent, workshops, crucible, rear shrine and
+both upper galleries; clipped placement and untouched covering rock; personal
+multiplayer rewards; repeat readings and paid replacements; written-book,
+instrument and discovery-data save/reload; dimension-scoped scholar offers;
+and the real anchor interaction with Minecraft's connected test player. The
+anchor test rejects carried chain blocks and high links, then verifies the
+book, retained echo and awarded advancement at a registered buried anchor.
+
+The natural terrain probe uses the folio's bounded placement list, including
+the real exclusion rules. On seed **0**, candidate **146** yields a Forge at
+chunk **[-221, -239]**, doorway **X−3524/Y101/Z−3804**, with orientation 1 and
+foundry floor **Y74**. The complete structure start survives Minecraft NBT
+loading and reversed-chunk placement on actual Elysium terrain. Its hearth,
+ledger and excavated approach are present afterward. A completed chunk with
+no saved Forge is rejected even when the new noise plan would fit there;
+after the test explicitly installs the real start, the survey returns its
+saved doorway. This is one reproducible candidate, not a multi-seed estimate
+of discovery distance. The initial four-point entrance survey found no Forge
+within this range; the final planner surveys a 32-block neighbourhood while
+retaining mountain-cover constraints and vanilla's eight-chunk reference limit.
+
+`run/logs/forge-sections.json` in the CI log artifact exports actual block-state
+slices for layout review. The production models' vanilla texture references
+were also checked against the actual Minecraft resource archive. The new
+models require no copied vanilla PNGs. The six biome palettes, sprite curves,
+terrain noise, fixed time, existing building grammar and chain-vault geometry
+are unchanged from alpha 14.
+
+These are headless checks. No graphical client, GPU/model appearance review,
+full queued folio interaction in a normal survival world, multi-seed frequency
+study or new ReTerraForged co-installation test was run. GameTest world options
+disable automatic structures, so the terrain probe explicitly exercises real
+structure generation, serialization, saved-start lookup and clipped placement.
+The older natural-generation smoke test above does not validate the new Forge.
+The existing explicit town-placement test still reports deferred
+post-processing and a replaced pre-existing bee-nest block entity; all authored
+furnishing assertions pass. A survey limits work to one candidate per server
+tick, but individual structure-start generation can still cause a pause.
+
+The downloaded artifact matches GitHub's ZIP digest. The player jar passes
+ZIP integrity, contains **114 Java 21 classes**, and matches all **185 shipped
+source resources**. Tests, probes and development world fixtures are excluded.
+It is **563,937 bytes**, SHA-256
+`6081243b514221188cfac44671bef0edf29d0fae69ca49ac54a15bad75f0349a`.
+
+Install on both client and server and restart. New structures need fresh
+chunks, while existing scholars and natural chain anchors support the new
+items. Follow [the player guide](FORGE.md) for the discovery route, replacement
+rules and inspection commands. The current chapter leaves the Forge dormant;
+the full Tartarus region, boss and restart sequence remain future work.
