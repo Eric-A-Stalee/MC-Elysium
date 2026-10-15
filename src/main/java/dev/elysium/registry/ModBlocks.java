@@ -6,6 +6,8 @@ import dev.elysium.block.GoldenBirchLeavesBlock;
 import dev.elysium.block.LeafLitterBlock;
 import dev.elysium.block.ForgeRecordBlock;
 import dev.elysium.block.DormantHearthBlock;
+import dev.elysium.block.ForgeServiceBlock;
+import dev.elysium.block.ForgeDebrisBlock;
 import dev.elysium.forge.ForgeLore;
 import dev.elysium.portal.HarvestAltarBlock;
 import java.util.Optional;
@@ -26,6 +28,17 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Elysium.MOD_ID);
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
+    public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_LAMP = BLOCKS.register("forge_service_lamp",
+            () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
+                    .lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 9 : 0), false));
+    public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_SWITCH = BLOCKS.register("forge_service_switch",
+            () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
+                    .strength(4).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 4 : 2), true));
+    public static final DeferredBlock<Block> FORGE_PILOT_LIGHT = BLOCKS.register("forge_pilot_light",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_OXIDIZED_COPPER_BULB).lightLevel(s -> 3)));
+    public static final DeferredBlock<ForgeDebrisBlock> FORGE_DEBRIS = BLOCKS.register("forge_debris",
+            () -> new ForgeDebrisBlock(BlockBehaviour.Properties.of().strength(.3f).noOcclusion().noCollission()
+                    .sound(SoundType.TUFF).mapColor(MapColor.COLOR_GRAY)));
     public static final DeferredBlock<ForgeRecordBlock> FORGE_ARCHIVE = BLOCKS.register("forge_archive",
             () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BOOKSHELF).strength(2.5F),ForgeLore.Record.SURVEY));
     public static final DeferredBlock<ForgeRecordBlock> FORGE_LEDGER = BLOCKS.register("forge_ledger",
@@ -34,7 +47,7 @@ public final class ModBlocks {
             () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_POLISHED_BLACKSTONE).strength(4.0F),ForgeLore.Record.BINDINGS));
     public static final DeferredBlock<DormantHearthBlock> FORGE_HEARTH = BLOCKS.register("forge_hearth",
             () -> new DormantHearthBlock(BlockBehaviour.Properties.of().strength(12.0F,1200.0F).requiresCorrectToolForDrops()
-                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->3)));
+                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->1)));
     public static final DeferredBlock<Block> TARTARUS_CHAIN_BLOCK = BLOCKS.register("tartarus_chain",
             () -> new Block(BlockBehaviour.Properties.of().strength(8.0F, 1200.0F).requiresCorrectToolForDrops()
                     .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY)));

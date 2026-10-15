@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:forge_survey",
+  "display": {
+    "icon": {
+      "id": "elysium:forge_service_switch"
+    },
+    "title": "A Little Light Remains",
+    "description": "Restore a service circuit in the buried Forge. Its hearth still waits for the First Flame.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

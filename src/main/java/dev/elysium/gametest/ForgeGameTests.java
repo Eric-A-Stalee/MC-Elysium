@@ -69,7 +69,7 @@ public final class ForgeGameTests {
                     "Descending stairs must face uphill after rotation");
             if(turn!=0)continue;
             var seen=new HashSet<BlockPos>();var queue=new ArrayDeque<BlockPos>();
-            queue.add(new BlockPos(0,fitted.entranceFloor()+1,-4));
+            queue.add(new BlockPos(ForgePlan.approachCenter(-6),fitted.entranceFloor()+1,-6));
             while(!queue.isEmpty()) {
                 var at=queue.remove();if(!seen.add(at))continue;
                 for(Direction d:Direction.Plane.HORIZONTAL)for(int dy=-1;dy<=1;dy++) {
@@ -79,9 +79,10 @@ public final class ForgeGameTests {
             }
             int b=fitted.floor();
             for(var goal:List.of(new BlockPos(0,b+1,60),new BlockPos(-37,b+1,51),new BlockPos(37,b+1,60),
-                    new BlockPos(0,b+3,71),new BlockPos(0,b+1,111),new BlockPos(-22,b+9,70),new BlockPos(22,b+9,70)))
+                    new BlockPos(-8,b+1,76),new BlockPos(0,b+1,111),new BlockPos(-22,b+9,70),new BlockPos(22,b+9,70),
+                    new BlockPos(-2,b+1,40),new BlockPos(-39,b+1,55),new BlockPos(34,b+1,65)))
                 helper.assertTrue(seen.contains(goal),"A player-sized path must connect the entrance to "+goal);
-            helper.assertTrue(loaded.materialAt(0,b+13,76).is(Blocks.POLISHED_BLACKSTONE),"The hammer must hang above the crucible");
+            helper.assertTrue(loaded.materialAt(0,b+13,76).is(Blocks.POLISHED_BLACKSTONE),"The hammer must hang above the striking bed");
             helper.assertTrue(loaded.materialAt(0,fitted.entranceFloor()+10,70)==null,"Unexcavated mountain roof must remain natural rock");
         }
         helper.succeed();
@@ -90,7 +91,10 @@ public final class ForgeGameTests {
         var feet=piece.materialAt(p.getX(),p.getY(),p.getZ());
         var head=piece.materialAt(p.getX(),p.getY()+1,p.getZ());
         var floor=piece.materialAt(p.getX(),p.getY()-1,p.getZ());
-        return feet!=null&&feet.isAir()&&head!=null&&head.isAir()&&floor!=null&&!floor.isAir();
+        return passable(feet)&&passable(head)&&floor!=null&&!passable(floor)&&floor.getFluidState().isEmpty();
+    }
+    private static boolean passable(net.minecraft.world.level.block.state.BlockState state) {
+        return state!=null&&(state.isAir()||state.is(Blocks.RAIL)||state.is(ModBlocks.FORGE_DEBRIS.get()));
     }
 
     @GameTest(template="portal_test_empty",timeoutTicks=100)
@@ -222,7 +226,7 @@ public final class ForgeGameTests {
                     var piece=(HephaestusForgePiece)start.getPieces().getFirst();var p=piece.plan();
                     realm.getChunk(chunk.x,chunk.z).setStartForStructure(structure,start);
                     var target=StructureSurvey.probe(realm,structure,new StructureSurvey.Candidate(chunk,placement));
-                    helper.assertTrue(target.isPresent()&&target.get().equals(new BlockPos(p.x(),p.entranceFloor()+1,p.z())),
+                    helper.assertTrue(target.isPresent()&&target.get().equals(p.entrance()),
                             "Survey must return the saved doorway, not a guessed underground centre");
                     helper.assertTrue(realm.getBlockState(piece.hearth()).is(ModBlocks.FORGE_HEARTH.get())
                             &&realm.getBlockState(piece.ledger()).is(ModBlocks.FORGE_LEDGER.get()),"Natural clipped placement must deliver the progression blocks");

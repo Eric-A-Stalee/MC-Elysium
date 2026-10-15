@@ -5,11 +5,17 @@ import java.util.function.IntBinaryOperator;
 
 /** A surveyed entrance and a fully buried foundry. Coordinates are relative to the doorway. */
 public record ForgePlan(int x, int z, int entranceFloor, int turn) {
-    public static final int MIN_U = -46, MAX_U = 46, MIN_V = -5, MAX_V = 119;
+    public static final int MIN_U = -46, MAX_U = 46, MIN_V = -8, MAX_V = 119;
     public ForgePlan {
         if (turn < 0 || turn > 3) throw new IllegalArgumentException("Invalid forge orientation");
     }
     public int floor() { return entranceFloor - 26; }
+    public long key() { return new net.minecraft.core.BlockPos(x, entranceFloor, z).asLong(); }
+    public net.minecraft.core.BlockPos entrance() {
+        return new net.minecraft.core.BlockPos(worldX(approachCenter(-6),-6),entranceFloor+1,worldZ(approachCenter(-6),-6));
+    }
+    /** A narrow survivor's route winds around the buried original doorway. */
+    public static int approachCenter(int v) { return v <= 1 ? -3 : v <= 4 ? -2 : v <= 6 ? -1 : 0; }
     public int worldX(int u, int v) { return x + switch (turn) { case 0 -> u; case 1 -> -v; case 2 -> -u; default -> v; }; }
     public int worldZ(int u, int v) { return z + switch (turn) { case 0 -> v; case 1 -> u; case 2 -> -v; default -> -u; }; }
     public int localU(int wx, int wz) { int a=wx-x,b=wz-z; return switch(turn) { case 0->a;case 1->b;case 2->-a;default->-b; }; }
@@ -26,7 +32,7 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
             boolean fits=true;
             entrance: for(int u=-5;u<=5;u+=2) for(int v=-5;v<=2;v++) {
                 int y=p.height(heights,u,v);
-                if(y<entry-2 || y>entry+3) {fits=false;break entrance;}
+                if(y<entry-3 || y>entry+5) {fits=false;break entrance;}
             }
             if(!fits) continue;
             // Every room is checked against base terrain, never a loaded neighbouring chunk.

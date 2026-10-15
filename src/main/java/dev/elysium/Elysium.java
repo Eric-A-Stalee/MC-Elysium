@@ -5,6 +5,7 @@ import dev.elysium.registry.ModItems;
 import dev.elysium.registry.ModStructures;
 import dev.elysium.registry.ModAmbience;
 import dev.elysium.registry.ModWorldgen;
+import dev.elysium.registry.ModBlockEntities;
 import dev.elysium.loot.WheatShardModifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -17,6 +18,7 @@ public final class Elysium {
 
     public Elysium(IEventBus modBus, ModContainer container) {
         ModBlocks.BLOCKS.register(modBus);
+        ModBlockEntities.TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModItems.TABS.register(modBus);
         WheatShardModifier.SERIALIZERS.register(modBus);

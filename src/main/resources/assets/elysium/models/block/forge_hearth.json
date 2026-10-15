@@ -3,7 +3,7 @@
   "textures": {
     "stone": "minecraft:block/polished_blackstone",
     "emblem": "minecraft:block/copper_block",
-    "socket": "minecraft:block/crying_obsidian",
+    "socket": "minecraft:block/obsidian",
     "particle": "#stone"
   },
   "elements": [

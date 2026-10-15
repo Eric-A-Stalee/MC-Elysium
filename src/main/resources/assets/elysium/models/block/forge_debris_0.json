@@ -1,0 +1,202 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "chips": "minecraft:block/basalt_top",
+    "dust": "minecraft:block/tuff",
+    "particle": "#chips"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        2
+      ],
+      "to": [
+        7,
+        1,
+        7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dust"
+        },
+        "up": {
+          "texture": "#dust"
+        },
+        "north": {
+          "texture": "#dust"
+        },
+        "south": {
+          "texture": "#dust"
+        },
+        "west": {
+          "texture": "#dust"
+        },
+        "east": {
+          "texture": "#dust"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        8
+      ],
+      "to": [
+        15,
+        0.7,
+        15
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dust"
+        },
+        "up": {
+          "texture": "#dust"
+        },
+        "north": {
+          "texture": "#dust"
+        },
+        "south": {
+          "texture": "#dust"
+        },
+        "west": {
+          "texture": "#dust"
+        },
+        "east": {
+          "texture": "#dust"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0.5,
+        3
+      ],
+      "to": [
+        6,
+        2,
+        6
+      ],
+      "faces": {
+        "down": {
+          "texture": "#chips"
+        },
+        "up": {
+          "texture": "#chips"
+        },
+        "north": {
+          "texture": "#chips"
+        },
+        "south": {
+          "texture": "#chips"
+        },
+        "west": {
+          "texture": "#chips"
+        },
+        "east": {
+          "texture": "#chips"
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        0.5,
+        9
+      ],
+      "to": [
+        13,
+        3,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#chips"
+        },
+        "up": {
+          "texture": "#chips"
+        },
+        "north": {
+          "texture": "#chips"
+        },
+        "south": {
+          "texture": "#chips"
+        },
+        "west": {
+          "texture": "#chips"
+        },
+        "east": {
+          "texture": "#chips"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        0,
+        2
+      ],
+      "to": [
+        12,
+        1.5,
+        4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#chips"
+        },
+        "up": {
+          "texture": "#chips"
+        },
+        "north": {
+          "texture": "#chips"
+        },
+        "south": {
+          "texture": "#chips"
+        },
+        "west": {
+          "texture": "#chips"
+        },
+        "east": {
+          "texture": "#chips"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        11
+      ],
+      "to": [
+        4,
+        1,
+        14
+      ],
+      "faces": {
+        "down": {
+          "texture": "#chips"
+        },
+        "up": {
+          "texture": "#chips"
+        },
+        "north": {
+          "texture": "#chips"
+        },
+        "south": {
+          "texture": "#chips"
+        },
+        "west": {
+          "texture": "#chips"
+        },
+        "east": {
+          "texture": "#chips"
+        }
+      }
+    }
+  ]
+}

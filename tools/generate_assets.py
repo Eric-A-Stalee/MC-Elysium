@@ -104,11 +104,56 @@ for name, surface, emblem in [
                cuboid([5, 9, -0.1], [11, 11, 0.15], "#socket")]
     asset(f"models/block/{name}", {"parent": "minecraft:block/block",
           "textures": {"stone": f"minecraft:block/{surface}", "emblem": f"minecraft:block/{emblem}",
-                       "socket": "minecraft:block/crying_obsidian" if name == "forge_hearth" else "minecraft:block/deepslate_tiles", "particle": "#stone"},
+                       "socket": "minecraft:block/obsidian" if name == "forge_hearth" else "minecraft:block/deepslate_tiles", "particle": "#stone"},
           "elements": pieces})
     asset(f"blockstates/{name}", {"variants": {"": {"model": f"elysium:block/{name}"}}})
     asset(f"models/item/{name}", {"parent": f"elysium:block/{name}"})
     loot(name, [pool([item(f"elysium:{name}")], [SURVIVES])])
+
+# Original inset fixtures and handwheel geometry. Active-pack textures supply all surfaces.
+for name in ("forge_service_lamp", "forge_service_switch", "forge_pilot_light"):
+    for lit in (False, True) if name != "forge_pilot_light" else (True,):
+        pieces = [cuboid([0, 0, 0], [16, 16, 16], "#stone")]
+        size = 3 if name == "forge_pilot_light" else 5
+        lo, hi = 8-size, 8+size
+        for a,bounds in [([lo, lo, -.03], [hi, hi, .03]), ([lo, lo, 15.97], [hi, hi, 16.03]),
+                         ([-.03, lo, lo], [.03, hi, hi]), ([15.97, lo, lo], [16.03, hi, hi]),
+                         ([lo, 15.97, lo], [hi, 16.03, hi])]:
+            pieces.append(cuboid(a, bounds, "#lens"))
+        if name == "forge_service_switch":
+            # A thick square handwheel with open centre, spindle and grip is readable in vanilla.
+            pieces += [cuboid([3,3,-1],[5,13,0],"#metal"), cuboid([11,3,-1],[13,13,0],"#metal"),
+                       cuboid([5,3,-1],[11,5,0],"#metal"), cuboid([5,11,-1],[11,13,0],"#metal"),
+                       cuboid([7,5,-1],[9,11,0],"#metal"), cuboid([7,7,-2],[9,9,-1],"#stone")]
+        else:
+            pieces += [cuboid([lo-1,lo-1,-.2],[lo,hi+1,.1],"#metal"),
+                       cuboid([hi,lo-1,-.2],[hi+1,hi+1,.1],"#metal"),
+                       cuboid([lo,lo-1,-.2],[hi,lo,.1],"#metal"),
+                       cuboid([lo,hi,-.2],[hi,hi+1,.1],"#metal"),
+                       cuboid([7,lo,-.15],[9,hi,.1],"#metal")]
+        suffix = "_lit" if lit else ""
+        asset(f"models/block/{name}{suffix}", {"parent":"minecraft:block/block",
+              "textures":{"stone":"minecraft:block/polished_blackstone", "metal":"minecraft:block/weathered_copper",
+                          "lens":"minecraft:block/weathered_copper_bulb_lit" if lit else "minecraft:block/oxidized_copper_bulb",
+                          "particle":"#metal"}, "elements":pieces})
+    if name == "forge_pilot_light":
+        asset(f"blockstates/{name}", {"variants":{"":{"model":f"elysium:block/{name}_lit"}}})
+    else:
+        asset(f"blockstates/{name}", {"variants":{
+            f"facing={facing},lit={str(lit).lower()}":{"model":f"elysium:block/{name}"+("_lit" if lit else ""),"y":rotation}
+            for facing,rotation in (("north",0),("east",90),("south",180),("west",270)) for lit in (False,True)}})
+    asset(f"models/item/{name}", {"parent":f"elysium:block/{name}"+("_lit" if name=="forge_pilot_light" else "")})
+    loot(name,[pool([item(f"elysium:{name}")],[SURVIVES])])
+
+for kind,texture in enumerate(("basalt_top","cobbled_deepslate","blackstone","calcite")):
+    pieces = [cuboid([1,0,2],[7,1,7],"#dust"), cuboid([8,0,8],[15,.7,15],"#dust"),
+              cuboid([3,.5,3],[6,2,6],"#chips"), cuboid([10,.5,9],[13,3,12],"#chips"),
+              cuboid([9,0,2],[12,1.5,4],"#chips"),cuboid([1,0,11],[4,1,14],"#chips")]
+    asset(f"models/block/forge_debris_{kind}", {"parent":"minecraft:block/block",
+          "textures":{"chips":f"minecraft:block/{texture}","dust":"minecraft:block/tuff","particle":"#chips"},"elements":pieces})
+asset("blockstates/forge_debris",{"variants":{f"kind={k}":[{"model":f"elysium:block/forge_debris_{k}","y":r} for r in (0,90,180,270)] for k in range(4)}})
+asset("models/item/forge_debris",{"parent":"elysium:block/forge_debris_1"})
+loot("forge_debris",[pool([item("elysium:forge_debris")],[SURVIVES])])
 
 asset("models/item/forge_survey", {"parent": "minecraft:item/generated", "textures": {"layer0": "minecraft:item/written_book"}})
 asset("models/item/chain_resonator", {
@@ -180,7 +225,7 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
-                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription"],
+                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris"],
                     "mineable/axe": ["elysium:forge_archive"],
                     "needs_iron_tool": ["elysium:tartarus_chain"],
                     "bee_growables": ["elysium:golden_birch_sapling"]}.items():
@@ -208,6 +253,7 @@ for result, ingredient in [("elysium_fragment", "elysium_shard"), ("elysium_sigi
 for name, parent, icon, title, description in [
         ("forge_survey", "elysium", "forge_survey", "An Older Craft", "Read the mountain archive and recover a survey of the old Forge."),
         ("cold_hearth", "forge_survey", "forge_hearth", "The Unfinished Work", "Examine the dormant hearth of Hephaestus and recover a Chain Resonator."),
+        ("borrowed_light", "forge_survey", "forge_service_switch", "A Little Light Remains", "Restore a service circuit in the buried Forge. Its hearth still waits for the First Flame."),
         ("voice_in_iron", "cold_hearth", "chain_resonator", "A Voice in the Iron", "Listen to the terminal anchor of a Chain of Tartarus.")]:
     data(f"advancement/{name}", {"parent": f"elysium:{parent}",
          "display": {"icon": {"id": f"elysium:{icon}"}, "title": title, "description": description,

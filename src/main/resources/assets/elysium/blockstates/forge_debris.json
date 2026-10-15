@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "kind=0": [
+      {
+        "model": "elysium:block/forge_debris_0",
+        "y": 0
+      },
+      {
+        "model": "elysium:block/forge_debris_0",
+        "y": 90
+      },
+      {
+        "model": "elysium:block/forge_debris_0",
+        "y": 180
+      },
+      {
+        "model": "elysium:block/forge_debris_0",
+        "y": 270
+      }
+    ],
+    "kind=1": [
+      {
+        "model": "elysium:block/forge_debris_1",
+        "y": 0
+      },
+      {
+        "model": "elysium:block/forge_debris_1",
+        "y": 90
+      },
+      {
+        "model": "elysium:block/forge_debris_1",
+        "y": 180
+      },
+      {
+        "model": "elysium:block/forge_debris_1",
+        "y": 270
+      }
+    ],
+    "kind=2": [
+      {
+        "model": "elysium:block/forge_debris_2",
+        "y": 0
+      },
+      {
+        "model": "elysium:block/forge_debris_2",
+        "y": 90
+      },
+      {
+        "model": "elysium:block/forge_debris_2",
+        "y": 180
+      },
+      {
+        "model": "elysium:block/forge_debris_2",
+        "y": 270
+      }
+    ],
+    "kind=3": [
+      {
+        "model": "elysium:block/forge_debris_3",
+        "y": 0
+      },
+      {
+        "model": "elysium:block/forge_debris_3",
+        "y": 90
+      },
+      {
+        "model": "elysium:block/forge_debris_3",
+        "y": 180
+      },
+      {
+        "model": "elysium:block/forge_debris_3",
+        "y": 270
+      }
+    ]
+  }
+}

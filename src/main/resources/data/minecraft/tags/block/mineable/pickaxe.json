@@ -5,6 +5,10 @@
     "elysium:tartarus_chain",
     "elysium:forge_hearth",
     "elysium:forge_ledger",
-    "elysium:tartarus_inscription"
+    "elysium:tartarus_inscription",
+    "elysium:forge_service_lamp",
+    "elysium:forge_service_switch",
+    "elysium:forge_pilot_light",
+    "elysium:forge_debris"
   ]
 }

@@ -72,7 +72,7 @@ public final class StructureSurvey {
         if(start==null||!start.isValid())return Optional.empty();
         for(var piece:start.getPieces()) {
             if(piece instanceof HephaestusForgePiece forge) {
-                var p=forge.plan();return Optional.of(new BlockPos(p.x(),p.entranceFloor()+1,p.z()));
+                return Optional.of(forge.plan().entrance());
             }
             if(piece instanceof TartarusChainPiece chain) {
                 var p=chain.plan();return Optional.of(new BlockPos(p.x(),p.top(),p.z()));

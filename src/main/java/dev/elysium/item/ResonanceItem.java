@@ -102,6 +102,10 @@ public final class ResonanceItem extends Item {
         return directions[Math.floorMod((int)Math.round(Math.atan2(dx,-dz)/(Math.PI/4)),8)];
     }
     public static void bearing(ServerPlayer player,BlockPos target,boolean forge) {
+        if(forge && arrived(player,target)) {
+            player.displayClientMessage(Component.translatable("message.elysium.forge.arrived"),true);
+            return;
+        }
         int dx=target.getX()-player.getBlockX(),dz=target.getZ()-player.getBlockZ();
         double distance=Math.hypot(dx,dz);
         var direction=Component.translatable("direction.elysium."+direction(dx,dz));
@@ -111,6 +115,9 @@ public final class ResonanceItem extends Item {
         player.level().playSound(null,player.blockPosition(),SoundEvents.AMETHYST_BLOCK_CHIME,SoundSource.PLAYERS,.7f,distance<192?1.4f:.7f);
         if(distance>3)for(int i=1;i<=6;i++)player.serverLevel().sendParticles(ParticleTypes.END_ROD,
                 player.getX()+dx/distance*i*.55,player.getY()+1.1,player.getZ()+dz/distance*i*.55,1,0,0,0,0);
+    }
+    public static boolean arrived(ServerPlayer player,BlockPos target) {
+        return target.distToCenterSqr(player.getX(),player.getY(),player.getZ()) <= 64;
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,List<Component> lines,TooltipFlag flag) {
         lines.add(Component.translatable("tooltip.elysium."+(forge?"forge_survey":"chain_resonator")).withStyle(ChatFormatting.GOLD));
