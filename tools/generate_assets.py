@@ -44,12 +44,18 @@ loot("tartarus_chain", [pool([item("elysium:tartarus_chain")], [SURVIVES])])
 asset("particles/golden_leaf", {"textures": ["elysium:golden_leaf"]})
 # Particles and block/item models use separate atlases. Stitch the same original
 # leaf image into the blocks atlas as well, without duplicating its PNG.
+GRASS_SPRITES = ("grass_block_top", "grass_block_side_overlay", "short_grass",
+                 "tall_grass_top", "tall_grass_bottom")
 emit("assets/minecraft/atlases/blocks.json", {"sources": [
     {"type": "minecraft:single", "resource": "elysium:particle/golden_leaf"},
-    # Lift the active pack's leaf midtones before the regional foliage tint.
+    # Approved L3 curve; G4.1 below retains the G4 curve, with its 0.95 gain
+    # folded into the biome tint (#FFD34A -> #F2C846, within 8-bit rounding).
     # Transparency, animation and resolution remain owned by the source sprite.
     {"type": "elysium:tone_mapped", "resource": "minecraft:block/birch_leaves",
-     "sprite": "elysium:block/golden_birch_leaves", "gamma": 0.72}]})
+     "sprite": "elysium:block/golden_birch_leaves", "gamma": 0.40, "contrast": 1.8, "pivot": 195},
+    *({"type": "elysium:tone_mapped", "resource": f"minecraft:block/{name}",
+       "sprite": f"elysium:block/golden_{name}", "gamma": 0.38, "contrast": 1.55, "pivot": 207}
+      for name in GRASS_SPRITES)]})
 asset("sounds", {"woodland_breeze": {"sounds": [{"name": "elysium:woodland_breeze", "stream": True, "volume": 0.32}]}})
 for name, texture in [("elysium_shard", "quartz"), ("elysium_fragment", "prismarine_crystals"),
                       ("elysium_sigil", "nether_star")]:

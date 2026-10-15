@@ -203,7 +203,7 @@ sourceSets {
 }
 def verifyClientSprites = tasks.register('verifyClientSprites', JavaExec) {
     group = 'verification'
-    description = 'Check generated leaf sprites, pack overrides, animation and transparency.'
+    description = 'Check approved leaf/grass curves, pack sprites and dimension-aware grass models.'
     dependsOn tasks.named('clientTestClasses')
     classpath = sourceSets.clientTest.runtimeClasspath
     mainClass = 'dev.elysium.client.SpriteSourceProbe'

@@ -8,7 +8,49 @@
       "type": "elysium:tone_mapped",
       "resource": "minecraft:block/birch_leaves",
       "sprite": "elysium:block/golden_birch_leaves",
-      "gamma": 0.72
+      "gamma": 0.4,
+      "contrast": 1.8,
+      "pivot": 195
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/grass_block_top",
+      "sprite": "elysium:block/golden_grass_block_top",
+      "gamma": 0.38,
+      "contrast": 1.55,
+      "pivot": 207
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/grass_block_side_overlay",
+      "sprite": "elysium:block/golden_grass_block_side_overlay",
+      "gamma": 0.38,
+      "contrast": 1.55,
+      "pivot": 207
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/short_grass",
+      "sprite": "elysium:block/golden_short_grass",
+      "gamma": 0.38,
+      "contrast": 1.55,
+      "pivot": 207
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/tall_grass_top",
+      "sprite": "elysium:block/golden_tall_grass_top",
+      "gamma": 0.38,
+      "contrast": 1.55,
+      "pivot": 207
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/tall_grass_bottom",
+      "sprite": "elysium:block/golden_tall_grass_bottom",
+      "gamma": 0.38,
+      "contrast": 1.55,
+      "pivot": 207
     }
   ]
 }

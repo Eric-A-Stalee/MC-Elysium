@@ -31,6 +31,11 @@ def validate(root):
                 gamma = source["gamma"]
                 if not isinstance(gamma, (int, float)) or not math.isfinite(gamma) or not 0.2 <= gamma <= 2.0:
                     raise ValueError("Invalid generated-sprite gamma")
+                contrast, pivot = source.get("contrast", 1), source.get("pivot", 0)
+                if not isinstance(contrast, (int, float)) or not math.isfinite(contrast) or not 0 <= contrast <= 4:
+                    raise ValueError("Invalid generated-sprite contrast")
+                if not isinstance(pivot, int) or not 0 <= pivot <= 255:
+                    raise ValueError("Invalid generated-sprite contrast pivot")
                 if not source["sprite"].startswith("elysium:") or source["sprite"] == source["resource"]:
                     raise ValueError("Generated sprites need a separate Elysium identifier")
                 # Minecraft supplies vanilla pixels at reload time. Mod-owned

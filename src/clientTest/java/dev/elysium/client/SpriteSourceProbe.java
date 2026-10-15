@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.util.HexFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +41,18 @@ public final class SpriteSourceProbe {
         ElysiumClient.spriteSources(new RegisterSpriteSourceTypesEvent(types));
         var atlas = JsonParser.parseString(Files.readString(Path.of("src/main/resources/assets/minecraft/atlases/blocks.json")))
                 .getAsJsonObject().getAsJsonArray("sources");
-        var definition = Stream.iterate(0, i -> i + 1).limit(atlas.size()).map(atlas::get)
+        var definitions = Stream.iterate(0, i -> i + 1).limit(atlas.size()).map(atlas::get)
                 .map(value -> value.getAsJsonObject())
-                .filter(value -> value.get("type").getAsString().equals("elysium:tone_mapped")).findFirst().orElseThrow();
+                .filter(value -> value.get("type").getAsString().equals("elysium:tone_mapped")).toList();
+        check(definitions.size() == 6, "All five grass sprites and the leaf sprite must be generated");
+        for (var definition : definitions) verifySource(definition, types);
+        verifyBiomeTints();
+        GrassModelProbe.run();
+        System.out.println("Client sprite/model checks passed: approved L3/G4.1, six real sprites, alpha, mipmaps, animation, pack overrides and dimension isolation.");
+    }
+
+    private static void verifySource(com.google.gson.JsonObject definition,
+                                     Map<ResourceLocation, SpriteSourceType> types) throws Exception {
         var type = types.get(ResourceLocation.parse(definition.get("type").getAsString()));
         check(type == ToneMappedSpriteSource.TYPE, "Atlas type must be registered by the real client handler");
         var source = (ToneMappedSpriteSource) type.codec().codec().parse(JsonOps.INSTANCE, definition).getOrThrow();
@@ -49,10 +60,19 @@ public final class SpriteSourceProbe {
         var target = SpriteSource.TEXTURE_ID_CONVERTER.idToFile(source.sprite());
 
         byte[] vanilla;
-        try (var stream = SpriteSourceProbe.class.getResourceAsStream("/assets/minecraft/textures/block/birch_leaves.png")) {
-            check(stream != null, "Minecraft's actual birch texture must be available");
+        try (var stream = SpriteSourceProbe.class.getResourceAsStream("/assets/minecraft/" + input.getPath())) {
+            check(stream != null, "Minecraft's actual source texture must be available");
             vanilla = stream.readAllBytes();
         }
+        var curve = new SpriteToneCurve(source.gamma(), source.contrast(), source.pivot());
+        byte[] lut = new byte[256];
+        for (int value = 0; value < 256; value++) lut[value] = (byte) curve.applyAsInt(0xFF000000 | value);
+        // Golden values exported from the approved Python preview, independently of Java's implementation.
+        String expectedCurveHash = source.resource().getPath().endsWith("birch_leaves")
+                ? "f3e63d863e6c1e2795f5e8792f0ad585296d91b2e16f787a376898e4e9cb5ec8"
+                : "6f27e8ace6b640dbebe7b1af1f8149fe3c286a48aa7c0a33522352f994525868";
+        check(HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(lut)).equals(expectedCurveHash),
+                "Every channel value must match the approved preview curve: " + source.sprite());
         var resource = resource(vanilla, "{}");
         try (var original = LOADER.loadSprite(source.resource(), resource);
              var mapped = load(source, Map.of(input, resource))) {
@@ -62,15 +82,16 @@ public final class SpriteSourceProbe {
             for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) {
                 int a = original.getOriginalImage().getPixelRGBA(x, y), b = mapped.getOriginalImage().getPixelRGBA(x, y);
                 check((a >>> 24) == (b >>> 24), "Leaf cutout alpha must remain exact");
+                check(b == curve.applyAsInt(a), "The real loader must apply the approved curve to each source pixel");
                 if ((a >>> 24) == 0) check(a == b, "Transparent RGB padding must remain exact");
                 else { before += a & 255; after += b & 255; opaque++; }
             }
-            check(opaque > 0 && after / before > 1.1 && after / before < 1.3, "Leaf lift must remain moderate");
+            check(opaque > 0 && after > before, "Approved source values must be lifted");
             mapped.increaseMipLevel(4);
             check(mapped.byMipLevel.length == 5 && mapped.byMipLevel[4].getWidth() == 1,
                     "The generated sprite must survive real Minecraft mip generation");
-            System.out.printf("Vanilla leaf source: %d opaque pixels; mean red %.1f -> %.1f; alpha and five mip levels preserved.%n",
-                    opaque, before / opaque, after / opaque);
+            System.out.printf("%s: %d visible pixels; mean red %.1f -> %.1f; approved curve, alpha and five mip levels preserved.%n",
+                    source.resource(), opaque, before / opaque, after / opaque);
         }
 
         // A non-vanilla pack supplies a larger, coloured, animated texture with
@@ -89,6 +110,7 @@ public final class SpriteSourceProbe {
             for (int y = 0; y < 64; y++) for (int x = 0; x < 32; x++) {
                 int a = original.getOriginalImage().getPixelRGBA(x, y), b = mapped.getOriginalImage().getPixelRGBA(x, y);
                 check((a >>> 24) == (b >>> 24), "Pack partial alpha must remain exact in every frame");
+                check(b == curve.applyAsInt(a), "Each pack frame must use the same approved curve");
                 if (a != b) altered++;
             }
             check(altered > 1000, "A reload must process the newly supplied resource pack texture");
@@ -103,9 +125,33 @@ public final class SpriteSourceProbe {
                     "Explicit Elysium texture overrides must not be recoloured a second time");
         }
         check(load(source, Map.of()) == null, "An absent source must fall back to Minecraft's missing-sprite path");
-        var invalid = definition.deepCopy(); invalid.addProperty("gamma", 0);
-        check(type.codec().codec().parse(JsonOps.INSTANCE, invalid).error().isPresent(), "Invalid atlas gamma must be rejected");
-        System.out.println("Client sprite checks passed: registered codec, actual vanilla texture, cutouts, partial alpha, mipmaps, pack reload, animation and explicit overrides.");
+        for (String field : List.of("gamma", "contrast", "pivot")) {
+            var invalid = definition.deepCopy(); invalid.addProperty(field, -1);
+            check(type.codec().codec().parse(JsonOps.INSTANCE, invalid).error().isPresent(), "Invalid atlas " + field + " must be rejected");
+        }
+        var legacy = definition.deepCopy(); legacy.remove("contrast"); legacy.remove("pivot");
+        var legacySource = (ToneMappedSpriteSource) type.codec().codec().parse(JsonOps.INSTANCE, legacy).getOrThrow();
+        check(legacySource.contrast() == 1 && legacySource.pivot() == 0, "Gamma-only pack sources must remain compatible");
+    }
+
+    private static void verifyBiomeTints() throws Exception {
+        for (String biome : List.of("golden_fields", "elysian_highlands", "ivory_peaks")) {
+            var effects = JsonParser.parseString(Files.readString(Path.of(
+                    "src/main/resources/data/elysium/worldgen/biome/" + biome + ".json")))
+                    .getAsJsonObject().getAsJsonObject("effects");
+            check(effects.get("foliage_color").getAsInt() == 0xFFD047, "Reference biomes must use L3 foliage");
+            check(effects.get("grass_color").getAsInt() == 0xF2C846, "Reference biomes must use G4.1 grass");
+        }
+        check(dev.elysium.registry.ModBlocks.GOLDEN_LEAF_COLOR == 0xFFD047, "Inventory foliage must use L3 too");
+        int[] original = {255, 211, 74}, folded = {242, 200, 70};
+        int largestDifference = 0;
+        for (int channel = 0; channel < 3; channel++) for (int value = 0; value < 256; value++) {
+            long preview = Math.round(value * original[channel] / 255.0 * 0.95);
+            long runtime = Math.round(value * folded[channel] / 255.0);
+            largestDifference = Math.max(largestDifference, (int) Math.abs(preview - runtime));
+        }
+        check(largestDifference <= 1, "Folding 0.95 gain into the biome tint must stay within one 8-bit channel value");
+        System.out.println("G4.1 tint quantization: maximum difference from approved preview = " + largestDifference + "/255.");
     }
 
     private static void verifyPixelContract() {
