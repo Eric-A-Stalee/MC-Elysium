@@ -141,6 +141,13 @@ public final class GrandTownGameTests {
                         var e=b.entry();var door=new BlockPos(b.worldX(e.u(),e.v()),e.floor()+1,b.worldZ(e.u(),e.v()));
                         helper.assertTrue(realm.getBlockState(door).is(Blocks.SPRUCE_DOOR),"Every saved entry needs a real door: "+door
                                 +", got="+realm.getBlockState(door)+", style="+b.style()+", entry="+b.entry());
+                        var building=(MountainBuildingPiece)actual.getPieces().get(i);
+                        for(var voxel:building.geometry().entrySet()) {
+                            var expected=building.state(voxel.getValue());if(!expected.hasBlockEntity())continue;
+                            var p=voxel.getKey();var at=new BlockPos(b.worldX(p.u(),p.v()),p.y(),b.worldZ(p.u(),p.v()));
+                            helper.assertTrue(realm.getBlockState(at).equals(expected) && realm.getBlockEntity(at)!=null,
+                                    "Authored beds and furnishings must survive the complete town placement: "+at+", expected="+expected+", got="+realm.getBlockState(at));
+                        }
                     }
                     var crossing=pieces.stream().filter(p->p instanceof ElysianBridgePiece).map(p->((ElysianBridgePiece)p).span()).findFirst().orElseThrow();int middle=crossing.length()/2;
                     var deck=new BlockPos(crossing.x(middle,0),crossing.walkingHeight(middle)-1,crossing.z(middle,0));

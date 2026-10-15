@@ -27,12 +27,19 @@ final class StructurePlacementProbe {
         // Reverse coordinate order; every piece receives only the current chunk's clip.
         for (int x = box.maxX() >> 4; x >= box.minX() >> 4; x--) {
             for (int z = box.maxZ() >> 4; z >= box.minZ() >> 4; z--) {
-                level.getChunk(x, z);
+                var loaded=level.getChunk(x, z);
+                var existingEntities=new java.util.LinkedHashMap<BlockPos,net.minecraft.world.level.block.state.BlockState>();
+                for(var pos:loaded.getBlockEntitiesPos())existingEntities.put(pos,level.getBlockState(pos));
                 var chunk = new ChunkPos(x, z);
                 var clip = new BoundingBox(chunk.getMinBlockX(), level.getMinBuildHeight(), chunk.getMinBlockZ(),
                         chunk.getMaxBlockX(), level.getMaxBuildHeight() - 1, chunk.getMaxBlockZ());
                 saved.placeInChunk(level, level.structureManager(), generator,
                         RandomSource.create(chunk.toLong() ^ level.getSeed()), clip, chunk);
+                existingEntities.forEach((pos,before)->{
+                    var after=level.getBlockState(pos);
+                    if(!before.equals(after))com.mojang.logging.LogUtils.getLogger().info(
+                            "Explicit structure probe replaced existing block entity at {}: {} -> {}",pos,before,after);
+                });
             }
         }
         return saved;
