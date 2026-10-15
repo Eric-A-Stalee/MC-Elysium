@@ -173,7 +173,10 @@ for direction,(lo,hi) in {
         channel_parts.append({"when":{direction:"true","lit":str(lit).lower()},"apply":{"model":f"elysium:block/{name}"}})
 asset("blockstates/forge_ember_channel",{"multipart":channel_parts})
 asset("models/item/forge_ember_channel",{"parent":"elysium:block/forge_ember_channel_0"})
-loot("forge_ember_channel",[pool([item("elysium:forge_ember_channel")],[SURVIVES])])
+loot("forge_ember_channel",[pool([
+    item("elysium:forge_ember_channel") | {"conditions":[{"condition":"minecraft:inverted","term":{"condition":"minecraft:block_state_property","block":"elysium:forge_ember_channel","properties":{"decay":"2"}}}]},
+    item("minecraft:iron_nugget") | {"conditions":[{"condition":"minecraft:block_state_property","block":"elysium:forge_ember_channel","properties":{"decay":"2"}}]}
+],[SURVIVES])])
 data("recipe/forge_ember_channel",{"type":"minecraft:crafting_shaped","category":"building","pattern":["I I","CCC"],
      "key":{"I":{"item":"minecraft:iron_ingot"},"C":{"item":"minecraft:copper_ingot"}},"result":{"id":"elysium:forge_ember_channel","count":8}})
 data("advancement/recipes/forge_ember_channel",{"parent":"minecraft:recipes/root","criteria":{"copper":{"trigger":"minecraft:inventory_changed",

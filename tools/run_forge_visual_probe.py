@@ -60,9 +60,9 @@ def main():
                                           start_new_session=True)
                 result = client.wait(timeout=480)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 10 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            if result or len(images) != 11 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured ten actual vanilla-rendered Forge views:', *(p.name for p in images), sep='\n')
+            print('Captured eleven actual vanilla-rendered Forge views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)

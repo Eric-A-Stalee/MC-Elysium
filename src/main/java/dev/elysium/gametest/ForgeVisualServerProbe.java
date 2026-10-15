@@ -72,6 +72,10 @@ public final class ForgeVisualServerProbe {
             case "shaft" -> camera(player,level,-10,PLAN.floor()+48,22,4,PLAN.floor()+26,20);
             case "overlook" -> camera(player,level,0,PLAN.floor()+13,49,0,PLAN.floor()+6,76);
             case "dark" -> camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
+            case "ignition" -> {
+                ignite(level);
+                camera(player,level,-10,PLAN.floor()+2,50,-4,PLAN.floor()+.5,56);
+            }
             case "foundry" -> {
                 ignite(level);
                 camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
@@ -94,7 +98,7 @@ public final class ForgeVisualServerProbe {
 
     private static void ignite(ServerLevel level) {
         var source=(ForgeServiceBlockEntity)level.getBlockEntity(ForgeFixtures.source(PLAN));
-        source.addFuel(24000);source.ignite();if(!source.airflow())source.toggleAirflow();
+        if(source.fuelTicks()==0)source.addFuel(24000);source.ignite();if(!source.airflow())source.toggleAirflow();
     }
     private static void repair(ServerLevel level,BlockPos local) {
         var f=ForgeFixtures.NETWORK.get(local);var pos=f.worldPosition(PLAN);

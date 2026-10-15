@@ -79,7 +79,7 @@
   "lore.elysium.survey.1": "THE LAST SURVEY\n\nOur hearths still warm the houses. The great hearth has been cold longer than anyone remembers. Its entrance lies under the mountain scree; only a little corroded copper remains.",
   "lore.elysium.survey.2": "Old survey workshops still stand on the high shoulders. Their archives remember the way. At the marked hillside, search beside the buried masonry for a narrow cleft.",
   "lore.elysium.survey.3": "Take a pick and your own light. Broken stairs wind around the old hauling shaft, far below the entrance. The lift has failed. A narrow maintenance route reaches the gallery above the foundry.",
-  "lore.elysium.survey.4": "Feed charcoal to the service brazier, strike a flame, and open its handwheel. Follow the copper runners. Clear ash by hand; pack small cracks with gunpowder. Missing channels need copper and iron. The service fire cannot wake the great hearth.",
+  "lore.elysium.survey.4": "Coal feeds the service brazier. Strike a flame, then open its wheel. Follow the runners: clear ash by hand; bridge cracks with gunpowder; replace missing channels with copper and iron. This small fire cannot wake the great hearth.",
   "lore.elysium.ledger.1": "THE UNFINISHED WORK\n\nThe hammer rests above its last die. A link waits unfinished in the cradle. The western gallery fell after the keepers left; the stone has buried the work where it stood.",
   "lore.elysium.ledger.2": "The little service fire fed the runners around our benches. Its coal must be replenished; closing the draught banks the embers. At the great hearth rested another fire entirely: the First Flame. Ordinary coal cannot replace it.",
   "lore.elysium.ledger.3": "The First Flame was taken below, into the keeping of the one who watches the bindings. The great chains still carry an echo of it through the mountain. Listen at their deepest anchors.",
@@ -109,5 +109,6 @@
   "message.elysium.forge.service.full": "The brazier is full. It holds up to eighty minutes of fuel.",
   "message.elysium.forge.service.ignited": "The coals catch. Fire begins to follow the surviving copper runners.",
   "message.elysium.forge.service.banked": "The coals hold an ember. Open the handwheel to feed the channels.",
-  "message.elysium.forge.service.empty": "The bowl is empty. Add charcoal or coal before striking a flame."
+  "message.elysium.forge.service.empty": "The bowl is empty. Add charcoal or coal before striking a flame.",
+  "message.elysium.forge.service.flowing": "The draught opens. Embers follow the surviving runners. Fuel remaining: %s minutes."
 }

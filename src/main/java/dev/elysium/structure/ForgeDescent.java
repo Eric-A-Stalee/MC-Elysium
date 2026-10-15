@@ -17,7 +17,7 @@ public final class ForgeDescent {
     static {
         var steps=new ArrayList<Step>();
         int[] points={0,72,7, 0,56,23, -14,50,23, -14,38,9, 14,26,9, 14,14,30,
-                14,12,42, 0,12,42, 0,12,50, -21,8,50, -21,8,64};
+                14,12,42, 0,12,42, 0,12,50, -24,8,50, -24,8,64};
         for(int i=3;i<points.length;i+=3) {
             int u=points[i-3],h=points[i-2],v=points[i-1],tu=points[i],th=points[i+1],tv=points[i+2];
             int length=Math.abs(tu-u)+Math.abs(tv-v);
@@ -28,7 +28,7 @@ public final class ForgeDescent {
                 steps.add(new Step(u+Integer.signum(tu-u)*n,height,v+Integer.signum(tv-v)*n,uphill,next<height));
             }
         }
-        steps.add(new Step(-21,8,64,Direction.NORTH,false));ROUTE=List.copyOf(steps);
+        steps.add(new Step(-24,8,64,Direction.NORTH,false));ROUTE=List.copyOf(steps);
         var map=new HashMap<Long,List<Sample>>();
         for(var step:ROUTE)for(int du=-2;du<=2;du++)for(int dv=-2;dv<=2;dv++)
             map.computeIfAbsent(key(step.u()+du,step.v()+dv),k->new ArrayList<>()).add(new Sample(step,Math.max(Math.abs(du),Math.abs(dv))));
@@ -86,7 +86,7 @@ public final class ForgeDescent {
             if(h<=4)return block(h==4&&Math.floorMod(u+v,4)==0?Blocks.TUFF:Blocks.DEEPSLATE);
             if(h==52)return block(Blocks.STONE);
             if(Math.abs(u)==12&&(v==12||v==28))return block(h%8==0?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.POLISHED_BASALT);
-            if(h==50&&v>=19&&v<=21)return block(Blocks.DARK_OAK_LOG);
+            if(h==50&&v>=18&&v<=21)return block(Blocks.DARK_OAK_LOG);
             if(u==4&&v==20&&h>=10&&h<50)return block(Blocks.CHAIN);
             if(u>=3&&u<=5&&v>=19&&v<=21&&h>=7&&h<=10)return block(ModBlocks.FORGE_IRON.get());
             if(u>=-4&&u<=2&&v>=18&&v<=23&&h==36&&!(u>=0&&v>=21))return block(Blocks.DARK_OAK_PLANKS);
@@ -96,9 +96,9 @@ public final class ForgeDescent {
             return block(Blocks.CAVE_AIR);
         }
         // Corbels and piers carry the gallery where it emerges from the service adit.
-        if(v>=48&&v<=52&&u>=-23&&u<=2&&h>=1&&h<12) {
+        if(v>=48&&v<=52&&u>=-26&&u<=2&&h>=1&&h<12) {
             for(var sample:COLUMNS.getOrDefault(key(u,v),List.of()))if(h<sample.step.h()-2) {
-                if((u==0||u==-10||u==-21)&&v==50)return block(Blocks.POLISHED_BASALT);
+                if((u==0||u==-10||u==-24)&&v==50)return block(Blocks.POLISHED_BASALT);
                 if(h>=sample.step.h()-4&&Math.abs(v-50)<=sample.step.h()-h-2)return block(Blocks.DEEPSLATE_BRICKS);
             }
         }

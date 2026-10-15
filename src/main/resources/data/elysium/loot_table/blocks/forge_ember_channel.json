@@ -6,7 +6,32 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "elysium:forge_ember_channel"
+          "name": "elysium:forge_ember_channel",
+          "conditions": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:block_state_property",
+                "block": "elysium:forge_ember_channel",
+                "properties": {
+                  "decay": "2"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:iron_nugget",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "elysium:forge_ember_channel",
+              "properties": {
+                "decay": "2"
+              }
+            }
+          ]
         }
       ],
       "conditions": [

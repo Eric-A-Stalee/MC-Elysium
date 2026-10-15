@@ -106,6 +106,7 @@ public final class ForgeGeometry {
 
     private BlockState floor(int u,int y,int v,int floor) {
         if(y<floor)return b(Blocks.DEEPSLATE);
+        if(u==-7&&v==52)return b(ModBlocks.FORGE_PILOT_LIGHT.get());
                 if(v>=48&&v<=92&&(u==-6||u==6))return b(Blocks.WAXED_WEATHERED_COPPER_GRATE);
         if(grime(u,v)&&noise(Math.floorDiv(u,3),0,Math.floorDiv(v,4),3)%4!=0)
             return b(u>29&&v>65?Blocks.BLACKSTONE:Blocks.TUFF);

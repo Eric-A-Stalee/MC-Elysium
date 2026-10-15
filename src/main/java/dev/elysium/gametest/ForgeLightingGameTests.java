@@ -85,6 +85,7 @@ public final class ForgeLightingGameTests {
         var missing=world(p,ForgeFixtures.MISSING);level.setBlock(missing,ModBlocks.FORGE_EMBER_CHANNEL.get().defaultBlockState(),3);
         ModBlocks.FORGE_EMBER_CHANNEL.get().setPlacedBy(level,missing,level.getBlockState(missing),player,new ItemStack(ModBlocks.FORGE_EMBER_CHANNEL.get()));
         advance(level,source);helper.assertTrue(lit(level,shrine),"A placed replacement must bind to its neighbours and restore the shrine path");
+        helper.assertTrue(source.energized().size()==ForgeFixtures.ALL.size(),"All authored fixtures must be physically reachable once the three failures are repaired");
         level.setBlock(crack,Blocks.AIR.defaultBlockState(),3);ForgeLighting.advance(level,source,10);
         helper.assertTrue(!lit(level,east)&&lit(level,west),"Mining a runner must immediately cut its downstream branch");
         helper.assertTrue(level.getBlockState(crack).isAir(),"Recalculation may never reconstruct a mined channel");
@@ -119,6 +120,15 @@ public final class ForgeLightingGameTests {
         helper.assertTrue(!lit(level,far),"A late-loaded terminal with no connecting blocks stays dark");
         var disconnected=helper.absolutePos(new BlockPos(1,2,1));level.setBlock(disconnected,ModBlocks.FORGE_SERVICE_SWITCH.get().defaultBlockState(),3);
         helper.assertTrue(!((ForgeServiceBlockEntity)level.getBlockEntity(disconnected)).addFuel(12000),"An unbound item cannot create another Forge reservoir");
+        helper.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=100)
+    public static void arrivalGuidanceStillRequiresTheHearthsHeight(GameTestHelper helper) {
+        var player=new FakePlayer(helper.getLevel(),new GameProfile(UUID.randomUUID(),"ArrivalReader"));
+        var target=new BlockPos(32,100,32);player.setPos(32.5,100,32.5);
+        helper.assertTrue(dev.elysium.item.ResonanceItem.arrived(player,target),"Standing at the remembered hearth must be recognised");
+        player.setPos(32.5,172,32.5);
+        helper.assertTrue(!dev.elysium.item.ResonanceItem.arrived(player,target),"Being at the deeper Forge's mountain entrance is not arrival at its hearth");
         helper.succeed();
     }
     private static ForgePlan plan(GameTestHelper h,int offset) {var p=h.absolutePos(new BlockPos(offset,105,0));return new ForgePlan(p.getX(),p.getZ(),p.getY(),0);}

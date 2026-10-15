@@ -1,4 +1,4 @@
-# The buried Forge — alpha 16
+# The buried Forge — alpha 17
 
 Elysium now has an optional exploration chapter: find a surviving archive,
 locate the Forge of Hephaestus, recover an instrument from its cold hearth,
@@ -30,10 +30,20 @@ will not acquire one merely because the new terrain planner could fit it there.
 
 ## Inside the mountain
 
-A broken copper-marked jamb is almost swallowed by pale scree and roots. A
-narrow route winds around the blocked original doorway, then descends 26
-blocks into the mountain. Faint pilot lights mark a few surviving stations;
-most of the foundry starts dark.
+A narrow cleft beside scree and roots leads past buried masonry. Only a small
+corroded fragment of the original entrance survives. The foundry floor is
+**72 blocks below the entrance**, reached by roughly 160 blocks of stairs,
+landings and passages. Broken stairs wind around a hauling shaft with a
+failed timber lift, hanging counterweight, rubble bottom and incomplete rails.
+Rockfall narrows several passages; exposed edges can drop into the shaft.
+Bring a pick and your own light. A few weak pilot embers mark surviving stations.
+
+The maintenance adit opens onto a high overlook, then joins the west gallery.
+The ordinary gallery stair leads down to the foundry floor. Entry, descent,
+overlook and hall are distinct spaces; the upper entrance cannot see the hall.
+The planner retains at least 80 blocks above the dimension's minimum height
+for the foundry floor. In the current dimension this means Y=16 or higher,
+above the existing Tartarus anchor vault, whose floor is Y=-48.
 
 The main vault contains a heavy suspended hammer and its aligned anvil, guide
 piers, a stepped crosshead and an unfinished Chain of Tartarus link resting in
@@ -53,21 +63,44 @@ the chamber does not deliberately open a skylight through the peak.
 
 ## Restoring a little light
 
-Right-click the copper handwheels to recover three independent service
-circuits. The first is beside the final bend into the foundry, the second is
-in the west archive workshop, and the third is at the east workshop entrance.
-Each controls a different set of lamps, which wake in sequence. The first
-restoration awards **A Little Light Remains**.
+The **Forge Service Brazier** stands near the front of the hall. Add coal or
+charcoal with right-click: one item supplies ten minutes of burning time, up
+to eighty minutes stored. Ignite it with flint and steel or a fire charge,
+then use an empty hand on the wheel to open its draught. Fuel and ignition
+alone cannot light a closed network, and the wheel cannot supply fuel.
+Opening an ignited, supplied brazier awards **A Little Light Remains**.
 
-This is shared progress for that particular Forge. Other players see the same
-restored circuits, and they survive saving and reloading. Another Forge starts
-dark. Lamps in unloaded chunks recover their circuit state when loaded; turning
-a handwheel does not force-load the complex or replace a lamp someone mined.
-A handwheel placed from an item is unbound and cannot operate a distant Forge.
+Embers advance along actual neighbouring **Forge Ember Channels**, roughly
+six blocks per second. The exposed copper runners lead to branch braziers
+around the machinery, workbenches and galleries. Dark branches tell you where
+the old system has failed. Light does not jump directly to a list of fixtures.
 
-Restored lighting remains uneven, with pools of light around old workstations
-and dark heights beyond them. It does **not** restart the hammer, light the
-hearth, supply the First Flame or start a world event.
+- The west workshop runner is clogged with ash. Right-click it to clear it.
+- The east workshop runner is cracked. Use one gunpowder to pack an ignition
+  trail across the short break. This repair survives later extinguishing.
+  Mining an unrepaired cracked runner yields only an iron nugget.
+- The rear shrine runner has an actual missing piece. Replace it with an
+  Ember Channel: two iron ingots above three copper ingots craft eight.
+
+Repairs leave the physical blocks intact and persist with the chunks. Mining
+any connecting runner interrupts its downstream fire; the simulation never
+replaces missing blocks. Replacement channels bind through adjacent original
+fixtures, and operate only at authored service-route positions. This is a
+Forge repair system, not a general-purpose cable network for arbitrary builds.
+
+The central reservoir spends fuel while burning and ticking. Closing the
+draught banks its ignition and preserves the remaining fuel while extinguishing
+the branches. Exhaustion extinguishes the fire and requires another ignition.
+Fuel is saved in the brazier, never copied to branch fixtures. Unloaded source
+chunks spend no fuel; the network does not force-load them. A loaded branch
+losing its source goes dark. On reload the saved brazier rebuilds its fire
+through the physical loaded connections, so an unloaded/missing section cannot
+silently conduct. Other Forges have independent reservoirs and bindings.
+
+Restored lighting remains uneven, with small flames above the runners and
+braziers, warm pools around old workstations and dark heights beyond them.
+This service fire cannot restart the hammer, supply the First Flame, light
+the great hearth or start a world event.
 
 Read the **Keeper's Ledger** in the archive workshop and the **Binding
 Inscription** behind the foundry. These provide ordinary written books, with
@@ -93,14 +126,14 @@ current discovery sequence. Existing naturally generated chain chambers can
 also be used; their saved structure identity is checked.
 
 The full Tartarus region, its keeper/boss, obtaining the First Flame and
-restarting the Forge are **not implemented in alpha 16**. The great hammer
+restarting the Forge are **not implemented in alpha 17**. The great hammer
 and hearth remain dormant; ordinary fuel cannot restart them. The smaller
 vanilla workshop furnaces can still be used normally by a player.
 
 ## Commands and upgrading
 
 Replace the Elysium jar on client and server and restart. Use a new alpha test
-world or regenerate Elysium for this update. Alpha 15 Forge structure saves are
+world or regenerate Elysium for this update. Earlier Forge structure saves are
 not supported by the new geometry. No conversion or automatic retrogen is
 included. The rest of the realm's terrain, palette, towns and chain chambers
 retain their current design.
@@ -128,12 +161,15 @@ over every vaulted space on a three-block grid. The 93-by-128-block saved
 envelope includes untouched rock; the rooms occupy only part of that area.
 No mountain is flattened to place the complex. `HephaestusForgePiece` stores
 the plan and geometry version and writes only the current chunk's clip.
-`ForgeGeometry` composes the entrance, shell, machinery, workshops and damage
-with deterministic coordinate sampling. `ForgeFixtures` defines supported
-lamps and handwheels in the same local coordinate system. Each fixture saves
-its own Forge/circuit binding; `ForgeLighting` stores the three shared circuit
-bits per Forge. Fixtures reconcile on load or a scheduled block tick, with no
-per-tick block-entity ticker or continuous structure scan.
+`ForgeGeometry` composes the entrance, shell, machinery, workshops and damage.
+`ForgeDescent` supplies a separate deterministic 3D route and shaft, allowing
+several passage levels in one column. `ForgeFixtures` describes the service
+network once in local coordinates for generation and bounded connectivity.
+Each fixture saves its Forge binding. Only the source brazier has a block-entity
+ticker: twice per second `ForgeLighting` traverses existing, loaded, intact
+connections and advances the flame front. Illuminated fixtures also reconcile
+with their source on scheduled ticks, so source unloading cannot leave eternal
+lights. No chunk tickets are requested by the lighting system.
 
 `StructureSurvey` reads the registered structure placements, including their
 exclusion rules. A request visits at most 289 candidate regions around the

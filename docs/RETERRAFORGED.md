@@ -141,6 +141,16 @@ one JVM; parallel chunk generation in both dimensions; and a clear failure when
 an adapter-created save loses its engine dependency. Actual generated terrain
 must be inspected in-game before claiming visual parity with the references.
 
+## October 15 Forge depth review
+
+The 1.21.1 branch's `MixinChunkMap` and `MixinRandomState` were checked again
+while planning alpha 17. The Overworld guard and global preset selection remain.
+The deeper Forge therefore uses Elysium's existing terrain: a 72-block descent
+and a minimum foundry floor of Y=16 fit above the current Tartarus anchor vault.
+No FreeTerraForged adapter or dimension-height change was introduced in alpha 17.
+A substantially deeper Tartarus region remains a separate vertical-layout and
+terrain-generation decision; the lighting and descent do not require that engine.
+
 ## September 28 alpha 4 re-evaluation
 
 The image-inspired water and mountain work prompted a new source review at FreeTerraForged head [`a4e4af4`](https://github.com/ETcodehome/FreeTerraForged/tree/a4e4af44441d3ca15c3e86645d45a6cc3e782d08). The six commits since the inspected release cover biome replacement compatibility, RoadWeaver null-state handling and legacy preset loading. They do not remove the separate-dimension blockers: `MixinChunkMap` still enables the context only for `Level.OVERWORLD`; `MixinRandomState` still zeroes terrain markers outside that dimension and chooses one global preset; preset noise settings still register under `minecraft:overworld`; `FlowSettings` still holds shared static state.

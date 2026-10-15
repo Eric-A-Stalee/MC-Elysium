@@ -66,6 +66,7 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
                 ?(world,pos,s,be)->ForgeServiceBlockEntity.serverTick(world,pos,s,(ForgeServiceBlockEntity)be):null;
     }
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,Player player,BlockHitResult hit) {
+        if(!controller()&&state.getValue(DECAY)==0)return InteractionResult.PASS;
         if(player instanceof ServerPlayer server) {
             if(state.getValue(DECAY)==1) {
                 level.setBlock(pos,state.setValue(DECAY,0),3);
@@ -77,7 +78,7 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
                 else {
                     service.toggleAirflow();
                     level.playSound(null,pos,SoundEvents.CHAIN_PLACE,SoundSource.BLOCKS,.8f,.5f);
-                    ForgeLore.tell(server,service.airflow()?"service.open":"service.closed",(service.fuelTicks()+1199)/1200);
+                    ForgeLore.tell(server,service.airflow()?(service.burning()?"service.flowing":"service.open"):"service.closed",(service.fuelTicks()+1199)/1200);
                     if(service.burning())ForgeLore.award(server,"borrowed_light");
                 }
             } else return InteractionResult.PASS;
