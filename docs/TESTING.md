@@ -673,3 +673,73 @@ chunks, while existing scholars and natural chain anchors support the new
 items. Follow [the player guide](FORGE.md) for the discovery route, replacement
 rules and inspection commands. The current chapter leaves the Forge dormant;
 the full Tartarus region, boss and restart sequence remain future work.
+
+## Alpha 16 buried ruin and service lighting (October 15, 2026)
+
+[GitHub Actions run 38788338097](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38788338097)
+built commit `d6ba15284a6731c6acc804ed2c3decdbe8445da5`. The Java 21 build,
+generated assets and worldgen, client sprite/model probes, independent
+compatibility guard and **all 51 required dedicated-server GameTests passed**.
+The previous 47 tests remain enabled, with four new lighting/ruin tests.
+
+The checks cover all four rotations, every authored lamp and handwheel, dark
+initial states, the obstructed original doorway, matching gallery rockfall,
+hammer/anvil alignment and the unfinished chain link. Player-sized routes
+connect the winding approach, workrooms, surviving galleries, shrine and all
+three controls. An early test caught an overhead duct crossing a stair; it now
+passes above that route. Natural terrain placement, registered piece NBT and
+chunk clipping continue to pass.
+
+Lighting tests operate a real registered handwheel block with a server test
+player; exercise circuit isolation, shared idempotence and per-Forge saved data;
+save/load a fixture through Minecraft's registered block-entity NBT; and check
+that a late-loaded lamp reconciles without the restoration loading its chunk.
+Isolated test fixtures receive temporary ticking tickets because no connected
+player supplies them. Production restoration grants no chunk tickets. Mining
+a fixture does not reconstruct it, placed unbound handwheels remain unbound,
+and the main hearth stays at light level 1. Pilots emit 3, dormant handwheels
+2, restored handwheels 4 and restored work lights 12. There are 28 work lights
+across three circuits, positioned around work surfaces and surviving passages.
+
+Arrival guidance also checks vertical distance, so standing on the mountain
+above the hearth does not count as reaching it. Surface palettes, tree and
+settlement generation, terrain noise and the Tartarus vault remain unchanged.
+
+For this pass a **real graphical Minecraft client also ran successfully** in
+CI, using Xvfb and software OpenGL against a disposable local dedicated server.
+The `forge-client-review` artifact contains eight 1280-by-720 screenshots:
+entrance, dormant foundry, first circuit, west workshop, retorts, all service
+circuits, gallery and collapse. These use default Minecraft textures, no shader
+pack, brightness 50% and the unchanged Elysium time/ambient light. The dark and
+restored foundry frames use the same camera. The actual captures were reviewed;
+they are not generated concept images or approximations of the block geometry.
+
+The visual server explicitly places the full chunk-clipped production piece
+on the previously surveyed seed-zero mountain at X -3524 / Z -3804, entry
+floor 100 and orientation 1. It disables automatic structures to avoid a second
+overlapping placement. This exercises rendering and the real lighting network;
+the separate natural terrain GameTest exercises structure selection and saved
+starts. The first capture pass exposed overly clean iron rails, a raised
+straight approach and weak illumination at the machine. The final pass uses
+Weathered Forge Iron, a lower rubble approach and selective machine work lights.
+The foundry remains deliberately dim after restoration, especially overhead.
+
+To reproduce on Linux with Java 21, Xvfb and Mesa installed, run
+`python3 tools/run_forge_visual_probe.py` with fresh `run-visual-server` and
+`run-visual-client` directories. The opt-in harness binds its disposable server
+to localhost, uses an offline development client, captures the scenes and stops
+both processes. All harness classes are excluded from the player jar. This is
+not a shader/resource-pack comparison or a manual survival playthrough. The
+CI runner has no working audio device, so audible ambience was not assessed.
+No new ReTerraForged co-installation or multi-seed frequency study was performed.
+
+The downloaded player jar matches GitHub's artifact ZIP digest and passes ZIP
+integrity checks. It contains **122 Java 21 classes** and **209 source-matching
+resources**. GameTests, visual harnesses and development world fixtures are
+excluded. Its size is **595,232 bytes**, SHA-256
+`b4e0cd18dd83d4d9a961c6c165e057a232c07b64f33786c474e9a9693972fe4c`.
+
+Use a fresh alpha world or regenerate Elysium. This pass does not maintain
+alpha-15 Forge structure-save compatibility; it verifies the new design's own
+save/load behavior. See [the player guide](FORGE.md) for the discovery and
+lighting controls.

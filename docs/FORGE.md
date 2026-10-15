@@ -93,8 +93,9 @@ current discovery sequence. Existing naturally generated chain chambers can
 also be used; their saved structure identity is checked.
 
 The full Tartarus region, its keeper/boss, obtaining the First Flame and
-restarting the Forge are **not implemented in alpha 16**. The machinery is a
-dormant landmark, not a functioning smelter. Ordinary fuel cannot activate it.
+restarting the Forge are **not implemented in alpha 16**. The great hammer
+and hearth remain dormant; ordinary fuel cannot restart them. The smaller
+vanilla workshop furnaces can still be used normally by a player.
 
 ## Commands and upgrading
 
