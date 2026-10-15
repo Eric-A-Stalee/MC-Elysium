@@ -38,8 +38,7 @@ public final class DormantHearthBlock extends Block {
         var level=player.serverLevel();
         if(!level.dimension().equals(ElysiumTravel.DIMENSION)){ForgeLore.tell(player,"outside");return false;}
         boolean first=ForgeDiscoveries.get(level).discover(player.getUUID(),ForgeDiscoveries.HEARTH);
-        boolean missing=!player.getInventory().contains(new ItemStack(ModItems.CHAIN_RESONATOR.get()));
-        // contains compares item identity; component-bound relics are checked explicitly too.
+        boolean missing=true;
         for(int i=0;i<player.getInventory().getContainerSize();i++)
             if(player.getInventory().getItem(i).is(ModItems.CHAIN_RESONATOR.get()))missing=false;
         if(first || replace&&missing) {

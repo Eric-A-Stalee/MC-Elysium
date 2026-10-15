@@ -57,7 +57,7 @@
   "message.elysium.forge.record.ledger": "The Keeper's Ledger describes the missing First Flame. Its account has been copied into your book on first reading; offer a fresh book for another copy.",
   "message.elysium.forge.record.bindings": "The inscription connects the cold hearth to the great chains. Its account has been copied on first reading; offer a fresh book for another copy.",
   "message.elysium.forge.relic": "A small instrument answers your touch. The Chain Resonator remembers this hearth.",
-  "message.elysium.forge.hearth": "The hearth is cold. Ordinary fuel cannot replace its missing heart. Read the Keeper's Ledger in the western workshop. If your instrument is lost, an amethyst shard can tune a replacement here.",
+  "message.elysium.forge.hearth": "The hearth is cold. Ordinary fuel cannot replace its missing heart. Read the Keeper's Ledger in the archive workshop. If your instrument is lost, an amethyst shard can tune a replacement here.",
   "message.elysium.forge.no_memory": "This instrument has no memory of a hearth.",
   "message.elysium.forge.survey_disabled": "No structure survey can be made in this world: structure generation is disabled.",
   "message.elysium.forge.survey_pending": "Your instrument is still listening. You can keep walking while it searches.",

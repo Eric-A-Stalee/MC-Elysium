@@ -59,6 +59,7 @@ public final class HephaestusForgePiece extends StructurePiece {
             if(e>=1 && e<=9) {
                 if(Math.abs(u)>=5 && v>=-1) return block(e==5?Blocks.WAXED_CUT_COPPER:Blocks.DEEPSLATE_BRICKS);
                 if(e==8 && v>=-1 || e==9 && v>=0 && Math.abs(u)<=4) return block(Blocks.DEEPSLATE_TILES);
+                if(v==-2 && (u==-5&&e<=5 || u==5&&e<=2))return block(Blocks.POLISHED_BASALT);
                 if(u==-5 && e==6 && v==-2) return lamp();
                 if(u==5 && e==3 && v==-2) return block(ModBlocks.FORGE_ARCHIVE.get());
                 if(Math.abs(u)<=4 && e<=7) return block(Blocks.AIR);
@@ -103,11 +104,11 @@ public final class HephaestusForgePiece extends StructurePiece {
         if(du>=18 && du<=19 && v>=74 && v<=78 && h<=23) return block(h%6==0?Blocks.WAXED_CUT_COPPER:Blocks.POLISHED_BASALT);
 
         // Two straight flights reach the side galleries. Rail openings match the stair landings.
-        if(du>=20 && du<=22 && v>=51 && v<=59 && h<=v-51) {
-            return h==v-51?stair(Direction.SOUTH):block(Blocks.DEEPSLATE_BRICKS);
+        if(du>=19 && du<=21 && v>=55 && v<=63 && h<=v-55) {
+            return h==v-55?stair(Direction.SOUTH):block(Blocks.DEEPSLATE_BRICKS);
         }
-        if(du>=20 && du<=24 && v>=59 && v<=82 && h==8) return block(Blocks.DEEPSLATE_TILES);
-        if(du==20 && v>=61 && v<=82 && h==9) return block(Blocks.POLISHED_DEEPSLATE_WALL);
+        if(du>=19 && du<=24 && v>=63 && v<=82 && h==8) return block(Blocks.DEEPSLATE_TILES);
+        if(du==19 && v>=65 && v<=82 && h==9) return block(Blocks.POLISHED_DEEPSLATE_WALL);
         // Fixtures stand on full supports; no neighbour-dependent attachment can fall during clipping.
         if(du==23 && v>=63 && v<=79 && v%8==7 && h==9) return lamp();
         if(du==12 && (v==50 || v==89) && h<=3) return h==3?lamp():block(Blocks.CHISELED_DEEPSLATE);
@@ -122,7 +123,8 @@ public final class HephaestusForgePiece extends StructurePiece {
         }
         if(u>=30 && u<=44 && v>=55 && v<=87) {
             if(u>=40 && v>=68 && v<=76 && h<=2) return block(h==2?Blocks.WAXED_EXPOSED_COPPER_GRATE:Blocks.DEEPSLATE_BRICKS);
-            if(u>=32 && u<=35 && v>=77 && v<=84 && h==1) return block(Blocks.CAULDRON);
+            if((u==33 || u==36) && (v==78 || v==82) && h==1)
+                return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL,3);
             if(u==43 && v>=57 && v<=65 && v%3==0 && h<=2) return block(Blocks.BLAST_FURNACE);
             if(u==37 && v==84 && h<=2) return h==2?lamp():block(Blocks.WAXED_CUT_COPPER);
         }

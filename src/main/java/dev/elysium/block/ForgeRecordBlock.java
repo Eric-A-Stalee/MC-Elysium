@@ -42,6 +42,6 @@ public final class ForgeRecordBlock extends Block {
         }
         ForgeLore.tell(player,"record."+record.key());
         if(record==ForgeLore.Record.SURVEY)ForgeLore.award(player,"forge_survey");
-        return true;
+        return !first && copy;
     }
 }

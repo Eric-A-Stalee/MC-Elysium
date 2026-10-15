@@ -84,6 +84,8 @@ public final class StructureSurvey {
         var chunk=candidate.chunk;
         if(!level.getWorldBorder().isWithinBounds(new BlockPos(chunk.getMiddleBlockX(),64,chunk.getMiddleBlockZ())))return Optional.empty();
         if(!candidate.placement.isStructureChunk(level.getChunkSource().getGeneratorState(),chunk.x,chunk.z))return Optional.empty();
+        var loaded=level.getChunkSource().getChunkNow(chunk.x,chunk.z);
+        if(loaded!=null)return destination(loaded.getStartForStructure(structure));
         // This respects old, already generated chunks lacking the new structure. A successful noise plan alone does not.
         if(level.structureManager().checkStructurePresence(chunk,structure,candidate.placement,false)==StructureCheckResult.START_NOT_PRESENT)return Optional.empty();
         var actual=level.getChunkSource().getChunk(chunk.x,chunk.z,ChunkStatus.STRUCTURE_STARTS,true);
