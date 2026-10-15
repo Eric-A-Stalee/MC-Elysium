@@ -552,3 +552,41 @@ Java 21 classes**. All **158 shipped source resources match**; server/client
 tests, fixtures and the flat test preset are excluded. The jar is **502,856
 bytes**, SHA-256
 `c880041ee3028d39ddec1f08cdb7c0fb976d20ac52d46096eb64e66364e9cf4b`.
+
+## Alpha 13 approved L3/G4.1 sprite recipes (October 15, 2026)
+
+[GitHub Actions run 38708226797](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38708226797)
+built commit `ef2d90701e4b4294a34f2bd7c30a2c930af4239e`. The Java 21 build,
+generated-content checks, client probes, independent compatibility guard and
+**all 41 required dedicated-server GameTests passed**.
+
+The real sprite loader now processes the actual vanilla birch texture and all
+five grass textures. Each 256-value curve matches a SHA-256 reference exported
+from the approved Python preview. Birch's mean source red rises from 130.6 to
+193.3; grass-block top rises from 147.4 to 206.6 before its biome tint. Folding
+G4.1's 0.95 gain into `#F2C846` stays within **one 8-bit channel value** of the
+preview for every possible source value. Reference-biome and inventory tints
+are checked against the selection. All six sources pass alpha/padding,
+five-level mip generation, animated 32-by-32 pack frames, partial alpha,
+explicit-artwork override, invalid-parameter and legacy-codec checks.
+
+`GrassModelProbe` exercises the actual baking hook with Minecraft baked quads
+and atlas sprites. It checks both snowy grass-block states, short grass, both
+tall-grass halves, Elysium/other-dimension model-data transitions, item-model
+isolation, preservation of pack model data, UV relocation, geometry, vertex
+colours, light, normals, tint/shading flags and missing-target fallback. These
+headless checks do not create a window, stitch/upload a GPU atlas or exercise
+a third-party shader/renderer. The six-source loader also tests pack textures;
+the player's complete texture pack has not been run here.
+
+The downloaded CI artifact matches GitHub's ZIP digest. Its player jar passes
+ZIP integrity checks, contains **100 Java 21 classes**, and matches all **158
+shipped source resources**. Client/server probes and flat test fixtures are
+excluded. The jar is **508,561 bytes**, SHA-256
+`5fd768f58ee536512824c88fa36dab38510bcd9faca88bf379a71f00b8bc1e85`.
+
+Replace the jar on client and server and restart. Existing chunks receive the
+palette and sprite changes; no regeneration is required. The remaining visual
+check is the same mountain-town view with vanilla lighting and the preferred
+shader/resource pack, especially ground warmth, leaf brightness and the
+contrast against the intentionally pale rock.

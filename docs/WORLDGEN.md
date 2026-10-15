@@ -70,7 +70,7 @@ probabilities; the generator converts them to the conditional probabilities
 needed by Minecraft's sequential random selector. Placement failures can change
 the mix among surviving trees.
 
-Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter use a fixed golden tint; inventory items remain gold. Birch leaf models use a derived sprite based on the active pack's vanilla birch texture, with the alpha-12 tonal treatment described below. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
+Grass colors are biome effects. Leaves, fallen-leaf particles and ground litter use the biome foliage palette within Elysium, including Minecraft's normal biome blending. Outside Elysium, the custom leaves and litter use a fixed golden tint; inventory items remain gold. Birch leaf models use a derived sprite based on the active pack's vanilla birch texture; alpha 13 extends this treatment to grass rendered within Elysium, as described below. The small original grayscale leaf sprite is reused for particles and scattered ground leaves, avoiding a texture set for every colour. Particles use the particle atlas; `assets/minecraft/atlases/blocks.json` explicitly adds that same PNG to the blocks atlas for the litter block and inventory model. Merely referencing a particle texture from a model does not register it in that atlas.
 
 | Biome | Grass | Foliage | Water |
 | --- | --- | --- | --- |
@@ -434,8 +434,8 @@ biome tree profiles and their attempt budgets remain as in alpha 10.
 
 ## Alpha 12 warm gold and leaf sprite midtones
 
-The selected sprite-study direction is B (warm gold), with a small saturation
-reduction. The current table separates warmer foliage from quieter straw grass.
+The alpha-12 sprite-study direction was B (warm gold), with a small saturation
+reduction. That revision separated warmer foliage from quieter straw grass.
 The highland and inventory foliage tint is `#FFCA59`; woods are deeper, Amber
 Lakes remain warmer and Ivory Peaks remain paler. The same regional foliage
 palette continues to colour fallen leaves and leaf particles.
@@ -463,3 +463,60 @@ continues to use the vanilla texture with its independent regional tint.
 Terrain, structures, tree geometry, fixed time and water are unchanged from
 alpha 11. The snowlike ivory faces are intentional. Restarting with alpha 12
 updates existing chunks; no regeneration is needed for this revision.
+
+## Alpha 13 approved L3 leaves and G4.1 ground
+
+This revision implements the selected programmatic previews made from the
+actual Minecraft 1.21.1 sprites. The brighter body comes from texture values;
+the gold comes from a saturated tint, without whitening the result.
+
+| Recipe | Gamma | Contrast | Pivot | Reference biome tint |
+| --- | ---: | ---: | ---: | --- |
+| L3 leaves | 0.40 | 1.80 | 195 | `#FFD047` |
+| G4.1 grass | 0.38 | 1.55 | 207 | `#F2C846` |
+
+For each visible RGB source channel `c`, the client computes
+`g = round(255 * (c / 255)^gamma)` and then
+`v = clamp(round(pivot + contrast * (g - pivot)), 0, 255)`.
+Normal Minecraft rendering multiplies this value by the biome tint. These
+two rounded curve steps match the preview exactly. G4.1's preview used tint
+`#FFD34A` and a common RGB gain of `0.95`; that gain is folded into the
+8-bit biome tint `#F2C846`. Across all channel values, the resulting rounded
+colour differs from the preview by at most **1/255**. No global exposure,
+emission or additional saturation filter is applied.
+
+Golden Fields, Elysian Highlands and Ivory Peaks use the reference pair.
+Mountain vegetation therefore stays golden against the pale rock. Woods keep
+a slightly deeper gold, watermeadows a lighter gold, and Amber Lakes a warmer
+autumn hue. Inventory/fallback leaves use L3. Litter and particles retain their
+own original grayscale texture with the updated regional foliage tint.
+
+The atlas derives five grass sprites from the active pack's vanilla paths:
+`grass_block_top`, `grass_block_side_overlay`, `short_grass`, `tall_grass_top`
+and `tall_grass_bottom`. Their target paths are
+`elysium:block/golden_<source_name>`. As with the leaf sprite, a PNG explicitly
+supplied at the corresponding Elysium texture path bypasses the tonal curve;
+the model still applies its normal biome tint. Animation, resolution, partial
+alpha and transparent RGB padding remain intact.
+
+`ElysiumGrassModel` wraps the baked world models of vanilla grass blocks,
+short grass and both halves of tall grass. NeoForge's model-data hook captures
+whether the current client level is Elysium. Only tinted faces using the five
+known vanilla sprite paths are retargeted; UVs are mapped to the new atlas
+region while geometry, vertex data, tint indices, face shading and ambient
+occlusion are preserved. Weighted models still choose their original quads.
+Pack model data and render layers are delegated. Dirt, snow faces, uncoloured
+artwork, custom sprite paths, inventory models and other dimensions keep their
+original sprites. Missing derived sprites fall back to the original model.
+Quad results use a bounded thread-safe cache, replaced during resource reload.
+
+Packs overriding the vanilla texture paths supply the source artwork. Packs
+using different custom grass paths retain those textures, so the approved
+preview cannot predict their appearance. This is a standard NeoForge model
+path; third-party shader/rendering combinations still require visual testing.
+
+All ground remains `minecraft:grass_block`; spreading, farming, drops and
+existing saves keep vanilla behaviour. Replacing the jar on client and server
+and restarting updates existing chunks, with **no Elysium reset**. Terrain,
+settlement layout, tree geometry, water, pale rock and fixed time remain as in
+alpha 12.
