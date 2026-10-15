@@ -12,7 +12,7 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
     public int floor() { return entranceFloor - 26; }
     public long key() { return new net.minecraft.core.BlockPos(x, entranceFloor, z).asLong(); }
     public net.minecraft.core.BlockPos entrance() {
-        return new net.minecraft.core.BlockPos(worldX(approachCenter(-6),-6),entranceFloor+1,worldZ(approachCenter(-6),-6));
+        return new net.minecraft.core.BlockPos(worldX(approachCenter(-6),-6),stairFloor(-6)+1,worldZ(approachCenter(-6),-6));
     }
     /** A narrow survivor's route winds around the buried original doorway. */
     public static int approachCenter(int v) { return v <= 1 ? -3 : v <= 4 ? -2 : v <= 6 ? -1 : 0; }
@@ -20,7 +20,7 @@ public record ForgePlan(int x, int z, int entranceFloor, int turn) {
     public int worldZ(int u, int v) { return z + switch (turn) { case 0 -> v; case 1 -> u; case 2 -> -v; default -> -u; }; }
     public int localU(int wx, int wz) { int a=wx-x,b=wz-z; return switch(turn) { case 0->a;case 1->b;case 2->-a;default->-b; }; }
     public int localV(int wx, int wz) { int a=wx-x,b=wz-z; return switch(turn) { case 0->b;case 1->-a;case 2->-b;default->a; }; }
-    public int stairFloor(int v) { return entranceFloor - Math.min(26, Math.max(0, v-6)); }
+    public int stairFloor(int v) { return v< -2?entranceFloor-1:entranceFloor-Math.min(26,Math.max(0,v-6)); }
 
     public static Optional<ForgePlan> find(IntBinaryOperator heights, int x, int z, int sea, int minY) {
         int entry=heights.applyAsInt(x,z)-1;

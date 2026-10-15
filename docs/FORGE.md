@@ -1,4 +1,4 @@
-# The dormant Forge — alpha 15
+# The buried Forge — alpha 16
 
 Elysium now has an optional exploration chapter: find a surviving archive,
 locate the Forge of Hephaestus, recover an instrument from its cold hearth,
@@ -30,11 +30,44 @@ will not acquire one merely because the new terrain planner could fit it there.
 
 ## Inside the mountain
 
-A modest copper-marked entrance leads down 26 blocks through a ribbed gallery.
-Beyond it are a vaulted foundry, two upper galleries, an archive and smithing
-workshop, a room of retorts and quench troughs, and a rear power shrine. A large
-stationary hammer hangs above the central crucible. Cold runner channels and
-aged copper masonry suggest how the machinery once connected.
+A broken copper-marked jamb is almost swallowed by pale scree and roots. A
+narrow route winds around the blocked original doorway, then descends 26
+blocks into the mountain. Faint pilot lights mark a few surviving stations;
+most of the foundry starts dark.
+
+The main vault contains a heavy suspended hammer and its aligned anvil, guide
+piers, a stepped crosshead and an unfinished Chain of Tartarus link resting in
+its cradle. The cold, slag-filled crucible stands separately. One upper gallery
+ends in a collapse with a corresponding rubble fan and raw rock protruding
+through its vault. Broken rails, mineral streaks, cracked masonry, slag and
+small walk-through debris collect where the old work and damage occurred.
+Weathered Forge Iron supplies dark machine plate using an active-pack vanilla
+metal texture. It is a decorative salvage block, with no netherite or ingot
+conversion recipe.
+
+The west workshop contains an archive, smithing benches, racks and casting
+moulds. The east workshop has a cold furnace bank, exhaust hoods, quench trough
+and casting stations. Surviving stairways reach the galleries, and a passage
+continues to the rear power shrine. All of this is inside the surveyed mountain;
+the chamber does not deliberately open a skylight through the peak.
+
+## Restoring a little light
+
+Right-click the copper handwheels to recover three independent service
+circuits. The first is beside the final bend into the foundry, the second is
+in the west archive workshop, and the third is at the east workshop entrance.
+Each controls a different set of lamps, which wake in sequence. The first
+restoration awards **A Little Light Remains**.
+
+This is shared progress for that particular Forge. Other players see the same
+restored circuits, and they survive saving and reloading. Another Forge starts
+dark. Lamps in unloaded chunks recover their circuit state when loaded; turning
+a handwheel does not force-load the complex or replace a lamp someone mined.
+A handwheel placed from an item is unbound and cannot operate a distant Forge.
+
+Restored lighting remains uneven, with pools of light around old workstations
+and dark heights beyond them. It does **not** restart the hammer, light the
+hearth, supply the First Flame or start a world event.
 
 Read the **Keeper's Ledger** in the archive workshop and the **Binding
 Inscription** behind the foundry. These provide ordinary written books, with
@@ -60,15 +93,16 @@ current discovery sequence. Existing naturally generated chain chambers can
 also be used; their saved structure identity is checked.
 
 The full Tartarus region, its keeper/boss, obtaining the First Flame and
-restarting the Forge are **not implemented in alpha 15**. The machinery is a
+restarting the Forge are **not implemented in alpha 16**. The machinery is a
 dormant landmark, not a functioning smelter. Ordinary fuel cannot activate it.
 
 ## Commands and upgrading
 
-Replace the Elysium jar on client and server and restart. New Forges,
-waystations and town archives require fresh chunks. Existing towns can supply
-the folio through their scholars, and existing chain anchors support the new
-interaction. A dimension reset is not required.
+Replace the Elysium jar on client and server and restart. Use a new alpha test
+world or regenerate Elysium for this update. Alpha 15 Forge structure saves are
+not supported by the new geometry. No conversion or automatic retrogen is
+included. The rest of the realm's terrain, palette, towns and chain chambers
+retain their current design.
 
 Inside Elysium, these commands help inspect the chapter:
 
@@ -83,16 +117,22 @@ The Forge deliberately requires suitable mountain cover, so a synchronous
 vanilla `/locate` can take time. The folio spreads its work across ticks. A
 creative resonator has no remembered hearth until you obtain one at a hearth.
 Discovery state persists per player with the Elysium world, across death and
-reconnection. The current chapter introduces three advancements.
+reconnection. The current chapter introduces four advancements.
 
 ## Implementation boundaries
 
 `ForgePlan` surveys base noise heights without loading neighbouring chunks.
 It selects one of four orientations on a mountain shoulder and checks cover
-over every vaulted space on a three-block grid. The 93-by-125-block saved
+over every vaulted space on a three-block grid. The 93-by-128-block saved
 envelope includes untouched rock; the rooms occupy only part of that area.
 No mountain is flattened to place the complex. `HephaestusForgePiece` stores
 the plan and geometry version and writes only the current chunk's clip.
+`ForgeGeometry` composes the entrance, shell, machinery, workshops and damage
+with deterministic coordinate sampling. `ForgeFixtures` defines supported
+lamps and handwheels in the same local coordinate system. Each fixture saves
+its own Forge/circuit binding; `ForgeLighting` stores the three shared circuit
+bits per Forge. Fixtures reconcile on load or a scheduled block tick, with no
+per-tick block-entity ticker or continuous structure scan.
 
 `StructureSurvey` reads the registered structure placements, including their
 exclusion rules. A request visits at most 289 candidate regions around the
@@ -103,7 +143,7 @@ search does not fully generate every target chunk or keep it force-loaded.
 Changing dimensions, disconnecting or losing the requesting item cancels a
 pending request. Results and hearth memory use normal item data components.
 
-Progress is separate per-player saved data. Books use vanilla written-book
+Lore progress is separate per-player saved data. Books use vanilla written-book
 components and localized pages. Models are original cuboid geometry referencing
 active-pack vanilla textures. There is no new dependency, packet protocol,
 global trade-pool replacement, Minecraft texture redistribution, or automatic

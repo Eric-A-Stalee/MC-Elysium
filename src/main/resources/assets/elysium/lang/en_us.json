@@ -102,5 +102,6 @@
   "message.elysium.forge.service.circuit.0": "the foundry",
   "message.elysium.forge.service.circuit.1": "the workshops",
   "message.elysium.forge.service.circuit.2": "the galleries and binding shrine",
-  "message.elysium.forge.arrived": "The remembered place is here. Look for worked stone, or the cold hearth itself."
+  "message.elysium.forge.arrived": "The remembered place is here. Look for worked stone, or the cold hearth itself.",
+  "block.elysium.forge_iron": "Weathered Forge Iron"
 }

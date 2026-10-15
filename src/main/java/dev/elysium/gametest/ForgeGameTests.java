@@ -69,7 +69,7 @@ public final class ForgeGameTests {
                     "Descending stairs must face uphill after rotation");
             if(turn!=0)continue;
             var seen=new HashSet<BlockPos>();var queue=new ArrayDeque<BlockPos>();
-            queue.add(new BlockPos(ForgePlan.approachCenter(-6),fitted.entranceFloor()+1,-6));
+            queue.add(new BlockPos(ForgePlan.approachCenter(-6),fitted.stairFloor(-6)+1,-6));
             while(!queue.isEmpty()) {
                 var at=queue.remove();if(!seen.add(at))continue;
                 for(Direction d:Direction.Plane.HORIZONTAL)for(int dy=-1;dy<=1;dy++) {

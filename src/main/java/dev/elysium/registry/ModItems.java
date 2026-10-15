@@ -34,6 +34,7 @@ public final class ModItems {
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_SERVICE_SWITCH);
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_PILOT_LIGHT);
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_DEBRIS);
+        ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_IRON);
     }
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ELYSIUM_TAB = TABS.register("elysium",
@@ -50,6 +51,7 @@ public final class ModItems {
                         output.accept(ModBlocks.TARTARUS_INSCRIPTION);output.accept(ModBlocks.FORGE_HEARTH);
                         output.accept(ModBlocks.FORGE_SERVICE_LAMP);output.accept(ModBlocks.FORGE_SERVICE_SWITCH);
                         output.accept(ModBlocks.FORGE_PILOT_LIGHT);output.accept(ModBlocks.FORGE_DEBRIS);
+                        output.accept(ModBlocks.FORGE_IRON);
                     }).build());
 
     private ModItems() {}

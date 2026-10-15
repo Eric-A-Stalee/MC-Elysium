@@ -110,6 +110,12 @@ for name, surface, emblem in [
     asset(f"models/item/{name}", {"parent": f"elysium:block/{name}"})
     loot(name, [pool([item(f"elysium:{name}")], [SURVIVES])])
 
+# Dark plate stock is its own decorative iron block, not a cache of netherite resources.
+asset("blockstates/forge_iron", {"variants":{"":{"model":"elysium:block/forge_iron"}}})
+asset("models/block/forge_iron", {"parent":"minecraft:block/cube_all", "textures":{"all":"minecraft:block/netherite_block"}})
+asset("models/item/forge_iron", {"parent":"elysium:block/forge_iron"})
+loot("forge_iron",[pool([item("elysium:forge_iron")],[SURVIVES])])
+
 # Original inset fixtures and handwheel geometry. Active-pack textures supply all surfaces.
 for name in ("forge_service_lamp", "forge_service_switch", "forge_pilot_light"):
     for lit in (False, True) if name != "forge_pilot_light" else (True,):
@@ -225,9 +231,9 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
-                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris"],
+                    "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris", "elysium:forge_iron"],
                     "mineable/axe": ["elysium:forge_archive"],
-                    "needs_iron_tool": ["elysium:tartarus_chain"],
+                    "needs_iron_tool": ["elysium:tartarus_chain", "elysium:forge_iron"],
                     "bee_growables": ["elysium:golden_birch_sapling"]}.items():
     emit(f"data/minecraft/tags/block/{tag}.json", {"replace": False, "values": values})
 for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"]}.items():

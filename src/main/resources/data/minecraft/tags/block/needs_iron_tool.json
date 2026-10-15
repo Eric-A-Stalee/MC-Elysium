@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "elysium:tartarus_chain"
+    "elysium:tartarus_chain",
+    "elysium:forge_iron"
   ]
 }

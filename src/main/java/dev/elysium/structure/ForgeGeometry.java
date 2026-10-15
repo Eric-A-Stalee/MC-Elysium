@@ -78,11 +78,13 @@ public final class ForgeGeometry {
 
     private BlockState entrance(int u,int y,int v) {
         if(Math.abs(u)>10)return null;
-        int floor=plan.stairFloor(Math.max(0,v)),e=y-floor;
+        int floor=plan.stairFloor(v),e=y-floor;
         if(e< -2||e>10)return null;
         int centre=ForgePlan.approachCenter(v);
         boolean route=u>=centre&&u<=centre+1;
         if(route) {
+            if(v<0&&e<=0)return b(e<0?Blocks.STONE:noise(u,0,v,2)%3==0?Blocks.GRAVEL:Blocks.TUFF);
+            if(v<0&&e==1&&noise(u,0,v,12)%3==0)return debris(3);
             if(e<=0)return e==0&&v>=7?stair(Blocks.COBBLED_DEEPSLATE_STAIRS,Direction.NORTH):b(Blocks.COBBLED_DEEPSLATE);
             if(e<=3)return b(Blocks.CAVE_AIR);
         }
@@ -169,17 +171,18 @@ public final class ForgeGeometry {
             return b(h==7||h==15||h>=21?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.POLISHED_BASALT);
         if(du>=13&&du<=18&&dv<=2&&h>=19&&h<=22&&du>=35-h)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
         if(du<=18&&dv<=2&&h>=23&&h<=24)return b(h==24?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.CHISELED_DEEPSLATE);
-        if(du==6&&dv<=1&&h>=2&&h<=22)return b(h%5==0?Blocks.WAXED_EXPOSED_CUT_COPPER:Blocks.IRON_BLOCK);
+        if(du==6&&dv<=1&&h>=2&&h<=22)return b(h%5==0?Blocks.WAXED_EXPOSED_CUT_COPPER:ModBlocks.FORGE_IRON.get());
         if(du<=1&&dv<=1&&h>=17&&h<=22)return pillar(Blocks.BASALT,Direction.Axis.Y);
         if(heavyChain(u-4,h,v-76)||heavyChain(u+4,h,v-76))return b(ModBlocks.TARTARUS_CHAIN_BLOCK.get());
         // Neck, shouldered body and a replaceable striking face give the hammer a readable silhouette.
         if(dv<=2&&du<=3&&h>=15&&h<=17)return b(h==15?Blocks.WAXED_EXPOSED_CUT_COPPER:Blocks.POLISHED_BLACKSTONE);
-        if(dv<=3&&du<=4&&h>=11&&h<=14)return b(h==14?Blocks.CHISELED_DEEPSLATE:Blocks.POLISHED_BLACKSTONE);
-        if(dv<=2&&du<=3&&h==10)return b(Blocks.IRON_BLOCK);
+        if(dv<=(h>=13?3:2)&&du<=(h>=13?4:3)&&du+dv<=6&&h>=11&&h<=14)
+            return b(h==14?Blocks.CHISELED_DEEPSLATE:Blocks.POLISHED_BLACKSTONE);
+        if(dv<=2&&du<=3&&h==10)return b(ModBlocks.FORGE_IRON.get());
         if(du<=6&&dv<=5&&h<=1)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
         if(du<=4&&dv<=3&&h==2)return b(Blocks.CHISELED_DEEPSLATE);
         if(du<=2&&dv<=2&&h>=3&&h<=4)return b(Blocks.POLISHED_BASALT);
-        if(du<=5&&dv<=3&&h==5)return b(Blocks.IRON_BLOCK);
+        if(du<=5&&dv<=3&&h==5)return b(ModBlocks.FORGE_IRON.get());
         if(u>=6&&u<=8&&dv<=1&&h==5)return slab(Blocks.CUT_COPPER_SLAB);
         // An unfinished link rests in its cradle; its unclosed shoulder is deliberate.
         int a=Math.abs(u-11),z=Math.abs(v-69),vertical=Math.abs(h-5);
@@ -258,7 +261,7 @@ public final class ForgeGeometry {
         int du=Math.abs(u);
         if(v>=105&&v<=110&&du<=4&&h<=4) {
             if(h==4&&du<=2&&v>=106&&v<=109)return b(Blocks.CAVE_AIR);
-            return b(h==4?Blocks.IRON_BLOCK:Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS);
+            return b(h==4?ModBlocks.FORGE_IRON.get():Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS);
         }
         if(du==7&&v==107&&h<=5)return b(h==4?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.POLISHED_BASALT);
         if(u==-3&&v==101&&h==2)return b(ModBlocks.FORGE_PILOT_LIGHT.get());

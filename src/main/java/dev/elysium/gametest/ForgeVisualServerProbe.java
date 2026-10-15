@@ -79,7 +79,8 @@ public final class ForgeVisualServerProbe {
                 for(int i=0;i<ForgeLighting.CIRCUITS;i++)ForgeLighting.restore(level,PLAN,i);
                 camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
             }
-            case "gallery" -> camera(player,level,22,PLAN.floor()+9,70,-10,PLAN.floor()+5,83);
+            case "gallery" -> camera(player,level,22,PLAN.floor()+9,66,0,PLAN.floor()+8,79);
+            case "collapse" -> camera(player,level,-7,PLAN.floor()+2,92,-22,PLAN.floor()+9,82);
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);
         }
         LogUtils.getLogger().info("ELYSIUM_FORGE_SCENE {}",scene);

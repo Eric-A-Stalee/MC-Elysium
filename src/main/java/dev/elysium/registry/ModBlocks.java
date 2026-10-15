@@ -30,12 +30,14 @@ public final class ModBlocks {
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
     public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_LAMP = BLOCKS.register("forge_service_lamp",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
-                    .lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 9 : 0), false));
+                    .lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 12 : 0), false));
     public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_SWITCH = BLOCKS.register("forge_service_switch",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
                     .strength(4).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 4 : 2), true));
     public static final DeferredBlock<Block> FORGE_PILOT_LIGHT = BLOCKS.register("forge_pilot_light",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_OXIDIZED_COPPER_BULB).lightLevel(s -> 3)));
+    public static final DeferredBlock<Block> FORGE_IRON = BLOCKS.register("forge_iron",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(7,30).sound(SoundType.NETHERITE_BLOCK)));
     public static final DeferredBlock<ForgeDebrisBlock> FORGE_DEBRIS = BLOCKS.register("forge_debris",
             () -> new ForgeDebrisBlock(BlockBehaviour.Properties.of().strength(.3f).noOcclusion().noCollission()
                     .sound(SoundType.TUFF).mapColor(MapColor.COLOR_GRAY)));

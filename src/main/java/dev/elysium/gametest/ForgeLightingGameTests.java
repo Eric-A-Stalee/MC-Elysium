@@ -48,7 +48,7 @@ public final class ForgeLightingGameTests {
                     "The original doorway centre must be blocked by scree");
             helper.assertTrue(piece.materialAt(-22,p.floor()+7,82)!=null&&!piece.materialAt(-22,p.floor()+7,82).isAir(),
                     "Rockfall must bury the failed gallery beneath its breach");
-            helper.assertTrue(piece.materialAt(0,p.floor()+5,76).is(Blocks.IRON_BLOCK),"Hammer and anvil must be vertically aligned");
+            helper.assertTrue(piece.materialAt(0,p.floor()+5,76).is(ModBlocks.FORGE_IRON.get()),"Hammer and anvil must be vertically aligned");
             helper.assertTrue(piece.materialAt(11,p.floor()+9,69).is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()),"An unfinished link must remain legible beside the hammer");
             helper.assertTrue(piece.materialAt(0,p.entranceFloor()+10,76)==null,"The broken vault must not excavate open sky through the mountain");
         }

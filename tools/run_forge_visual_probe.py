@@ -34,7 +34,7 @@ def main():
     )
     (CLIENT / 'options.txt').write_text(
         'version:3955\nonboardAccessibility:false\nshowMultiplayerWarning:false\n'
-        'pauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:4\n'
+        'pauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:5\n'
         'maxFps:30\nvsync:false\ngamma:0.5\n'
     )
     args = ['./gradlew', '--no-daemon', '--console=plain', '--max-workers=2', '-Dorg.gradle.jvmargs=-Xmx512m']
@@ -60,9 +60,9 @@ def main():
                                           start_new_session=True)
                 result = client.wait(timeout=360)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 7 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            if result or len(images) != 8 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured seven actual vanilla-rendered Forge views:', *(p.name for p in images), sep='\n')
+            print('Captured eight actual vanilla-rendered Forge views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)

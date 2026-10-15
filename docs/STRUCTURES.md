@@ -332,3 +332,27 @@ their previous blocks. Existing town residents can provide the folio through
 an Elysium-only supplemental scholar trade. The old static town templates,
 building grammar, landscape geometry, terrain noise and chain vaults are
 unchanged.
+
+## Alpha 16 buried Forge ruin
+
+The Forge's original mountain survey remains, with a narrow winding approach
+through scree replacing the open front. Geometry is split into deterministic
+parts in `ForgeGeometry`: approach, descending tunnel, masonry, collapse,
+machinery, galleries, workshops and rear shrine. The failed gallery and its
+rockfall occupy the same side of the vault; exposed raw stone, wet mineral
+streaks, furnace soot and floor slag follow their respective causes. Most
+interior material still references the active resource pack's vanilla assets.
+
+The central hammer has a stepped body, striking face, anvil, guide piers and
+crosshead. A partly forged giant chain link and a separate slag-filled crucible
+make the old workflow legible. Workrooms contain furnace hoods, quench water,
+casting moulds, smithing benches and racks. Small debris uses a noncolliding
+model so atmosphere does not obstruct the verified walking routes.
+
+`ForgeFixtures` supplies the same coordinate list to geometry and service
+lighting. Bound block entities retain their Forge and circuit; per-Forge saved
+data records the three restored circuits. A handwheel only updates loaded,
+matching fixtures, and late-loaded fixtures reconcile on their next scheduled
+tick. Lights do not reconstruct mined blocks or load distant chunks. The main
+hearth remains dormant. This alpha deliberately replaces the previous Forge
+geometry without maintaining the old structure-save format.

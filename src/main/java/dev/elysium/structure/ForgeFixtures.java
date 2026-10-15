@@ -16,11 +16,13 @@ public final class ForgeFixtures {
             lamp(-5,4,40,0), lamp(5,4,45,0), lamp(-24,4,64,0), lamp(24,5,64,0),
             lamp(-17,6,74,0), lamp(17,9,74,0), lamp(-10,23,75,0), lamp(10,23,75,0),
             lamp(-9,0,57,0), lamp(11,0,85,0),
+            lamp(-3,13,73,0), lamp(-4,2,73,0), lamp(14,1,67,0),
             control(-39,1,54,1,Direction.SOUTH),
             lamp(-38,2,49,1), lamp(-44,4,57,1), lamp(-44,5,72,1), lamp(-30,4,77,1),
             lamp(43,5,69,1), lamp(43,8,80,1), lamp(35,1,83,1),
             control(34,1,66,2,Direction.NORTH),
             lamp(-24,9,66,2), lamp(-24,9,74,2), lamp(24,9,66,2), lamp(24,9,74,2),
+            lamp(-11,0,77,2),
             lamp(-7,5,107,2), lamp(7,5,107,2), lamp(0,10,118,2));
     private ForgeFixtures() {}
 }
