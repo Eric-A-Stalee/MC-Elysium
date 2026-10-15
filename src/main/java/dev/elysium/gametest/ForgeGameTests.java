@@ -18,6 +18,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
@@ -51,7 +52,7 @@ public final class ForgeGameTests {
         helper.assertTrue(ForgePlan.find((x,z)->160,0,0,63,-64).isEmpty(),"A flat plateau must not pretend to be a mountain entrance");
         for(int turn=0;turn<4;turn++) {
             var orientation=new ForgePlan(160,-320,140,turn);
-            var fitted=ForgePlan.find((x,z)->141+Math.max(0,orientation.localV(x,z))/2,160,-320,63,-64).orElseThrow();
+            var fitted=ForgePlan.find((x,z)->141+Math.max(0,orientation.localV(x,z)-2)*2,160,-320,63,-64).orElseThrow();
             helper.assertTrue(fitted.turn()==turn,"The entrance must face the actual descending shoulder");
             var piece=new HephaestusForgePiece(fitted);
             var context=StructurePieceSerializationContext.fromLevel(helper.getLevel());
@@ -132,10 +133,10 @@ public final class ForgeGameTests {
         var written=first(player,Items.WRITTEN_BOOK);
         var pages=ItemStack.parse(realm.registryAccess(),written.save(realm.registryAccess())).orElseThrow().get(DataComponents.WRITTEN_BOOK_CONTENT);
         helper.assertTrue(pages!=null&&pages.pages().size()==4&&pages.resolved(),"Archive books must remain readable written books after save/reload");
-        var crystal=new ItemStack(Items.AMETHYST_SHARD,2);player.setItemInHand(InteractionHand.MAIN_HAND,crystal);
-        hearth.useItemOn(crystal,realm,player,InteractionHand.MAIN_HAND,hit);
+        var crystal=new ItemStack(Items.AMETHYST_SHARD,2);player.setItemInHand(InteractionHand.OFF_HAND,crystal);
+        hearth.useItemOn(crystal,realm,player,InteractionHand.OFF_HAND,hit);
         helper.assertTrue(crystal.getCount()==2,"A replacement may not consume crystal when the instrument is still held");
-        relic.setCount(0);hearth.useItemOn(crystal,realm,player,InteractionHand.MAIN_HAND,hit);
+        relic.setCount(0);hearth.useItemOn(crystal,realm,player,InteractionHand.OFF_HAND,hit);
         helper.assertTrue(crystal.getCount()==1&&count(player,ModItems.CHAIN_RESONATOR.get())==1,"A lost instrument must be recoverable with one amethyst shard");
         var saved=ForgeDiscoveries.get(realm).save(new CompoundTag(),realm.registryAccess());
         var loaded=ForgeDiscoveries.load(saved,realm.registryAccess());
@@ -149,7 +150,11 @@ public final class ForgeGameTests {
 
     @GameTest(template="portal_test_empty",timeoutTicks=160)
     public static void resonatorRequiresTheRealBuriedAnchor(GameTestHelper helper) {
-        var realm=realm(helper);var player=reader(realm,"AnchorReader");
+        var realm=realm(helper);
+        // NeoForge deliberately suppresses advancements for FakePlayer, so exercise
+        // the full interaction with Minecraft's connected test player here.
+        var player=helper.makeMockServerPlayerInLevel();
+        try {
         var structure=realm.registryAccess().registryOrThrow(Registries.STRUCTURE).get(StructureSurvey.Destination.CHAIN.id());
         var plan=new TartarusChainPlan(100000,100000,160,-48,true,12,22);
         var piece=new TartarusChainPiece(plan);var source=new ChunkPos(plan.x()>>4,plan.z()>>4);
@@ -157,6 +162,7 @@ public final class ForgeGameTests {
         realm.getChunk(source.x,source.z).setStartForStructure(structure,start);
         realm.getChunk(source.x,source.z).addReferenceForStructure(structure,source.toLong());
         var anchor=new BlockPos(plan.x(),plan.floor()+6,plan.z());var high=anchor.above(35);var fake=anchor.offset(32,0,0);
+        player.teleportTo(realm,anchor.getX()+.5,anchor.getY()+2,anchor.getZ()+.5,0,0);
         var relic=new ItemStack(ModItems.CHAIN_RESONATOR.get());player.setItemInHand(InteractionHand.MAIN_HAND,relic);
         for(var pos:List.of(fake,high,anchor)) {
             realm.setBlock(pos,ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState(),2);
@@ -170,6 +176,7 @@ public final class ForgeGameTests {
         var advancement=realm.getServer().getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("elysium","voice_in_iron"));
         helper.assertTrue(advancement!=null&&player.getAdvancements().getOrStartProgress(advancement).isDone(),"The final discovery must award its advancement");
         helper.succeed();
+        } finally {realm.getServer().getPlayerList().remove(player);}
     }
 
     @GameTest(template="portal_test_empty",timeoutTicks=160)
@@ -225,7 +232,7 @@ public final class ForgeGameTests {
                     helper.succeed();return;
                 }
                 helper.assertTrue(index<candidates.size(),"No buried Forge was discoverable within the actual folio search radius");
-                helper.runAfterDelay(1,this);
+                helper.runAfterDelay(1,()->run());
             }
         }
         new Probe().run();
@@ -234,8 +241,8 @@ public final class ForgeGameTests {
     private static ServerLevel realm(GameTestHelper helper){return Objects.requireNonNull(helper.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION));}
     private static FakePlayer reader(ServerLevel level,String name){return new FakePlayer(level,new GameProfile(UUID.randomUUID(),name));}
     private static BlockHitResult hit(BlockPos pos){return new BlockHitResult(Vec3.atCenterOf(pos),Direction.UP,pos,false);}
-    private static int count(FakePlayer player,Item item){int n=0;for(int i=0;i<player.getInventory().getContainerSize();i++)if(player.getInventory().getItem(i).is(item))n+=player.getInventory().getItem(i).getCount();return n;}
-    private static ItemStack first(FakePlayer player,Item item){for(int i=0;i<player.getInventory().getContainerSize();i++)if(player.getInventory().getItem(i).is(item))return player.getInventory().getItem(i);throw new IllegalStateException("Missing "+item);}
+    private static int count(ServerPlayer player,Item item){int n=0;for(int i=0;i<player.getInventory().getContainerSize();i++)if(player.getInventory().getItem(i).is(item))n+=player.getInventory().getItem(i).getCount();return n;}
+    private static ItemStack first(ServerPlayer player,Item item){for(int i=0;i<player.getInventory().getContainerSize();i++)if(player.getInventory().getItem(i).is(item))return player.getInventory().getItem(i);throw new IllegalStateException("Missing "+item);}
     /** Actual block-state slices for visual review, included in the CI log artifact. */
     private static void exportSections(HephaestusForgePiece piece) {
         var out=new com.google.gson.JsonObject();var slices=new com.google.gson.JsonArray();int b=piece.plan().floor();

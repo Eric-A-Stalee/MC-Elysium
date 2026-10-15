@@ -724,10 +724,6 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
             "nbt": nbt_compound({"id": Tag(8, "minecraft:villager"), "PersistenceRequired": Tag(1, 1),
                 "VillagerData": nbt_compound({"type": Tag(8, "minecraft:taiga" if module.name.startswith("mountain") else "minecraft:plains"),
                     "profession": Tag(8, "minecraft:none"), "level": Tag(3, 1)})})}]
-        if module.name == "mountain_hall":
-            shelves = sorted(pos for pos, (block, _) in module.blocks.items() if block["Name"] == "minecraft:bookshelf")
-            if shelves:
-                module.blocks[shelves[0]] = (state("elysium:forge_archive"), None)
         entries[DATA / "structure" / f"{module.name}.nbt"] = encode_template(module.blocks, module.size, module.name, villagers)
     emit_site(entries, SiteDefinition("waterside_cottage", ("waterside_cottage",),
               "#elysium:has_structure/waterside_cottage", 6, 2, require_water_approach=True))

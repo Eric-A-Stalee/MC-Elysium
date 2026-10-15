@@ -316,3 +316,19 @@ now descend in unequal short footings rather than extending a level platform
 at floor height. Uphill facing still replaces existing material only. Grammars
 1–4 retain their original geometry; hashes captured before this revision guard
 alpha-10 buildings and tree form 3 against accidental changes.
+
+## Alpha 15 dormant Forge and discovery sites
+
+The [Forge chapter](FORGE.md) adds an independent mountain structure and an
+abandoned surface workshop. The Forge uses a saved `ForgePlan` and one
+versioned `HephaestusForgePiece`, with a terrain-fitted entrance and covered
+vaults rather than a flattened building pad. Carving and furnishings share
+the same chunk-clipped geometry. The worldgen catalog owns placement spacing,
+biome tags and town exclusion zones; the planner owns physical suitability.
+
+Newly planned great halls carry a saved `ForgeRecord` flag that replaces one
+bookshelf with a readable archive. Pieces loaded without that flag retain
+their previous blocks. Existing town residents can provide the folio through
+an Elysium-only supplemental scholar trade. The old static town templates,
+building grammar, landscape geometry, terrain noise and chain vaults are
+unchanged.
