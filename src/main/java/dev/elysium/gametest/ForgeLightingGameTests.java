@@ -46,7 +46,7 @@ public final class ForgeLightingGameTests {
             helper.assertTrue(air<=8&&stone>=35,"Most of the old doorway must be visibly buried, leaving a narrow survivor's route");
             helper.assertTrue(piece.materialAt(0,p.entranceFloor()+1,1)!=null&&!piece.materialAt(0,p.entranceFloor()+1,1).isAir(),
                     "The original doorway centre must be blocked by scree");
-            helper.assertTrue(piece.materialAt(-25,p.floor()+7,85)!=null&&!piece.materialAt(-25,p.floor()+7,85).isAir(),
+            helper.assertTrue(piece.materialAt(-22,p.floor()+7,82)!=null&&!piece.materialAt(-22,p.floor()+7,82).isAir(),
                     "Rockfall must bury the failed gallery beneath its breach");
             helper.assertTrue(piece.materialAt(0,p.floor()+5,76).is(Blocks.IRON_BLOCK),"Hammer and anvil must be vertically aligned");
             helper.assertTrue(piece.materialAt(11,p.floor()+9,69).is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()),"An unfinished link must remain legible beside the hammer");
@@ -124,6 +124,8 @@ public final class ForgeLightingGameTests {
     private static void place(ServerLevel level,ForgePlan plan,ForgeFixtures.Fixture fixture) {
         var pos=fixture.worldPosition(plan);
         var state=new HephaestusForgePiece(plan).materialAt(fixture.u(),plan.floor()+fixture.h(),fixture.v());
+        // These isolated fixture tests have no nearby connected player to supply a ticking ticket.
+        level.setChunkForced(pos.getX()>>4,pos.getZ()>>4,true);
         level.setBlock(pos,state,3);
         ((ForgeServiceBlockEntity)Objects.requireNonNull(level.getBlockEntity(pos))).bind(plan,fixture.circuit());
     }

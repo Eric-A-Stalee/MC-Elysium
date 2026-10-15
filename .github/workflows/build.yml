@@ -84,6 +84,20 @@ jobs:
         with:
           name: elysium-neoforge-1.21.1
           path: build/libs/*.jar
+      - name: Install software display for the real client review
+        run: sudo apt-get update -qq && sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
+      - name: Capture the Forge in a real Minecraft client
+        run: python3 tools/run_forge_visual_probe.py
+      - name: Upload actual client views
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-client-review
+          path: |
+            run-visual-client/screenshots/
+            run-visual-client/probe.log
+            run-visual-server/probe.log
+          if-no-files-found: ignore
       - name: Upload test logs
         if: always()
         uses: actions/upload-artifact@v4

@@ -62,8 +62,9 @@ public final class ForgeGeometry {
         if(v==39&&u>=-5&&u<=-3&&h<=2)return b(Blocks.CHISELED_DEEPSLATE);
         if(Math.abs(u)==24&&(v==64||v==76)&&h<=10)return b(Blocks.POLISHED_BASALT);
         // Surviving overhead duct connects the workshops; broken branches end in bare metal.
-        if(v==60&&Math.abs(u)>=10&&Math.abs(u)<=40&&h==6)
+        if(v==60&&Math.abs(u)>=10&&Math.abs(u)<=40&&h==(Math.abs(u)<=24?12:6))
             return b(Math.floorMod(u,8)==0?Blocks.WAXED_OXIDIZED_CUT_COPPER:Blocks.WAXED_WEATHERED_CUT_COPPER);
+        if(v==60&&Math.abs(u)==24&&h>=6&&h<=12)return b(Blocks.WAXED_WEATHERED_CUT_COPPER);
         if(Math.abs(u)==30&&v==60&&h>=3&&h<=6)return b(Blocks.WAXED_WEATHERED_CUT_COPPER);
         if(h==1&&Math.abs(u)==3&&v>=44&&v<=65&&!(v>=53&&v<=55))
             return b(Blocks.RAIL).setValue(RailBlock.SHAPE,(plan.turn()&1)==0?RailShape.NORTH_SOUTH:RailShape.EAST_WEST);
@@ -145,8 +146,11 @@ public final class ForgeGeometry {
     }
 
     private BlockState collapse(int u,int h,int v) {
-        double r=(u+25.0)*(u+25.0)/144+(v-85.0)*(v-85.0)/169;
+        double r=(u+22.0)*(u+22.0)/144+(v-82.0)*(v-82.0)/169;
         int height=r<1?(int)(11*Math.pow(1-r,1.35)):0;
+        // The raw mountain protrudes through the failed vault above the matching rubble fan.
+        if(r<0.38&&h>=plan.roof(u,v)-plan.floor()-3)
+            return b(noise(u/2,h/2,v/2,23)%4==0?Blocks.CALCITE:Blocks.STONE);
         if(height>0&&h<=height) {
             int patch=noise(Math.floorDiv(u,2),Math.floorDiv(h,2),Math.floorDiv(v,2),21)%9;
             return b(patch<3?Blocks.STONE:patch<5?Blocks.CALCITE:patch<7?Blocks.COBBLED_DEEPSLATE:Blocks.TUFF);
@@ -165,7 +169,7 @@ public final class ForgeGeometry {
             return b(h==7||h==15||h>=21?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.POLISHED_BASALT);
         if(du>=13&&du<=18&&dv<=2&&h>=19&&h<=22&&du>=35-h)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
         if(du<=18&&dv<=2&&h>=23&&h<=24)return b(h==24?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.CHISELED_DEEPSLATE);
-        if(du==6&&dv<=1&&h>=7&&h<=22)return b(h%5==0?Blocks.WAXED_EXPOSED_CUT_COPPER:Blocks.IRON_BLOCK);
+        if(du==6&&dv<=1&&h>=2&&h<=22)return b(h%5==0?Blocks.WAXED_EXPOSED_CUT_COPPER:Blocks.IRON_BLOCK);
         if(du<=1&&dv<=1&&h>=17&&h<=22)return pillar(Blocks.BASALT,Direction.Axis.Y);
         if(heavyChain(u-4,h,v-76)||heavyChain(u+4,h,v-76))return b(ModBlocks.TARTARUS_CHAIN_BLOCK.get());
         // Neck, shouldered body and a replaceable striking face give the hammer a readable silhouette.

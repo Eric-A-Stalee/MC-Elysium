@@ -69,6 +69,19 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        forgeVisualServer {
+            server()
+            gameDirectory = project.file('run-visual-server')
+            programArgument '--nogui'
+            systemProperty 'elysium.visualServer', 'true'
+        }
+        forgeVisualClient {
+            client()
+            gameDirectory = project.file('run-visual-client')
+            systemProperty 'elysium.visualClient', 'true'
+            programArguments.addAll '--username', 'ForgeObserver', '--width', '1280', '--height', '720'
+        }
+
         data {
             data()
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
