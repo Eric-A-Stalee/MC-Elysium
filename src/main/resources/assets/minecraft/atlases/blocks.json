@@ -3,6 +3,12 @@
     {
       "type": "minecraft:single",
       "resource": "elysium:particle/golden_leaf"
+    },
+    {
+      "type": "elysium:tone_mapped",
+      "resource": "minecraft:block/birch_leaves",
+      "sprite": "elysium:block/golden_birch_leaves",
+      "gamma": 0.72
     }
   ]
 }

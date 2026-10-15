@@ -25,7 +25,7 @@ GOLDEN_HOUR = 11500
 @dataclass(frozen=True)
 class Palette:
     grass: int
-    foliage: int = 0xFFDA30
+    foliage: int = 0xFFD062
     sky: int = 0xB5D2E7
     fog: int = 0xF0DAB1
     water: int = 0x55A6AE
@@ -138,35 +138,35 @@ def inland_climates(humidity):
 BIOMES = (
     BiomeDefinition("golden_fields", "Golden Fields",
                     inland_climates((-1.0, 0.10)),
-                    Palette(0xF5D65A), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
+                    Palette(0xF0D58B), Vegetation(0, 7, 3, 2, 0.20, riverside_attempts=2),
                     FARM_CREATURES + (Spawn("horse", 3, 2, 4),),
                     settlements=("harvest_hamlet",)),
     BiomeDefinition("golden_birch_woods", "Golden Birch Woods",
                     inland_climates((0.10, 1.0)),
-                    Palette(0xE7C75C, foliage=0xFFD234, fog=0xE6D6AA),
+                    Palette(0xDCC286, foliage=0xFBC155, fog=0xE6D6AA),
                     Vegetation(7, 3, 3, 5, 0.50, 0.20, GrovePattern(2)), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze"),
     BiomeDefinition("golden_watermeadows", "Golden Watermeadows",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(-1.0, 0.25), weirdness=(-0.10, 0.10)),),
-                    Palette(0xE4CE68, foliage=0xFFDF42, water=0x65AEB3),
+                    Palette(0xDFCE98, foliage=0xFFD76B, water=0x65AEB3),
                     Vegetation(2, 1, 9, 4, 0.15, canopy_tree_chance=0.75), FARM_CREATURES,
                     downfall=0.65, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("amber_lakes", "Amber Lakes",
                     (ClimateBox((-1.0, 1.0), (-0.22, 1.0), temperature=(0.25, 1.0), weirdness=(-0.22, 0.22)),),
-                    Palette(0xE9B74E, foliage=0xFFC132, sky=0xB9CEDD, fog=0xDFC39C,
+                    Palette(0xDEBB80, foliage=0xF5AF54, sky=0xB9CEDD, fog=0xDFC39C,
                             water=0x386C79, water_fog=0x264B59),
                     Vegetation(3, 2, 3, 3, 0.25, 0.20, canopy_tree_chance=0.40, leaf_patches=3),
                     FARM_CREATURES, downfall=0.6, ambient_loop="elysium:woodland_breeze", settlements=("waterside_cottage",)),
     BiomeDefinition("elysian_highlands", "Elysian Highlands",
                     (ClimateBox((-1.0, 1.0), (-0.55, -0.22)),),
-                    Palette(0xF3D662, foliage=0xFFDF38, sky=0xAFC6DF, fog=0xD7DCE2,
+                    Palette(0xE8CF91, foliage=0xFFCA59, sky=0xAFC6DF, fog=0xD7DCE2,
                             water=0x527D93, water_fog=0x354F68),
                     Vegetation(2, 2, 2, 3, 0.45, 0.10, canopy_tree_chance=0.30),
                     (Spawn("sheep", 10), Spawn("rabbit", 5, 2, 3)),
                     temperature=0.45, downfall=0.35, pale_cliffs=True, settlements=("mountain_town",)),
     BiomeDefinition("ivory_peaks", "Ivory Peaks",
                     (ClimateBox((-1.0, 1.0), (-1.0, -0.55)),),
-                    Palette(0xF4DC81, foliage=0xFFE64C, sky=0xA7BDD5, fog=0xCDD6E1,
+                    Palette(0xEDDBAB, foliage=0xFFD879, sky=0xA7BDD5, fog=0xCDD6E1,
                             water=0x496D88, water_fog=0x334962),
                     Vegetation(1, 0, 1, 1, 0.55, canopy_tree_chance=0.25), (Spawn("sheep", 8), Spawn("rabbit", 4, 2, 3)),
                     temperature=0.35, downfall=0.25, pale_cliffs=True, settlements=("mountain_town",)),

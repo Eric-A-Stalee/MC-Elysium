@@ -45,7 +45,11 @@ asset("particles/golden_leaf", {"textures": ["elysium:golden_leaf"]})
 # Particles and block/item models use separate atlases. Stitch the same original
 # leaf image into the blocks atlas as well, without duplicating its PNG.
 emit("assets/minecraft/atlases/blocks.json", {"sources": [
-    {"type": "minecraft:single", "resource": "elysium:particle/golden_leaf"}]})
+    {"type": "minecraft:single", "resource": "elysium:particle/golden_leaf"},
+    # Lift the active pack's leaf midtones before the regional foliage tint.
+    # Transparency, animation and resolution remain owned by the source sprite.
+    {"type": "elysium:tone_mapped", "resource": "minecraft:block/birch_leaves",
+     "sprite": "elysium:block/golden_birch_leaves", "gamma": 0.72}]})
 asset("sounds", {"woodland_breeze": {"sounds": [{"name": "elysium:woodland_breeze", "stream": True, "volume": 0.32}]}})
 for name, texture in [("elysium_shard", "quartz"), ("elysium_fragment", "prismarine_crystals"),
                       ("elysium_sigil", "nether_star")]:
@@ -58,7 +62,7 @@ asset("models/block/golden_birch_leaves", {
     # Keep sky/block light and directional face shading, but avoid the extra
     # dark corner shading that makes dense golden crowns muddy in vanilla.
     "ambientocclusion": False,
-    "textures": {"all": "minecraft:block/birch_leaves", "particle": "#all"},
+    "textures": {"all": "elysium:block/golden_birch_leaves", "particle": "#all"},
     "elements": [{"from": [0, 0, 0], "to": [16, 16, 16], "faces": faces}]})
 asset("models/block/golden_birch_sapling", {"parent": "minecraft:block/cross",
       "render_type": "minecraft:cutout", "textures": {"cross": "minecraft:block/birch_sapling"}})

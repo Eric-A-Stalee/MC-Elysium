@@ -8,6 +8,7 @@ import dev.elysium.portal.ElysiumTravel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -18,10 +19,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.RegisterSpriteSourceTypesEvent;
 
 /** Every client-class reference stays in this client-only subscriber. */
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
+    @SubscribeEvent
+    public static void spriteSources(RegisterSpriteSourceTypesEvent event) {
+        event.register(ResourceLocation.fromNamespaceAndPath(Elysium.MOD_ID, "tone_mapped"), ToneMappedSpriteSource.TYPE);
+    }
+
     @SubscribeEvent
     public static void particles(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModAmbience.GOLDEN_LEAF.get(), sprites ->

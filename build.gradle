@@ -192,3 +192,22 @@ tasks.named('jar', Jar).configure {
     exclude 'data/elysium/structure/portal_test_empty.nbt'
     exclude 'data/minecraft/worldgen/world_preset/flat.json'
 }
+
+// Exercise the real client sprite loader without opening a game window.
+// This source set is isolated from both the player jar and the server GameTests.
+sourceSets {
+    clientTest {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+def verifyClientSprites = tasks.register('verifyClientSprites', JavaExec) {
+    group = 'verification'
+    description = 'Check generated leaf sprites, pack overrides, animation and transparency.'
+    dependsOn tasks.named('clientTestClasses')
+    classpath = sourceSets.clientTest.runtimeClasspath
+    mainClass = 'dev.elysium.client.SpriteSourceProbe'
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+    systemProperty 'java.awt.headless', 'true'
+}
+tasks.named('check') { dependsOn verifyClientSprites }

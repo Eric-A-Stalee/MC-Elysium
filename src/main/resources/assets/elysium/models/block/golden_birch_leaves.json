@@ -3,7 +3,7 @@
   "render_type": "minecraft:cutout_mipped",
   "ambientocclusion": false,
   "textures": {
-    "all": "minecraft:block/birch_leaves",
+    "all": "elysium:block/golden_birch_leaves",
     "particle": "#all"
   },
   "elements": [

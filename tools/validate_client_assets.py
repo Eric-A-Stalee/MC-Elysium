@@ -2,10 +2,11 @@
 """Check Elysium's concrete model/particle texture references and atlas membership.
 
 Reads committed resources independently of the generators. This covers vanilla
-1.21.1's block/item directories and our explicit single-sprite atlas additions;
+1.21.1's block/item directories and our single/generated sprite atlas additions;
 it is not a client renderer or a validator for third-party resource packs.
 """
 import json
+import math
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "src/main/resources"
@@ -26,6 +27,17 @@ def validate(root):
     atlas = assets / "minecraft/atlases/blocks.json"
     if atlas.exists():
         for source in json.loads(atlas.read_text())["sources"]:
+            if source["type"] == "elysium:tone_mapped":
+                gamma = source["gamma"]
+                if not isinstance(gamma, (int, float)) or not math.isfinite(gamma) or not 0.2 <= gamma <= 2.0:
+                    raise ValueError("Invalid generated-sprite gamma")
+                if not source["sprite"].startswith("elysium:") or source["sprite"] == source["resource"]:
+                    raise ValueError("Generated sprites need a separate Elysium identifier")
+                # Minecraft supplies vanilla pixels at reload time. Mod-owned
+                # inputs must still exist locally; no generated PNG is shipped.
+                sprites[source["sprite"]] = (None if source["resource"].startswith("minecraft:")
+                                              else texture_file(assets, source["resource"]))
+                continue
             if source["type"] not in ("single", "minecraft:single"):
                 raise ValueError(f"Extend atlas validation for source type {source['type']}")
             resource = source["resource"]
@@ -41,7 +53,7 @@ def validate(root):
             references += 1
             if resource not in sprites:
                 errors.append(f"{model.relative_to(assets)}: {resource} is absent from the blocks atlas")
-            elif not sprites[resource].is_file():
+            elif sprites[resource] is not None and not sprites[resource].is_file():
                 errors.append(f"{model.relative_to(assets)}: missing texture {sprites[resource]}")
 
     # Particle descriptions use a different atlas: its particle/ directory has
