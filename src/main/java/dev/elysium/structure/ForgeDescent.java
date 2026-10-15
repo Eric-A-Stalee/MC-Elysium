@@ -58,7 +58,8 @@ public final class ForgeDescent {
                 return block(v>=44?Blocks.DEEPSLATE_TILES:Math.floorMod(u+v,9)==0?Blocks.CRACKED_DEEPSLATE_BRICKS:Blocks.TUFF);
             }
             if(v>=44) {
-                if(best.distance==2&&e==1&&v<58&&Math.floorMod(u+v,7)!=0)return block(Blocks.POLISHED_DEEPSLATE_WALL);
+                if(best.distance==2&&e==1&&v<58&&Math.floorMod(u+v,7)!=0)
+                    return block(v>=50&&Math.abs(u)<=5?Blocks.DEEPSLATE_TILE_SLAB:Blocks.POLISHED_DEEPSLATE_WALL);
                 if(e<=4)return block(Blocks.CAVE_AIR);
                 return plan.hallRoof(u,v)>=plan.floor()+h?null:block(Blocks.STONE);
             }
@@ -85,6 +86,12 @@ public final class ForgeDescent {
             if((u==-12&&h==48&&v==23)||(u==0&&h==32&&v==12)||(u==12&&h==20&&v==23))return block(ModBlocks.FORGE_PILOT_LIGHT.get());
             if(h<=4)return block(h==4&&Math.floorMod(u+v,4)==0?Blocks.TUFF:Blocks.DEEPSLATE);
             if(h==52)return block(Blocks.STONE);
+            // A local failure, rather than an undamaged rectangular shaft: rock projects
+            // from the east wall above its matching talus. The maintenance route wins first.
+            if(u>=9&&v>=21&&v<=27&&h<=18-(12-u)*3-Math.abs(v-25))
+                return block(Math.floorMod(v+h/2,5)==0?Blocks.CALCITE:Blocks.TUFF);
+            if(u==12&&v>=19&&v<=26&&h>=17&&h<=34)
+                return block(Math.floorMod(v/2+h/3,4)==0?Blocks.DRIPSTONE_BLOCK:Blocks.CRACKED_DEEPSLATE_BRICKS);
             if(Math.abs(u)==12&&(v==12||v==28))return block(h%8==0?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.POLISHED_BASALT);
             if(h==50&&v>=18&&v<=21)return block(Blocks.DARK_OAK_LOG);
             if(u==4&&v==20&&h>=10&&h<50)return block(Blocks.CHAIN);

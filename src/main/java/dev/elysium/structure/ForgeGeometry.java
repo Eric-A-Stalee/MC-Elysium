@@ -205,7 +205,6 @@ public final class ForgeGeometry {
         if(u>=-44&&u<=-30&&v>=48&&v<=80) {
             if((u==-44||u==-30)&&v<=54&&h<=5)return b(h==3?Blocks.DARK_OAK_SLAB:Blocks.BOOKSHELF);
             if(u>=-40&&u<=-35&&v>=49&&v<=50&&h==1)return b(Blocks.DARK_OAK_PLANKS);
-            if(u==-39&&v==54&&h==2)return slab(Blocks.WAXED_WEATHERED_CUT_COPPER_SLAB);
             if(u>=-44&&u<=-42&&v>=56&&v<=78&&h==1)return b(v%5==0?Blocks.SMITHING_TABLE:Blocks.DARK_OAK_PLANKS);
             if(u==-43&&v>=56&&v<=78&&h==2)return slab(Blocks.DARK_OAK_SLAB);
             if(u==-44&&v>=56&&v<=78&&h>=3&&h<=5)return b(v%5==2?Blocks.WAXED_OXIDIZED_COPPER_GRATE:Blocks.DARK_OAK_LOG);
