@@ -32,6 +32,7 @@ import net.minecraft.world.phys.BlockHitResult;
 /** Fuelled brazier, ember channels and terminal braziers share a small structure binding. */
 public final class ForgeServiceBlock extends Block implements EntityBlock {
     public static final BooleanProperty LIT=BlockStateProperties.LIT;
+    public static final BooleanProperty RESTORED=BooleanProperty.create("restored");
     public static final IntegerProperty DECAY=IntegerProperty.create("decay",0,2);
     public static final BooleanProperty[] CONNECTIONS={BooleanProperty.create("down"),BooleanProperty.create("up"),
             BooleanProperty.create("north"),BooleanProperty.create("south"),BooleanProperty.create("west"),BooleanProperty.create("east")};
@@ -39,12 +40,17 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
     private final ForgeFixtures.Kind kind;
     public ForgeServiceBlock(Properties properties,ForgeFixtures.Kind kind) {
         super(properties);this.kind=kind;
-        var state=stateDefinition.any().setValue(LIT,false).setValue(DECAY,0);
+        var state=stateDefinition.any().setValue(LIT,false).setValue(RESTORED,false).setValue(DECAY,0);
         for(var property:CONNECTIONS)state=state.setValue(property,false);
         registerDefaultState(state);
     }
     public boolean controller() { return kind==ForgeFixtures.Kind.BRAZIER; }
-    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder) { builder.add(LIT,DECAY);builder.add(CONNECTIONS); }
+    public boolean bowl(){return kind!=ForgeFixtures.Kind.CHANNEL;}
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder) { builder.add(LIT,RESTORED,DECAY);builder.add(CONNECTIONS); }
+    @Override public void stepOn(Level level,BlockPos pos,BlockState state,net.minecraft.world.entity.Entity entity) {
+        if(state.getValue(LIT)&&state.getValue(DECAY)==0)ForgeFlameBlock.burn(level,entity,state.getValue(RESTORED));
+        super.stepOn(level,pos,state,entity);
+    }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
         var state=defaultBlockState();
         for(var d:Direction.values())state=state.setValue(connection(d),context.getLevel().getBlockState(context.getClickedPos().relative(d)).getBlock() instanceof ForgeServiceBlock);
@@ -78,7 +84,7 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
                 else {
                     service.toggleAirflow();
                     level.playSound(null,pos,SoundEvents.CHAIN_PLACE,SoundSource.BLOCKS,.8f,.5f);
-                    ForgeLore.tell(server,service.airflow()?(service.burning()?"service.flowing":"service.open"):"service.closed",(service.fuelTicks()+1199)/1200);
+                    ForgeLore.tell(server,service.airflow()?(service.burning()?"service.flowing":"service.open"):"service.closed",service.fuelMinutes());
                     if(service.burning())ForgeLore.award(server,"borrowed_light");
                 }
             } else return InteractionResult.PASS;
@@ -104,7 +110,7 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
             else if(fuel) {
                 if(service.addFuel(ForgeServiceBlockEntity.FUEL_UNIT)) {
                     if(!player.getAbilities().instabuild)stack.shrink(1);
-                    ForgeLore.tell(server,"service.fuel",(service.fuelTicks()+1199)/1200);
+                    ForgeLore.tell(server,"service.fuel",service.fuelMinutes());
                 } else ForgeLore.tell(server,"service.full");
             } else if(service.ignite()) {
                 if(!player.getAbilities().instabuild) {
@@ -124,8 +130,6 @@ public final class ForgeServiceBlock extends Block implements EntityBlock {
     @Override public void animateTick(BlockState state,Level level,BlockPos pos,RandomSource random) {
         if(!state.getValue(LIT))return;
         boolean channel=kind==ForgeFixtures.Kind.CHANNEL;
-        if(random.nextInt(channel?5:2)==0)level.addParticle(ParticleTypes.SMALL_FLAME,pos.getX()+.3+random.nextDouble()*.4,pos.getY()+1.03,pos.getZ()+.3+random.nextDouble()*.4,0,.01,0);
-        if(!channel&&random.nextInt(18)==0)level.addParticle(ParticleTypes.SMOKE,pos.getX()+.5,pos.getY()+1.1,pos.getZ()+.5,0,.02,0);
-        if(random.nextInt(channel?500:90)==0)level.playLocalSound(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,SoundEvents.FIRE_AMBIENT,SoundSource.BLOCKS,.2f,.7f,false);
+        if(random.nextInt(channel?160:45)==0)level.playLocalSound(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,SoundEvents.FIRE_AMBIENT,SoundSource.BLOCKS,state.getValue(RESTORED)?.55f:.3f,.7f,false);
     }
 }

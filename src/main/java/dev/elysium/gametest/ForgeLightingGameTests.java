@@ -131,6 +131,51 @@ public final class ForgeLightingGameTests {
         helper.assertTrue(!dev.elysium.item.ResonanceItem.arrived(player,target),"Being at the deeper Forge's mountain entrance is not arrival at its hearth");
         helper.succeed();
     }
+    @GameTest(template="portal_test_empty",timeoutTicks=180)
+    public static void restoredHeatTravelsFromTheHearthAndStillRequiresFuelAndConnections(GameTestHelper h) {
+        var level=h.getLevel();var p=plan(h,1700);placeAll(level,p);var source=service(level,p,ForgeFixtures.SOURCE);
+        source.addFuel(48000);source.ignite();source.toggleAirflow();advance(level,source);
+        var near=world(p,0,0,60);var lamp=world(p,-24,4,64);var hearth=ForgeFixtures.hearth(p);
+        h.assertTrue(level.getBlockState(near).getLightEmission()==10&&level.getBlockState(near.above()).is(ModBlocks.FORGE_FLAME.get()),
+                "Service fire must have real light and a visible, hazardous flame volume");
+        h.assertTrue(level.getBlockState(source.getBlockPos()).getLightEmission()==13,"The initial brazier must outshine its runners");
+        level.setBlock(hearth,ModBlocks.FORGE_HEARTH.get().defaultBlockState().setValue(dev.elysium.block.DormantHearthBlock.FLAME,true),3);
+        ForgeLighting.advance(level,source,10);
+        h.assertTrue(level.getBlockState(near).getValue(ForgeServiceBlock.RESTORED)
+                &&!level.getBlockState(lamp).getValue(ForgeServiceBlock.RESTORED),"Full heat must start at the hearth feed, not turn everything on remotely");
+        int fuel=source.fuelTicks();ForgeLighting.advance(level,source,10);
+        h.assertTrue(source.fuelTicks()==fuel-20,"Restored heat consumes coal at twice the service rate");
+        advance(level,source);
+        h.assertTrue(level.getBlockState(near).getLightEmission()==14&&level.getBlockState(lamp).getLightEmission()==15
+                &&level.getBlockState(source.getBlockPos()).getLightEmission()==15,"Restored runners and bowls must use their stronger light levels");
+        h.assertTrue(!lit(level,world(p,43,8,80)),"The First Flame cannot bypass an unrepaired eastern crack");
+        var saved=(ForgeServiceBlockEntity)BlockEntity.loadStatic(source.getBlockPos(),source.getBlockState(),source.saveWithFullMetadata(level.registryAccess()),level.registryAccess());
+        h.assertTrue(saved.restored().isEmpty()&&saved.energized().isEmpty(),"Reload must reconstruct both heat waves from physical connections");
+        level.setBlock(hearth.below(),Blocks.AIR.defaultBlockState(),3);ForgeLighting.advance(level,source,10);
+        h.assertTrue(lit(level,near)&&!level.getBlockState(near).getValue(ForgeServiceBlock.RESTORED),"Breaking the hearth feed must leave only ordinary service fire");
+        level.setBlock(near.above(),Blocks.DIAMOND_BLOCK.defaultBlockState(),3);ForgeLighting.advance(level,source,10);
+        h.assertTrue(level.getBlockState(near.above()).is(Blocks.DIAMOND_BLOCK),"Flames must never overwrite a player's solid cover");
+        source.toggleAirflow();ForgeLighting.advance(level,source,10);
+        h.assertTrue(!lit(level,source.getBlockPos())&&level.getBlockState(source.getBlockPos().above()).isAir(),"Banking the draught removes its flame volumes");
+        h.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=100)
+    public static void exposedFireBurnsPlayersAndRespectsFireResistance(GameTestHelper h) {
+        var level=h.getLevel();var p=h.absolutePos(new BlockPos(2,80,2));
+        var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"FireWalker"));player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setHealth(20);var block=ModBlocks.FORGE_EMBER_CHANNEL.get();var cold=block.defaultBlockState();
+        block.stepOn(level,p,cold,player);h.assertTrue(player.getHealth()==20&&!player.isOnFire(),"Cold channels are safe");
+        var low=cold.setValue(ForgeServiceBlock.LIT,true);block.stepOn(level,p,low,player);
+        float serviceDamage=20-player.getHealth();h.assertTrue(serviceDamage>0&&player.isOnFire(),"The service flame must hurt a survival player and ignite clothing");
+        player.setHealth(20);player.invulnerableTime=0;player.clearFire();
+        block.stepOn(level,p,low.setValue(ForgeServiceBlock.RESTORED,true),player);
+        h.assertTrue(20-player.getHealth()>serviceDamage&&player.isOnFire(),"Restored heat must be more hazardous");
+        player.setHealth(20);player.invulnerableTime=0;player.clearFire();
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE,200));
+        block.stepOn(level,p,low.setValue(ForgeServiceBlock.RESTORED,true),player);
+        h.assertTrue(player.getHealth()==20&&!player.isOnFire(),"Fire resistance must protect against both contact damage and ignition");
+        h.succeed();
+    }
     private static ForgePlan plan(GameTestHelper h,int offset) {var p=h.absolutePos(new BlockPos(offset,105,0));return new ForgePlan(p.getX(),p.getZ(),p.getY(),0);}
     private static BlockPos world(ForgePlan p,int u,int h,int v) {return new BlockPos(p.worldX(u,v),p.floor()+h,p.worldZ(u,v));}
     private static BlockPos world(ForgePlan p,BlockPos local) {return world(p,local.getX(),local.getY(),local.getZ());}

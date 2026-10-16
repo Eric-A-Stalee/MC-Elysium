@@ -11,6 +11,7 @@ import dev.elysium.block.LeafLitterBlock;
 import dev.elysium.block.ForgeRecordBlock;
 import dev.elysium.block.DormantHearthBlock;
 import dev.elysium.block.ForgeServiceBlock;
+import dev.elysium.block.ForgeFlameBlock;
 import dev.elysium.block.ForgeDebrisBlock;
 import dev.elysium.forge.ForgeLore;
 import dev.elysium.structure.ForgeFixtures;
@@ -49,15 +50,18 @@ public final class ModBlocks {
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_HEART = BLOCKS.register("tartarus_heart",
             () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
+    public static final DeferredBlock<ForgeFlameBlock> FORGE_FLAME = BLOCKS.register("forge_flame",
+            () -> new ForgeFlameBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().instabreak()
+                    .lightLevel(s -> s.getValue(ForgeFlameBlock.RESTORED)?(s.getValue(ForgeFlameBlock.BRAZIER)?15:14):(s.getValue(ForgeFlameBlock.BRAZIER)?13:10))));
     public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_LAMP = BLOCKS.register("forge_service_lamp",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
-                    .lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 12 : 0), ForgeFixtures.Kind.LAMP));
+                    .lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? (s.getValue(ForgeServiceBlock.RESTORED)?15:12) : 0), ForgeFixtures.Kind.LAMP));
     public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_SWITCH = BLOCKS.register("forge_service_switch",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
-                    .strength(4).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 10 : 0), ForgeFixtures.Kind.BRAZIER));
+                    .strength(4).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? (s.getValue(ForgeServiceBlock.RESTORED)?15:13) : 0), ForgeFixtures.Kind.BRAZIER));
     public static final DeferredBlock<ForgeServiceBlock> FORGE_EMBER_CHANNEL = BLOCKS.register("forge_ember_channel",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BLACKSTONE)
-                    .strength(2).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? 5 : 0), ForgeFixtures.Kind.CHANNEL));
+                    .strength(2).lightLevel(s -> s.getValue(ForgeServiceBlock.LIT) ? (s.getValue(ForgeServiceBlock.RESTORED)?14:10) : 0), ForgeFixtures.Kind.CHANNEL));
     public static final DeferredBlock<Block> FORGE_PILOT_LIGHT = BLOCKS.register("forge_pilot_light",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_OXIDIZED_COPPER_BULB).lightLevel(s -> 3)));
     public static final DeferredBlock<Block> FORGE_IRON = BLOCKS.register("forge_iron",
@@ -73,7 +77,7 @@ public final class ModBlocks {
             () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_POLISHED_BLACKSTONE).strength(4.0F),ForgeLore.Record.BINDINGS));
     public static final DeferredBlock<DormantHearthBlock> FORGE_HEARTH = BLOCKS.register("forge_hearth",
             () -> new DormantHearthBlock(BlockBehaviour.Properties.of().strength(12.0F,1200.0F).requiresCorrectToolForDrops()
-                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->s.getValue(DormantHearthBlock.FLAME)?8:1)));
+                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->s.getValue(DormantHearthBlock.FLAME)?15:1)));
     public static final DeferredBlock<Block> TARTARUS_CHAIN_BLOCK = BLOCKS.register("tartarus_chain",
             () -> new Block(BlockBehaviour.Properties.of().strength(8.0F, 1200.0F).requiresCorrectToolForDrops()
                     .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY)));

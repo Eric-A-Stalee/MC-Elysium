@@ -116,63 +116,83 @@ asset("models/block/forge_iron", {"parent":"minecraft:block/cube_all", "textures
 asset("models/item/forge_iron", {"parent":"elysium:block/forge_iron"})
 loot("forge_iron",[pool([item("elysium:forge_iron")],[SURVIVES])])
 
-# Recessed ember conduits and open coal bowls use the active resource pack's vanilla materials.
+# Exposed coal bowls and connected runners. Heat has a separate restored state;
+# animated, contained fire occupies the air above an active exposed fixture.
+HEAT_STATES = [("", {"lit": "false"}, "coal_block"),
+               ("_lit", {"lit": "true", "restored": "false"}, "magma"),
+               ("_restored", {"lit": "true", "restored": "true"}, "lava_still")]
 for name in ("forge_service_lamp", "forge_service_switch", "forge_pilot_light"):
-    for lit in (False, True) if name != "forge_pilot_light" else (True,):
-        pieces=[cuboid([0,0,0],[16,16,16],"#stone")]
+    states = [("_lit", {}, "magma")] if name == "forge_pilot_light" else HEAT_STATES
+    variants = {}
+    for suffix, condition, texture in states:
+        pieces = [cuboid([0, 0, 0], [16, 16, 16], "#stone")]
         if name == "forge_pilot_light":
             pieces += [cuboid([6,6,-.02],[10,10,.02],"#ember"),cuboid([6,15.98,6],[10,16.02,10],"#ember")]
         else:
             pieces += [cuboid([3,16,3],[13,16.4,13],"#ember"),
                        cuboid([1,15,1],[3,19,15],"#metal"),cuboid([13,15,1],[15,19,15],"#metal"),
                        cuboid([3,15,1],[13,19,3],"#metal"),cuboid([3,15,13],[13,19,15],"#metal")]
-            # Slits expose the glowing coals from the floor as well as the galleries.
-            for lo,hi in [([4,9,-.02],[12,13,.02]),([4,9,15.98],[12,13,16.02]),
-                          ([-.02,9,4],[.02,13,12]),([15.98,9,4],[16.02,13,12])]:
-                pieces.append(cuboid(lo,hi,"#ember"))
+            for lo, hi in [([4,9,-.02],[12,13,.02]),([4,9,15.98],[12,13,16.02]),
+                           ([-.02,9,4],[.02,13,12]),([15.98,9,4],[16.02,13,12])]:
+                pieces.append(cuboid(lo, hi, "#ember"))
         if name == "forge_service_switch":
             pieces += [cuboid([3,3,-1],[5,13,0],"#metal"),cuboid([11,3,-1],[13,13,0],"#metal"),
                        cuboid([5,3,-1],[11,5,0],"#metal"),cuboid([5,11,-1],[11,13,0],"#metal"),
                        cuboid([7,5,-1],[9,11,0],"#metal"),cuboid([7,7,-2],[9,9,-1],"#stone")]
-        suffix="_lit" if lit else ""
-        asset(f"models/block/{name}{suffix}",{"parent":"minecraft:block/block",
+        asset(f"models/block/{name}{suffix}", {"parent":"minecraft:block/block",
+              "ambientocclusion": not bool(suffix),
               "textures":{"stone":"minecraft:block/polished_blackstone","metal":"minecraft:block/weathered_copper",
-                          "ember":"minecraft:block/magma" if lit else "minecraft:block/coal_block","particle":"#stone"},"elements":pieces})
-    if name=="forge_pilot_light":
-        asset(f"blockstates/{name}",{"variants":{"":{"model":f"elysium:block/{name}_lit"}}})
-    else:
-        asset(f"blockstates/{name}",{"variants":{f"lit={str(lit).lower()}":{"model":f"elysium:block/{name}"+("_lit" if lit else "")} for lit in (False,True)}})
-    asset(f"models/item/{name}",{"parent":f"elysium:block/{name}"+("_lit" if name=="forge_pilot_light" else "")})
+                          "ember":f"minecraft:block/{texture}","particle":"#stone"},"elements":pieces})
+        variants[",".join(f"{k}={v}" for k,v in condition.items())] = {"model":f"elysium:block/{name}{suffix}"}
+    asset(f"blockstates/{name}", {"variants":variants})
+    asset(f"models/item/{name}", {"parent":f"elysium:block/{name}"+("_lit" if name=="forge_pilot_light" else "")})
     loot(name,[pool([item(f"elysium:{name}")],[SURVIVES])])
 
-channel_parts=[]
+channel_parts = []
 for decay in range(3):
-    for lit in (False,True):
-        name=f"forge_ember_channel_{decay}"+("_lit" if lit else "")
-        pieces=[cuboid([0,0,0],[16,16,16],"#stone"),cuboid([5,16,5],[11,16.04,11],"#ember")]
-        if decay==1:
+    for suffix, condition, texture in HEAT_STATES:
+        name = f"forge_ember_channel_{decay}{suffix}"
+        pieces = [cuboid([0,0,0],[16,16,16],"#stone"),cuboid([4,16,4],[12,16.04,12],"#ember")]
+        if decay == 1:
             pieces += [cuboid([2,16,2],[14,18,14],"#ash"),cuboid([4,18,6],[9,19,11],"#ash")]
-        if decay==2:
+        if decay == 2:
             pieces += [cuboid([6,16.05,3],[9,16.1,13],"#ash")]
-        asset(f"models/block/{name}",{"parent":"minecraft:block/block","textures":{
-            "stone":"minecraft:block/polished_blackstone","ember":"minecraft:block/magma" if lit else "minecraft:block/weathered_copper",
-            "ash":"minecraft:block/basalt_top" if decay==1 else "minecraft:block/obsidian","particle":"#stone"},"elements":pieces})
-        channel_parts.append({"when":{"decay":str(decay),"lit":str(lit).lower()},"apply":{"model":f"elysium:block/{name}"}})
+        asset(f"models/block/{name}", {"parent":"minecraft:block/block", "ambientocclusion":not bool(suffix), "textures":{
+            "stone":"minecraft:block/polished_blackstone", "ember":f"minecraft:block/{texture if suffix else 'weathered_copper'}",
+            "ash":"minecraft:block/basalt_top" if decay==1 else "minecraft:block/obsidian", "particle":"#stone"},"elements":pieces})
+        channel_parts.append({"when":{"decay":str(decay),**condition},"apply":{"model":f"elysium:block/{name}"}})
 for direction,(lo,hi) in {
-    "north":([6,16.01,0],[10,16.05,8]),"south":([6,16.01,8],[10,16.05,16]),
-    "west":([0,16.01,6],[8,16.05,10]),"east":([8,16.01,6],[16,16.05,10]),
-    "up":([6,8,-.02],[10,16,.02]),"down":([6,0,-.02],[10,8,.02])}.items():
-    for lit in (False,True):
-        name=f"forge_channel_{direction}"+("_lit" if lit else "")
-        pieces=[cuboid(lo,hi,"#ember")]
+    "north":([5,16.01,0],[11,16.05,8]),"south":([5,16.01,8],[11,16.05,16]),
+    "west":([0,16.01,5],[8,16.05,11]),"east":([8,16.01,5],[16,16.05,11]),
+    "up":([5,8,-.02],[11,16,.02]),"down":([5,0,-.02],[11,8,.02])}.items():
+    for suffix, condition, texture in HEAT_STATES:
+        name = f"forge_channel_{direction}{suffix}"
+        pieces = [cuboid(lo,hi,"#ember")]
         if direction in ("up","down"):
-            pieces += [cuboid([6,lo[1],15.98],[10,hi[1],16.02],"#ember"),
-                       cuboid([-.02,lo[1],6],[.02,hi[1],10],"#ember"),cuboid([15.98,lo[1],6],[16.02,hi[1],10],"#ember")]
-        asset(f"models/block/{name}",{"parent":"minecraft:block/block","textures":{
-            "ember":"minecraft:block/magma" if lit else "minecraft:block/weathered_copper","particle":"#ember"},"elements":pieces})
-        channel_parts.append({"when":{direction:"true","lit":str(lit).lower()},"apply":{"model":f"elysium:block/{name}"}})
-asset("blockstates/forge_ember_channel",{"multipart":channel_parts})
-asset("models/item/forge_ember_channel",{"parent":"elysium:block/forge_ember_channel_0"})
+            pieces += [cuboid([5,lo[1],15.98],[11,hi[1],16.02],"#ember"),
+                       cuboid([-.02,lo[1],5],[.02,hi[1],11],"#ember"),cuboid([15.98,lo[1],5],[16.02,hi[1],11],"#ember")]
+        asset(f"models/block/{name}", {"parent":"minecraft:block/block", "ambientocclusion":not bool(suffix), "textures":{
+            "ember":f"minecraft:block/{texture if suffix else 'weathered_copper'}", "particle":"#ember"},"elements":pieces})
+        channel_parts.append({"when":{direction:"true",**condition},"apply":{"model":f"elysium:block/{name}"}})
+asset("blockstates/forge_ember_channel", {"multipart":channel_parts})
+asset("models/item/forge_ember_channel", {"parent":"elysium:block/forge_ember_channel_0"})
+
+flame_variants = {}
+for bowl in (False, True):
+    for restored in (False, True):
+        name = f"forge_flame_{'bowl' if bowl else 'runner'}_{'restored' if restored else 'low'}"
+        bottom, top = (3, 16 if restored else 11) if bowl else (.1, 13 if restored else 7)
+        width = 14 if bowl else 11 if restored else 8
+        pieces = []
+        for angle, texture in [(45,"#fire0"),(-45,"#fire1")]:
+            pieces.append({"from":[8-width/2,bottom,8], "to":[8+width/2,top,8], "shade":False,
+                "rotation":{"origin":[8,8,8],"axis":"y","angle":angle},
+                "faces":{side:{"texture":texture,"uv":[0,0,16,16]} for side in ("north","south")}})
+        asset(f"models/block/{name}", {"parent":"minecraft:block/block","render_type":"minecraft:cutout",
+            "ambientocclusion":False,"textures":{"fire0":"minecraft:block/fire_0","fire1":"minecraft:block/fire_1","particle":"#fire0"},
+            "elements":pieces})
+        flame_variants[f"brazier={str(bowl).lower()},restored={str(restored).lower()}"] = {"model":f"elysium:block/{name}"}
+asset("blockstates/forge_flame", {"variants":flame_variants})
 loot("forge_ember_channel",[pool([
     item("elysium:forge_ember_channel") | {"conditions":[{"condition":"minecraft:inverted","term":{"condition":"minecraft:block_state_property","block":"elysium:forge_ember_channel","properties":{"decay":"2"}}}]},
     item("minecraft:iron_nugget") | {"conditions":[{"condition":"minecraft:block_state_property","block":"elysium:forge_ember_channel","properties":{"decay":"2"}}]}

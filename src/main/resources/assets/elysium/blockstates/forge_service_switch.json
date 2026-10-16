@@ -3,8 +3,11 @@
     "lit=false": {
       "model": "elysium:block/forge_service_switch"
     },
-    "lit=true": {
+    "lit=true,restored=false": {
       "model": "elysium:block/forge_service_switch_lit"
+    },
+    "lit=true,restored=true": {
+      "model": "elysium:block/forge_service_switch_restored"
     }
   }
 }

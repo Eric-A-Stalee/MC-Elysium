@@ -27,7 +27,7 @@ public final class HephaestusForgePiece extends StructurePiece {
         if(tag.getInt("Version")!=3) throw new IllegalArgumentException("Regenerate older Forge chunks for the alpha-17 descent");
     }
     public ForgePlan plan() { return plan; }
-    public BlockPos hearth() { return at(0,plan.floor()+1,61); }
+    public BlockPos hearth() { return ForgeFixtures.hearth(plan); }
     public BlockPos ledger() { return at(-37,plan.floor()+1,50); }
     public BlockPos at(int u,int y,int v) { return new BlockPos(plan.worldX(u,v),y,plan.worldZ(u,v)); }
     private static BoundingBox bounds(ForgePlan p) {

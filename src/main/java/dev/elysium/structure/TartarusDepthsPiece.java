@@ -87,10 +87,17 @@ public final class TartarusDepthsPiece extends StructurePiece {
             return stone(u,y,v);
         }
         // Sparse raw columns and rubble; the walk route above always wins.
-        int cx=Math.floorMod(u+23,43)-21,cz=Math.floorMod(v+11,47)-23;
+        int cellX=Math.floorDiv(u+23,43),cellZ=Math.floorDiv(v+11,47),pillar=plan.hash(cellX,19,cellZ);
+        int cx=Math.floorMod(u+23,43)-21+(pillar%11-5),cz=Math.floorMod(v+11,47)-23+((pillar/11)%13-6);
         double column=(double)(cx*cx+cz*cz);
-        if(column<7+(roof-y)*.12&&y<=roof)return stone(u,y,v);
-        if(y==floor+1&&plan.hash(u,0,v)%31==0)return b(ModBlocks.FORGE_DEBRIS.get());
+        double radius=4+pillar%7+(roof-y)*.07+Math.max(0,8-(y-floor))*.85;
+        boolean broken=pillar%4==0&&y>floor+8+pillar%9&&y<roof-9;
+        if(column<radius&&!broken&&y<=roof)return stone(u,y,v);
+        // Collapse collects beneath broken supports instead of peppering every floor equally.
+        int rubble=pillar%4==0&&column<120?Math.max(0,4-(int)Math.sqrt(column)/3):0;
+        if(rubble>0&&y<=floor+rubble)return stone(u,y,v);
+        if(y==floor+1&&(rubble>0||plan.hash(Math.floorDiv(u,11),0,Math.floorDiv(v,13))%9==0)
+                &&plan.hash(u,0,v)%7==0)return b(ModBlocks.FORGE_DEBRIS.get());
         // A hanging lateral chain across the fracture, far above the broken foot crossing.
         if(Math.abs(v-221)<=2&&u>=-28&&u<=44) {
             int cy=-147-(int)Math.round(7*Math.sin((u+28)*Math.PI/72));
@@ -104,8 +111,13 @@ public final class TartarusDepthsPiece extends StructurePiece {
         return b(v==190?Blocks.POLISHED_BLACKSTONE_BRICKS:Blocks.WAXED_OXIDIZED_COPPER_GRATE);
     }
     private BlockState stone(int u,int y,int v) {
-        int h=plan.hash(Math.floorDiv(u,3),Math.floorDiv(y,3),Math.floorDiv(v,3))%16;
-        return b(h<9?ModBlocks.BURNT_CLINKER.get():h<13?Blocks.BASALT:h<15?Blocks.BLACKSTONE:Blocks.OBSIDIAN);
+        int bend=(int)Math.round(3*Math.sin(u*.045)+2*Math.cos(v*.037));
+        int stratum=Math.floorDiv(y+bend,12);
+        int h=plan.hash(Math.floorDiv(u,19),stratum,Math.floorDiv(v,23))%19;
+        double fault=Math.abs(u-18-7*Math.sin((v-TartarusDepthsPlan.BASIN_Z)*.045));
+        if(fault<1.5&&plan.hash(Math.floorDiv(u,5),Math.floorDiv(y,9),Math.floorDiv(v,7))%5<3)return b(Blocks.OBSIDIAN);
+        if(Math.floorMod(y+bend,12)<=1&&h<7)return b(Blocks.BASALT);
+        return b(h<14?ModBlocks.BURNT_CLINKER.get():h<18?Blocks.BLACKSTONE:Blocks.BASALT);
     }
     @Override public void postProcess(WorldGenLevel level,StructureManager structures,ChunkGenerator generator,RandomSource random,BoundingBox clip,ChunkPos chunk,BlockPos pivot) {
         for(int x=Math.max(clip.minX(),boundingBox.minX());x<=Math.min(clip.maxX(),boundingBox.maxX());x++)

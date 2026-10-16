@@ -38,12 +38,25 @@ public final class ForgeLighting {
             next.addAll(additions);
         }
         source.setEnergized(next);
+        // Restored heat enters directly below the hearth and follows intact, burning runners.
+        var feed=ForgeFixtures.hearth(p).below();
+        boolean full=source.hearthRestored(level)&&next.contains(feed);
+        var hot=new HashSet<>(source.restored());hot.retainAll(next);
+        if(!full)hot.clear();else {
+            hot.add(feed);
+            for(int wave=0;wave<3;wave++) {
+                var additions=new HashSet<BlockPos>();
+                for(var pos:hot)for(var d:Direction.values())if(next.contains(pos.relative(d)))additions.add(pos.relative(d));
+                hot.addAll(additions);
+            }
+        }
+        source.setRestored(hot);
         previous.addAll(next);
         for(var pos:previous) {
             var service=loadedService(level,pos);
             if(service!=null&&service.belongsTo(p))service.reconcile(level);
         }
-        source.consume(elapsed);
+        source.consume(elapsed*(full?2:1));
     }
     private ForgeLighting() {}
 }

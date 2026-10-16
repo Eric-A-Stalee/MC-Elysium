@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
     "ember": "minecraft:block/magma",
     "particle": "#ember"
@@ -7,12 +8,12 @@
   "elements": [
     {
       "from": [
-        6,
+        5,
         0,
         -0.02
       ],
       "to": [
-        10,
+        11,
         8,
         0.02
       ],
@@ -39,12 +40,12 @@
     },
     {
       "from": [
-        6,
+        5,
         0,
         15.98
       ],
       "to": [
-        10,
+        11,
         8,
         16.02
       ],
@@ -73,12 +74,12 @@
       "from": [
         -0.02,
         0,
-        6
+        5
       ],
       "to": [
         0.02,
         8,
-        10
+        11
       ],
       "faces": {
         "down": {
@@ -105,12 +106,12 @@
       "from": [
         15.98,
         0,
-        6
+        5
       ],
       "to": [
         16.02,
         8,
-        10
+        11
       ],
       "faces": {
         "down": {

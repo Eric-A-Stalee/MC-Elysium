@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "ember": "minecraft:block/lava_still",
+    "particle": "#ember"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        16.01,
+        5
+      ],
+      "to": [
+        8,
+        16.05,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ember"
+        },
+        "up": {
+          "texture": "#ember"
+        },
+        "north": {
+          "texture": "#ember"
+        },
+        "south": {
+          "texture": "#ember"
+        },
+        "west": {
+          "texture": "#ember"
+        },
+        "east": {
+          "texture": "#ember"
+        }
+      }
+    }
+  ]
+}

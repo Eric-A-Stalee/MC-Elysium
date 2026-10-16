@@ -16,6 +16,7 @@ public final class ForgeFixtures {
         public boolean controller() { return kind == Kind.BRAZIER; }
     }
     public static final BlockPos SOURCE = new BlockPos(-5,1,52);
+    public static final BlockPos HEARTH_FEED = new BlockPos(0,0,61);
     public static final BlockPos ASH = new BlockPos(-28,0,60);
     public static final BlockPos CRACK = new BlockPos(28,0,60);
     public static final BlockPos MISSING = new BlockPos(0,0,98);
@@ -26,6 +27,7 @@ public final class ForgeFixtures {
         line(map,SOURCE,new BlockPos(-5,0,52));
         path(map,-5,0,52,-5,0,60,0,0,60,-24,0,60,-44,0,60,-44,0,77,-30,0,77);
         path(map,0,0,60,24,0,60,43,0,60,43,0,80);
+        line(map,new BlockPos(0,0,60),HEARTH_FEED);
         path(map,-12,0,60,-12,0,90,0,0,90,0,0,115);
         path(map,-24,0,60,-24,0,74);
         path(map,24,0,60,24,0,74);
@@ -53,6 +55,7 @@ public final class ForgeFixtures {
         path(m,x,y,z,u,y,z,u,y,v,u,h,v);put(m,new BlockPos(u,h,v),Kind.LAMP,0);
     }
     public static BlockPos source(ForgePlan p) { return NETWORK.get(SOURCE).worldPosition(p); }
+    public static BlockPos hearth(ForgePlan p) { return NETWORK.get(HEARTH_FEED).worldPosition(p).above(); }
     public static Fixture at(ForgePlan p,BlockPos world) { return NETWORK.get(new BlockPos(p.localU(world.getX(),world.getZ()),world.getY()-p.floor(),p.localV(world.getX(),world.getZ()))); }
     public static BlockState state(ForgePlan p,Fixture f) {
         var block=switch(f.kind()) {case CHANNEL->ModBlocks.FORGE_EMBER_CHANNEL;case LAMP->ModBlocks.FORGE_SERVICE_LAMP;case BRAZIER->ModBlocks.FORGE_SERVICE_SWITCH;};

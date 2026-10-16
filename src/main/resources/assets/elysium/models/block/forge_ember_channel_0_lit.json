@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
     "stone": "minecraft:block/polished_blackstone",
     "ember": "minecraft:block/magma",
@@ -41,14 +42,14 @@
     },
     {
       "from": [
-        5,
+        4,
         16,
-        5
+        4
       ],
       "to": [
-        11,
+        12,
         16.04,
-        11
+        12
       ],
       "faces": {
         "down": {

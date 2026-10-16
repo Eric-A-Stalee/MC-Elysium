@@ -27,6 +27,8 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.SLAG_CHIMERA.get(), SlagChimeraRenderer::new);
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_BOLT.get(), context ->
+                new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context,1.5f,true));
     }
     @SubscribeEvent
     public static void grassModels(ModelEvent.ModifyBakingResult event) {

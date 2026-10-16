@@ -12,10 +12,21 @@
     {
       "when": {
         "decay": "0",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_ember_channel_0_lit"
+      }
+    },
+    {
+      "when": {
+        "decay": "0",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_0_restored"
       }
     },
     {
@@ -30,10 +41,21 @@
     {
       "when": {
         "decay": "1",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_ember_channel_1_lit"
+      }
+    },
+    {
+      "when": {
+        "decay": "1",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_1_restored"
       }
     },
     {
@@ -48,10 +70,21 @@
     {
       "when": {
         "decay": "2",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_ember_channel_2_lit"
+      }
+    },
+    {
+      "when": {
+        "decay": "2",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_ember_channel_2_restored"
       }
     },
     {
@@ -66,10 +99,21 @@
     {
       "when": {
         "north": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_north_lit"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_north_restored"
       }
     },
     {
@@ -84,10 +128,21 @@
     {
       "when": {
         "south": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_south_lit"
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_south_restored"
       }
     },
     {
@@ -102,10 +157,21 @@
     {
       "when": {
         "west": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_west_lit"
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_west_restored"
       }
     },
     {
@@ -120,10 +186,21 @@
     {
       "when": {
         "east": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_east_lit"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_east_restored"
       }
     },
     {
@@ -138,10 +215,21 @@
     {
       "when": {
         "up": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_up_lit"
+      }
+    },
+    {
+      "when": {
+        "up": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_up_restored"
       }
     },
     {
@@ -156,10 +244,21 @@
     {
       "when": {
         "down": "true",
-        "lit": "true"
+        "lit": "true",
+        "restored": "false"
       },
       "apply": {
         "model": "elysium:block/forge_channel_down_lit"
+      }
+    },
+    {
+      "when": {
+        "down": "true",
+        "lit": "true",
+        "restored": "true"
+      },
+      "apply": {
+        "model": "elysium:block/forge_channel_down_restored"
       }
     }
   ]

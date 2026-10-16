@@ -3,8 +3,11 @@
     "lit=false": {
       "model": "elysium:block/forge_service_lamp"
     },
-    "lit=true": {
+    "lit=true,restored=false": {
       "model": "elysium:block/forge_service_lamp_lit"
+    },
+    "lit=true,restored=true": {
+      "model": "elysium:block/forge_service_lamp_restored"
     }
   }
 }

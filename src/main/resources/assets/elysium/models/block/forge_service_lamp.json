@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": true,
   "textures": {
     "stone": "minecraft:block/polished_blackstone",
     "metal": "minecraft:block/weathered_copper",

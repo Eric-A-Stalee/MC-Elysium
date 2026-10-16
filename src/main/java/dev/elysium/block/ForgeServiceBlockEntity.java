@@ -20,6 +20,7 @@ public final class ForgeServiceBlockEntity extends BlockEntity {
     private int fuelTicks;
     private boolean airflow,ignited;
     private Set<BlockPos> energized=new HashSet<>();
+    private Set<BlockPos> restored=new HashSet<>();
     public ForgeServiceBlockEntity(BlockPos pos,BlockState state) { super(ModBlockEntities.FORGE_SERVICE.get(),pos,state); }
     public ForgePlan plan() { return plan; }
     public boolean belongsTo(ForgePlan other) { return other.equals(plan); }
@@ -30,6 +31,16 @@ public final class ForgeServiceBlockEntity extends BlockEntity {
     public boolean source() { return plan!=null&&worldPosition.equals(ForgeFixtures.source(plan))&&getBlockState().getBlock() instanceof ForgeServiceBlock block&&block.controller(); }
     public Set<BlockPos> energized() { return energized; }
     public void setEnergized(Set<BlockPos> value) { energized=value; }
+    public Set<BlockPos> restored(){return restored;}
+    public void setRestored(Set<BlockPos> value){restored=value;}
+    public boolean hearthRestored(ServerLevel level) {
+        if(plan==null)return false;
+        var pos=ForgeFixtures.hearth(plan);var chunk=level.getChunkSource().getChunkNow(pos.getX()>>4,pos.getZ()>>4);
+        if(chunk==null)return false;
+        var state=chunk.getBlockState(pos);
+        return state.is(dev.elysium.registry.ModBlocks.FORGE_HEARTH.get())&&state.getValue(DormantHearthBlock.FLAME);
+    }
+    public int fuelMinutes(){int rate=restored.isEmpty()?1200:2400;return (fuelTicks+rate-1)/rate;}
     public boolean addFuel(int ticks) { if(!source()||ticks<=0||fuelTicks>MAX_FUEL-ticks)return false;fuelTicks+=ticks;setChanged();return true; }
     public boolean ignite() { if(!source()||fuelTicks==0||ignited)return false;ignited=true;setChanged();return true; }
     public void toggleAirflow() { airflow=!airflow;setChanged(); }
@@ -56,7 +67,16 @@ public final class ForgeServiceBlockEntity extends BlockEntity {
         var origin=plan==null?null:ForgeLighting.loadedService(server,ForgeFixtures.source(plan));
         boolean active=origin!=null&&origin.source()&&origin.burning()&&origin.energized.contains(worldPosition)
                 &&state.getValue(ForgeServiceBlock.DECAY)==0;
-        if(state.getValue(ForgeServiceBlock.LIT)!=active)server.setBlock(worldPosition,state.setValue(ForgeServiceBlock.LIT,active),3);
+        boolean hot=active&&origin.restored.contains(worldPosition);
+        if(state.getValue(ForgeServiceBlock.LIT)!=active||state.getValue(ForgeServiceBlock.RESTORED)!=hot)
+            server.setBlock(worldPosition,state.setValue(ForgeServiceBlock.LIT,active).setValue(ForgeServiceBlock.RESTORED,hot),3);
+        var above=worldPosition.above();var overhead=server.getBlockState(above);
+        var fire=dev.elysium.registry.ModBlocks.FORGE_FLAME.get();
+        if(active&&(overhead.isAir()||overhead.is(fire))) {
+            var wanted=fire.defaultBlockState().setValue(ForgeFlameBlock.RESTORED,hot)
+                    .setValue(ForgeFlameBlock.BRAZIER,((ForgeServiceBlock)state.getBlock()).bowl());
+            if(!overhead.equals(wanted))server.setBlock(above,wanted,3);
+        } else if(!active&&overhead.is(fire))server.removeBlock(above,false);
         if(active)server.scheduleTick(worldPosition,state.getBlock(),20);
     }
     @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider provider) {
@@ -65,7 +85,7 @@ public final class ForgeServiceBlockEntity extends BlockEntity {
         if(source()) {tag.putInt("Fuel",fuelTicks);tag.putBoolean("Airflow",airflow);tag.putBoolean("Ignited",ignited);}
     }
     @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider provider) {
-        super.loadAdditional(tag,provider);plan=null;energized=new HashSet<>();
+        super.loadAdditional(tag,provider);plan=null;energized=new HashSet<>();restored=new HashSet<>();
         int turn=tag.getInt("Turn");
         if(tag.contains("Entrance",Tag.TAG_LONG)&&turn>=0&&turn<4) {
             var entry=BlockPos.of(tag.getLong("Entrance"));
