@@ -88,9 +88,21 @@ final class TartarusNaturalGenerationProbe {
                         "Natural control block entity is missing or unbound at " + pos);
             }
             require(level.getBlockState(plan.monster()).isAir(), "Creature chamber remains solid");
-            LogUtils.getLogger().info("ELYSIUM_NATURAL_TARTARUS_VERIFIED seed={} source={} anchor={} depthsOrigin={},{} chunks={} routeSteps={} heart={}",
+            int samples = 0;
+            for (int u = TartarusDepthsPlan.MIN_X + 2; u <= TartarusDepthsPlan.MAX_X; u += 8)
+                for (int v = TartarusDepthsPlan.MIN_Z + 1; v <= TartarusDepthsPlan.MAX_Z; v += 8)
+                    for (int y = -242; y <= -64; y += 9) {
+                        var wanted = piece.materialAt(u, y, v);
+                        if (wanted == null) continue;
+                        var pos = plan.at(u, y, v);
+                        var actual = level.getBlockState(pos);
+                        require(wanted.isAir() ? actual.isAir() : wanted.equals(actual),
+                                "Natural basin/chamber differs at " + pos + ": " + actual + " expected " + wanted);
+                        samples++;
+                    }
+            LogUtils.getLogger().info("ELYSIUM_NATURAL_TARTARUS_VERIFIED seed={} source={} anchor={} depthsOrigin={},{} chunks={} routeSteps={} materialSamples={} heart={}",
                     level.getSeed(), source, new BlockPos(chain.x(), chain.floor(), chain.z()),
-                    plan.x, plan.z, chunks, steps, plan.heart());
+                    plan.x, plan.z, chunks, steps, samples, plan.heart());
             return plan;
         }
         throw new IllegalStateException("No natural chain found in bounded candidate survey");

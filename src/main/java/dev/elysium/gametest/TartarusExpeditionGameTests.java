@@ -26,6 +26,31 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder("elysium")
 @PrefixGameTestTemplate(false)
 public final class TartarusExpeditionGameTests {
+    @GameTest(template="portal_test_empty",timeoutTicks=120)
+    public static void entireChainFitsNaturalReferenceReach(GameTestHelper h) {
+        for(int sx:new int[]{-19,-1,0,13})for(int sz:new int[]{-23,-1,0,17}) {
+            var source=new net.minecraft.world.level.ChunkPos(sx,sz);
+            for(int dx=1;dx<=13;dx+=4)for(int dz=1;dz<=13;dz+=4) {
+                int x=source.getMinBlockX()+TartarusChainStructure.ANCHOR_X_OFFSET+dx;
+                int z=source.getMinBlockZ()+TartarusChainStructure.ANCHOR_Z_OFFSET+dz;
+                var chain=new TartarusChainPiece(new TartarusChainPlan(x,z,160,-48,true));
+                var plan=TartarusDepthsPlan.belowAnchor(x,z,23);
+                var depths=new TartarusDepthsPiece(plan);
+                h.assertTrue(TartarusChainStructure.withinReferenceReach(source,chain.getBoundingBox())
+                                &&TartarusChainStructure.withinReferenceReach(source,depths.getBoundingBox()),
+                        "Every candidate offset, including negative chunks, must fit vanilla reference discovery");
+                var entrance=plan.route().getFirst();
+                h.assertTrue(plan.at(entrance.x(),entrance.y(),entrance.z()).equals(new BlockPos(x+10,-48,z+30)),
+                        "The folded route must still meet the upper vault's southern floor");
+                h.assertTrue(depths.materialAt(entrance.x(),-47,entrance.z()).isAir(),
+                        "The depths piece must cut open the vault entrance");
+            }
+        }
+        var oldBounds=new BoundingBox(-87,-245,-4,166,-43,300);
+        h.assertTrue(!TartarusChainStructure.withinReferenceReach(new net.minecraft.world.level.ChunkPos(0,0),oldBounds),
+                "The alpha 18 footprint must be rejected, not silently truncated");
+        h.succeed();
+    }
     @GameTest(template="portal_test_empty",timeoutTicks=180)
     public static void inspectionWayIsWalkableAndDarkAcrossSavedSeeds(GameTestHelper h) {
         var realm=h.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
@@ -43,7 +68,7 @@ public final class TartarusExpeditionGameTests {
                 for(int y=1;y<=2;y++)h.assertTrue(piece.materialAt(step.x(),step.y()+y,step.z()).isAir(),"Blocked headroom: "+step+" +"+y);
             }
             int exposed=0;
-            for(int v=160;v<=210;v++)for(int x=-2;x<=2;x++)for(int y=-145;y<=-115;y++)
+            for(int v=160;v<=221;v++)for(int x=-2;x<=2;x++)for(int y=-151;y<=-96;y++)
                 if(piece.materialAt(x,y,v)!=null&&piece.materialAt(x,y,v).is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()))exposed++;
             h.assertTrue(exposed>100,"The lower iron must emerge inside Tartarus, not terminate in unrelated upper geology");
             var context=StructurePieceSerializationContext.fromLevel(realm);var tag=piece.createTag(context);

@@ -25,6 +25,8 @@ final class StructurePlacementProbe {
         helper.assertTrue(saved != null && saved.isValid() && saved.createTag(context, source).equals(tag),
                 "The complete structure start must survive Minecraft's NBT loader");
         var box = saved.getBoundingBox();
+        helper.assertTrue(dev.elysium.structure.TartarusChainStructure.withinReferenceReach(source,box),
+                "Explicit placement must not hide a structure that extends beyond natural reference reach: "+box);
         // Reverse coordinate order; every piece receives only the current chunk's clip.
         for (int x = box.maxX() >> 4; x >= box.minX() >> 4; x--) {
             for (int z = box.maxZ() >> 4; z >= box.minZ() >> 4; z--) {

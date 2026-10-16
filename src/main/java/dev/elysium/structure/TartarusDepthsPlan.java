@@ -9,7 +9,11 @@ import net.minecraft.core.BlockPos;
 /** Saved region coordinates and a continuous, one-block-grade expedition route. */
 public final class TartarusDepthsPlan {
     public static final int ANCHOR_FLOOR=-48, BASIN_Z=210, BOSS_X=128, BOSS_Z=220, BOSS_FLOOR=-232;
-    public static final int MIN_X=-88, MAX_X=165, MIN_Z=-5, MAX_Z=299;
+    // The upper anchor is north of the basin, but the saved start is near the
+    // whole installation's centre. All pieces must remain within eight chunks
+    // of that start for vanilla structure-reference discovery.
+    public static final int ANCHOR_Z=96;
+    public static final int MIN_X=-88, MAX_X=165, MIN_Z=56, MAX_Z=299;
     public record Step(int x,int y,int z) {}
     public record PathCell(int floor,int distance) {}
     public final int x,z;
@@ -18,9 +22,9 @@ public final class TartarusDepthsPlan {
     private final Map<Long,PathCell> path=new HashMap<>();
     public TartarusDepthsPlan(int x,int z,long seed) {
         this.x=x;this.z=z;this.seed=seed;
-        int[][] points={{10,-48,30},{10,-48,42},{30,-58,42},{30,-68,62},{2,-82,62},
-            {2,-92,82},{30,-106,82},{30,-116,102},{-2,-132,102},{-2,-142,122},
-            {-26,-154,122},{-26,-164,142},{-10,-172,142},{-10,-184,166},
+        int[][] points={{10,-48,126},{10,-48,138},{-10,-58,138},{-10,-68,118},{18,-82,118},
+            {18,-92,98},{-10,-106,98},{-10,-116,78},{-42,-132,78},{-42,-142,98},
+            {-66,-154,98},{-66,-164,118},{-50,-172,118},{-50,-184,142},
             {-26,-184,166},{-26,-184,190},{38,-184,190},{58,-184,210},{70,-186,210},
             {86,-190,210},{86,-207,232},{104,-215,232},{104,-222,246},{116,-232,246}};
         for(int n=1;n<points.length;n++) {
@@ -38,6 +42,9 @@ public final class TartarusDepthsPlan {
             }
         }
     }
+    public static TartarusDepthsPlan belowAnchor(int x,int anchorZ,long seed) {
+        return new TartarusDepthsPlan(x,anchorZ-ANCHOR_Z,seed);
+    }
     public static long key(int x,int z){return ((long)x<<32)^(z&0xffffffffL);}
     public List<Step> route(){return List.copyOf(route);}
     public PathCell path(int u,int v){return path.get(key(u,v));}
@@ -48,11 +55,12 @@ public final class TartarusDepthsPlan {
     public static boolean bridgeGap(int u,int v){return u>=6&&u<=22&&Math.abs(v-190)<=3;}
     /** The anchor's buried lower run slopes into Tartarus and emerges above the rift. */
     public boolean lowerChain(int u,int y,int v) {
-        if(Math.abs(u)>2||v<0||v>221)return false;
-        int dy=y-(-52-(int)Math.round(v*.43));if(Math.abs(dy)>2)return false;
-        int first=Math.floorDiv(v,7);
+        if(Math.abs(u)>2||v<ANCHOR_Z||v>221)return false;
+        int along=v-ANCHOR_Z;
+        int dy=y-(-52-(int)Math.round(along*95.0/(221-ANCHOR_Z)));if(Math.abs(dy)>2)return false;
+        int first=Math.floorDiv(along,7);
         for(int n=first;n<=first+1;n++) {
-            int dz=Math.abs(v-n*7);if(dz>5)continue;
+            int dz=Math.abs(along-n*7);if(dz>5)continue;
             if((n&1)==0&&u==0&&(dz==5||Math.abs(dy)==2))return true;
             if((n&1)==1&&dy==0&&(dz==5||Math.abs(u)==2))return true;
         }

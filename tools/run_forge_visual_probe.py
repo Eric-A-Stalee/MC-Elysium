@@ -53,7 +53,7 @@ def main():
                 time.sleep(2)
             else:
                 raise TimeoutError('Visual server never completed its mountain placement')
-            print('Mountain and Forge ready; starting real Minecraft client', flush=True)
+            print('Natural Tartarus references, route and chamber verified; starting real Minecraft client', flush=True)
             with (CLIENT / 'probe.log').open('w') as client_log:
                 client = subprocess.Popen(['xvfb-run', '-a', '-s', '-screen 0 1280x720x24', *args, 'runForgeVisualClient'],
                                           cwd=ROOT, env=env, stdout=client_log, stderr=subprocess.STDOUT,

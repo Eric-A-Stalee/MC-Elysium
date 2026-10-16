@@ -55,7 +55,7 @@ public final class ForgeVisualServerProbe {
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"descent");
+        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"inspection_entry");
     }
 
     private static void scene(ServerPlayer player,String scene) {
@@ -86,9 +86,17 @@ public final class ForgeVisualServerProbe {
             }
             case "gallery" -> camera(player,level,22,PLAN.floor()+9,66,0,PLAN.floor()+8,79);
             case "collapse" -> camera(player,level,-7,PLAN.floor()+2,92,-22,PLAN.floor()+9,82);
+            case "inspection_entry" -> {
+                level.setBlock(DEPTHS.at(9,-47,127),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,10,-47,124,10,-48,138);
+            }
+            case "lower_descent" -> {
+                level.setBlock(DEPTHS.at(-51,DEPTHS.path(-50,132).floor()+1,132),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,-50,-170,119,-46,-184,146);
+            }
             case "descent" -> {
-                prepareDepths(level);level.setBlock(DEPTHS.at(-9,-183,165),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
-                depthsCamera(player,level,-10,-178,158,-18,-184,181);
+                level.setBlock(DEPTHS.at(-28,-183,164),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,-31,-182,161,-26,-184,180);
             }
             case "crossing" -> {
                 level.setBlock(DEPTHS.at(-3,-182,187),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);

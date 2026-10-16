@@ -108,7 +108,7 @@ public final class TartarusDepthsPiece extends StructurePiece {
             for(int z=Math.max(clip.minZ(),boundingBox.minZ());z<=Math.min(clip.maxZ(),boundingBox.maxZ());z++) {
                 int u=x-plan.x,v=z-plan.z,floor=plan.floor(u,v),roof=plan.roof(u,v);
                 double basin=plan.basinRadius(u,v),chamber=plan.chamberRadius(u,v);var path=plan.path(u,v);
-                if(basin>1.03&&chamber>1.10&&path==null&&!(Math.abs(u)<=2&&v>=0&&v<=221))continue;
+                if(basin>1.03&&chamber>1.10&&path==null&&!(Math.abs(u)<=2&&v>=TartarusDepthsPlan.ANCHOR_Z&&v<=221))continue;
                 for(int y=Math.max(clip.minY(),boundingBox.minY());y<=Math.min(clip.maxY(),boundingBox.maxY());y++) {
                     var state=materialAt(u,y,v,floor,roof,basin,chamber,path);
                     if(state!=null)placeBlock(level,state,x,y,z,clip);

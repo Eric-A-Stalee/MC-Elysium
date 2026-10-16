@@ -1,4 +1,10 @@
-# Tartarus expedition — alpha 18 design and player notes
+# Tartarus expedition — alpha 19 design and player notes
+
+Alpha 19 corrects the alpha 18 generation cutoff: the earlier footprint extended
+beyond the chunks that Minecraft discovers from one structure start. The
+descent now folds through the rock, and the saved start lies nearer the centre
+of the complete installation. Basin size, chamber size and depth are retained.
+Previously generated partial structures need regeneration.
 
 This chapter extends the optional Forge expedition: restore a keeper's lamp,
 follow a chain into its anchor vault, descend through an abandoned inspection
@@ -37,6 +43,9 @@ exploration, the keeper's lamp and the service brazier never advance the sun.
 2. Take the Chain Resonator from the cold hearth. Follow its bearing to a chain,
    excavate along the links to the Y=-48 anchor, and listen to the bottom link.
    Its book points to the inspection way through the vault's southern wall.
+   At floor Y=-48, look roughly ten blocks east and thirty blocks south of the
+   chain centre. The brick-floored passage should be open and continuous; a
+   sheer wall of ordinary stone across it is not an intended mining puzzle.
 3. Follow the switchbacks into the burnt basin. There are exposed drops; bring
    light, equipment and food. Hold **four vanilla chains** against the seized
    counterweight to raise the 17-block missing span. It refuses an obstructed
@@ -69,6 +78,10 @@ home chunks to be loaded; normal exploration never force-loads that arena.
 chunks and clips every write. The saved chain structure contains both the old
 anchor-vault piece and the new depths piece. Chain placement is rarer (48-chunk
 spacing / 24-chunk separation), leaving room between the underground regions.
+The anchor sits north of the depths plan, and every candidate offset is checked
+against Minecraft's eight-chunk structure-reference reach. The client review
+now loads a naturally generated region, including the far-end chunk first,
+and checks the complete route and chamber before taking screenshots.
 A buried lower run continues from the anchor and emerges above the basin,
 so the giant iron can still be followed through the rock. The surface density
 function is unchanged; the new lower volume remains solid
