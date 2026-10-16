@@ -545,3 +545,20 @@ handlers; their original grayscale artwork is retained. G4.1 grass, both
 texture curves, sky, water, fog, time, terrain, trees and structures remain as
 in alpha 13. Existing chunks receive this palette after restarting with the
 updated jar on client and server; no regeneration is required.
+
+## Alpha 18 depth extension
+
+Elysium now spans Y=-256 through Y=319 (height 576). The surface density
+gradient remains anchored to the original -64/320 endpoints, so this adds
+solid underground volume without rescaling surface mountains. A chain start
+now includes a separate saved depths piece: switchbacks, a burnt basin,
+repairable crossing and the creature chamber at floor Y=-232. The anchor vault
+stays at Y=-48. Chain spacing is 48 chunks with 24-chunk separation to leave
+room for these bounded underground regions. This does not add a dimension-wide
+cave generator or a ReTerraForged dependency. All placement remains clipped to
+the generating chunk; exploration and carried lighting do not load neighbours.
+
+This depth change requires a fresh alpha world or full Elysium regeneration.
+The earlier palette-only updates above did not. See [Tartarus](TARTARUS.md) for
+the current generation plan and [verification notes](TESTING.md) for the tested
+source commit and real client captures.

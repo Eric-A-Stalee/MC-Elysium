@@ -786,3 +786,55 @@ not create the Minecraft compilation artifact. The client probes use scripted
 cameras and service interactions; they are not a manual survival playthrough,
 a shader-pack comparison or an audio listening test. The existing surface
 palette, fixed time, towns and Tartarus chamber design remain unchanged.
+
+## Alpha 18 Tartarus expedition (October 16, 2026)
+
+Verified implementation: `e15622835fbecff19f29748df977f3d2102c8b6c`.
+[GitHub Actions run 38835133098](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38835133098)
+passed the generated-content checks, Java build, optional compatibility guard,
+**all 61 required dedicated-server GameTests**, and the real Minecraft client
+capture. The player jar is `elysium-0.1.0-alpha.18.jar` (673,497 bytes), SHA-256
+`70ab8bd2fff70a422a8ea2741a8a9dac30492b41f9c1ad8f80f046fac8261e85`.
+Its 141 class files target Java 21, all 268 source resources match the archive,
+and the GameTests and visual harness are excluded. The downloaded artifact ZIP
+matched GitHub's digest and both the outer archive and jar passed integrity checks.
+
+Eight new expedition tests cover the deeper dimension bounds, deterministic
+route/headroom and basin geometry, lower chain, saved structure data, workshop
+lamp crafting, resource consumption, atomic crossing repairs and relocation of
+the original fallen deck. Encounter checks cover one saved creature UUID,
+health persistence, the real multipart eye, vulnerability, attack cover,
+creative-player exclusion, victory claims and lost-flame recovery. The original
+Forge hearth accepts the flame once, while copied hearths cannot substitute for
+it and the fixed time remains 11,500. Separate lighting tests exercise held and
+off-hand lamps, the eye's actual block light, empty-section propagation, solid
+block preservation, empty ray collision and expiry after the source leaves.
+The natural chain survey also confirms that a generated start now contains both
+the original anchor piece and its depths piece.
+
+The final client captured **five unmodified 1280×720 screenshots**, all reviewed:
+the basin descent, broken crossing, dark creature chamber, the same chamber
+with two player-placed lamps, and a close view of the eye. These use Minecraft's
+default textures, no external shaders, gamma 0.5, FOV 70, a ten-chunk render
+distance, Xvfb and Mesa software OpenGL. The production depths piece was placed
+with its normal chunk clipping at X=-3900 / Z=-4200, local seed 17, in a
+disposable seed-zero Elysium world. The harness deliberately disables automatic
+structure placement to avoid overlapping fixtures; natural placement is tested
+separately. The lamps in these captures are review fixtures, not pre-lit chamber
+decorations. Earlier captures exposed a sealed passage collar, pale deep fog
+and a creature facing away from the approach; the final source corrects these,
+and a raycast regression check protects the entrance sightline.
+
+No missing Elysium textures or models appeared in the client log. The runner
+lacks an audio device and narrator library, so audio was not assessed. Scripted
+cameras and automated interactions are not a manual survival playthrough:
+combat difficulty, long multiplayer sessions and external shader/resource-pack
+combinations still need player feedback. The creature currently uses an authored
+voxel model and a stationary body with a lowering eye; it has no roaming AI.
+No new ReTerraForged integration or compatibility claim is part of this pass.
+
+Use a new alpha world or fully regenerate Elysium: its minimum Y is now -256.
+The surface density formula and palette remain unchanged. This chapter ends
+with returning the First Flame; the main Forge restart and later world-state
+changes are not implemented here. See [Tartarus expedition notes](TARTARUS.md)
+for the playable sequence, commands and architectural boundaries.
