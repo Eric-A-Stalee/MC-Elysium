@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 /** Saved region coordinates and a continuous, one-block-grade expedition route. */
 public final class TartarusDepthsPlan {
     public static final int ANCHOR_FLOOR=-48, BASIN_Z=210, BOSS_X=128, BOSS_Z=220, BOSS_FLOOR=-232;
-    public static final int MIN_X=-88, MAX_X=165, MIN_Z=27, MAX_Z=299;
+    public static final int MIN_X=-88, MAX_X=165, MIN_Z=-5, MAX_Z=299;
     public record Step(int x,int y,int z) {}
     public record PathCell(int floor,int distance) {}
     public final int x,z;
@@ -46,6 +46,18 @@ public final class TartarusDepthsPlan {
     public BlockPos heart(){return at(116,BOSS_FLOOR+1,246);}
     public BlockPos monster(){return at(BOSS_X,BOSS_FLOOR+1,BOSS_Z);}
     public static boolean bridgeGap(int u,int v){return u>=6&&u<=22&&Math.abs(v-190)<=3;}
+    /** The anchor's buried lower run slopes into Tartarus and emerges above the rift. */
+    public boolean lowerChain(int u,int y,int v) {
+        if(Math.abs(u)>2||v<0||v>221)return false;
+        int dy=y-(-52-(int)Math.round(v*.43));if(Math.abs(dy)>2)return false;
+        int first=Math.floorDiv(v,7);
+        for(int n=first;n<=first+1;n++) {
+            int dz=Math.abs(v-n*7);if(dz>5)continue;
+            if((n&1)==0&&u==0&&(dz==5||Math.abs(dy)==2))return true;
+            if((n&1)==1&&dy==0&&(dz==5||Math.abs(u)==2))return true;
+        }
+        return false;
+    }
     public double basinRadius(int u,int v){return (double)(u*u)/(84*84)+(double)((v-BASIN_Z)*(v-BASIN_Z))/(86*86);}
     public double chamberRadius(int u,int v){return (double)((u-BOSS_X)*(u-BOSS_X))/(35*35)+(double)((v-BOSS_Z)*(v-BOSS_Z))/(39*39);}
     public int floor(int u,int v) {

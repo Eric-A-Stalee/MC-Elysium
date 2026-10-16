@@ -44,7 +44,7 @@ def main():
         with (SERVER / 'probe.log').open('w') as log:
             server = subprocess.Popen([*args, 'runForgeVisualServer'], cwd=ROOT, env=env,
                                       stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
-            deadline = time.monotonic() + 240
+            deadline = time.monotonic() + 480
             while time.monotonic() < deadline:
                 if server.poll() is not None:
                     raise RuntimeError('Visual server stopped; inspect run-visual-server/probe.log')

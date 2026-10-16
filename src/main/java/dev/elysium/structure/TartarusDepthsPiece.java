@@ -44,6 +44,7 @@ public final class TartarusDepthsPiece extends StructurePiece {
         if(path!=null&&!TartarusDepthsPlan.bridgeGap(u,v)) {
             if(path.distance()<=1&&y>=path.floor()-1&&y<=path.floor()+4) {
                 if(y<=path.floor())return b(plan.hash(u,y,v)%7==0?Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS:Blocks.POLISHED_BLACKSTONE_BRICKS);
+                if(path.distance()==1&&y==path.floor()+1&&plan.hash(u,0,v)%23==0)return b(ModBlocks.FORGE_DEBRIS.get());
                 return b(Blocks.CAVE_AIR);
             }
             if(path.distance()<=2&&y>=path.floor()-2&&y<=path.floor()+5&&(basin>1||v<143)) {
@@ -51,6 +52,7 @@ public final class TartarusDepthsPiece extends StructurePiece {
                 return b(Blocks.CAVE_AIR);
             }
         }
+        if(plan.lowerChain(u,y,v))return b(ModBlocks.TARTARUS_CHAIN_BLOCK.get());
         // Boss chamber: no glowstone, lanterns or maintained galleries.
         if(chamber<=1.10&&y>=TartarusDepthsPlan.BOSS_FLOOR-2) {
             int cap=-208+(int)Math.round(30*Math.sqrt(Math.max(0,1-chamber)));
@@ -96,7 +98,7 @@ public final class TartarusDepthsPiece extends StructurePiece {
             for(int z=Math.max(clip.minZ(),boundingBox.minZ());z<=Math.min(clip.maxZ(),boundingBox.maxZ());z++) {
                 int u=x-plan.x,v=z-plan.z,floor=plan.floor(u,v),roof=plan.roof(u,v);
                 double basin=plan.basinRadius(u,v),chamber=plan.chamberRadius(u,v);var path=plan.path(u,v);
-                if(basin>1.03&&chamber>1.10&&path==null)continue;
+                if(basin>1.03&&chamber>1.10&&path==null&&!(Math.abs(u)<=2&&v>=0&&v<=221))continue;
                 for(int y=Math.max(clip.minY(),boundingBox.minY());y<=Math.min(clip.maxY(),boundingBox.maxY());y++) {
                     var state=materialAt(u,y,v,floor,roof,basin,chamber,path);
                     if(state!=null)placeBlock(level,state,x,y,z,clip);

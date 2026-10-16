@@ -60,6 +60,7 @@ public final class ForgeVisualServerProbe {
                         chunk.getMaxBlockX(),level.getMaxBuildHeight()-1,chunk.getMaxBlockZ());
                 piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,chunk,BlockPos.ZERO);
             }
+        prepareDepths(level);
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
     }
 

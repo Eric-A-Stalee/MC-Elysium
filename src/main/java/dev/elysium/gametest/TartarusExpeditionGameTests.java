@@ -42,6 +42,10 @@ public final class TartarusExpeditionGameTests {
                 if(plan.at(step.x(),step.y()+1,step.z()).equals(plan.heart()))continue;
                 for(int y=1;y<=2;y++)h.assertTrue(piece.materialAt(step.x(),step.y()+y,step.z()).isAir(),"Blocked headroom: "+step+" +"+y);
             }
+            int exposed=0;
+            for(int v=160;v<=210;v++)for(int x=-2;x<=2;x++)for(int y=-145;y<=-115;y++)
+                if(piece.materialAt(x,y,v)!=null&&piece.materialAt(x,y,v).is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()))exposed++;
+            h.assertTrue(exposed>100,"The lower iron must emerge inside Tartarus, not terminate in unrelated upper geology");
             var context=StructurePieceSerializationContext.fromLevel(realm);var tag=piece.createTag(context);
             var loaded=(TartarusDepthsPiece)ModStructures.TARTARUS_DEPTHS_PIECE.get().load(context,tag);
             h.assertTrue(tag.equals(loaded.createTag(context)),"Depth plan and seed must round-trip through Minecraft NBT");
@@ -124,6 +128,27 @@ public final class TartarusExpeditionGameTests {
         for(var p:BlockPos.betweenClosed(base.offset(-4,0,8),base.offset(4,14,8)))level.setBlock(p,Blocks.STONE.defaultBlockState(),2);
         h.assertTrue(!body.canStrike(player,1),"Real block collision must stop an attack through cover");
         player.getAbilities().instabuild=true;h.assertTrue(!body.canStrike(player,3),"Creative observers cannot become combat targets");h.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=160)
+    public static void firstFlameFitsOnlyTheOriginalHearthWithoutMovingTheSun(GameTestHelper h) {
+        var level=h.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
+        var structure=level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE)
+                .get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("elysium","hephaestus_forge"));
+        var plan=new ForgePlan(46000,46000,140,0);var piece=new HephaestusForgePiece(plan);
+        var source=new net.minecraft.world.level.ChunkPos(plan.x()>>4,plan.z()>>4);
+        var start=new net.minecraft.world.level.levelgen.structure.StructureStart(structure,source,0,
+                new net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer(java.util.List.of(piece)));
+        level.getChunk(source.x,source.z).setStartForStructure(structure,start);
+        var pos=piece.hearth();level.getChunk(pos.getX()>>4,pos.getZ()>>4).addReferenceForStructure(structure,source.toLong());
+        var block=ModBlocks.FORGE_HEARTH.get();level.setBlock(pos,block.defaultBlockState(),3);level.setBlock(pos.east(3),block.defaultBlockState(),3);
+        var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"Homeward"));var flame=new ItemStack(ModItems.FIRST_FLAME.get());
+        long time=level.getDayTime();
+        h.assertTrue(!block.receiveFlame(player,pos.east(3),flame)&&flame.getCount()==1,"A moved or copied hearth cannot consume the expedition reward");
+        h.assertTrue(block.receiveFlame(player,pos,flame)&&flame.isEmpty(),"The saved original hearth must accept exactly one flame");
+        h.assertTrue(level.getBlockState(pos).getValue(DormantHearthBlock.FLAME)&&level.getBlockState(pos).getLightEmission()==8,"Returning the flame lights its physical socket");
+        h.assertTrue(level.getDayTime()==time&&level.dimensionType().fixedTime().orElseThrow()==11500,"Completing this chapter may not start the sunset");
+        var second=new ItemStack(ModItems.FIRST_FLAME.get());h.assertTrue(!block.receiveFlame(player,pos,second)&&second.getCount()==1,"A filled socket may not consume another reward");
+        h.succeed();
     }
     private static int count(FakePlayer p,net.minecraft.world.item.Item item) {int n=0;for(int i=0;i<p.getInventory().getContainerSize();i++){var s=p.getInventory().getItem(i);if(s.is(item))n+=s.getCount();}return n;}
     private TartarusExpeditionGameTests(){}

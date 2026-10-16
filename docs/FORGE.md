@@ -1,8 +1,8 @@
-# The buried Forge — alpha 17
+# The buried Forge — alpha 18
 
 Elysium now has an optional exploration chapter: find a surviving archive,
 locate the Forge of Hephaestus, recover an instrument from its cold hearth,
-and listen at a deep Chain of Tartarus anchor. The golden afternoon continues
+and continue through the deep anchor into the [Tartarus expedition](TARTARUS.md). The golden afternoon continues
 at **11,500 ticks**. Visiting, reading or collecting anything in this chapter
 does not start a timer or a world event.
 
@@ -41,9 +41,9 @@ Bring a pick and your own light. A few weak pilot embers mark surviving stations
 The maintenance adit opens onto a high overlook, then joins the west gallery.
 The ordinary gallery stair leads down to the foundry floor. Entry, descent,
 overlook and hall are distinct spaces; the upper entrance cannot see the hall.
-The planner retains at least 80 blocks above the dimension's minimum height
-for the foundry floor. In the current dimension this means Y=16 or higher,
-above the existing Tartarus anchor vault, whose floor is Y=-48.
+The mountain-shoulder requirement keeps the foundry above sea level minus 42
+(currently Y=21 or higher). The Tartarus anchor vault stays at Y=-48, and the
+new expedition continues from there down to a separate chamber at Y=-232.
 
 The main vault contains a heavy suspended hammer and its aligned anvil, guide
 piers, a stepped crosshead and an unfinished Chain of Tartarus link resting in
@@ -121,14 +121,15 @@ stone to the deep chamber. The instrument does not excavate a path.
 
 At the central plinth, use the resonator on the lowest iron of the anchor.
 An ordinary placed chain block or a high exposed link is not sufficient.
-The echo awards *A Voice in the Iron*, marks the instrument and completes the
-current discovery sequence. Existing naturally generated chain chambers can
-also be used; their saved structure identity is checked.
+The echo awards *A Voice in the Iron*, marks the instrument and describes the
+southern inspection way into the deeper basin. The saved structure identity
+is checked. Bring a Keeper’s Lamp, four chains and equipment for the journey.
 
-The full Tartarus region, its keeper/boss, obtaining the First Flame and
-restarting the Forge are **not implemented in alpha 17**. The great hammer
-and hearth remain dormant; ordinary fuel cannot restart them. The smaller
-vanilla workshop furnaces can still be used normally by a player.
+The [alpha 18 expedition](TARTARUS.md) supplies the first bounded Tartarus region,
+the original one-eyed chimera encounter and the First Flame return. Restarting
+the great mechanism and advancing the sun remain a later chapter. Ordinary fuel
+cannot substitute for that flame. The smaller vanilla workshop furnaces can
+still be used normally by a player.
 
 ## Commands and upgrading
 
@@ -151,7 +152,7 @@ The Forge deliberately requires suitable mountain cover, so a synchronous
 vanilla `/locate` can take time. The folio spreads its work across ticks. A
 creative resonator has no remembered hearth until you obtain one at a hearth.
 Discovery state persists per player with the Elysium world, across death and
-reconnection. The current chapter introduces four advancements.
+reconnection. The Forge and Tartarus route introduce eight discovery advancements.
 
 ## Implementation boundaries
 

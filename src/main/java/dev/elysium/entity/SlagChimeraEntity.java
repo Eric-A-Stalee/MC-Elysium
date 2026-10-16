@@ -90,6 +90,8 @@ public final class SlagChimeraEntity extends Mob {
         if(phase()!=4&&age<15) {
             double dx=target.getX()-getX(),dz=target.getZ()-getZ();setYRot((float)Math.toDegrees(Math.atan2(-dx,dz)));setYHeadRot(getYRot());
         }
+        if(phase()!=4&&age==1)server.playSound(null,blockPosition(),
+                phase()==1?SoundEvents.BLAZE_BURN:SoundEvents.IRON_GOLEM_STEP,SoundSource.HOSTILE,1.2f,.5f);
         if(phase()!=4&&age%5==0) {
             var e=eyeCenter(0);server.sendParticles(ParticleTypes.SMALL_FLAME,e.x,e.y,e.z,4,.7,.7,.7,.01);
             if(phase()==3)for(int i=0;i<24;i++) {double a=i*Math.PI/12;server.sendParticles(ParticleTypes.ASH,getX()+Math.cos(a)*14,getY()+.25,getZ()+Math.sin(a)*14,1,0,0,0,0);}

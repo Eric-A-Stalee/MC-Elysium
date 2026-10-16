@@ -29,8 +29,14 @@ public final class SlagChimeraRenderer extends EntityRenderer<SlagChimeraEntity>
     @Override public void render(SlagChimeraEntity e,float yaw,float partial,PoseStack p,MultiBufferSource buffer,int light) {
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-e.getYRot()));
         double breath=Math.sin((e.tickCount+partial)*.035)*.08;
-        box(p,buffer,light,Blocks.BLACKSTONE,0,.1,0,9,2.6+breath,10);
-        box(p,buffer,light,Blocks.OBSIDIAN,-.6,1.5,-.8,6.5,2.5,7.5);
+        // Individual slag columns give the heavy body an uneven outline and keep the
+        // active pack's texel scale close to the surrounding world.
+        for(int x=-4;x<=4;x++)for(int z=-5;z<=5;z++) {
+            double r=x*x/21.0+z*z/31.0;
+            if(r>1.08+Math.sin(x*3.1+z*1.7)*.07)continue;
+            double height=1.1+2.9*Math.max(0,1-r)+Math.sin(x*7+z*11)*.22+breath;
+            box(p,buffer,light,(x+z)%4==0?Blocks.OBSIDIAN:Blocks.BLACKSTONE,x*1.05,.08,z*1.05,1.2,height,1.2);
+        }
         // Unequal dragging lobes, with tapering tar ribbons rather than humanoid limbs.
         for(int side:new int[]{-1,1})for(int i=0;i<5;i++) {
             double z=-4+i*2.05,x=side*(4.4+Math.sin(i*2.3+side)*.6),w=2.1+i%2*.6;
