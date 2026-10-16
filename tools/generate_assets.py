@@ -314,7 +314,8 @@ for name, texture in [('burnt_clinker','blackstone'),('cinder_ash','gray_terraco
     asset(f'blockstates/{name}',{'variants':{'':{'model':f'elysium:block/{name}'}}})
     asset(f'models/item/{name}',{'parent':f'elysium:block/{name}'})
     if name not in ('tartarus_counterweight','tartarus_heart'):loot(name,[pool([item(f'elysium:{name}')],[SURVIVES])])
-asset('blockstates/chimera_glow',{'variants':{'':{'model':'minecraft:block/air'}}})
+asset('models/block/chimera_glow',{'textures':{'particle':'minecraft:block/blackstone'},'elements':[]})
+asset('blockstates/chimera_glow',{'variants':{'':{'model':'elysium:block/chimera_glow'}}})
 # Cage holds an amber light. A normal block light when placed; no held dynamic-light dependency.
 lamp=[cuboid([3,0,3],[13,2,13],'#iron'),cuboid([4,11,4],[12,13,12],'#copper'),cuboid([5,3,5],[11,10,11],'#light')]
 for x in (4,11):

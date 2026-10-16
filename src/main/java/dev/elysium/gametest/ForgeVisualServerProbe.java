@@ -31,6 +31,18 @@ public final class ForgeVisualServerProbe {
     // A real surveyed mountain shoulder in the seed-zero Elysium terrain, not a flat test room.
     private static final ForgePlan PLAN=new ForgePlan(-3524,-3804,100,1);
 
+    private static final dev.elysium.structure.TartarusDepthsPlan DEPTHS=new dev.elysium.structure.TartarusDepthsPlan(-3900,-4200,17);
+    private static boolean depthsReady;
+    private static void prepareDepths(ServerLevel level) {
+        if(depthsReady)return;
+        var piece=new dev.elysium.structure.TartarusDepthsPiece(DEPTHS);var bounds=piece.getBoundingBox();
+        for(int x=bounds.minX()>>4;x<=bounds.maxX()>>4;x++)for(int z=bounds.minZ()>>4;z<=bounds.maxZ()>>4;z++) {
+            level.setChunkForced(x,z,true);level.getChunk(x,z);var chunk=new ChunkPos(x,z);
+            piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,
+                    new BoundingBox(chunk.getMinBlockX(),-256,chunk.getMinBlockZ(),chunk.getMaxBlockX(),319,chunk.getMaxBlockZ()),chunk,BlockPos.ZERO);
+        }
+        depthsReady=true;
+    }
     @SubscribeEvent public static void started(ServerStartedEvent event) {
         if(!ENABLED)return;
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
@@ -91,6 +103,25 @@ public final class ForgeVisualServerProbe {
             }
             case "gallery" -> camera(player,level,22,PLAN.floor()+9,66,0,PLAN.floor()+8,79);
             case "collapse" -> camera(player,level,-7,PLAN.floor()+2,92,-22,PLAN.floor()+9,82);
+            case "descent" -> {
+                prepareDepths(level);level.setBlock(DEPTHS.at(-9,-183,165),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,-10,-182,158,-18,-184,181);
+            }
+            case "crossing" -> {
+                level.setBlock(DEPTHS.at(-3,-182,187),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,-6,-182,190,19,-193,196);
+            }
+            case "chimera_dark" -> {
+                var heart=(dev.elysium.block.DepthsControlBlockEntity)level.getBlockEntity(DEPTHS.heart());
+                heart.use(player,new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.CHAIN_RESONATOR.get()));
+                depthsCamera(player,level,116,-230,246,128,-226,220);
+            }
+            case "chimera_lamp" -> {
+                level.setBlock(DEPTHS.at(122,-231,231),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                level.setBlock(DEPTHS.at(132,-231,229),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+                depthsCamera(player,level,116,-230,246,128,-226,220);
+            }
+            case "chimera_eye" -> depthsCamera(player,level,121,-223,234,128,-221,220);
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);
         }
         LogUtils.getLogger().info("ELYSIUM_FORGE_SCENE {}",scene);
@@ -106,6 +137,10 @@ public final class ForgeVisualServerProbe {
         ((ForgeServiceBlockEntity)level.getBlockEntity(pos)).bind(PLAN);
     }
 
+    private static void depthsCamera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
+        double x=DEPTHS.x+u+.5,z=DEPTHS.z+v+.5,dx=tu-u,dz=tv-v,dy=ty-y-1.62;
+        player.teleportTo(level,x,y,z,(float)(Math.toDegrees(Math.atan2(dz,dx))-90),(float)-Math.toDegrees(Math.atan2(dy,Math.hypot(dx,dz))));
+    }
     private static void camera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
         double x=PLAN.worldX(u,v)+.5,z=PLAN.worldZ(u,v)+.5;
         double dx=PLAN.worldX(tu,tv)+.5-x,dz=PLAN.worldZ(tu,tv)+.5-z,dy=ty-y-1.62;

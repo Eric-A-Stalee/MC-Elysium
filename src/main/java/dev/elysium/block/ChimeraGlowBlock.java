@@ -16,7 +16,7 @@ public final class ChimeraGlowBlock extends Block {
     @Override protected RenderShape getRenderShape(BlockState state){return RenderShape.INVISIBLE;}
     @Override protected void onPlace(BlockState state,Level level,BlockPos pos,BlockState old,boolean moving){level.scheduleTick(pos,this,20);}
     @Override protected void tick(BlockState state,ServerLevel level,BlockPos pos,RandomSource random) {
-        boolean source=level.getEntitiesOfClass(SlagChimeraEntity.class,new AABB(pos).inflate(18),e->e.isAlive()&&e.eyePosition().distanceToSqr(pos.getCenter())<5).size()>0;
+        boolean source=level.getEntitiesOfClass(SlagChimeraEntity.class,new AABB(pos).inflate(18),e->e.isAlive()&&e.eyeCenter(0).distanceToSqr(pos.getCenter())<5).size()>0;
         if(!source)level.removeBlock(pos,false);else level.scheduleTick(pos,this,20);
     }
 }
