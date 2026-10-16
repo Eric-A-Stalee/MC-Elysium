@@ -18,6 +18,7 @@ public final class Elysium {
 
     public Elysium(IEventBus modBus, ModContainer container) {
         ModBlocks.BLOCKS.register(modBus);
+        dev.elysium.registry.ModEntities.TYPES.register(modBus);
         ModBlockEntities.TYPES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModItems.TABS.register(modBus);

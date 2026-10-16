@@ -2,6 +2,10 @@ package dev.elysium.registry;
 
 import dev.elysium.Elysium;
 import dev.elysium.block.WildGrainBlock;
+import dev.elysium.block.KeepersLampBlock;
+import dev.elysium.block.KeeperWorkbenchBlock;
+import dev.elysium.block.ChimeraGlowBlock;
+import dev.elysium.block.DepthsControlBlock;
 import dev.elysium.block.GoldenBirchLeavesBlock;
 import dev.elysium.block.LeafLitterBlock;
 import dev.elysium.block.ForgeRecordBlock;
@@ -28,6 +32,22 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Elysium.MOD_ID);
+    public static final DeferredBlock<KeepersLampBlock> KEEPERS_LAMP = BLOCKS.register("keepers_lamp",
+            () -> new KeepersLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 13)));
+    public static final DeferredBlock<KeeperWorkbenchBlock> KEEPER_WORKBENCH = BLOCKS.register("keeper_workbench",
+            () -> new KeeperWorkbenchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SMITHING_TABLE)));
+    public static final DeferredBlock<Block> BURNT_CLINKER = BLOCKS.register("burnt_clinker",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<Block> CINDER_ASH = BLOCKS.register("cinder_ash",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF).strength(.8f)));
+    public static final DeferredBlock<Block> SMOULDERING_CLINKER = BLOCKS.register("smouldering_clinker",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE).lightLevel(s -> 4)));
+    public static final DeferredBlock<ChimeraGlowBlock> CHIMERA_GLOW = BLOCKS.register("chimera_glow",
+            () -> new ChimeraGlowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().air().noLootTable().lightLevel(s -> 8)));
+    public static final DeferredBlock<DepthsControlBlock> TARTARUS_COUNTERWEIGHT = BLOCKS.register("tartarus_counterweight",
+            () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
+    public static final DeferredBlock<DepthsControlBlock> TARTARUS_HEART = BLOCKS.register("tartarus_heart",
+            () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
     public static final DeferredBlock<ForgeServiceBlock> FORGE_SERVICE_LAMP = BLOCKS.register("forge_service_lamp",
             () -> new ForgeServiceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WAXED_WEATHERED_COPPER_BULB)
@@ -53,7 +73,7 @@ public final class ModBlocks {
             () -> new ForgeRecordBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_POLISHED_BLACKSTONE).strength(4.0F),ForgeLore.Record.BINDINGS));
     public static final DeferredBlock<DormantHearthBlock> FORGE_HEARTH = BLOCKS.register("forge_hearth",
             () -> new DormantHearthBlock(BlockBehaviour.Properties.of().strength(12.0F,1200.0F).requiresCorrectToolForDrops()
-                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->1)));
+                    .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY).lightLevel(s->s.getValue(DormantHearthBlock.FLAME)?8:1)));
     public static final DeferredBlock<Block> TARTARUS_CHAIN_BLOCK = BLOCKS.register("tartarus_chain",
             () -> new Block(BlockBehaviour.Properties.of().strength(8.0F, 1200.0F).requiresCorrectToolForDrops()
                     .sound(SoundType.NETHERITE_BLOCK).mapColor(MapColor.COLOR_GRAY)));

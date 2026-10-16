@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "flame=false": {
       "model": "elysium:block/forge_hearth"
+    },
+    "flame=true": {
+      "model": "elysium:block/forge_hearth_flame"
     }
   }
 }

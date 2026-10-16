@@ -114,12 +114,12 @@ public final class TartarusGameTests {
             int index;
             @Override public void run() {
                 for(int batch=0;batch<8 && index<6400;batch++,index++) {
-                    var chunk=placement.getPotentialStructureChunk(realm.getSeed(),(index%80-40)*28,(index/80-40)*28);
+                    var chunk=placement.getPotentialStructureChunk(realm.getSeed(),(index%80-40)*48,(index/80-40)*48);
                     var context=new Structure.GenerationContext(realm.registryAccess(),generator,generator.getBiomeSource(),
                             realm.getChunkSource().randomState(),realm.getServer().getStructureManager(),realm.getSeed(),chunk,realm,structure.biomes()::contains);
                     var stub=structure.findGenerationPoint(context);if(stub.isEmpty())continue;
                     var pieces=stub.get().getPiecesBuilder().build().pieces();
-                    helper.assertTrue(pieces.size()==1 && pieces.getFirst() instanceof TartarusChainPiece,"Exposure and chamber must share one saved piece");
+                    helper.assertTrue(pieces.size()==2 && pieces.getFirst() instanceof TartarusChainPiece && pieces.get(1) instanceof dev.elysium.structure.TartarusDepthsPiece,"Chain and depths must belong to the same saved start");
                     var p=((TartarusChainPiece)pieces.getFirst()).plan();
                     helper.assertTrue(p.top()>100 && p.floor()==-48,"Surface clue must continue deep underground");
                     var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);

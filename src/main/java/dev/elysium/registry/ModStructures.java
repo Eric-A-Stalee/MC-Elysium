@@ -60,6 +60,8 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> TERRACE_PATH_PIECE =
             PIECES.register("terrace_path", () -> (StructurePieceType.ContextlessType) TerracePathPiece::new);
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> TARTARUS_DEPTHS_PIECE =
+            PIECES.register("tartarus_depths", () -> (StructurePieceType.ContextlessType) dev.elysium.structure.TartarusDepthsPiece::new);
     private ModStructures() {}
 
     public static void register(IEventBus modBus) {

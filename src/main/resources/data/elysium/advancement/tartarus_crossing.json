@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:voice_in_iron",
+  "display": {
+    "icon": {
+      "id": "elysium:tartarus_counterweight"
+    },
+    "title": "Across the Cinder Rift",
+    "description": "Repair the fallen crossing with four chains at its counterweight.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

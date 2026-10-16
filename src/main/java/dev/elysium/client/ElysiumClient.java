@@ -25,6 +25,9 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 /** Every client-class reference stays in this client-only subscriber. */
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
+    @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.SLAG_CHIMERA.get(), SlagChimeraRenderer::new);
+    }
     @SubscribeEvent
     public static void grassModels(ModelEvent.ModifyBakingResult event) {
         // The supplier runs when chunk model data is requested, not during baking.

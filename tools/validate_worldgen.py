@@ -211,7 +211,9 @@ def validate_terrain() -> None:
     vertical = combined["argument2"]
     assert vertical["type"] == "minecraft:y_clamped_gradient"
     assert vertical["from_y"] < vertical["to_y"] and vertical["from_value"] > vertical["to_value"]
-    assert vertical["from_y"] <= noise["noise"]["min_y"]
+    # Alpha 18 extends solid geology downward; the old surface gradient stays exact.
+    assert vertical["from_y"] == -64 and vertical["from_value"] == 64
+    assert (noise["noise"]["min_y"], noise["noise"]["height"]) == (-256, 576)
     assert vertical["to_y"] >= noise["noise"]["min_y"] + noise["noise"]["height"]
     height = read_json("worldgen/density_function/terrain_height.json")
 

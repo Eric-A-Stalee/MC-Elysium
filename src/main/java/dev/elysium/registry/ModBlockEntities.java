@@ -11,5 +11,7 @@ public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Elysium.MOD_ID);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ForgeServiceBlockEntity>> FORGE_SERVICE = TYPES.register("forge_service",
             () -> BlockEntityType.Builder.of(ForgeServiceBlockEntity::new, ModBlocks.FORGE_SERVICE_LAMP.get(), ModBlocks.FORGE_SERVICE_SWITCH.get(), ModBlocks.FORGE_EMBER_CHANNEL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.elysium.block.DepthsControlBlockEntity>> DEPTHS_CONTROL = TYPES.register("depths_control",
+            () -> BlockEntityType.Builder.of(dev.elysium.block.DepthsControlBlockEntity::new, ModBlocks.TARTARUS_COUNTERWEIGHT.get(), ModBlocks.TARTARUS_HEART.get()).build(null));
     private ModBlockEntities() {}
 }

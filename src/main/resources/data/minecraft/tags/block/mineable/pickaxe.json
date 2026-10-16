@@ -11,6 +11,11 @@
     "elysium:forge_pilot_light",
     "elysium:forge_debris",
     "elysium:forge_iron",
-    "elysium:forge_ember_channel"
+    "elysium:forge_ember_channel",
+    "elysium:keepers_lamp",
+    "elysium:burnt_clinker",
+    "elysium:smouldering_clinker",
+    "elysium:cinder_ash",
+    "elysium:keeper_workbench"
   ]
 }

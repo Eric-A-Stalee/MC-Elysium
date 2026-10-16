@@ -23,12 +23,29 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /** Examining the cold hearth cannot advance the sun or start a world-wide phase. */
 public final class DormantHearthBlock extends Block {
-    public DormantHearthBlock(Properties properties){super(properties);}
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty FLAME=net.minecraft.world.level.block.state.properties.BooleanProperty.create("flame");
+    public DormantHearthBlock(Properties properties){super(properties);registerDefaultState(stateDefinition.any().setValue(FLAME,false));}
+    @Override protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Block,BlockState> builder){builder.add(FLAME);}
+    public boolean receiveFlame(ServerPlayer player,BlockPos pos,ItemStack stack) {
+        var level=player.serverLevel();var state=level.getBlockState(pos);
+        if(!level.dimension().equals(ElysiumTravel.DIMENSION)||!state.is(this)||state.getValue(FLAME)||!stack.is(ModItems.FIRST_FLAME.get()))return false;
+        var type=level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE)
+                .get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("elysium","hephaestus_forge"));
+        var start=level.structureManager().getStructureAt(pos,type);
+        if(!start.isValid()||start.getPieces().stream().noneMatch(piece->piece instanceof dev.elysium.structure.HephaestusForgePiece forge&&forge.hearth().equals(pos)))return false;
+        level.setBlock(pos,state.setValue(FLAME,true),3);if(!player.getAbilities().instabuild)stack.shrink(1);
+        ForgeLore.award(player,"flame_returned");ForgeLore.tell(player,"flame_returned");
+        level.playSound(null,pos,SoundEvents.BEACON_ACTIVATE,SoundSource.BLOCKS,.8f,.55f);return true;
+    }
     @Override protected InteractionResult useWithoutItem(BlockState state,Level level,BlockPos pos,Player player,BlockHitResult hit) {
         if(player instanceof ServerPlayer server) examine(server,pos,false);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
     @Override protected ItemInteractionResult useItemOn(ItemStack stack,BlockState state,Level level,BlockPos pos,Player player,InteractionHand hand,BlockHitResult hit) {
+        if(stack.is(ModItems.FIRST_FLAME.get())) {
+            if(player instanceof ServerPlayer server&&!receiveFlame(server,pos,stack))ForgeLore.tell(server,"flame_socket");
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if(!stack.is(Items.AMETHYST_SHARD)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if(player instanceof ServerPlayer server && examine(server,pos,true) && !player.getAbilities().instabuild)stack.shrink(1);
         return ItemInteractionResult.sidedSuccess(level.isClientSide);

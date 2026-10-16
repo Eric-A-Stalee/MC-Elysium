@@ -297,6 +297,52 @@ for name, parent, icon, title, description in [
                      "frame": "goal" if name != "forge_survey" else "task", "announce_to_chat": False},
          "criteria": {"discovered": {"trigger": "minecraft:impossible"}}})
 
+# Tartarus expedition: authored geometry, material references owned by the active pack.
+for name, texture in [('burnt_clinker','blackstone'),('cinder_ash','gray_terracotta'),('smouldering_clinker','blackstone'),
+                      ('keeper_workbench','smithing_table_side'),('tartarus_counterweight','chiseled_deepslate'),('tartarus_heart','chiseled_polished_blackstone')]:
+    pieces=[cuboid([0,0,0],[16,16,16],'#base')]
+    textures={'base':f'minecraft:block/{texture}','particle':'#base','metal':'minecraft:block/weathered_copper','ember':'minecraft:block/magma','iron':'minecraft:block/netherite_block'}
+    if name=='smouldering_clinker':
+        pieces += [cuboid([5,15.99,2],[6,16.01,13],'#ember'),cuboid([6,15.99,10],[12,16.01,11],'#ember')]
+    if name=='keeper_workbench':
+        pieces += [cuboid([1,16,1],[15,17,15],'#metal'),cuboid([3,17,4],[5,19,12],'#iron'),cuboid([11,17,4],[13,19,12],'#iron')]
+    if name=='tartarus_counterweight':
+        pieces += [cuboid([6,16,6],[10,23,10],'#iron'),cuboid([1,21,6],[15,23,10],'#metal'),cuboid([1,17,6],[3,21,10],'#metal'),cuboid([13,17,6],[15,21,10],'#metal')]
+    if name=='tartarus_heart':
+        pieces += [cuboid([1,16,1],[4,21,4],'#iron'),cuboid([12,16,12],[15,21,15],'#iron'),cuboid([6,16,6],[10,17,10],'#metal')]
+    asset(f'models/block/{name}',{'parent':'minecraft:block/block','textures':textures,'elements':pieces})
+    asset(f'blockstates/{name}',{'variants':{'':{'model':f'elysium:block/{name}'}}})
+    asset(f'models/item/{name}',{'parent':f'elysium:block/{name}'})
+    if name not in ('tartarus_counterweight','tartarus_heart'):loot(name,[pool([item(f'elysium:{name}')],[SURVIVES])])
+asset('blockstates/chimera_glow',{'variants':{'':{'model':'minecraft:block/air'}}})
+# Cage holds an amber light. A normal block light when placed; no held dynamic-light dependency.
+lamp=[cuboid([3,0,3],[13,2,13],'#iron'),cuboid([4,11,4],[12,13,12],'#copper'),cuboid([5,3,5],[11,10,11],'#light')]
+for x in (4,11):
+    for z in (4,11):lamp.append(cuboid([x,2,z],[x+1,11,z+1],'#copper'))
+lamp += [cuboid([7,13,7],[9,16,9],'#iron')]
+asset('models/block/keepers_lamp',{'parent':'minecraft:block/block','ambientocclusion':False,
+      'textures':{'iron':'minecraft:block/netherite_block','copper':'minecraft:block/copper_block','light':'minecraft:block/glowstone','particle':'#copper'},'elements':lamp})
+asset('blockstates/keepers_lamp',{'variants':{'':{'model':'elysium:block/keepers_lamp'}}})
+asset('models/item/keepers_lamp',{'parent':'elysium:block/keepers_lamp'})
+loot('keepers_lamp',[pool([item('elysium:keepers_lamp')],[SURVIVES])])
+asset('models/item/first_flame',{'parent':'minecraft:block/block','gui_light':'front','ambientocclusion':False,
+      'textures':{'shell':'minecraft:block/obsidian','flame':'minecraft:block/glowstone','hot':'minecraft:block/orange_concrete','particle':'#flame'},
+      'elements':[cuboid([3,1,3],[13,4,13],'#shell'),cuboid([5,4,5],[11,12,11],'#hot'),
+                  cuboid([6,5,6],[10,14,10],'#flame'),cuboid([7,14,7],[9,16,9],'#hot')]})
+hearth=json.loads(OUTPUTS['assets/elysium/models/block/forge_hearth.json'])
+hearth['textures']['socket']='minecraft:block/glowstone'
+asset('models/block/forge_hearth_flame',hearth)
+asset('blockstates/forge_hearth',{'variants':{'flame=false':{'model':'elysium:block/forge_hearth'},'flame=true':{'model':'elysium:block/forge_hearth_flame'}}})
+for name,parent,icon,title,description in [
+    ('keepers_lamp','borrowed_light','keepers_lamp','A Light to Carry','Restore the workshop embers, then bring a lantern, copper ingot and amethyst shard to the Keeper workbench. Place and recover the lamp along the descent.'),
+    ('tartarus_crossing','voice_in_iron','tartarus_counterweight','Across the Cinder Rift','Repair the fallen crossing with four chains at its counterweight.'),
+    ('first_flame','tartarus_crossing','first_flame','The Fire Within','Survive the one-eyed chimera. When its attack ends, the lowered eye is vulnerable.'),
+    ('flame_returned','first_flame','forge_hearth','A Promise Carried Home','Return the First Flame to the original Forge hearth. The great mechanism is still silent; the afternoon has not ended.')]:
+    data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name=='first_flame' else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
+# Append to the generated pickaxe tag without duplicating the earlier list.
+path='data/minecraft/tags/block/mineable/pickaxe.json'
+mining=json.loads(OUTPUTS[path]);mining['values'] += [f'elysium:{n}' for n in ('keepers_lamp','burnt_clinker','smouldering_clinker','cinder_ash','keeper_workbench')];emit(path,mining)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")

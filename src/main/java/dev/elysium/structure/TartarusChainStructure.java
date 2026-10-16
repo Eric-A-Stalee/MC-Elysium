@@ -14,7 +14,7 @@ public final class TartarusChainStructure extends Structure {
     public TartarusChainStructure(StructureSettings settings) { super(settings); }
     @Override public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         var terrain = new TerrainSampler(context);
-        int floor = context.heightAccessor().getMinBuildHeight() + 16;
+        int floor = TartarusDepthsPlan.ANCHOR_FLOOR;
         boolean axis = context.random().nextBoolean();
         for (int dx = 1; dx <= 13; dx += 4) for (int dz = 1; dz <= 13; dz += 4) {
             int x = context.chunkPos().getMinBlockX() + dx, z = context.chunkPos().getMinBlockZ() + dz;
@@ -31,8 +31,12 @@ public final class TartarusChainStructure extends Structure {
             for(int cx=-r;cx<=r;cx+=6)for(int cz=-r;cz<=r;cz+=6)
                 if(cx*cx+cz*cz<=r*r)covered &= terrain.height(x+cx,z+cz)>plan.get().roof(cx,cz)+20;
             if (!covered) continue;
+            long seed=context.random().nextLong();
             return Optional.of(new GenerationStub(new BlockPos(x, top, z),
-                    builder -> builder.addPiece(new TartarusChainPiece(plan.get()))));
+                    builder -> {
+                        builder.addPiece(new TartarusChainPiece(plan.get()));
+                        builder.addPiece(new TartarusDepthsPiece(new TartarusDepthsPlan(x,z,seed)));
+                    }));
         }
         return Optional.empty();
     }

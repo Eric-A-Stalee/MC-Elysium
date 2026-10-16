@@ -19,7 +19,15 @@ public final class ModItems {
     public static final DeferredItem<ResonanceItem> FORGE_SURVEY = ITEMS.register("forge_survey", () -> new ResonanceItem(new Item.Properties().stacksTo(1),true));
     public static final DeferredItem<ResonanceItem> CHAIN_RESONATOR = ITEMS.register("chain_resonator", () -> new ResonanceItem(new Item.Properties().stacksTo(1).fireResistant(),false));
 
+    public static final DeferredItem<Item> FIRST_FLAME = ITEMS.registerSimpleItem("first_flame", new Item.Properties().stacksTo(1).fireResistant());
     static {
+        ITEMS.registerSimpleBlockItem(ModBlocks.KEEPERS_LAMP, new Item.Properties().fireResistant());
+        ITEMS.registerSimpleBlockItem(ModBlocks.KEEPER_WORKBENCH);
+        ITEMS.registerSimpleBlockItem(ModBlocks.BURNT_CLINKER);
+        ITEMS.registerSimpleBlockItem(ModBlocks.CINDER_ASH);
+        ITEMS.registerSimpleBlockItem(ModBlocks.SMOULDERING_CLINKER);
+        ITEMS.registerSimpleBlockItem(ModBlocks.TARTARUS_COUNTERWEIGHT);
+        ITEMS.registerSimpleBlockItem(ModBlocks.TARTARUS_HEART);
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_LEAVES);
         ITEMS.registerSimpleBlockItem(ModBlocks.GOLDEN_BIRCH_SAPLING);
         ITEMS.registerSimpleBlockItem(ModBlocks.WILD_GRAIN);
@@ -42,6 +50,9 @@ public final class ModItems {
             () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.elysium"))
                     .icon(() -> ELYSIUM_SIGIL.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        output.accept(FIRST_FLAME);output.accept(ModBlocks.KEEPERS_LAMP);output.accept(ModBlocks.KEEPER_WORKBENCH);
+                        output.accept(ModBlocks.BURNT_CLINKER);output.accept(ModBlocks.CINDER_ASH);output.accept(ModBlocks.SMOULDERING_CLINKER);
+                        output.accept(ModBlocks.TARTARUS_COUNTERWEIGHT);output.accept(ModBlocks.TARTARUS_HEART);
                         output.accept(ELYSIUM_SHARD); output.accept(ELYSIUM_FRAGMENT); output.accept(ELYSIUM_SIGIL);
                         output.accept(ModBlocks.HARVEST_ALTAR); output.accept(ModBlocks.GOLDEN_BIRCH_LEAVES);
                         output.accept(ModBlocks.GOLDEN_BIRCH_SAPLING); output.accept(ModBlocks.WILD_GRAIN);

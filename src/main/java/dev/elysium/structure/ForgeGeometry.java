@@ -53,6 +53,7 @@ public final class ForgeGeometry {
         if(plan.edge(u,v)||y>=roof-1)return masonry(u,h,v);
         state=machinery(u,h,v);if(state!=null)return state;
         state=galleries(u,h,v);if(state!=null)return state;
+        if(u==-42&&h==1&&v==60)return ModBlocks.KEEPER_WORKBENCH.get().defaultBlockState();
         state=workshops(u,h,v);if(state!=null)return state;
         state=rearShrine(u,h,v);if(state!=null)return state;
         // Low niches flank the last bend; the central approach has no lamp pillars.

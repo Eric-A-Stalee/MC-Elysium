@@ -1,0 +1,108 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "base": "minecraft:block/blackstone",
+    "particle": "#base",
+    "metal": "minecraft:block/weathered_copper",
+    "ember": "minecraft:block/magma",
+    "iron": "minecraft:block/netherite_block"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#base"
+        },
+        "up": {
+          "texture": "#base"
+        },
+        "north": {
+          "texture": "#base"
+        },
+        "south": {
+          "texture": "#base"
+        },
+        "west": {
+          "texture": "#base"
+        },
+        "east": {
+          "texture": "#base"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        15.99,
+        2
+      ],
+      "to": [
+        6,
+        16.01,
+        13
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ember"
+        },
+        "up": {
+          "texture": "#ember"
+        },
+        "north": {
+          "texture": "#ember"
+        },
+        "south": {
+          "texture": "#ember"
+        },
+        "west": {
+          "texture": "#ember"
+        },
+        "east": {
+          "texture": "#ember"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        15.99,
+        10
+      ],
+      "to": [
+        12,
+        16.01,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ember"
+        },
+        "up": {
+          "texture": "#ember"
+        },
+        "north": {
+          "texture": "#ember"
+        },
+        "south": {
+          "texture": "#ember"
+        },
+        "west": {
+          "texture": "#ember"
+        },
+        "east": {
+          "texture": "#ember"
+        }
+      }
+    }
+  ]
+}

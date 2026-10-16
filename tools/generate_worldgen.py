@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/main/resources/data/elysium"
 WORLDGEN = DATA / "worldgen"
-MIN_Y, HEIGHT, SEA_LEVEL = -64, 384, 63
+MIN_Y, HEIGHT, SEA_LEVEL = -256, 576, 63
 GOLDEN_HOUR = 11500
 # Approved V4 preview: warmer-amber B foliage on the L3 curve, and G4.1 grass. Grass's 0.95
 # common RGB gain is folded into its 8-bit biome tint (#FFD34A -> #F2C846).
@@ -292,7 +292,7 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     terrain_height = unary("flat_cache", binary("add", binary("add", 60.0, binary("mul", -1.0, channel_depth)), binary("add",
                     binary("mul", channel, upland), binary("mul", shoulder, mountains))))
     terrain_density = binary("mul", 0.05, binary("add", "elysium:terrain_height",
-                                                    gradient(MIN_Y, 320, 64.0, -320.0)))
+                                                    gradient(-64, 320, 64.0, -320.0)))
     emit(entries, "worldgen/noise/gentle_relief.json", {"firstOctave": -4, "amplitudes": [1.0, 0.5]})
     emit(entries, "worldgen/density_function/terrain_height.json", terrain_height)
     emit(entries, "worldgen/density_function/terrain_density.json", terrain_density)
@@ -816,7 +816,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
         "step": "underground_structures", "terrain_adaptation": "none", "spawn_overrides": {}})
     emit(entries, "worldgen/structure_set/tartarus_chain.json", {
         "structures": [{"structure": "elysium:tartarus_chain", "weight": 1}],
-        "placement": {"type": "minecraft:random_spread", "spacing": 28, "separation": 12,
+        "placement": {"type": "minecraft:random_spread", "spacing": 48, "separation": 24,
                       "salt": 813701245, "spread_type": "linear"}})
     emit(entries, "tags/worldgen/biome/has_structure/tartarus_chain.json",
          {"replace": False, "values": ["elysium:ivory_peaks"]})
