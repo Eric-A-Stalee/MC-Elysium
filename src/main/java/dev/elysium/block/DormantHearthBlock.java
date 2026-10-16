@@ -64,7 +64,7 @@ public final class DormantHearthBlock extends Block {
             ForgeLore.tell(player,"relic");
         }
         ForgeLore.award(player,"cold_hearth");
-        ForgeLore.tell(player,level.getBlockState(pos).getValue(FLAME)?"hearth_restored":"hearth");
+        ForgeLore.tell(player,level.getBlockState(pos).is(this)&&level.getBlockState(pos).getValue(FLAME)?"hearth_restored":"hearth");
         if(first){
             level.playSound(null,pos,SoundEvents.BEACON_DEACTIVATE,SoundSource.BLOCKS,1,.65f);
             level.sendParticles(ParticleTypes.END_ROD,pos.getX()+.5,pos.getY()+1.1,pos.getZ()+.5,18,.6,.15,.6,.005);

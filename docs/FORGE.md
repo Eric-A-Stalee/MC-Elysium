@@ -97,10 +97,24 @@ losing its source goes dark. On reload the saved brazier rebuilds its fire
 through the physical loaded connections, so an unloaded/missing section cannot
 silently conduct. Other Forges have independent reservoirs and bindings.
 
-Restored lighting remains uneven, with small flames above the runners and
-braziers, warm pools around old workstations and dark heights beyond them.
-This service fire cannot restart the hammer, supply the First Flame, light
-the great hearth or start a world event.
+Alpha 20 gives exposed runners actual contained flame blocks with animated
+vanilla fire textures. Service channels emit level 10 light and the main
+brazier emits level 13; terminal bowls emit level 12. Standing on a hot runner
+or entering its flame causes fire damage and ignition. Fire resistance protects
+the player. This fire cannot spread to neighbouring wood, consume scenery or
+overwrite placed blocks or water. It goes out when its supply is banked or cut.
+
+Returning the **First Flame** to the original hearth raises its light to 15.
+Full heat enters at the runner directly beneath it and advances through the
+same physical network at six blocks per second. Restored channels emit level
+14, and the bowls and source brazier reach level 15, Minecraft's maximum block
+light. Flames grow taller and the exposed runners become visibly hotter.
+Contact damage rises from one to three, with longer ignition. The greater
+draught consumes coal twice as fast: five minutes per item, forty minutes
+stored at capacity. Fuel, ignition and an open wheel remain necessary; cracks,
+missing sections and unloaded connections still stop heat. Breaking the hearth
+feed returns the surviving network to ordinary service fire. The hammer, sun
+and later crisis remain unchanged.
 
 Read the **Keeper's Ledger** in the archive workshop and the **Binding
 Inscription** behind the foundry. These provide ordinary written books, with
@@ -125,7 +139,7 @@ The echo awards *A Voice in the Iron*, marks the instrument and describes the
 southern inspection way into the deeper basin. The saved structure identity
 is checked. Bring a Keeper’s Lamp, four chains and equipment for the journey.
 
-The [alpha 18 expedition](TARTARUS.md) supplies the first bounded Tartarus region,
+The [Tartarus expedition](TARTARUS.md) supplies the first bounded Tartarus region,
 the original one-eyed chimera encounter and the First Flame return. Restarting
 the great mechanism and advancing the sun remain a later chapter. Ordinary fuel
 cannot substitute for that flame. The smaller vanilla workshop furnaces can

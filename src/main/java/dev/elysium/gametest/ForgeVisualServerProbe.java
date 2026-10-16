@@ -28,8 +28,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID)
 public final class ForgeVisualServerProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualServer");
-    // A real surveyed mountain shoulder in the seed-zero Elysium terrain, not a flat test room.
-    private static final ForgePlan PLAN=new ForgePlan(-3524,-3804,100,1);
+    private static ForgePlan PLAN;
 
     private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
     private static boolean depthsReady;
@@ -43,6 +42,7 @@ public final class ForgeVisualServerProbe {
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
         prepareDepths(level);
+        PLAN=ForgeNaturalGenerationProbe.generateAndVerify(level);
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
     }
 
@@ -113,6 +113,30 @@ public final class ForgeVisualServerProbe {
                 depthsCamera(player,level,116,-230,246,128,-226,220);
             }
             case "chimera_eye" -> depthsCamera(player,level,121,-223,234,128,-221,220);
+            case "chimera_attack" -> {
+                depthsCamera(player,level,116,-230,246,128,-225,220);
+                player.setGameMode(GameType.SURVIVAL);
+                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,2400,4,false,false));
+                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SATURATION,2400,4,false,false));
+                player.getAbilities().mayfly=true;player.getAbilities().flying=true;player.onUpdateAbilities();
+            }
+            case "forge_service" -> {
+                ignite(level);repair(level,ForgeFixtures.ASH);repair(level,ForgeFixtures.CRACK);repair(level,ForgeFixtures.MISSING);
+                camera(player,level,-10,PLAN.floor()+2,50,-2,PLAN.floor()+1,61);
+            }
+            case "forge_restored" -> {
+                var hearth=ForgeFixtures.hearth(PLAN);
+                boolean accepted=ModBlocks.FORGE_HEARTH.get().receiveFlame(player,hearth,
+                        new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.FIRST_FLAME.get()));
+                if(!accepted)throw new IllegalStateException("Natural Forge refused its First Flame");
+                camera(player,level,-10,PLAN.floor()+2,50,-2,PLAN.floor()+1,61);
+            }
+            case "forge_full_hall" -> camera(player,level,-11,PLAN.floor()+2.5,57,0,PLAN.floor()+11,76);
+            case "forge_banked" -> {
+                var source=(ForgeServiceBlockEntity)level.getBlockEntity(ForgeFixtures.source(PLAN));
+                if(source.airflow())source.toggleAirflow();
+                camera(player,level,-10,PLAN.floor()+2,50,-2,PLAN.floor()+1,61);
+            }
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);
         }
         LogUtils.getLogger().info("ELYSIUM_FORGE_SCENE {}",scene);

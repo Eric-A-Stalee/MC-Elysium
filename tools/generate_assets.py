@@ -358,7 +358,7 @@ for name,parent,icon,title,description in [
     ('keepers_lamp','borrowed_light','keepers_lamp','A Light to Carry','Restore the workshop embers, then bring a lantern, copper ingot and amethyst shard to the Keeper workbench. Place and recover the lamp along the descent.'),
     ('tartarus_crossing','voice_in_iron','tartarus_counterweight','Across the Cinder Rift','Repair the fallen crossing with four chains at its counterweight.'),
     ('first_flame','tartarus_crossing','first_flame','The Fire Within','Survive the one-eyed chimera. When its attack ends, the lowered eye is vulnerable.'),
-    ('flame_returned','first_flame','forge_hearth','A Promise Carried Home','Return the First Flame to the original Forge hearth. The great mechanism is still silent; the afternoon has not ended.')]:
+    ('flame_returned','first_flame','forge_hearth','A Promise Carried Home','Return the First Flame to restore full heat through the surviving forge runners. The great hammer and afternoon still wait.')]:
     data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name=='first_flame' else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 # Append to the generated pickaxe tag without duplicating the earlier list.
 path='data/minecraft/tags/block/mineable/pickaxe.json'

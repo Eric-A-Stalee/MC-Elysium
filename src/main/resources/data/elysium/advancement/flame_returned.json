@@ -5,7 +5,7 @@
       "id": "elysium:forge_hearth"
     },
     "title": "A Promise Carried Home",
-    "description": "Return the First Flame to the original Forge hearth. The great mechanism is still silent; the afternoon has not ended.",
+    "description": "Return the First Flame to restore full heat through the surviving forge runners. The great hammer and afternoon still wait.",
     "frame": "goal",
     "announce_to_chat": false
   },

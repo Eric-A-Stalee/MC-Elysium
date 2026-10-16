@@ -17,10 +17,12 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID,value=Dist.CLIENT)
 public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
-    private static final String[] SCENES={"inspection_entry","lower_descent","descent","crossing","chimera_dark"};
+    private static final String[] SCENES={"descent","chimera_dark","chimera_lamp","chimera_eye","chimera_attack",
+            "dark","forge_service","forge_restored","forge_full_hall","forge_banked"};
     private static boolean connecting,requested,captured;
     private static int index;
     private static long next;
+    private static long attackDeadline;
 
     @SubscribeEvent public static void tick(ClientTickEvent.Post event) {
         if(!ENABLED)return;
@@ -43,8 +45,15 @@ public final class ForgeVisualClientProbe {
         }
         if(!requested) {
             mc.player.connection.sendCommand("forge_probe "+SCENES[index]);
-            next=now+(index==0?90_000_000_000L:20_000_000_000L);requested=true;captured=false;
+            next=now+(index==0?90_000_000_000L:20_000_000_000L);attackDeadline=next+30_000_000_000L;requested=true;captured=false;
         } else if(now>=next&&!captured) {
+            if(SCENES[index].equals("chimera_attack")) {
+                boolean bolt=mc.level.getEntitiesOfClass(dev.elysium.entity.CinderBoltEntity.class,mc.player.getBoundingBox().inflate(40),e->e.tickCount>=5&&e.tickCount<=18).size()>0;
+                if(!bolt) {
+                    if(now>=attackDeadline)throw new IllegalStateException("No visible cinder projectile reached the client during the combat capture");
+                    return;
+                }
+            }
             String name=String.format("%02d-%s.png",index+1,SCENES[index]);
             Screenshot.grab(mc.gameDirectory,name,mc.getMainRenderTarget(),message->LogUtils.getLogger().info("Forge capture: {}",message.getString()));
             captured=true;next=now+3_000_000_000L;

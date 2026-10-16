@@ -22,13 +22,17 @@ public final class CinderboundCombatGameTests {
     public static void gazeLaunchesRealBoltsThatDamagePlayersAndStopAtWalls(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1000,170,0));clear(level,base);
         var difficulty=level.getDifficulty();level.getServer().setDifficulty(Difficulty.NORMAL,true);
-        var player=h.makeMockServerPlayerInLevel();var mob=body(level,base);
+        var player=h.makeMockServerPlayerInLevel();
+        player.teleportTo(level,base.getX()+.5,base.getY(),base.getZ()+20.5,0,0);
+        player.setGameMode(GameType.SURVIVAL);
+        h.runAfterDelay(70,()->{
+        var mob=body(level,base);
         try {
             player.setGameMode(GameType.SURVIVAL);player.setPos(Vec3.atBottomCenterOf(base.south(20)));player.setHealth(20);
             for(int n=0;n<15;n++)mob.tick();
             mob.phase(1,44);mob.tick();
             var bolts=level.getEntitiesOfClass(CinderBoltEntity.class,mob.getBoundingBox().inflate(36));
-            h.assertTrue(bolts.size()==1,"The shooting sound must accompany a real projectile entity");
+            h.assertTrue(bolts.size()==1,"The shooting sound must accompany a real projectile entity: "+diagnostic(level,mob,player));
             var bolt=bolts.getFirst();
             h.assertTrue(player.getHealth()==20,"Launch may not apply invisible instant gaze damage");
             Vec3 before=bolt.position();bolt.tick();
@@ -50,16 +54,21 @@ public final class CinderboundCombatGameTests {
             h.assertTrue(player.getHealth()==20,"Creative observers may not take projectile damage");observer.discard();
             h.succeed();
         } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);}
+        });
     }
     @GameTest(template="portal_test_empty",timeoutTicks=200)
     public static void tailAndExpandingPulseDamageOnlyTheirSweptAreas(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1300,170,0));clear(level,base);
         var difficulty=level.getDifficulty();level.getServer().setDifficulty(Difficulty.NORMAL,true);
-        var player=h.makeMockServerPlayerInLevel();var mob=body(level,base);
+        var player=h.makeMockServerPlayerInLevel();
+        player.teleportTo(level,base.getX()+.5,base.getY(),base.getZ()+20.5,0,0);
+        player.setGameMode(GameType.SURVIVAL);
+        h.runAfterDelay(70,()->{
+        var mob=body(level,base);
         try {
             player.setGameMode(GameType.SURVIVAL);reset(player,base.north(10));
             mob.phase(2,0);mob.phase(2,41);mob.tick();
-            h.assertTrue(player.getHealth()<20,"The tail's middle sweep must hit a player standing behind it");
+            h.assertTrue(player.getHealth()<20,"The tail's middle sweep must hit a player standing behind it: "+diagnostic(level,mob,player));
             float health=player.getHealth();player.invulnerableTime=0;mob.tick();
             h.assertTrue(player.getHealth()==health,"One sweep may damage a player only once");
             reset(player,base.south(15));mob.phase(3,0);mob.phase(3,55);mob.tick();
@@ -74,6 +83,12 @@ public final class CinderboundCombatGameTests {
             h.assertTrue(mob.phase()==0,"The encounter must bank its attacks when only spectators remain");
             h.succeed();
         } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);}
+        });
+    }
+    private static String diagnostic(ServerLevel level,SlagChimeraEntity mob,ServerPlayer player) {
+        return "phase="+mob.phase()+" age="+mob.phaseAge()+" body="+mob.position()+" player="+player.position()
+            +" level="+player.level().dimension()+" listed="+level.players().contains(player)+" alive="+player.isAlive()
+            +" creative="+player.isCreative()+" spectator="+player.isSpectator()+" health="+player.getHealth()+" difficulty="+level.getDifficulty();
     }
     private static void reset(ServerPlayer p,BlockPos pos){p.setPos(Vec3.atBottomCenterOf(pos));p.setHealth(20);p.invulnerableTime=0;p.setDeltaMovement(Vec3.ZERO);}
     private static SlagChimeraEntity body(ServerLevel l,BlockPos p) {

@@ -118,14 +118,10 @@ public final class SlagChimeraRenderer extends EntityRenderer<SlagChimeraEntity>
     }
     private void tail(SlagChimeraEntity e,PoseStack p,MultiBufferSource b,int light,float partial,double time) {
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees((float)-Math.toDegrees(e.tailAngle(partial))));
-        boolean sweep=e.phase()==2&&e.phaseAge()>=35;
-        double lower=sweep?Math.sin(Mth.clamp((e.phaseAge()+partial-35)/14,0,1)*Math.PI):0;
         Vec3 previous=new Vec3(.6,2.8,-3.2);
         for(int i=1;i<=15;i++) {
             double t=i/15.0;
-            Vec3 next=new Vec3(.6+.8*Math.sin(t*Math.PI),
-                    2.8+8*Math.sin(t*1.6)-2.2*Math.pow(t,4)-lower*7*t,
-                    -3.2-7.7*Math.sin(t*2.0)-lower*3*t);
+            Vec3 next=e.tailJoint(t,partial);
             double width=2.2-1.5*t;
             limb(p,b,light,i%3==0?Blocks.OBSIDIAN:Blocks.BLACKSTONE,previous,next,width,width*.82);
             if(i%4==0)limb(p,b,ember(light,9),Blocks.ORANGE_TERRACOTTA,previous.add(width*.44,0,0),next.add(width*.44,0,0),.08,.14);

@@ -82,6 +82,15 @@ public final class SlagChimeraEntity extends Mob {
         return age<35?-.95*Math.min(1,age/25):-.95+1.9*Mth.clamp((age-35)/14,0,1);
     }
     public double pulseRadius(float partial){return 10+10*Mth.clamp((phaseAge()+partial-45)/22,0,1);}
+    public Vec3 tailJoint(double t,float partial) {
+        double drop=phase()==2&&phaseAge()>=35?Math.sin(Mth.clamp((phaseAge()+partial-35)/14,0,1)*Math.PI):0;
+        return new Vec3(.6+.8*Math.sin(t*Math.PI),2.8+8*Math.sin(t*1.6)-2.2*Math.pow(t,4)-drop*7*t,
+                -3.2-7.7*Math.sin(t*2.0)-drop*3*t);
+    }
+    public Vec3 tailTip(float partial) {
+        var local=tailJoint(1,partial).add(-.55,-2.2,2);double a=tailAngle(partial),s=Math.sin(a),c=Math.cos(a);
+        return localToWorld(new Vec3(local.x*c-local.z*s,local.y,local.z*c+local.x*s));
+    }
     @Override public boolean isMultipartEntity(){return true;}
     @Override public PartEntity<?>[] getParts(){return parts;}
     @Override public void setId(int id){super.setId(id);if(eye!=null)eye.setId(id+1);}
@@ -106,9 +115,9 @@ public final class SlagChimeraEntity extends Mob {
         boss.setVisible(true);
         if(phase()==0) {phase(1,0);return;}
         int age=phaseAge()+1;entityData.set(AGE,age);
-        if(phase()!=4&&age<=14) {
+        if(phase()==1&&age<=30||phase()==3&&age<=14) {
             double dx=target.getX()-getX(),dz=target.getZ()-getZ();
-            setYRot(Mth.approachDegrees(getYRot(),(float)Math.toDegrees(Math.atan2(-dx,dz)),5));setYHeadRot(getYRot());
+            setYRot(Mth.approachDegrees(getYRot(),(float)Math.toDegrees(Math.atan2(-dx,dz)),phase()==1?6:2));setYHeadRot(getYRot());
             lockedAim=target.position().add(0,target.getBbHeight()*.55,0);
         }
         if(phase()!=4&&age==1)server.playSound(null,blockPosition(),
@@ -138,7 +147,7 @@ public final class SlagChimeraEntity extends Mob {
     public boolean canStrike(Player player,int attack) {
         if(player.isCreative()||player.isSpectator()||!player.isAlive())return false;
         Vec3 delta=player.position().subtract(position());double distance=delta.horizontalDistance();
-        if(Math.abs(delta.y)>8||distance>(attack==1?30:attack==2?13:20))return false;
+        if(Math.abs(delta.y)>8||distance>(attack==1?46:attack==2?13:20))return false;
         Vec3 facing=new Vec3(-Math.sin(Math.toRadians(getYRot())),0,Math.cos(Math.toRadians(getYRot())));
         double dot=new Vec3(delta.x,0,delta.z).normalize().dot(facing);
         if(attack==1&&dot<.93||attack==2&&dot>.3||attack==3&&distance<10)return false;
@@ -156,15 +165,12 @@ public final class SlagChimeraEntity extends Mob {
         server.sendParticles(ParticleTypes.FLAME,from.x,from.y,from.z,12,.35,.35,.1,.02);
     }
     private void sweep(ServerLevel server) {
-        double angle=Math.toRadians(getYRot())+tailAngle(0);
-        Vec3 rear=new Vec3(Math.sin(angle),0,-Math.cos(angle));
+        Vec3 tip=tailTip(0);
+        var swept=net.minecraft.world.phys.AABB.ofSize(tip,4.8,4,4.8);
         for(Player player:server.players()) {
-            Vec3 d=player.position().subtract(position());
-            if(canStrike(player,2)&&d.horizontalDistance()>=5&&Math.abs(d.y)<3
-                    &&new Vec3(d.x,0,d.z).normalize().dot(rear)>.94)damageOnce(player,9);
+            if(canStrike(player,2)&&player.getBoundingBox().intersects(swept))damageOnce(player,9);
         }
-        Vec3 tip=position().add(rear.scale(11)).add(0,1,0);
-        server.sendParticles(ParticleTypes.FLAME,tip.x,tip.y,tip.z,5,.5,.3,.5,.01);
+        server.sendParticles(ParticleTypes.FLAME,tip.x,Math.max(tip.y,getY()+.2),tip.z,5,.5,.3,.5,.01);
     }
     private void damageOnce(Player player,float damage) {
         if(!struck.add(player.getUUID()))return;

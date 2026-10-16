@@ -53,16 +53,16 @@ def main():
                 time.sleep(2)
             else:
                 raise TimeoutError('Visual server never completed its mountain placement')
-            print('Natural Tartarus references, route and chamber verified; starting real Minecraft client', flush=True)
+            print('Natural Tartarus and Forge references and fixtures verified; starting real Minecraft client', flush=True)
             with (CLIENT / 'probe.log').open('w') as client_log:
                 client = subprocess.Popen(['xvfb-run', '-a', '-s', '-screen 0 1280x720x24', *args, 'runForgeVisualClient'],
                                           cwd=ROOT, env=env, stdout=client_log, stderr=subprocess.STDOUT,
                                           start_new_session=True)
-                result = client.wait(timeout=480)
+                result = client.wait(timeout=600)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 5 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            if result or len(images) != 10 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured five actual vanilla-rendered Tartarus views:', *(p.name for p in images), sep='\n')
+            print('Captured ten actual vanilla-rendered creature and Forge views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)

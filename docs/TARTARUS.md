@@ -1,6 +1,12 @@
-# Tartarus expedition — alpha 19 design and player notes
+# Tartarus expedition — alpha 20 design and player notes
 
-Alpha 19 corrects the alpha 18 generation cutoff: the earlier footprint extended
+Alpha 20 reshapes the creature with unequal dragging limbs, a bowed neck, an
+irregular amber eye and an articulated hooked tail. Cinder volleys now travel
+as visible entities and collide with cover; the tail and ground pulse have
+spatially timed damage. Broader stone strata and localized collapse soften
+the basin's repetitive material pattern without changing its route or size.
+
+Alpha 19 corrected the alpha 18 generation cutoff: the earlier footprint extended
 beyond the chunks that Minecraft discovers from one structure start. The
 descent now folds through the rock, and the saved start lies nearer the centre
 of the complete installation. Basin size, chamber size and depth are retained.
@@ -27,7 +33,8 @@ at Y=-48. The first Tartarus regions are bounded installations in the geology,
 not a dimension-wide cave generator. No ReTerraForged dependency is introduced.
 
 The main Forge restart, moving sun and later crisis are a subsequent chapter.
-This expedition ends with the First Flame returned to its socket; ordinary
+Returning the First Flame now restores full heat to the connected, burning
+Forge network. Coal, ignition and airflow are still required. Ordinary
 exploration, the keeper's lamp and the service brazier never advance the sun.
 
 ## Play the expedition
@@ -56,16 +63,22 @@ exploration, the keeper's lamp and the service brazier never advance the sun.
    separate, dark chamber. Use the Chain Resonator on this socket to awaken
    **The Cinderbound Eye**. It is the original tarry, one-eyed chimera, with a
    dragging body, long neck and hooked tail—not a humanoid keeper.
-5. The creature warns before a forward gaze, rear tail sweep or outer ground
-   pulse. Solid cover stops attacks. After each attack its eye lowers and becomes
-   vulnerable for three seconds; the slag body resists damage. It has 360 health.
-   It does not destroy terrain, spread fire or attack creative/spectator players.
+5. The eye locks its aim before releasing three travelling cinder bolts. Each
+   bolt deals six damage before armour/difficulty effects, collides with solid
+   cover and expires; it never ignites or explodes terrain. The rear tail sweep
+   deals nine damage where the moving hook passes, and the ground pulse deals
+   seven as its ring expands from ten to twenty blocks. Cover blocks both.
+   After each attack the eye lowers and becomes vulnerable for three seconds;
+   the slag body resists damage. It has 360 health. Peaceful difficulty and
+   creative/spectator players do not activate attacks.
 6. Defeating the creature releases a **First Flame** for nearby players. Others
    can collect their first copy at the binding. A saved claim prevents repeat
    collection; if a flame is lost, offer one Elysium Fragment there to recover it.
 7. Sneak-use the resonator for the remembered Forge bearing. Place the flame in
-   the **original Forge hearth**. The socket begins to glow, but the great hammer
-   remains still and the afternoon stays at 11,500 ticks.
+   the **original Forge hearth**. Stronger heat spreads from its physical feed
+   through the connected, burning runners. Repaired channels burn brighter
+   and are more dangerous; coal lasts five minutes at full heat instead of ten.
+   The great hammer remains still and the afternoon stays at 11,500 ticks.
 
 The encounter and repair record persist across reloads. A chamber does not
 respawn its defeated creature. Reconciliation of a missing entity waits for its
@@ -90,8 +103,10 @@ except where these pieces excavate their bounded spaces.
 `DepthsControlBlockEntity` owns repair status, the single creature UUID, victory
 and player claims. `SlagChimeraEntity` owns combat, health and the real multipart
 eye target. Client-only rendering builds its anatomy from authored voxel geometry
-using active-pack vanilla material references. Only the eye and stinger use
-emissive rendering; the creature's body receives ordinary world light. A small,
+using active-pack vanilla material references. The iris, stinger and thin ember fissures use emissive rendering; the dark
+anatomy receives ordinary world light. The rendered socket and hook share
+their poses with the eye hitbox and swept damage volume. A cinder bolt is an
+entity with a full-bright fire-charge model, visible even with minimal particles. A small,
 expiring light source follows the eye or a held Keeper’s Lamp without overwriting
 solid player blocks. Held light never loads chunks and stops outside the depths.
 
