@@ -789,6 +789,12 @@ palette, fixed time, towns and Tartarus chamber design remain unchanged.
 
 ## Alpha 18 Tartarus expedition (October 16, 2026)
 
+Subsequent player testing exposed a coverage gap in this pass: the checks below
+validated candidate selection and explicit piece placement, but bypassed normal
+chunk structure-reference discovery. The oversized layout therefore passed
+these checks while being truncated in ordinary world generation. Alpha 19's
+natural-generation regression below replaces that missing coverage.
+
 Verified implementation: `e15622835fbecff19f29748df977f3d2102c8b6c`.
 [GitHub Actions run 38835133098](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38835133098)
 passed the generated-content checks, Java build, optional compatibility guard,
@@ -819,8 +825,9 @@ default textures, no external shaders, gamma 0.5, FOV 70, a ten-chunk render
 distance, Xvfb and Mesa software OpenGL. The production depths piece was placed
 with its normal chunk clipping at X=-3900 / Z=-4200, local seed 17, in a
 disposable seed-zero Elysium world. The harness deliberately disables automatic
-structure placement to avoid overlapping fixtures; natural placement is tested
-separately. The lamps in these captures are review fixtures, not pre-lit chamber
+structure placement to avoid overlapping fixtures; the separate candidate/start
+survey also explicitly places pieces and did not test reference discovery.
+The lamps in these captures are review fixtures, not pre-lit chamber
 decorations. Earlier captures exposed a sealed passage collar, pale deep fog
 and a creature facing away from the approach; the final source corrects these,
 and a raycast regression check protects the entrance sightline.

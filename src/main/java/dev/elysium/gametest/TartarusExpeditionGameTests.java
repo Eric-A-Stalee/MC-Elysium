@@ -44,6 +44,11 @@ public final class TartarusExpeditionGameTests {
                         "The folded route must still meet the upper vault's southern floor");
                 h.assertTrue(depths.materialAt(entrance.x(),-47,entrance.z()).isAir(),
                         "The depths piece must cut open the vault entrance");
+                for(int v=TartarusDepthsPlan.ANCHOR_Z+20;v<entrance.z();v++)for(int y=-47;y<=-46;y++) {
+                    var state=depths.materialAt(10,y,v);
+                    if(state==null)state=chain.materialAt(10,y,v-TartarusDepthsPlan.ANCHOR_Z);
+                    h.assertTrue(state!=null&&state.isAir(),"The anchor-floor approach may not be sealed by the passage's end cap");
+                }
             }
         }
         var oldBounds=new BoundingBox(-87,-245,-4,166,-43,300);

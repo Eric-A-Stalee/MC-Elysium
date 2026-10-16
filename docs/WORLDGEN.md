@@ -562,3 +562,24 @@ This depth change requires a fresh alpha world or full Elysium regeneration.
 The earlier palette-only updates above did not. See [Tartarus](TARTARUS.md) for
 the current generation plan and [verification notes](TESTING.md) for the tested
 source commit and real client captures.
+
+## Alpha 19 natural structure-reference correction
+
+Alpha 18's depths stretched too far south of the chain's start chunk. Minecraft
+discovers nearby starts within eight chunks when generating structure references;
+chunks beyond that reach never called the piece, leaving a sharp plane of
+uncarved stone. Explicitly calling `placeInChunk` for every piece chunk had
+concealed that error in the original verification.
+
+The anchor now sits northwest of the start chunk's centre. The depths plan's
+origin is 96 blocks north of the anchor, and the upper descent folds west through
+the rock before joining the basin. The basin, crossing and creature chamber keep
+their sizes and elevations. Every candidate's two piece bounds must fit within
+the start's eight-chunk reference window or the candidate is rejected. This
+requires no global chunk-loading changes or generator mixins.
+
+The visual review enables normal structures and first visits the chamber's far
+end. It verifies actual chunk references, the complete walk route, bound controls
+and material samples before starting the client. Alpha 18 fails this same test
+with a missing reference and `minecraft:stone` at the expected chamber control.
+Regenerate existing partial structures; this update does not repair saved chunks.

@@ -51,10 +51,14 @@ public final class TartarusDepthsPiece extends StructurePiece {
             if(path.distance()<=1&&v>=143&&y<path.floor()-1&&y>=(chamber<1?TartarusDepthsPlan.BOSS_FLOOR:floor))return stone(u,y,v);
             if(path.distance()<=1&&y>=path.floor()-1&&y<=path.floor()+4) {
                 if(y<=path.floor())return b(plan.hash(u,y,v)%7==0?Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS:Blocks.POLISHED_BLACKSTONE_BRICKS);
-                if(path.distance()==1&&y==path.floor()+1&&plan.hash(u,0,v)%23==0)return b(ModBlocks.FORGE_DEBRIS.get());
+                if(path.distance()==1&&path.floor()!=TartarusDepthsPlan.ANCHOR_FLOOR
+                        &&y==path.floor()+1&&plan.hash(u,0,v)%23==0)return b(ModBlocks.FORGE_DEBRIS.get());
                 return b(Blocks.CAVE_AIR);
             }
-            if(path.distance()<=2&&y>=path.floor()-2&&y<=path.floor()+5&&((basin>1&&chamber>1.10)||v<143)) {
+            // Leave the northern mouth open into the anchor vault. A closed
+            // two-block collar here used to wall off the otherwise valid route.
+            if(path.distance()<=2&&(path.floor()!=TartarusDepthsPlan.ANCHOR_FLOOR||v>=TartarusDepthsPlan.ANCHOR_Z+29)
+                    &&y>=path.floor()-2&&y<=path.floor()+5&&((basin>1&&chamber>1.10)||v<143)) {
                 if(y<=path.floor()||y==path.floor()+5||path.distance()==2)return stone(u,y,v);
                 return b(Blocks.CAVE_AIR);
             }

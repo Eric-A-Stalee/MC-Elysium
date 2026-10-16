@@ -64,6 +64,11 @@ final class TartarusNaturalGenerationProbe {
             }
             require(level.getBlockState(new BlockPos(chain.x(), chain.floor() + 6, chain.z()))
                     .is(ModBlocks.TARTARUS_CHAIN_BLOCK.get()), "Anchor did not generate");
+            for (int v = TartarusDepthsPlan.ANCHOR_Z + 20; v < plan.route().getFirst().z(); v++)
+                for (int y = -47; y <= -46; y++) {
+                    var pos = plan.at(10, y, v);
+                    require(level.getBlockState(pos).isAir(), "Anchor-to-passage mouth is blocked at " + pos);
+                }
             int steps = 0;
             for (var step : plan.route()) {
                 var pos = plan.at(step.x(), step.y(), step.z());

@@ -95,7 +95,9 @@ emissive rendering; the creature's body receives ordinary world light. A small,
 expiring light source follows the eye or a held Keeper’s Lamp without overwriting
 solid player blocks. Held light never loads chunks and stops outside the depths.
 
-Use `/locate structure elysium:tartarus_chain` for a natural start. For inspection,
+Use `/locate structure elysium:tartarus_chain` for a natural start. This marks
+the overall structure start; the Chain Resonator gives the exposed chain's
+actual bearing. For inspection,
 `/give @s elysium:keepers_lamp`, `/give @s elysium:chain_resonator` and
 `/summon elysium:slag_chimera` are available. A manually summoned creature has no
 binding and does not award the expedition flame. A creative resonator has no
