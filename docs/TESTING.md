@@ -894,3 +894,70 @@ a manual survival playthrough or a guarantee for every terrain seed.
 
 Use a fresh world or fully regenerate Elysium after installing alpha 19.
 Previously saved, partly generated structures are not repaired in place.
+
+
+## Alpha 20 Cinderbound combat and restored forge fire (October 16, 2026 UTC)
+
+Verified implementation: `e85c550bcecc04daf9adaf67fa13ef72497e8719`.
+[Run 38850270831](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38850270831)
+passes all **66 required GameTests in 1.255 minutes**, the generated-content
+checks and the optional erosion-guard tests. The new combat tests use normal
+`ServerPlayer` instances with an inert transport and expired spawn protection;
+Minecraft's stock GameTest mock reports Creative after a Survival mode change,
+and NeoForge's
+`FakePlayer` is explicitly invulnerable. Neither is suitable for damage tests.
+Production combat or damage handling is not overridden by the test players.
+
+The new checks verify real projectile creation, travel and health loss, solid
+cover consuming bolts, creative immunity, the moving tail's damage and once-per-
+sweep limit, the expanding pulse's active radius, its inner safe pocket, cover
+and spectator exclusion. Forge tests check actual damage and ignition at both
+heat levels, fire resistance, physical propagation from the restored hearth,
+the doubled fuel rate, broken branches, loss of the hearth feed, reload caches,
+solid-cover preservation and extinguishing flame blocks when the draught closes.
+The earlier 62 portal, terrain, structure, progression and lighting tests remain.
+
+The player jar is `elysium-0.1.0-alpha.20.jar` (695,978 bytes), SHA-256
+`9f2b6d7bc5cfc7e40af825f9d4bc9c531a12b056666bf6ab94b1a0dc7c836d84`.
+The downloaded artifact digest and ZIP integrity match. All **143 shipped
+classes** target Java 21 and all **285 source resources** match byte for byte.
+GameTests, visual harnesses and the development flat-world preset are excluded.
+The asset generator reproduces 174 outputs; the worldgen generator reproduces
+106, retaining all six parameterized biomes and the existing surface palette.
+
+The real-client review uses a fresh, ordinary seed-zero world with structures
+enabled. It first visits the distant Tartarus heart chunk, then loads the
+natural start's 272 chunks in reverse order and verifies 516 non-gap route
+steps and 3,861 material samples. A separate natural Forge probe visits its
+hearth chunk first, verifies its structure reference, then loads all 63 chunks
+and checks all 356 physical fixtures. Its source is `[123,163]`, entrance
+`(1983,124,2606)`, rotation 2 and foundry floor Y=52. These probes insert no
+structure starts, references or pieces manually.
+
+The complete CI run also passes both natural-generation probes and the client
+capture sequence. All ten final screenshots were visually reviewed; the client
+log contains no missing Elysium model or texture errors.
+
+The ten camera scenes cover the descent, dark creature chamber, player-lit
+chamber, close eye, real projectile attack, dormant forge, service fire,
+restored fire, full hall and banked draught. The attack camera requires an
+actual client-side cinder-bolt entity before taking its screenshot. The service,
+restored and banked comparison uses the same camera. The forge begins naturally
+dormant; the harness then supplies fuel, repairs the three failed branches and
+returns the First Flame through the original hearth interaction. Chamber lamps
+are placed review fixtures representing player lighting.
+
+These are unmodified 1280x720 Minecraft screenshots with default textures, no
+external shaders, gamma 0.5, FOV 70, render distance ten and Mesa software OpenGL.
+The review uses NeoForge's development launcher with the same compiled code and
+assets. Package inspection is separate; a fresh installer-based client launch
+was not repeated for this release.
+The runner has no audio device or narrator library, so audio is not assessed.
+Scripted cameras and server damage checks are not a manual survival playthrough:
+encounter balance, prolonged multiplayer play and external resource packs or
+shaders still need player feedback. The creature's main body stays stationary;
+its neck, eye, limbs and tail are articulated. The great forge hammer and world
+clock do not start moving in this update.
+
+Use a fresh alpha world or regenerate Elysium for the broader cavern strata,
+localized collapse and new physical hearth feed. Old structures are not migrated.
