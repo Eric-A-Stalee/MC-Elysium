@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.neoforge.event.EventHooks;
 
 /** A visible, finite-lived projectile. It never explodes, lights blocks or loads chunks. */
 public final class CinderBoltEntity extends Projectile implements ItemSupplier {
@@ -31,13 +32,13 @@ public final class CinderBoltEntity extends Projectile implements ItemSupplier {
     }
     @Override public void tick() {
         super.tick();
-        if(tickCount>65||level().getDifficulty()==Difficulty.PEACEFUL
-                ||!level().hasChunkAt(blockPosition())||!level().hasChunkAt(net.minecraft.core.BlockPos.containing(position().add(getDeltaMovement())))) {
+        if(!level().isClientSide&&(tickCount>65||level().getDifficulty()==Difficulty.PEACEFUL
+                ||!level().hasChunkAt(blockPosition())||!level().hasChunkAt(net.minecraft.core.BlockPos.containing(position().add(getDeltaMovement()))))) {
             discard();return;
         }
         if(!level().isClientSide) {
             var hit=ProjectileUtil.getHitResultOnMoveVector(this,this::canHitEntity);
-            if(hit.getType()!=HitResult.Type.MISS) {onHit(hit);return;}
+            if(hit.getType()!=HitResult.Type.MISS&&!EventHooks.onProjectileImpact(this,hit)) {onHit(hit);return;}
         } else {
             var d=getDeltaMovement();
             for(int i=0;i<3;i++)level().addParticle(ParticleTypes.FLAME,getX()-d.x*i/3,getY()-d.y*i/3,getZ()-d.z*i/3,0,.005,0);

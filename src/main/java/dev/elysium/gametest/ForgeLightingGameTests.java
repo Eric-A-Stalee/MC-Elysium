@@ -162,10 +162,8 @@ public final class ForgeLightingGameTests {
     @GameTest(template="portal_test_empty",timeoutTicks=100)
     public static void exposedFireBurnsPlayersAndRespectsFireResistance(GameTestHelper h) {
         var level=h.getLevel();var p=h.absolutePos(new BlockPos(2,80,2));
-        var player=h.makeMockServerPlayerInLevel();
-        player.teleportTo(level,p.getX()+.5,p.getY()+2,p.getZ()+.5,0,0);
-        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
-        h.runAfterDelay(70,()->{try {
+        var player=CombatTestPlayer.create(level,p.above(2));
+        try {
         player.setHealth(20);var block=ModBlocks.FORGE_EMBER_CHANNEL.get();var cold=block.defaultBlockState();
         block.stepOn(level,p,cold,player);h.assertTrue(player.getHealth()==20&&!player.isOnFire(),"Cold channels are safe");
         var low=cold.setValue(ForgeServiceBlock.LIT,true);block.stepOn(level,p,low,player);
@@ -178,7 +176,7 @@ public final class ForgeLightingGameTests {
         block.stepOn(level,p,low.setValue(ForgeServiceBlock.RESTORED,true),player);
         h.assertTrue(player.getHealth()==20&&!player.isOnFire(),"Fire resistance must protect against both contact damage and ignition");
         h.succeed();
-        } finally {level.getServer().getPlayerList().remove(player);}});
+        } finally {level.getServer().getPlayerList().remove(player);}
     }
     private static ForgePlan plan(GameTestHelper h,int offset) {var p=h.absolutePos(new BlockPos(offset,105,0));return new ForgePlan(p.getX(),p.getZ(),p.getY(),0);}
     private static BlockPos world(ForgePlan p,int u,int h,int v) {return new BlockPos(p.worldX(u,v),p.floor()+h,p.worldZ(u,v));}

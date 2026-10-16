@@ -281,7 +281,7 @@ data("loot_modifiers/wheat_shard", {"type": "elysium:wheat_shard", "conditions":
      {"condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:blocks/wheat"},
      {"condition": "minecraft:block_state_property", "block": "minecraft:wheat", "properties": {"age": "7"}}]})
 
-for tag, values in {"leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
+for tag, values in {"fire": ["elysium:forge_flame"], "leaves": ["elysium:golden_birch_leaves"], "saplings": ["elysium:golden_birch_sapling"],
                     "mineable/hoe": ["elysium:golden_birch_leaves"], "mineable/pickaxe": ["elysium:harvest_altar", "elysium:tartarus_chain", "elysium:forge_hearth", "elysium:forge_ledger", "elysium:tartarus_inscription", "elysium:forge_service_lamp", "elysium:forge_service_switch", "elysium:forge_pilot_light", "elysium:forge_debris", "elysium:forge_iron", "elysium:forge_ember_channel"],
                     "mineable/axe": ["elysium:forge_archive"],
                     "needs_iron_tool": ["elysium:tartarus_chain", "elysium:forge_iron"],

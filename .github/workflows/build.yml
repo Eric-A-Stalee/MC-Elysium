@@ -80,6 +80,15 @@ jobs:
           mkdir -p run
           printf 'eula=true\n' > run/eula.txt
           ./gradlew runGameTestServer --no-daemon
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gametest-logs
+          path: |
+            run/logs/
+            build/reports/
+          if-no-files-found: ignore
       - name: Upload mod jar
         if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
         uses: actions/upload-artifact@v4
@@ -101,13 +110,4 @@ jobs:
             run-visual-client/screenshots/
             run-visual-client/probe.log
             run-visual-server/probe.log
-          if-no-files-found: ignore
-      - name: Upload test logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gametest-logs
-          path: |
-            run/logs/
-            build/reports/
           if-no-files-found: ignore

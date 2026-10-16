@@ -22,10 +22,7 @@ public final class CinderboundCombatGameTests {
     public static void gazeLaunchesRealBoltsThatDamagePlayersAndStopAtWalls(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1000,170,0));clear(level,base);
         var difficulty=level.getDifficulty();level.getServer().setDifficulty(Difficulty.NORMAL,true);
-        var player=h.makeMockServerPlayerInLevel();
-        player.teleportTo(level,base.getX()+.5,base.getY(),base.getZ()+20.5,0,0);
-        player.setGameMode(GameType.SURVIVAL);
-        h.runAfterDelay(70,()->{
+        var player=CombatTestPlayer.create(level,base.south(20));
         var mob=body(level,base);
         try {
             player.setGameMode(GameType.SURVIVAL);player.setPos(Vec3.atBottomCenterOf(base.south(20)));player.setHealth(20);
@@ -54,16 +51,12 @@ public final class CinderboundCombatGameTests {
             h.assertTrue(player.getHealth()==20,"Creative observers may not take projectile damage");observer.discard();
             h.succeed();
         } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);}
-        });
     }
     @GameTest(template="portal_test_empty",timeoutTicks=200)
     public static void tailAndExpandingPulseDamageOnlyTheirSweptAreas(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1300,170,0));clear(level,base);
         var difficulty=level.getDifficulty();level.getServer().setDifficulty(Difficulty.NORMAL,true);
-        var player=h.makeMockServerPlayerInLevel();
-        player.teleportTo(level,base.getX()+.5,base.getY(),base.getZ()+20.5,0,0);
-        player.setGameMode(GameType.SURVIVAL);
-        h.runAfterDelay(70,()->{
+        var player=CombatTestPlayer.create(level,base.south(20));
         var mob=body(level,base);
         try {
             player.setGameMode(GameType.SURVIVAL);reset(player,base.north(10));
@@ -83,7 +76,6 @@ public final class CinderboundCombatGameTests {
             h.assertTrue(mob.phase()==0,"The encounter must bank its attacks when only spectators remain");
             h.succeed();
         } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);}
-        });
     }
     private static String diagnostic(ServerLevel level,SlagChimeraEntity mob,ServerPlayer player) {
         return "phase="+mob.phase()+" age="+mob.phaseAge()+" body="+mob.position()+" player="+player.position()
