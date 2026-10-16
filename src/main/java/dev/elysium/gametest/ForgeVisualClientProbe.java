@@ -28,7 +28,7 @@ public final class ForgeVisualClientProbe {
         if(!connecting&&mc.screen instanceof TitleScreen) {
             connecting=true;
             mc.options.hideGui=true;
-            mc.options.renderDistance().set(6);
+            mc.options.renderDistance().set(10);
             mc.options.gamma().set(.5);
             mc.options.fov().set(70);
             ConnectScreen.startConnecting(mc.screen,mc,ServerAddress.parseString("127.0.0.1:25565"),

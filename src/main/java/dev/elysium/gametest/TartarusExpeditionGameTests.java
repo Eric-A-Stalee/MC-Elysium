@@ -99,6 +99,9 @@ public final class TartarusExpeditionGameTests {
         // Only the arena's relevant volume, not a second full-region generation test.
         var clip=new BoundingBox(plan.x+110,-234,plan.z+200,plan.x+146,-215,plan.z+251);
         piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,new net.minecraft.world.level.ChunkPos(pos),pos);
+        h.assertTrue(level.clip(new net.minecraft.world.level.ClipContext(Vec3.atCenterOf(pos.above(2)),Vec3.atCenterOf(plan.monster().above(4)),
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,null)).getType()==net.minecraft.world.phys.HitResult.Type.MISS,
+                "The final passage must open into the chamber, not end in a sealed collar");
         var heart=(DepthsControlBlockEntity)level.getBlockEntity(pos);h.assertTrue(heart!=null&&heart.plan()!=null,"Clipped generation must place and bind the heart");
         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"FlameSeeker"));player.setPos(Vec3.atCenterOf(pos));
         heart.use(player,new ItemStack(ModItems.CHAIN_RESONATOR.get()));var id=heart.creature();
@@ -158,14 +161,36 @@ public final class TartarusExpeditionGameTests {
     }
     @GameTest(template="portal_test_empty",timeoutTicks=100)
     public static void eyeLightWorksInAirAndExpiresWithItsSource(GameTestHelper h) {
-        var level=h.getLevel();var base=h.absolutePos(new BlockPos(24,160,24));
-        var mob=ModEntities.SLAG_CHIMERA.get().create(level);mob.bind(base,Vec3.atBottomCenterOf(base));level.addFreshEntity(mob);
+        var level=h.getLevel();var base=h.absolutePos(new BlockPos(2,160,2));
+        for(int x=(base.getX()-16)>>4;x<=(base.getX()+16)>>4;x++)for(int z=(base.getZ()-16)>>4;z<=(base.getZ()+16)>>4;z++) {
+            level.setChunkForced(x,z,true);level.getChunk(x,z);
+        }
+        var mob=ModEntities.SLAG_CHIMERA.get().create(level);mob.bind(base,Vec3.atBottomCenterOf(base));level.addFreshEntity(mob);mob.tick();
         var light=BlockPos.containing(mob.eyeCenter(0));
         h.runAfterDelay(12,()->{
             h.assertTrue(level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"The eye must place a real light even in an otherwise empty chunk section");
             h.assertTrue(!level.getBlockState(light).isAir()&&level.getBlockState(light).getLightEmission()==8,"Invisible lighting must remain a non-air block for section bookkeeping");
+            h.assertTrue(level.getBlockState(light).getShape(level,light).isEmpty(),"Invisible lighting must not intercept the player’s mining or attack ray");
             mob.discard();
             h.runAfterDelay(25,()->{h.assertTrue(!level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"An unloaded or removed creature may not leave permanent lights");h.succeed();});
+        });
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=140)
+    public static void carriedLampUsesRealLightWithoutReplacingWalls(GameTestHelper h) {
+        var level=h.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
+        var player=h.makeMockServerPlayerInLevel();var pos=new BlockPos(48000,-181,48000);
+        level.setBlock(pos,Blocks.AIR.defaultBlockState(),3);level.setBlock(pos.above(),Blocks.AIR.defaultBlockState(),3);
+        player.teleportTo(level,pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);
+        player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,new ItemStack(ModBlocks.KEEPERS_LAMP.get()));
+        dev.elysium.forge.KeeperLampLight.illuminate(player);
+        h.assertTrue(level.getBlockState(pos.above()).is(ModBlocks.CHIMERA_GLOW.get()),"An offhand lamp must make real light in the depths");
+        level.setBlock(pos.above(),Blocks.DIAMOND_BLOCK.defaultBlockState(),3);dev.elysium.forge.KeeperLampLight.illuminate(player);
+        h.assertTrue(level.getBlockState(pos.above()).is(Blocks.DIAMOND_BLOCK),"Carried light may never overwrite a solid block");
+        level.setBlock(pos.above(),Blocks.AIR.defaultBlockState(),3);dev.elysium.forge.KeeperLampLight.illuminate(player);
+        player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,ItemStack.EMPTY);
+        h.runAfterDelay(30,()->{
+            try {h.assertTrue(!level.getBlockState(pos.above()).is(ModBlocks.CHIMERA_GLOW.get()),"Putting away the lamp must extinguish its temporary light");h.succeed();}
+            finally {level.getServer().getPlayerList().remove(player);}
         });
     }
     private static int count(FakePlayer p,net.minecraft.world.item.Item item) {int n=0;for(int i=0;i<p.getInventory().getContainerSize();i++){var s=p.getInventory().getItem(i);if(s.is(item))n+=s.getCount();}return n;}

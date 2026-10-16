@@ -10,7 +10,9 @@ elongated neck, a low dragging body and hooked stinger tail. There is no
 mechanical keeper. The keepers named in the records and lamp are the vanished
 people who once tended the works. The sealed chamber has no maintained lights;
 the wider basin has only sparse buried embers. Charcoal, burnt umber, clinker
-and sparse ash replace the pale continuous ground of the early concept.
+and sparse ash replace the pale continuous ground of the early concept. Below
+Y=-64, distant air gradually fades to warm darkness instead of pale sky fog;
+water and lava retain their own fog.
 
 Elysium extends down to Y=-256, retaining its existing upper boundary and
 surface height formula. Each newly generated chain includes a saved basin and
@@ -28,8 +30,10 @@ exploration, the keeper's lamp and the service brazier never advance the sun.
    the ash blocking the west workshop's channels. At the **Keeper's Workbench**,
    hold a vanilla lantern with one copper ingot and one amethyst shard in your
    inventory. The bench consumes one of each and supplies a **Keeper's Lamp**.
-   It emits light level 13 **when placed** and can be mined and carried onward.
-   It does not supply dynamic light while held; no shader or lighting mod is required.
+   It emits a small light (level 8) when held below Y=0 in Elysium, including in
+   the off hand, and a stronger light (level 13) when placed. Mine it to carry
+   it onward. Both use ordinary Minecraft lighting; no shader or lighting mod
+   is required. The held light updates twice per second and expires after use.
 2. Take the Chain Resonator from the cold hearth. Follow its bearing to a chain,
    excavate along the links to the Y=-48 anchor, and listen to the bottom link.
    Its book points to the inspection way through the vault's southern wall.
@@ -75,7 +79,8 @@ and player claims. `SlagChimeraEntity` owns combat, health and the real multipar
 eye target. Client-only rendering builds its anatomy from authored voxel geometry
 using active-pack vanilla material references. Only the eye and stinger use
 emissive rendering; the creature's body receives ordinary world light. A small,
-expiring light source follows the eye without overwriting solid player blocks.
+expiring light source follows the eye or a held Keeper’s Lamp without overwriting
+solid player blocks. Held light never loads chunks and stops outside the depths.
 
 Use `/locate structure elysium:tartarus_chain` for a natural start. For inspection,
 `/give @s elysium:keepers_lamp`, `/give @s elysium:chain_resonator` and

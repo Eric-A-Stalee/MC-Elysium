@@ -29,12 +29,12 @@ def main():
     (SERVER / 'eula.txt').write_text('eula=true\n')
     (SERVER / 'server.properties').write_text(
         'online-mode=false\nserver-ip=127.0.0.1\nserver-port=25565\n'
-        'level-seed=0\ngenerate-structures=false\nview-distance=6\nsimulation-distance=4\n'
+        'level-seed=0\ngenerate-structures=false\nview-distance=10\nsimulation-distance=4\n'
         'max-tick-time=-1\nspawn-protection=0\nenforce-secure-profile=false\n'
     )
     (CLIENT / 'options.txt').write_text(
         'version:3955\nonboardAccessibility:false\nshowMultiplayerWarning:false\n'
-        'pauseOnLostFocus:false\nrenderDistance:6\nsimulationDistance:5\n'
+        'pauseOnLostFocus:false\nrenderDistance:10\nsimulationDistance:5\n'
         'maxFps:30\nvsync:false\ngamma:0.5\n'
     )
     args = ['./gradlew', '--no-daemon', '--console=plain', '--max-workers=2', '-Dorg.gradle.jvmargs=-Xmx512m']

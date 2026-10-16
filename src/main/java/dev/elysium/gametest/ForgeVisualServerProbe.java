@@ -106,7 +106,7 @@ public final class ForgeVisualServerProbe {
             case "collapse" -> camera(player,level,-7,PLAN.floor()+2,92,-22,PLAN.floor()+9,82);
             case "descent" -> {
                 prepareDepths(level);level.setBlock(DEPTHS.at(-9,-183,165),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
-                depthsCamera(player,level,-10,-182,158,-18,-184,181);
+                depthsCamera(player,level,-10,-178,158,-18,-184,181);
             }
             case "crossing" -> {
                 level.setBlock(DEPTHS.at(-3,-182,187),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
