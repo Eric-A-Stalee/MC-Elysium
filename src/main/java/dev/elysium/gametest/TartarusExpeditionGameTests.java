@@ -100,7 +100,7 @@ public final class TartarusExpeditionGameTests {
         var clip=new BoundingBox(plan.x+110,-234,plan.z+200,plan.x+146,-215,plan.z+251);
         piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,new net.minecraft.world.level.ChunkPos(pos),pos);
         h.assertTrue(level.clip(new net.minecraft.world.level.ClipContext(Vec3.atCenterOf(pos.above(2)),Vec3.atCenterOf(plan.monster().above(4)),
-                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,(net.minecraft.world.entity.Entity)null)).getType()==net.minecraft.world.phys.HitResult.Type.MISS,
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,net.minecraft.world.phys.shapes.CollisionContext.empty())).getType()==net.minecraft.world.phys.HitResult.Type.MISS,
                 "The final passage must open into the chamber, not end in a sealed collar");
         var heart=(DepthsControlBlockEntity)level.getBlockEntity(pos);h.assertTrue(heart!=null&&heart.plan()!=null,"Clipped generation must place and bind the heart");
         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"FlameSeeker"));player.setPos(Vec3.atCenterOf(pos));
