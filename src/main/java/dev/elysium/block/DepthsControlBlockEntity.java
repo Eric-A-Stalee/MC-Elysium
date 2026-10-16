@@ -55,7 +55,7 @@ public final class DepthsControlBlockEntity extends BlockEntity {
         if(!arenaLoaded(server)){tell(player,"unloaded");return;}
         var mob=ModEntities.SLAG_CHIMERA.get().create(server);
         if(mob==null)return;
-        mob.bind(worldPosition,Vec3.atBottomCenterOf(plan.monster()));mob.setYRot(150);
+        mob.bind(worldPosition,Vec3.atBottomCenterOf(plan.monster()));mob.setYRot(25);mob.setYHeadRot(25);mob.yBodyRot=25;
         if(server.addFreshEntity(mob)){creature=mob.getUUID();missingTicks=0;setChanged();tell(player,"awakening");}
     }
     public boolean repair(Player player,ItemStack held) {
@@ -65,10 +65,13 @@ public final class DepthsControlBlockEntity extends BlockEntity {
         for(int u=6;u<=22;u++)for(int v=189;v<=191;v++) {
             var pos=plan.at(u,-184,v);
             if(server.getChunkSource().getChunkNow(pos.getX()>>4,pos.getZ()>>4)==null){tell(player,"unloaded");return false;}
-            if(!server.getBlockState(pos).isAir()){tell(player,"obstructed");return false;}
+            if(!server.getBlockState(pos).isAir()&&!((u==7||u==21)&&v!=190&&server.getBlockState(pos).is(Blocks.CHAIN))){tell(player,"obstructed");return false;}
+            if(!server.getBlockState(plan.at(u,-200,v)).equals(dev.elysium.structure.TartarusDepthsPiece.fallenDeck(v))){tell(player,"span_missing");return false;}
         }
-        for(int u=6;u<=22;u++)for(int v=189;v<=191;v++)server.setBlock(plan.at(u,-184,v),
-                (v==190?Blocks.POLISHED_BLACKSTONE_BRICKS:Blocks.WAXED_OXIDIZED_COPPER_GRATE).defaultBlockState(),3);
+        for(int u=6;u<=22;u++)for(int v=189;v<=191;v++) {
+            server.setBlock(plan.at(u,-200,v),Blocks.AIR.defaultBlockState(),3);
+            server.setBlock(plan.at(u,-184,v),dev.elysium.structure.TartarusDepthsPiece.fallenDeck(v),3);
+        }
         if(!player.getAbilities().instabuild)held.shrink(4);
         repaired=true;setChanged();server.playSound(null,worldPosition,SoundEvents.CHAIN_PLACE,SoundSource.BLOCKS,1,.6f);tell(player,"repaired");
         if(player instanceof ServerPlayer p)ForgeLore.award(p,"tartarus_crossing");return true;

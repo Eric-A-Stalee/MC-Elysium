@@ -77,12 +77,16 @@ public final class TartarusExpeditionGameTests {
         var level=h.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);var plan=new TartarusDepthsPlan(40000,40000,9);
         var pos=plan.bridgeControl();level.setBlock(pos,ModBlocks.TARTARUS_COUNTERWEIGHT.get().defaultBlockState(),3);
         var control=(DepthsControlBlockEntity)level.getBlockEntity(pos);control.bind(plan);
-        for(int u=6;u<=22;u++)for(int v=189;v<=191;v++)level.setBlock(plan.at(u,-184,v),Blocks.AIR.defaultBlockState(),3);
+        for(int u=6;u<=22;u++)for(int v=189;v<=191;v++) {
+            level.setBlock(plan.at(u,-184,v),Blocks.AIR.defaultBlockState(),3);
+            level.setBlock(plan.at(u,-200,v),TartarusDepthsPiece.fallenDeck(v),3);
+        }
         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"SpanMender"));var chains=new ItemStack(Items.CHAIN,5);
         var obstacle=plan.at(20,-184,190);level.setBlock(obstacle,Blocks.DIAMOND_BLOCK.defaultBlockState(),3);
         h.assertTrue(!control.repair(player,chains)&&chains.getCount()==5&&level.getBlockState(plan.at(6,-184,190)).isAir(),"An obstruction may not consume chains or partially build");
         level.removeBlock(obstacle,false);h.assertTrue(control.repair(player,chains)&&chains.getCount()==1,"Four chains must raise the complete crossing");
         for(int u=6;u<=22;u++)h.assertTrue(!level.getBlockState(plan.at(u,-184,190)).isAir(),"Every deck column must connect");
+        h.assertTrue(level.getBlockState(plan.at(14,-200,190)).isAir(),"Repair must relocate the surviving deck rather than duplicate its material");
         var loaded=(DepthsControlBlockEntity)BlockEntity.loadStatic(pos,control.getBlockState(),control.saveWithFullMetadata(level.registryAccess()),level.registryAccess());
         h.assertTrue(loaded!=null&&loaded.repaired(),"Bridge repair must survive actual block-entity loading");
         h.assertTrue(!control.repair(player,chains)&&chains.getCount()==1,"Repeated use cannot charge again");h.succeed();
@@ -100,7 +104,9 @@ public final class TartarusExpeditionGameTests {
         heart.use(player,new ItemStack(ModItems.CHAIN_RESONATOR.get()));var id=heart.creature();
         h.assertTrue(id!=null&&level.getEntity(id) instanceof SlagChimeraEntity,"The resonator must awaken a real creature");
         heart.use(player,new ItemStack(ModItems.CHAIN_RESONATOR.get()));h.assertTrue(id.equals(heart.creature()),"Repeated activation may not duplicate the boss");
-        var mob=(SlagChimeraEntity)level.getEntity(id);mob.setHealth(72);var tag=new CompoundTag();mob.saveWithoutId(tag);
+        var mob=(SlagChimeraEntity)level.getEntity(id);
+        h.assertTrue(mob.eyeCenter(0).distanceToSqr(Vec3.atCenterOf(pos))<mob.position().distanceToSqr(Vec3.atCenterOf(pos)),"The waking eye must face the approach, not the rear wall");
+        mob.setHealth(72);var tag=new CompoundTag();mob.saveWithoutId(tag);
         var reloaded=ModEntities.SLAG_CHIMERA.get().create(level);reloaded.load(tag);
         h.assertTrue(reloaded.getHealth()==72&&pos.equals(reloaded.control()),"Health and encounter ownership must persist");
         mob.hurt(level.damageSources().genericKill(),10000);
@@ -149,6 +155,18 @@ public final class TartarusExpeditionGameTests {
         h.assertTrue(level.getDayTime()==time&&level.dimensionType().fixedTime().orElseThrow()==11500,"Completing this chapter may not start the sunset");
         var second=new ItemStack(ModItems.FIRST_FLAME.get());h.assertTrue(!block.receiveFlame(player,pos,second)&&second.getCount()==1,"A filled socket may not consume another reward");
         h.succeed();
+    }
+    @GameTest(template="portal_test_empty",timeoutTicks=100)
+    public static void eyeLightWorksInAirAndExpiresWithItsSource(GameTestHelper h) {
+        var level=h.getLevel();var base=h.absolutePos(new BlockPos(24,160,24));
+        var mob=ModEntities.SLAG_CHIMERA.get().create(level);mob.bind(base,Vec3.atBottomCenterOf(base));level.addFreshEntity(mob);
+        var light=BlockPos.containing(mob.eyeCenter(0));
+        h.runAfterDelay(12,()->{
+            h.assertTrue(level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"The eye must place a real light even in an otherwise empty chunk section");
+            h.assertTrue(!level.getBlockState(light).isAir()&&level.getBlockState(light).getLightEmission()==8,"Invisible lighting must remain a non-air block for section bookkeeping");
+            mob.discard();
+            h.runAfterDelay(25,()->{h.assertTrue(!level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"An unloaded or removed creature may not leave permanent lights");h.succeed();});
+        });
     }
     private static int count(FakePlayer p,net.minecraft.world.item.Item item) {int n=0;for(int i=0;i<p.getInventory().getContainerSize();i++){var s=p.getInventory().getItem(i);if(s.is(item))n+=s.getCount();}return n;}
     private TartarusExpeditionGameTests(){}

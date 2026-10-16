@@ -43,7 +43,7 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> SMOULDERING_CLINKER = BLOCKS.register("smouldering_clinker",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE).lightLevel(s -> 4)));
     public static final DeferredBlock<ChimeraGlowBlock> CHIMERA_GLOW = BLOCKS.register("chimera_glow",
-            () -> new ChimeraGlowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().air().noLootTable().lightLevel(s -> 8)));
+            () -> new ChimeraGlowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().lightLevel(s -> 8)));
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_COUNTERWEIGHT = BLOCKS.register("tartarus_counterweight",
             () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_HEART = BLOCKS.register("tartarus_heart",

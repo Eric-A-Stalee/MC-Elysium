@@ -36,7 +36,9 @@ exploration, the keeper's lamp and the service brazier never advance the sun.
 3. Follow the switchbacks into the burnt basin. There are exposed drops; bring
    light, equipment and food. Hold **four vanilla chains** against the seized
    counterweight to raise the 17-block missing span. It refuses an obstructed
-   deck and consumes nothing on failure. Building your own crossing is also possible.
+   deck and consumes nothing on failure. The surviving deck is lifted from below,
+   not duplicated; if you salvage its blocks first, restore them or build your
+   own crossing. Repair currently changes block positions immediately, with sound.
 4. Continue through the rock to **The Last Binding**, at the entrance to the
    separate, dark chamber. Use the Chain Resonator on this socket to awaken
    **The Cinderbound Eye**. It is the original tarry, one-eyed chimera, with a

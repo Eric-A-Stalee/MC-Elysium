@@ -135,5 +135,6 @@
   "message.elysium.depths.obstructed": "Something blocks the fallen span. Clear its deck before raising it.",
   "message.elysium.depths.repaired": "The counterweight lowers. A narrow span crosses the cinder rift.",
   "message.elysium.depths.claimed": "Your flame has already been released. If it was lost, offer a fragment of Elysium here to recover it.",
-  "message.elysium.depths.flame": "In the fallen creature, a fire still lives. Carry it back to the Forge. Sneak-use the resonator for its remembered bearing."
+  "message.elysium.depths.flame": "In the fallen creature, a fire still lives. Carry it back to the Forge. Sneak-use the resonator for its remembered bearing.",
+  "message.elysium.depths.span_missing": "Part of the fallen deck is missing. Restore its blackstone centre and copper-grate edges before raising it, or build your own crossing."
 }

@@ -36,6 +36,12 @@ public final class TartarusDepthsPiece extends StructurePiece {
         if(u==-3&&y==-183&&v==188)return b(ModBlocks.TARTARUS_COUNTERWEIGHT.get());
         if(u==116&&y==-231&&v==246)return b(ModBlocks.TARTARUS_HEART.get());
         if(u>=-4&&u<=-2&&v>=187&&v<=189&&y>=floor&&y<=-184)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
+        // The missing deck survives at the bottom of the drop, held on old chains.
+        if(u>=6&&u<=22&&v>=189&&v<=191&&y==-200)return fallenDeck(v);
+        if((u==7||u==21)&&(v==189||v==191)&&y>=-199&&y<=-179)return b(Blocks.CHAIN);
+        if(u>=5&&u<=23&&(v==189||v==191)&&y==-178)return b(ModBlocks.FORGE_IRON.get());
+        if((u==5||u==23)&&(v==188||v==192)&&y>=-184&&y<=-178)return b(ModBlocks.FORGE_IRON.get());
+        if(u>=-2&&u<=7&&v==188&&y==-183)return b(Blocks.CHAIN).setValue(net.minecraft.world.level.block.ChainBlock.AXIS,net.minecraft.core.Direction.Axis.X);
         if(TartarusDepthsPlan.bridgeGap(u,v)) {
             if(y>=-203&&y<=-179)return b(Blocks.CAVE_AIR);
             floor=Math.min(floor,-204);
@@ -88,6 +94,9 @@ public final class TartarusDepthsPiece extends StructurePiece {
                 return b(ModBlocks.TARTARUS_CHAIN_BLOCK.get());
         }
         return b(Blocks.CAVE_AIR);
+    }
+    public static BlockState fallenDeck(int v) {
+        return b(v==190?Blocks.POLISHED_BLACKSTONE_BRICKS:Blocks.WAXED_OXIDIZED_COPPER_GRATE);
     }
     private BlockState stone(int u,int y,int v) {
         int h=plan.hash(Math.floorDiv(u,3),Math.floorDiv(y,3),Math.floorDiv(v,3))%16;
