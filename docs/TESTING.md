@@ -845,3 +845,52 @@ The surface density formula and palette remain unchanged. This chapter ends
 with returning the First Flame; the main Forge restart and later world-state
 changes are not implemented here. See [Tartarus expedition notes](TARTARUS.md)
 for the playable sequence, commands and architectural boundaries.
+
+## Alpha 19 natural Tartarus generation fix (October 16, 2026 UTC)
+
+The player report of a stone wall across the descent and a partly excavated
+basin was reproduced with the unchanged alpha 18 production code in a fresh
+world. [Run 38840886026](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38840886026)
+passes the original 61 GameTests but fails the new ordinary-generation probe:
+the expected heart chunk `[-661,-1790]` has no reference to the structure start
+`[-668,-1806]`, and the control position contains `minecraft:stone`.
+No pieces or starts were manually inserted by this reproduction.
+
+The fix folds the upper descent and places the start nearer the centre of the
+complete footprint, retaining the basin and chamber dimensions and elevations.
+It also removes the passage's northern end cap, which had blocked the approach
+from the anchor floor. Candidate bounds are checked against the normal
+eight-chunk reference reach. The explicit-placement helper now rejects oversized
+starts instead of allowing that shortcut to conceal another such failure.
+
+Verified implementation: `051af0ee8b88bf83a16f2b690683209f29661f6f`.
+The player jar is `elysium-0.1.0-alpha.19.jar` (674,051 bytes), SHA-256
+`cdf4da35fdf0d939d7d7899f9c370e0ca9b1fe77eabfe5b2ef5a240f7adbc6a2`.
+The artifact digest and ZIP integrity match. All 141 shipped classes target
+Java 21, all 268 source resources match, and GameTests, visual harnesses and the
+development flat preset are excluded from the player jar.
+
+[Run 38841846495](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/38841846495)
+passes all **62 required GameTests**, the compatibility source check, and the
+ordinary-generation/client probe. In a fresh seed-zero world with structures
+enabled, the probe visits the far-end heart chunk first, then loads all **272
+chunks** of the resulting natural start in reverse order. It checks structure
+references, **516 non-gap route steps** including the approach from the anchor,
+two-block headroom, the initially broken crossing, both control block entities,
+the creature volume, and **3,861 material samples**. No structure starts,
+references or pieces are explicitly inserted. The source chunk is `[-184,-1466]`,
+the anchor is `(-2983,-48,-23531)`, and the heart is `(-2867,-231,-23381)`.
+
+Five unmodified 1280x720 client screenshots were captured and visually reviewed:
+the open inspection entrance, lower descent, basin approach, broken crossing,
+and dark creature chamber. They use default textures, no external shaders,
+gamma 0.5, FOV 70 and a ten-chunk render distance. The lamps are fixtures placed
+after the generation checks to represent player lighting, not generated lights.
+The entrance and descent remain dark, with bends; the basin and creature chamber
+are fully excavated in this sample. There are no missing Elysium model or texture
+errors in the client log. The runner has no audio device or narrator library,
+so audio was not assessed. These scripted cameras and automated checks are not
+a manual survival playthrough or a guarantee for every terrain seed.
+
+Use a fresh world or fully regenerate Elysium after installing alpha 19.
+Previously saved, partly generated structures are not repaired in place.
