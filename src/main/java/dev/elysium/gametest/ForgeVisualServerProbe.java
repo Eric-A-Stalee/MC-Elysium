@@ -31,35 +31,17 @@ public final class ForgeVisualServerProbe {
     // A real surveyed mountain shoulder in the seed-zero Elysium terrain, not a flat test room.
     private static final ForgePlan PLAN=new ForgePlan(-3524,-3804,100,1);
 
-    private static final dev.elysium.structure.TartarusDepthsPlan DEPTHS=new dev.elysium.structure.TartarusDepthsPlan(-3900,-4200,17);
+    private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
     private static boolean depthsReady;
     private static void prepareDepths(ServerLevel level) {
         if(depthsReady)return;
-        var piece=new dev.elysium.structure.TartarusDepthsPiece(DEPTHS);var bounds=piece.getBoundingBox();
-        for(int x=bounds.minX()>>4;x<=bounds.maxX()>>4;x++)for(int z=bounds.minZ()>>4;z<=bounds.maxZ()>>4;z++) {
-            level.setChunkForced(x,z,true);level.getChunk(x,z);var chunk=new ChunkPos(x,z);
-            piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,
-                    new BoundingBox(chunk.getMinBlockX(),-256,chunk.getMinBlockZ(),chunk.getMaxBlockX(),319,chunk.getMaxBlockZ()),chunk,BlockPos.ZERO);
-        }
+        DEPTHS=TartarusNaturalGenerationProbe.generateAndVerify(level);
         depthsReady=true;
     }
     @SubscribeEvent public static void started(ServerStartedEvent event) {
         if(!ENABLED)return;
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
-        var piece=new HephaestusForgePiece(PLAN);var bounds=piece.getBoundingBox();
-        for(int x=(bounds.minX()>>4)-1;x<=(bounds.maxX()>>4)+1;x++)
-            for(int z=(bounds.minZ()>>4)-1;z<=(bounds.maxZ()>>4)+1;z++) {
-                level.setChunkForced(x,z,true);
-                level.getChunk(x,z);
-            }
-        for(int x=bounds.minX()>>4;x<=bounds.maxX()>>4;x++)
-            for(int z=bounds.minZ()>>4;z<=bounds.maxZ()>>4;z++) {
-                var chunk=new ChunkPos(x,z);
-                var clip=new BoundingBox(chunk.getMinBlockX(),level.getMinBuildHeight(),chunk.getMinBlockZ(),
-                        chunk.getMaxBlockX(),level.getMaxBuildHeight()-1,chunk.getMaxBlockZ());
-                piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,chunk,BlockPos.ZERO);
-            }
         prepareDepths(level);
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
     }
@@ -73,7 +55,7 @@ public final class ForgeVisualServerProbe {
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"entrance");
+        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"descent");
     }
 
     private static void scene(ServerPlayer player,String scene) {

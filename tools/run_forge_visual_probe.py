@@ -29,7 +29,7 @@ def main():
     (SERVER / 'eula.txt').write_text('eula=true\n')
     (SERVER / 'server.properties').write_text(
         'online-mode=false\nserver-ip=127.0.0.1\nserver-port=25565\n'
-        'level-seed=0\ngenerate-structures=false\nview-distance=10\nsimulation-distance=4\n'
+        'level-seed=0\ngenerate-structures=true\nview-distance=10\nsimulation-distance=4\n'
         'max-tick-time=-1\nspawn-protection=0\nenforce-secure-profile=false\n'
     )
     (CLIENT / 'options.txt').write_text(
