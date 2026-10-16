@@ -100,7 +100,7 @@ public final class TartarusExpeditionGameTests {
         var clip=new BoundingBox(plan.x+110,-234,plan.z+200,plan.x+146,-215,plan.z+251);
         piece.postProcess(level,level.structureManager(),level.getChunkSource().getGenerator(),level.random,clip,new net.minecraft.world.level.ChunkPos(pos),pos);
         h.assertTrue(level.clip(new net.minecraft.world.level.ClipContext(Vec3.atCenterOf(pos.above(2)),Vec3.atCenterOf(plan.monster().above(4)),
-                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,null)).getType()==net.minecraft.world.phys.HitResult.Type.MISS,
+                net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,(net.minecraft.world.entity.Entity)null)).getType()==net.minecraft.world.phys.HitResult.Type.MISS,
                 "The final passage must open into the chamber, not end in a sealed collar");
         var heart=(DepthsControlBlockEntity)level.getBlockEntity(pos);h.assertTrue(heart!=null&&heart.plan()!=null,"Clipped generation must place and bind the heart");
         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"FlameSeeker"));player.setPos(Vec3.atCenterOf(pos));
@@ -168,7 +168,7 @@ public final class TartarusExpeditionGameTests {
         var mob=ModEntities.SLAG_CHIMERA.get().create(level);mob.bind(base,Vec3.atBottomCenterOf(base));level.addFreshEntity(mob);mob.tick();
         var light=BlockPos.containing(mob.eyeCenter(0));
         h.runAfterDelay(12,()->{
-            h.assertTrue(level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"The eye must place a real light even in an otherwise empty chunk section");
+            h.assertTrue(level.getBlockState(light).is(ModBlocks.CHIMERA_GLOW.get()),"The eye must place a real light even in an otherwise empty chunk section: expected="+light+", actual="+level.getBlockState(light)+", eye="+mob.eyeCenter(0)+", tick="+mob.tickCount);
             h.assertTrue(!level.getBlockState(light).isAir()&&level.getBlockState(light).getLightEmission()==8,"Invisible lighting must remain a non-air block for section bookkeeping");
             h.assertTrue(level.getBlockState(light).getShape(level,light).isEmpty(),"Invisible lighting must not intercept the player’s mining or attack ray");
             mob.discard();

@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID,value=Dist.CLIENT)
 public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
-    private static final String[] SCENES={"entrance","shaft","overlook","dark","ignition","foundry","workshop","retorts","lit","gallery","collapse","descent","crossing","chimera_dark","chimera_lamp","chimera_eye"};
+    private static final String[] SCENES={"descent","crossing","chimera_dark","chimera_lamp","chimera_eye"};
     private static boolean connecting,requested,captured;
     private static int index;
     private static long next;

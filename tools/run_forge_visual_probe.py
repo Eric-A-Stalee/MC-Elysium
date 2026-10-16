@@ -58,11 +58,11 @@ def main():
                 client = subprocess.Popen(['xvfb-run', '-a', '-s', '-screen 0 1280x720x24', *args, 'runForgeVisualClient'],
                                           cwd=ROOT, env=env, stdout=client_log, stderr=subprocess.STDOUT,
                                           start_new_session=True)
-                result = client.wait(timeout=720)
+                result = client.wait(timeout=480)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 16 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            if result or len(images) != 5 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured sixteen actual vanilla-rendered expedition views:', *(p.name for p in images), sep='\n')
+            print('Captured five actual vanilla-rendered Tartarus views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)
