@@ -80,7 +80,7 @@ public final class BronzeEagleEntity extends Mob {
         var from=position().add(0,1.3,0);var d=aim.subtract(from).normalize();
         var feather=ModEntities.BRONZE_FEATHER.get().create(level);if(feather==null)return;
         feather.setOwner(this);feather.setPos(from);feather.setDeltaMovement(new Vec3(d.x*Math.cos(spread)-d.z*Math.sin(spread),d.y,d.z*Math.cos(spread)+d.x*Math.sin(spread)).scale(.9));level.addFreshEntity(feather);
-        playSound(SoundEvents.TRIDENT_THROW,1,.6f);
+        playSound(SoundEvents.TRIDENT_THROW.value(),1,.6f);
     }
     @Override public void startSeenByPlayer(ServerPlayer p){super.startSeenByPlayer(p);boss.addPlayer(p);}
     @Override public void stopSeenByPlayer(ServerPlayer p){super.stopSeenByPlayer(p);boss.removePlayer(p);}
