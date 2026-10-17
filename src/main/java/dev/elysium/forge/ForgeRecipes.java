@@ -15,6 +15,7 @@ public final class ForgeRecipes {
     }
     public static List<Work> all() {
         return List.of(
+            new Work("hush_charm",ModItems.ASHEN_FANG.get(),List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),2),new Cost(ModItems.ASHEN_FANG.get(),6)),ModItems.HUSH_CHARM.get(),1),
             new Work("sunwrought", Items.IRON_INGOT, List.of(new Cost(Items.IRON_INGOT,3),new Cost(Items.COPPER_INGOT,2),new Cost(Items.GOLD_INGOT,1)), ModItems.SUNWROUGHT_INGOT.get(),4),
             new Work("watchfire_seal", Items.AMETHYST_SHARD, List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),2),new Cost(Items.AMETHYST_SHARD,1)), ModItems.WATCHFIRE_SEAL.get(),1),
             new Work("wayfinder", Items.COMPASS, List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),2),new Cost(Items.COMPASS,1),new Cost(Items.AMETHYST_SHARD,2)), ModItems.DAWN_WAYFINDER.get(),1),

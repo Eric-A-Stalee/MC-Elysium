@@ -59,31 +59,38 @@ public final class TartarusTerrain {
         int cx = cellX * 112 + 25 + cell % 62, cz = cellZ * 112 + 25 + (cell >>> 7) % 62;
         int dx = x - cx, dz = z - cz;
         double distance = Math.hypot(dx, dz);
-        int pillar = cell % 4 == 0 ? (int)(Math.max(0, 1 - distance / 17) * (roof - floor)) : 0;
-        boolean chain = region == Region.CHAIN_FOREST && cell % 3 != 0;
+        int pillar = cell % 4 == 0 ? (int)(Math.pow(Math.max(0,1-Math.max(0,distance-4)/15),2)*(roof-floor)) : 0;
+        boolean chain = region(cx,cz) == Region.CHAIN_FOREST && cell % 3 != 0;
         int gx = Math.floorDiv(x, 192), gz = Math.floorDiv(z, 192);
         int grave = hash(gx, 43, gz);
         int boneX = gx * 192 + 64 + grave % 64, boneZ = gz * 192 + 64 + (grave >>> 8) % 64;
         int ribX = x - boneX, ribZ = z - boneZ;
         int boneBase = floor(boneX, boneZ);
-        return new Column(x, z, floor, roof, region, dx, dz, pillar, chain, ribX, ribZ, boneBase);
+        boolean bones=region(boneX,boneZ)==Region.TITAN_GRAVE;
+        double weather=detail.getValue((x-37)/37.0,(z+91)/37.0);
+        double seam=Math.abs(fracture.getValue(x/190.0,z/190.0));
+        int sx=Math.floorDiv(x,32),sz=Math.floorDiv(z,32),spike=hash(sx,97,sz);
+        double ceilingDistance=Math.hypot(x-(sx*32+8+spike%17),z-(sz*32+8+(spike>>>7)%17));
+        int pendant=spike%3==0?(int)(Math.max(0,1-ceilingDistance/8)*(14+spike%29)):0;
+        return new Column(x, z, floor, roof, region, dx, dz, pillar, chain, ribX, ribZ, boneBase,bones,weather,seam,pendant);
     }
 
     public final class Column {
         public final int x, z, floor, roof;
         public final Region region;
         private final int dx, dz, pillar, ribX, ribZ, boneBase;
-        private final boolean chain;
+        private final boolean chain,bones;private final double weather,seam;private final int pendant;
         private Column(int x, int z, int floor, int roof, Region region, int dx, int dz, int pillar,
-                       boolean chain, int ribX, int ribZ, int boneBase) {
+                       boolean chain, int ribX, int ribZ, int boneBase,boolean bones,double weather,double seam,int pendant) {
             this.x=x;this.z=z;this.floor=floor;this.roof=roof;this.region=region;
             this.dx=dx;this.dz=dz;this.pillar=pillar;this.chain=chain;
             this.ribX=ribX;this.ribZ=ribZ;this.boneBase=boneBase;
+            this.bones=bones;this.weather=weather;this.seam=seam;this.pendant=pendant;
         }
 
         public BlockState at(int y) {
             if(y <= MIN_Y + 4) return Blocks.BEDROCK.defaultBlockState();
-            if(y <= floor || y >= roof || y <= floor + pillar) return rock(y);
+            if(y <= floor || y >= roof-pendant || y <= floor + pillar) return rock(y);
             if(chain && Math.abs(dx) <= 5 && Math.abs(dz) <= 5) {
                 int link = Math.floorDiv(y, 14), along = Math.floorMod(y, 14) - 7;
                 int across = (link & 1) == 0 ? dx : dz, plane = (link & 1) == 0 ? dz : dx;
@@ -91,34 +98,40 @@ public final class TartarusTerrain {
                 if(Math.abs(plane) <= 1 && ring >= .48 && ring <= 1.6)
                     return ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState();
             }
-            if(region == Region.TITAN_GRAVE && Math.abs(ribZ) <= 54) {
+            if(bones && Math.abs(ribZ) <= 54) {
                 if(Math.abs(ribX) <= 3 && Math.abs(y - boneBase - 4) <= 3)
-                    return Blocks.BONE_BLOCK.defaultBlockState();
+                    return ModBlocks.CHARRED_BONE.get().defaultBlockState();
                 if(Math.floorMod(ribZ + 54, 12) <= 2 && Math.abs(ribX) <= 29) {
                     double arch = ribX * ribX / (29.0 * 29.0) + (y - boneBase - 6.0) * (y - boneBase - 6.0) / (43.0 * 43.0);
                     if(y >= boneBase + 4 && arch >= .84 && arch <= 1.16)
-                        return hash(x, y, z) % 7 == 0 ? Blocks.BASALT.defaultBlockState() : Blocks.BONE_BLOCK.defaultBlockState();
+                        return weather<-.5 ? Blocks.BASALT.defaultBlockState() : ModBlocks.CHARRED_BONE.get().defaultBlockState();
                 }
             }
+            if(bones&&ribZ>=-80&&ribZ<-54){
+                double shell=ribX*ribX/225.0+(y-boneBase-13.0)*(y-boneBase-13.0)/196.0+(ribZ+65.0)*(ribZ+65.0)/225.0;
+                boolean eye=Math.abs(Math.abs(ribX)-6)<3&&Math.abs(y-boneBase-16)<3&&ribZ<-70;
+                if(!eye&&shell>.65&&shell<1.15&&y>boneBase+3)return ModBlocks.CHARRED_BONE.get().defaultBlockState();
+            }
             if(y <= WATERLINE) return Blocks.WATER.defaultBlockState();
-            if(y == floor + 1 && region == Region.HOLLOW_MIRE && hash(x, 0, z) % 67 == 0)
-                return Blocks.BROWN_MUSHROOM.defaultBlockState();
+            if(y == floor + 1 && hash(x,0,z)%113==0&&(region==Region.HOLLOW_MIRE||region==Region.CHAIN_FOREST&&weather>.25))return ModBlocks.EMBER_ROOT.get().defaultBlockState();
             return Blocks.CAVE_AIR.defaultBlockState();
         }
 
         private BlockState rock(int y) {
             int h = hash(x, y, z);
             if(y == floor) {
-                if(region == Region.ASH_WASTES && h % 73 == 0) return Blocks.MAGMA_BLOCK.defaultBlockState();
+                if(region == Region.ASH_WASTES && seam<.025) return ModBlocks.SMOULDERING_CLINKER.get().defaultBlockState();
                 return switch(region) {
-                    case ASH_WASTES -> (h % 8 == 0 ? Blocks.SOUL_SOIL : Blocks.BLACKSTONE).defaultBlockState();
-                    case CHAIN_FOREST -> (h % 7 == 0 ? Blocks.BASALT : Blocks.DEEPSLATE).defaultBlockState();
-                    case HOLLOW_MIRE -> (h % 6 == 0 ? Blocks.PACKED_MUD : Blocks.MUD).defaultBlockState();
-                    case TITAN_GRAVE -> (h % 11 == 0 ? Blocks.BONE_BLOCK : Blocks.SOUL_SOIL).defaultBlockState();
+                    case ASH_WASTES -> (weather>.05?ModBlocks.CINDER_ASH.get():ModBlocks.BURNT_CLINKER.get()).defaultBlockState();
+                    case CHAIN_FOREST -> (weather<-.3?Blocks.BLACKSTONE:Blocks.DEEPSLATE).defaultBlockState();
+                    case HOLLOW_MIRE -> (weather>.3?Blocks.PACKED_MUD:Blocks.MUD).defaultBlockState();
+                    case TITAN_GRAVE -> (weather>.1?ModBlocks.CINDER_ASH.get():Blocks.SOUL_SOIL).defaultBlockState();
                 };
             }
-            if(Math.floorMod(y + (h >>> 4) % 3, 23) < 3) return Blocks.BASALT.defaultBlockState();
-            return (h % 13 == 0 ? Blocks.TUFF : region == Region.ASH_WASTES ? Blocks.BLACKSTONE : Blocks.DEEPSLATE).defaultBlockState();
+            if(Math.floorMod(y+(int)(weather*5),23)<3)return Blocks.BASALT.defaultBlockState();
+            if(weather<-.45&&Math.floorMod(y,47)<6)return Blocks.TUFF.defaultBlockState();
+            if(y<floor&&y>floor-3&&region==Region.ASH_WASTES&&weather>.05)return ModBlocks.CINDER_ASH.get().defaultBlockState();
+            return (region==Region.ASH_WASTES?Blocks.BLACKSTONE:Blocks.DEEPSLATE).defaultBlockState();
         }
     }
 

@@ -432,6 +432,18 @@ asset('models/item/prometheus_voice',{'parent':'elysium:block/prometheus_voice'}
 asset('models/item/bronze_pinion',{'parent':'minecraft:block/block','gui_light':'front','textures':{'copper':'minecraft:block/exposed_copper','iron':'minecraft:block/netherite_block','particle':'#copper'},'elements':[cuboid([7,0,7],[9,16,9],'#iron'),*[cuboid([3+i*.4,3+i*2,6],[13-i*.4,4+i*2,9],'#copper') for i in range(6)]]})
 data('advancement/promethean_craft',{'parent':'elysium:first_flame','display':{'icon':{'id':'elysium:bronze_pinion'},'title':'What Fire Remembers','description':'Silence the bronze eagle and learn from Prometheus.','frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
+# Dirty ivory, warm undergrowth, and the predator's first useful craft.
+asset('models/block/charred_bone',{'parent':'minecraft:block/block','textures':{'side':'minecraft:block/bone_block_side','end':'minecraft:block/bone_block_top','particle':'#side'},'elements':[{'from':[0,0,0],'to':[16,16,16],'faces':{face:{'texture':'#end' if face in ('up','down') else '#side','tintindex':0,'cullface':face} for face in ('up','down','north','south','west','east')}}]})
+asset('blockstates/charred_bone',{'variants':{'':{'model':'elysium:block/charred_bone'}}})
+asset('models/item/charred_bone',{'parent':'elysium:block/charred_bone'})
+loot('charred_bone',[pool([item('elysium:charred_bone')],[SURVIVES])])
+asset('models/block/ember_root',{'parent':'minecraft:block/block','ambientocclusion':False,'textures':{'root':'minecraft:block/mangrove_roots_side','coal':'minecraft:block/blackstone','ember':'minecraft:block/magma','particle':'#root'},'elements':[cuboid([6,0,6],[9,8,9],'#root'),cuboid([2,6,4],[12,8,12],'#coal'),cuboid([4,7,5],[10,8.1,11],'#ember'),cuboid([10,0,9],[12,5,11],'#root'),cuboid([8,4,7],[15,6,14],'#coal'),cuboid([10,5,9],[13,6.1,12],'#ember')]})
+asset('blockstates/ember_root',{'variants':{'':{'model':'elysium:block/ember_root'}}})
+asset('models/item/ember_root',{'parent':'elysium:block/ember_root'})
+loot('ember_root',[pool([item('elysium:cinder_glass')],[SURVIVES,{'condition':'minecraft:random_chance','chance':.25}])])
+asset('models/item/ashen_fang',{'parent':'minecraft:block/block','gui_light':'front','textures':{'bone':'minecraft:block/dripstone_block','char':'minecraft:block/basalt_side','particle':'#bone'},'elements':[cuboid([5,3,6],[11,8,10],'#char'),cuboid([6,8,6],[10,13,9],'#bone'),cuboid([7,13,6],[9,16,8],'#bone')]})
+asset('models/item/hush_charm',{'parent':'minecraft:block/block','gui_light':'front','textures':{'bone':'minecraft:block/dripstone_block','metal':'minecraft:block/gold_block','particle':'#metal'},'elements':[cuboid([3,7,7],[13,10,10],'#metal'),*[cuboid([x,3,7],[x+2,13,9],'#bone') for x in (3,7,11)]]})
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")

@@ -222,5 +222,11 @@
   "lore.elysium.prometheus.2": "The First Flame is not fuel. It is permission.\n\nRestore the hearth, clear its channels, and feed the brazier. Place your full bill at the press. Stand clear. An empty, crouching hand releases the hammer.",
   "lore.elysium.prometheus.3": "Iron, copper, gold: three, two, one. The hammer will make four sunwrought ingots. Other instruments follow.\n\nThe press remembers work through darkness. Your hands will remember this lesson through death.",
   "lore.elysium.prometheus.4": "The first completed work will open the vessel beneath the foundry. The paradise above rests on the things imprisoned below.\n\nFire carries more than light. Hunger will learn the roads. Malice will learn the names. The moon will wait.",
-  "lore.elysium.prometheus.5": "Do not mistake shelter for victory. The old watches can keep a home warm. They cannot recall what escapes.\n\nIn the deep world, seek the bindings of Hunger, Sorrow and Dominion. Take light. Leave a way back.\n\nI will not call this a gift without a cost."
+  "lore.elysium.prometheus.5": "Do not mistake shelter for victory. The old watches can keep a home warm. They cannot recall what escapes.\n\nIn the deep world, seek the bindings of Hunger, Sorrow and Dominion. Take light. Leave a way back.\n\nI will not call this a gift without a cost.",
+  "entity.elysium.ashen_hound": "Ashen Hunger",
+  "item.elysium.ashen_fang": "Ashen Fang",
+  "item.elysium.hush_charm": "Hush Charm",
+  "block.elysium.charred_bone": "Charred Titan Bone",
+  "block.elysium.ember_root": "Ember Root",
+  "tooltip.elysium.hush_charm": "Hold in your offhand to soften the sounds that blind hungers follow. Sprinting is still dangerous."
 }

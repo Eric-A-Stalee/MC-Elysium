@@ -26,6 +26,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.ASHEN_HOUND.get(),AshenHoundRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_EAGLE.get(),BronzeEagleRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_FEATHER.get(),c->new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(c,1.4f,false));
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_WISP.get(),CinderWispRenderer::new);
@@ -55,6 +56,7 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block event) {
+        event.register((state,level,pos,tint)->0xA28A70,ModBlocks.CHARRED_BONE.get());
         event.register((state, level, pos, tint) -> foliageColor(level, pos),
                 ModBlocks.GOLDEN_BIRCH_LEAVES.get(), ModBlocks.LEAF_LITTER.get());
     }
@@ -67,6 +69,7 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack,tint)->FastColor.ARGB32.opaque(0xA28A70),ModBlocks.CHARRED_BONE.get());
         // 1.21.1's ItemRenderer reads ARGB, including alpha. Our biome palette
         // uses RGB, so pass opaque tints or held/dropped items become invisible.
         event.register((stack, tint) -> FastColor.ARGB32.opaque(ModBlocks.GOLDEN_LEAF_COLOR),

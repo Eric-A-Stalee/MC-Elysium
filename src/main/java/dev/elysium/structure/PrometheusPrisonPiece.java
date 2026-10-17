@@ -33,7 +33,7 @@ public final class PrometheusPrisonPiece extends StructurePiece {
         int u=wx-x,h=wy-y,v=wz-z,n=hash(u,h,v);double r=Math.hypot(u-19,v-15);
         if(wx==voice().getX()&&wy==voice().getY()&&wz==voice().getZ())return ModBlocks.PROMETHEUS_VOICE.get().defaultBlockState();
         // The broad arena is deliberately interrupted at its rim, but its centre stays usable for a grounded player.
-        if(r<=19) {
+        if(r<=19&&!(v>=33&&Math.abs(u-19)<=2)) {
             if(h<=6&&h>=Math.max(low-y,-35+(int)r))return (h==6?(n%9==0?Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS:Blocks.POLISHED_BLACKSTONE_BRICKS):n%6==0?Blocks.BASALT:Blocks.BLACKSTONE).defaultBlockState();
             if(h>6&&h<12&&r<17)return Blocks.CAVE_AIR.defaultBlockState();
             if(r>17.4&&r<18.8&&h==7&&Math.floorMod((int)(Math.atan2(v-15,u-19)*10),9)<5)return Blocks.POLISHED_BLACKSTONE_BRICK_WALL.defaultBlockState();

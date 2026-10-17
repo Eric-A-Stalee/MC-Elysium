@@ -22,11 +22,15 @@ import net.neoforged.neoforge.gametest.*;
 public final class PrometheusGameTests {
     @GameTest(template="portal_test_empty",timeoutTicks=100)
     public static void prisonKeepsAnOpenArenaAndSerializesItsSurvey(GameTestHelper h){
-        int[] approach=new int[64];for(int i=0;i<64;i++)approach[i]=6-i/3;
+        int[] approach=new int[64];for(int i=0;i<64;i++)approach[i]=6-Math.min(i,30);
         var p=new PrometheusPrisonPiece(-1024,-480,2016,-520,81,approach);
         var c=StructurePieceSerializationContext.fromLevel(h.getLevel());
         var q=new PrometheusPrisonPiece(p.createTag(c));
         h.assertTrue(p.createTag(c).equals(q.createTag(c)),"Prison survey and independent seed must round-trip");
+        for(var step:q.approachRoute()){
+            h.assertTrue(!q.materialAt(step.getX(),step.getY(),step.getZ()).isAir(),"The surveyed approach keeps its floor");
+            for(int dy=1;dy<=2;dy++)h.assertTrue(q.materialAt(step.getX(),step.getY()+dy,step.getZ()).isAir(),"Arena rim cannot obstruct the approach at "+step);
+        }
         for(int dx=-13;dx<=13;dx++)for(int dz=-13;dz<=13;dz++)if(dx*dx+dz*dz<=169){
             var pos=q.arena().offset(dx,0,dz);
             h.assertTrue(!q.materialAt(pos.getX(),pos.getY()-1,pos.getZ()).isAir(),"Fighting ground is complete");
