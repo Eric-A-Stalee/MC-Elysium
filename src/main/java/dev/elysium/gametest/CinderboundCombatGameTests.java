@@ -27,7 +27,8 @@ public final class CinderboundCombatGameTests {
         try {
             player.setGameMode(GameType.SURVIVAL);player.setPos(Vec3.atBottomCenterOf(base.south(20)));player.setHealth(20);
             for(int n=0;n<15;n++)mob.tick();
-            mob.phase(1,44);mob.tick();
+            // Use the centre bolt for the direct-hit assertion; the first bolt deliberately has lateral spread.
+            mob.phase(1,50);mob.tick();
             var bolts=level.getEntitiesOfClass(CinderBoltEntity.class,mob.getBoundingBox().inflate(36));
             h.assertTrue(bolts.size()==1,"The shooting sound must accompany a real projectile entity: "+diagnostic(level,mob,player));
             var bolt=bolts.getFirst();
@@ -38,7 +39,7 @@ public final class CinderboundCombatGameTests {
             h.assertTrue(player.getHealth()<20&&bolt.isRemoved(),"An unobstructed volley must actually hurt a survival player");
             player.setHealth(20);player.invulnerableTime=0;
             for(var p:BlockPos.betweenClosed(base.offset(-5,0,11),base.offset(5,14,11)))level.setBlock(p,Blocks.STONE.defaultBlockState(),2);
-            mob.phase(1,50);mob.tick();
+            mob.phase(1,56);mob.tick();
             bolts=level.getEntitiesOfClass(CinderBoltEntity.class,mob.getBoundingBox().inflate(36),e->!e.isRemoved());
             h.assertTrue(bolts.size()==1,"A later volley must launch even when its aim is obstructed");
             bolt=bolts.getFirst();for(int n=0;n<60&&!bolt.isRemoved();n++)bolt.tick();
