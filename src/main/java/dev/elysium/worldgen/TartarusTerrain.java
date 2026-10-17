@@ -46,8 +46,8 @@ public final class TartarusTerrain {
     }
 
     public int roof(int x, int z) {
-        return -296 + (int)Math.round(25 * relief.getValue((x + 710) / 310.0, (z - 430) / 310.0)
-                + 9 * detail.getValue(x / 83.0, z / 83.0));
+        return Math.max(floor(x,z)+144,-296 + (int)Math.round(25 * relief.getValue((x + 710) / 310.0, (z - 430) / 310.0)
+                + 9 * detail.getValue(x / 83.0, z / 83.0)));
     }
 
     public Column column(int x, int z) {

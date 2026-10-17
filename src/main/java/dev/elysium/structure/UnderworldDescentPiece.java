@@ -69,7 +69,7 @@ public final class UnderworldDescentPiece extends StructurePiece {
     public BlockState materialAt(int wx,int y,int wz) {
         int u=wx-x,v=wz-z,r=Math.max(Math.abs(u),Math.abs(v));
         if(!boundingBox.isInside(wx,y,wz))return null;
-        if(u>=7&&u<7+exit.length&&Math.abs(v)<=1) {
+        if(u>=8&&u<7+exit.length&&Math.abs(v)<=1) {
             int ground=exit[u-7];
             if(y>=ground-3&&y<=ground+4)return y<=ground?Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS.defaultBlockState():Blocks.CAVE_AIR.defaultBlockState();
         }

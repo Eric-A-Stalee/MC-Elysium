@@ -119,7 +119,7 @@ public final class TartarusGameTests {
                             realm.getChunkSource().randomState(),realm.getServer().getStructureManager(),realm.getSeed(),chunk,realm,structure.biomes()::contains);
                     var stub=structure.findGenerationPoint(context);if(stub.isEmpty())continue;
                     var pieces=stub.get().getPiecesBuilder().build().pieces();
-                    helper.assertTrue(pieces.size()==2 && pieces.getFirst() instanceof TartarusChainPiece && pieces.get(1) instanceof dev.elysium.structure.TartarusDepthsPiece,"Chain and depths must belong to the same saved start");
+                    helper.assertTrue(pieces.size()==3 && pieces.getFirst() instanceof TartarusChainPiece && pieces.get(1) instanceof dev.elysium.structure.TartarusDepthsPiece && pieces.get(2) instanceof dev.elysium.structure.UnderworldDescentPiece,"Chain, depths and underworld descent must belong to the same saved start");
                     var p=((TartarusChainPiece)pieces.getFirst()).plan();
                     helper.assertTrue(p.top()>100 && p.floor()==-48,"Surface clue must continue deep underground");
                     var actual=StructurePlacementProbe.place(helper,realm,structure,chunk);
