@@ -48,13 +48,13 @@ public final class ForgePressBlockEntity extends BlockEntity {
     }
     public boolean queue(Player player,ForgeRecipes.Work recipe) {
         if(plan==null||recipe==null||!work.isEmpty()||!output.isEmpty()||!powered())return false;
-        if(drop>0&&level instanceof ServerLevel server){if(!ForgeHammer.move(server,plan,drop,0))return false;drop=0;}
         var inventory=player.getInventory();
         // Check the complete bill first. Failed jobs cannot eat a subset of the materials.
         for(var cost:recipe.costs()) {
             int total=0;for(int i=0;i<inventory.getContainerSize();i++)if(inventory.getItem(i).is(cost.item()))total+=inventory.getItem(i).getCount();
             if(total<cost.count()&&!player.getAbilities().instabuild)return false;
         }
+        if(drop>0&&level instanceof ServerLevel server){if(!ForgeHammer.move(server,plan,drop,0))return false;drop=0;}
         if(!player.getAbilities().instabuild)for(var cost:recipe.costs()) {
             int remaining=cost.count();
             for(int i=0;i<inventory.getContainerSize()&&remaining>0;i++) {

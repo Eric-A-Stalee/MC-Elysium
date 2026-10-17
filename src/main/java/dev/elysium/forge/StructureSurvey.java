@@ -108,6 +108,7 @@ public final class StructureSurvey {
             if(result.isPresent()) {
                 ResonanceItem.bind(item,result.get());
                 if(item.getItem() instanceof dev.elysium.item.DawnWayfinderItem) {
+                    if(ResonanceItem.data(item).getInt("watch_kind")!=request.destination.ordinal()-2){net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,item,t->t.remove("elysium_target"));return;}
                     dev.elysium.item.DawnWayfinderItem.bearing(player,result.get(),ResonanceItem.data(item).getInt("watch_kind"));return;
                 }
                 if(request.destination==Destination.FORGE)ForgeLore.tell(player,"survey_found",result.get().getX(),result.get().getZ());

@@ -40,6 +40,7 @@ public final class WatchfireBlockEntity extends BlockEntity {
     }
     public void use(Player player,ItemStack held) {
         if(!(player instanceof ServerPlayer sp)||watch<0||!sp.level().dimension().equals(ElysiumTravel.DIMENSION))return;
+        if(held.is(Items.BOOK)){ForgeLore.give(sp,WatchLore.book(watch));if(!player.getAbilities().instabuild)held.shrink(1);return;}
         var cycle=RealmCycle.get(sp.serverLevel());
         if(restored){WatchLore.give(sp,watch);player.displayClientMessage(Component.translatable("message.elysium.watch.answered",Integer.bitCount(cycle.watches())),false);return;}
         boolean success=repair(sp,held);

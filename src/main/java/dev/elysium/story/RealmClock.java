@@ -17,6 +17,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.registration.NetworkRegistry;
 
 /** Server clock and client projection share a dimension-scoped read path, never a global static time. */
 @EventBusSubscriber(modid=Elysium.MOD_ID)
@@ -35,7 +36,9 @@ public final class RealmClock {
     }
     @SubscribeEvent public static void unload(LevelEvent.Unload event){if(event.getLevel() instanceof Level level){SERVERS.remove(level);CLIENTS.remove(level);}}
     public static void sync(ServerPlayer player) {
-        if(!player.level().dimension().equals(ElysiumTravel.DIMENSION))return;
+        // Fake players and GameTest connections do not negotiate custom payload channels.
+        if(!player.level().dimension().equals(ElysiumTravel.DIMENSION)||player.connection==null
+                ||!NetworkRegistry.hasChannel(player.connection,RealmClockPayload.TYPE.id()))return;
         var state=RealmCycle.get(player.serverLevel());
         PacketDistributor.sendToPlayer(player,new RealmClockPayload(state.time(),state.moving()));
     }
