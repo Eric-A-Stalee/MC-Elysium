@@ -201,5 +201,7 @@
   "tooltip.elysium.sunwrought_ingot": "Tempered beneath the great hammer. Used in the smith's instruments.",
   "tooltip.elysium.cinder_glass": "An ember sealed in slag. Combine with four glass to make Emberglass.",
   "tooltip.elysium.ward_lamp": "Repels stray cinders while carried; shelters twelve blocks around its placed light.",
-  "tooltip.elysium.ember_glass": "A warm window that gives its own light."
+  "tooltip.elysium.ember_glass": "A warm window that gives its own light.",
+  "message.elysium.press.held": "Work held. Your materials are safe. Sneak-use an empty hand to resume.",
+  "message.elysium.press.queued": "Materials loaded. Stand clear of the anvil, then sneak-use an empty hand to begin."
 }

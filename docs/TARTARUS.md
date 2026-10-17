@@ -1,4 +1,4 @@
-# Tartarus expedition — alpha 20 design and player notes
+# Tartarus expedition — design and player notes
 
 Alpha 20 reshapes the creature with unequal dragging limbs, a bowed neck, an
 irregular amber eye and an articulated hooked tail. Cinder volleys now travel
@@ -32,7 +32,8 @@ encounter plan, clipped to the current generating chunk. The anchor vault stays
 at Y=-48. The first Tartarus regions are bounded installations in the geology,
 not a dimension-wide cave generator. No ReTerraForged dependency is introduced.
 
-The main Forge restart, moving sun and later crisis are a subsequent chapter.
+The [first-dawn chapter](FIRST_DAWN.md) continues at the great hammer after
+the First Flame returns.
 Returning the First Flame now restores full heat to the connected, burning
 Forge network. Coal, ignition and airflow are still required. Ordinary
 exploration, the keeper's lamp and the service brazier never advance the sun.
@@ -78,7 +79,8 @@ exploration, the keeper's lamp and the service brazier never advance the sun.
    the **original Forge hearth**. Stronger heat spreads from its physical feed
    through the connected, burning runners. Repaired channels burn brighter
    and are more dangerous; coal lasts five minutes at full heat instead of ten.
-   The great hammer remains still and the afternoon stays at 11,500 ticks.
+   The afternoon stays at 11,500 until you deliberately operate the Great
+   Hammer Control. Read its Smith's Charge before beginning the next chapter.
 
 The encounter and repair record persist across reloads. A chamber does not
 respawn its defeated creature. Reconciliation of a missing entity waits for its

@@ -58,6 +58,8 @@ public final class ForgeVisualClientProbe {
             String name=String.format("%02d-%s.png",index+1,SCENES[index]);
             long time=Math.floorMod(mc.level.getDayTime(),24000);
             String scene=SCENES[index];
+            if(mc.level.dayTime()!=mc.level.getDayTime()||mc.level.getTimeOfDay(1)!=mc.level.dimensionType().timeOfDay(mc.level.getDayTime()))
+                throw new IllegalStateException("Sky angle is not using the synchronized realm clock in "+scene);
             if(scene.equals("harvest_sunset")&&(time<11500||time>=14000)
                     ||scene.equals("harvest_night")&&(time<18000||time>22000)
                     ||scene.equals("first_dawn")&&time>=4000

@@ -72,7 +72,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
             var reward=output;output=ItemStack.EMPTY;setChanged();ForgeLore.give(server,reward);ForgeLore.award(server,"smiths_work");return;
         }
         if(!work.isEmpty()) {
-            if(running&&player.isShiftKeyDown()&&held.isEmpty()){pause();tell(player,"loaded");return;}
+            if(running&&player.isShiftKeyDown()&&held.isEmpty()){pause();tell(player,"held");return;}
             if(!running&&player.isShiftKeyDown()&&held.isEmpty()){start();tell(player,running?"started":"cold");}
             else if(!running&&held.isEmpty())tell(player,"loaded");
             else tell(player,powered()?"busy":"paused");
@@ -83,7 +83,11 @@ public final class ForgePressBlockEntity extends BlockEntity {
         var recipe=ForgeRecipes.select(held);
         tell(player,queue(player,recipe)?"loaded":!powered()?"cold":"materials");
     }
-    private static void tell(Player p,String key){p.displayClientMessage(Component.translatable("message.elysium.press."+key),false);}
+    private static void tell(Player p,String key){
+        if(key.equals("loaded")&&p.level() instanceof ServerLevel server&&server.dimension().equals(dev.elysium.portal.ElysiumTravel.DIMENSION)
+                &&dev.elysium.story.RealmCycle.get(server).released())key="queued";
+        p.displayClientMessage(Component.translatable("message.elysium.press."+key),false);
+    }
     public void advance() {
         if(!(level instanceof ServerLevel server)||!running||!powered())return;
         int next=STROKE[phase];

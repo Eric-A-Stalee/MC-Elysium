@@ -1,4 +1,4 @@
-# The buried Forge — alpha 18
+# The buried Forge and the working smithy
 
 Elysium now has an optional exploration chapter: find a surviving archive,
 locate the Forge of Hephaestus, recover an instrument from its cold hearth,
@@ -113,8 +113,10 @@ Contact damage rises from one to three, with longer ignition. The greater
 draught consumes coal twice as fast: five minutes per item, forty minutes
 stored at capacity. Fuel, ignition and an open wheel remain necessary; cracks,
 missing sections and unloaded connections still stop heat. Breaking the hearth
-feed returns the surviving network to ordinary service fire. The hammer, sun
-and later crisis remain unchanged.
+feed returns the surviving network to ordinary service fire. This heat alone
+does not move the sun. The [Great Hammer Control](FIRST_DAWN.md) beside the
+anvil can then load and temper material bills; its deliberate first strike
+releases the afternoon.
 
 Read the **Keeper's Ledger** in the archive workshop and the **Binding
 Inscription** behind the foundry. These provide ordinary written books, with
@@ -140,9 +142,10 @@ southern inspection way into the deeper basin. The saved structure identity
 is checked. Bring a Keeper’s Lamp, four chains and equipment for the journey.
 
 The [Tartarus expedition](TARTARUS.md) supplies the first bounded Tartarus region,
-the original one-eyed chimera encounter and the First Flame return. Restarting
-the great mechanism and advancing the sun remain a later chapter. Ordinary fuel
-cannot substitute for that flame. The smaller vanilla workshop furnaces can
+the original one-eyed chimera encounter and the First Flame return. The
+[first-dawn chapter](FIRST_DAWN.md) continues through the working hammer,
+surface watches and repaired celestial governor. Ordinary fuel cannot
+substitute for the First Flame. The smaller vanilla workshop furnaces can
 still be used normally by a player.
 
 ## Commands and upgrading
@@ -197,7 +200,7 @@ pending request. Results and hearth memory use normal item data components.
 
 Lore progress is separate per-player saved data. Books use vanilla written-book
 components and localized pages. Models are original cuboid geometry referencing
-active-pack vanilla textures. There is no new dependency, packet protocol,
-global trade-pool replacement, Minecraft texture redistribution, or automatic
-retrogen. Existing town building grammar is retained; only newly planned
+active-pack vanilla textures. The first-dawn chapter adds a small client clock packet and dimension-scoped
+time mixin. There is no new dependency, global trade-pool replacement, Minecraft
+texture redistribution, or automatic retrogen. Existing town building grammar is retained; only newly planned
 great halls save the archive-placement flag.

@@ -32,6 +32,8 @@ public final class FirstDawnGameTests {
             h.assertTrue(cycle.awaken(new BlockPos(5,40,5))&&!cycle.awaken(BlockPos.ZERO),"Only the first release can bind the world's origin forge");
             for(int i=0;i<2500;i++)cycle.advance(true);
             h.assertTrue(cycle.phase()==RealmCycle.Phase.NIGHT&&realm.getDayTime()==14000,"The sun must move into the first night");
+            h.assertTrue(realm.dayTime()==14000&&realm.getTimeOfDay(1)==realm.dimensionType().timeOfDay(14000),"Vanilla sky angle and daylight reads must use the same independent clock");
+            realm.updateSkyBrightness();h.assertTrue(realm.isNight(),"Server daylight logic must recognize the first night");
             cycle.advance(false);h.assertTrue(cycle.time()==14000,"An unoccupied realm has no offline deadline");
             for(int i=0;i<9000;i++)cycle.advance(true);
             h.assertTrue(cycle.phase()==RealmCycle.Phase.STALLED&&cycle.time()==22000&&!cycle.resolve(true),"Dawn cannot silently pass unanswered watches");
@@ -41,6 +43,7 @@ public final class FirstDawnGameTests {
             h.assertTrue(realm.getDayTime()==22000&&restored.watches()==1&&restored.forge().equals(new BlockPos(5,40,5)),"Clock, distinct watches and remembered forge survive serialization");
             restored.answerWatch(1,new BlockPos(0,70,100));restored.answerWatch(2,new BlockPos(0,150,200));
             h.assertTrue(restored.resolve(false)&&realm.getDayTime()==11500,"The chosen golden hour is a genuine resolution");
+            realm.updateSkyBrightness();h.assertTrue(realm.dayTime()==11500&&realm.isDay(),"Rebinding the golden hour must restore daylight too");
             for(int i=0;i<200;i++)restored.advance(true);h.assertTrue(realm.getDayTime()==11500,"A chosen golden hour remains arrested");
             h.assertTrue(restored.resolve(true),"The repaired governor can revisit the choice");
             for(int i=0;i<2000;i++)restored.advance(true);

@@ -28,7 +28,8 @@ public final class SunwroughtGameTests {
             h.assertTrue(level.getRawBrightness(center,0)>=8,"Harvest arena must have real crop-supporting light");
             for(var p:BlockPos.betweenClosed(center.offset(-1,0,-1),center.offset(1,0,1)))level.setBlock(p,Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,7),3);
             var young=center.north().west();level.setBlock(young,Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,3),3);
-            player.getInventory().add(new ItemStack(Items.WHEAT_SEEDS,9));var tool=new ItemStack(ModItems.HARVEST_SICKLE.get());player.setItemInHand(InteractionHand.MAIN_HAND,tool);
+            var tool=new ItemStack(ModItems.HARVEST_SICKLE.get());player.setItemInHand(InteractionHand.MAIN_HAND,tool);
+            player.getInventory().add(new ItemStack(Items.WHEAT_SEEDS,9));
             var result=tool.useOn(new UseOnContext(player,InteractionHand.MAIN_HAND,new BlockHitResult(center.getCenter(),Direction.UP,center,false)));
             h.assertTrue(result.consumesAction()&&tool.getDamageValue()==8,"Eight ripe plants cost eight durability");
             h.assertTrue(level.getBlockState(young).getValue(CropBlock.AGE)==3,"The sickle must leave young crops alone");

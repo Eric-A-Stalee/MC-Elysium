@@ -1,10 +1,14 @@
 # Elysium world generation
 
-The world has six profiles sharing white birch trunks, harvest colours and a sun held at time 11500. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
+The world has six profiles sharing white birch trunks, harvest colours and a sun initially held at time 11500. Golden Fields stay open; Golden Birch Woods have varied crowns and clearings; Golden Watermeadows open beneath taller trees along flowered streams; Amber Lakes have wider water, copper canopies and fallen leaves. Elysian Highlands and Ivory Peaks bring pale grass, honey foliage, cooler water and exposed pale stone. Surface rain,
 raids, ordinary hostile biome spawns, and zombified piglins from lit nether
-portals are disabled in Elysium while its sun is fixed. This does not
+portals are disabled in Elysium, including after the first sunset. This does not
 override the rest of a player's world or promise that another mod cannot spawn
 an entity here.
+
+The [first-dawn chapter](FIRST_DAWN.md) owns an independent saved clock,
+three small watchfire structure sets and bounded night encounters. It does not
+change the approved surface palettes, base terrain or settlement grammar.
 
 ## Parameterized source of truth
 

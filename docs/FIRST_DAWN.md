@@ -22,6 +22,7 @@ and finished output survive saving. Mining the control drops its stored items.
 | Amethyst shard | 2 Sunwrought Ingots, 1 amethyst | Watchfire Seal |
 | Compass | 2 Sunwrought Ingots, 1 compass, 2 amethyst | Dawn Wayfinder |
 | Iron hoe | 2 Sunwrought Ingots, 1 iron hoe | Harvest Sickle |
+| Glass | 1 Sunwrought Ingot, 4 glass | 4 Ember Glass |
 | Keeper's Lamp | 2 Sunwrought Ingots, 1 Keeper's Lamp, 1 amethyst | Ward Lamp |
 
 The sickle selectively harvests ripe crops in a 3×3 patch, using ordinary break
@@ -60,7 +61,9 @@ the unresolved night. They visibly open before a short damaging rush. They
 cannot burn or break terrain, do not appear in Peaceful or when mob spawning
 is disabled, and disappear when the crisis is resolved. Their Cinder Glass
 can be combined with four ordinary glass blocks to make four **Ember Glass**:
-a warm translucent building light at level 10.
+a warm translucent building light at level 10. The great hammer can also temper
+four glass with one Sunwrought Ingot into four Ember Glass, so this building
+material remains renewable after the night is resolved.
 
 ## Choosing the sky
 
