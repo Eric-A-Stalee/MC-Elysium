@@ -21,11 +21,14 @@ public final class CinderboundCombatGameTests {
     @GameTest(template="portal_test_empty",timeoutTicks=200)
     public static void gazeLaunchesRealBoltsThatDamagePlayersAndStopAtWalls(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1000,170,0));clear(level,base);
+        forceArena(level,base,true);
+        h.runAfterDelay(20,()->{
         var difficulty=level.getDifficulty();level.getServer().setDifficulty(Difficulty.NORMAL,true);
         var player=CombatTestPlayer.create(level,base.south(20));
         var mob=body(level,base);
         try {
             player.setGameMode(GameType.SURVIVAL);player.setPos(Vec3.atBottomCenterOf(base.south(20)));player.setHealth(20);
+            h.assertTrue(level.getEntitiesOfClass(ServerPlayer.class,player.getBoundingBox().inflate(1)).contains(player),"The real player must be visible to Minecraft’s spatial collision index");
             for(int n=0;n<15;n++)mob.tick();
             // Use the centre bolt for the direct-hit assertion; the first bolt deliberately has lateral spread.
             mob.phase(1,50);mob.tick();
@@ -51,7 +54,8 @@ public final class CinderboundCombatGameTests {
             for(int n=0;n<8&&!observer.isRemoved();n++)observer.tick();
             h.assertTrue(player.getHealth()==20,"Creative observers may not take projectile damage");observer.discard();
             h.succeed();
-        } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);}
+        } finally {mob.discard();level.getServer().getPlayerList().remove(player);level.getServer().setDifficulty(difficulty,true);forceArena(level,base,false);}
+        });
     }
     @GameTest(template="portal_test_empty",timeoutTicks=200)
     public static void tailAndExpandingPulseDamageOnlyTheirSweptAreas(GameTestHelper h) {
@@ -82,6 +86,9 @@ public final class CinderboundCombatGameTests {
         return "phase="+mob.phase()+" age="+mob.phaseAge()+" body="+mob.position()+" player="+player.position()
             +" level="+player.level().dimension()+" listed="+level.players().contains(player)+" alive="+player.isAlive()
             +" creative="+player.isCreative()+" spectator="+player.isSpectator()+" health="+player.getHealth()+" difficulty="+level.getDifficulty();
+    }
+    private static void forceArena(ServerLevel level,BlockPos base,boolean force) {
+        for(int x=(base.getX()-8)>>4;x<=(base.getX()+8)>>4;x++)for(int z=(base.getZ()-24)>>4;z<=(base.getZ()+28)>>4;z++)level.setChunkForced(x,z,force);
     }
     private static void reset(ServerPlayer p,BlockPos pos){p.setPos(Vec3.atBottomCenterOf(pos));p.setHealth(20);p.invulnerableTime=0;p.setDeltaMovement(Vec3.ZERO);}
     private static SlagChimeraEntity body(ServerLevel l,BlockPos p) {
