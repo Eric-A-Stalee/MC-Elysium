@@ -196,6 +196,17 @@ public final class ForgeVisualServerProbe {
     private static void watchCamera(ServerPlayer player,ServerLevel level,int kind) {
         var pos=WATCHES[kind].socket();
         double x=pos.getX()+10.5,y=pos.getY()+5,z=pos.getZ()+14.5;
+        if(kind==1) {
+            // Find a real view through the watermeadow canopy; never clear vegetation for a screenshot.
+            var target=pos.getCenter().add(0,1,0);
+            search:for(double height:new double[]{2.5,5,9})for(int[] offset:new int[][]{{4,7},{-4,7},{4,-7},{-4,-7},{8,0},{-8,0},{0,8},{0,-8}}) {
+                double cx=pos.getX()+offset[0]+.5,cy=pos.getY()+height,cz=pos.getZ()+offset[1]+.5;
+                var eye=new net.minecraft.world.phys.Vec3(cx,cy+1.62,cz);
+                if(!level.getBlockState(BlockPos.containing(eye)).isAir())continue;
+                var ray=level.clip(new net.minecraft.world.level.ClipContext(eye,target,net.minecraft.world.level.ClipContext.Block.VISUAL,net.minecraft.world.level.ClipContext.Fluid.NONE,player));
+                if(ray.getType()==net.minecraft.world.phys.HitResult.Type.MISS){x=cx;y=cy;z=cz;break search;}
+            }
+        }
         double dx=pos.getX()+.5-x,dz=pos.getZ()+.5-z,dy=pos.getY()+2-y-1.62;
         player.teleportTo(level,x,y,z,(float)(Math.toDegrees(Math.atan2(dz,dx))-90),(float)-Math.toDegrees(Math.atan2(dy,Math.hypot(dx,dz))));
     }
