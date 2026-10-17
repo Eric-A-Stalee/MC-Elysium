@@ -21,8 +21,11 @@ public final class SunwroughtGameTests {
     public static void harvestSickleSelectsRipePlantsAndPaysForEveryReplant(GameTestHelper h) {
         var level=h.getLevel();var center=h.absolutePos(new BlockPos(20,80,20));
         var player=CombatTestPlayer.create(level,center.south(3));
-        try {
-            for(var p:BlockPos.betweenClosed(center.offset(-1,-1,-1),center.offset(1,-1,1)))level.setBlock(p,Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,7),3);
+        for(var p:BlockPos.betweenClosed(center.offset(-1,-1,-1),center.offset(1,-1,1)))level.setBlock(p,Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE,7),3);
+        level.setBlock(center.above(3),Blocks.GLOWSTONE.defaultBlockState(),3);
+        // Newly generated test chunks need a lighting update before a real crop can survive there.
+        h.runAfterDelay(20,()->{try {
+            h.assertTrue(level.getRawBrightness(center,0)>=8,"Harvest arena must have real crop-supporting light");
             for(var p:BlockPos.betweenClosed(center.offset(-1,0,-1),center.offset(1,0,1)))level.setBlock(p,Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,7),3);
             var young=center.north().west();level.setBlock(young,Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE,3),3);
             player.getInventory().add(new ItemStack(Items.WHEAT_SEEDS,9));var tool=new ItemStack(ModItems.HARVEST_SICKLE.get());player.setItemInHand(InteractionHand.MAIN_HAND,tool);
@@ -32,7 +35,7 @@ public final class SunwroughtGameTests {
             for(var p:BlockPos.betweenClosed(center.offset(-1,0,-1),center.offset(1,0,1)))if(!p.equals(young))h.assertTrue(level.getBlockState(p).is(Blocks.WHEAT)&&level.getBlockState(p).getValue(CropBlock.AGE)==0,"Harvested crops replant at age zero");
             int seeds=0;for(int i=0;i<player.getInventory().getContainerSize();i++)if(player.getInventory().getItem(i).is(Items.WHEAT_SEEDS))seeds+=player.getInventory().getItem(i).getCount();
             h.assertTrue(seeds==1,"Replanting uses the player's seeds, not free harvest copies");h.succeed();
-        } finally {level.getServer().getPlayerList().remove(player);}
+        } finally {level.getServer().getPlayerList().remove(player);}});
     }
     @GameTest(template="portal_test_empty",timeoutTicks=200)
     public static void cindersTelegraphDamageRetreatFromWardsAndEndWithTheCrisis(GameTestHelper h) {

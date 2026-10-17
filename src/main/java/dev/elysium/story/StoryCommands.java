@@ -16,7 +16,8 @@ public final class StoryCommands {
             var source=context.getSource();var level=source.getServer().getLevel(ElysiumTravel.DIMENSION);if(level==null)return 0;
             var cycle=RealmCycle.get(level);
             source.sendSuccess(()->Component.translatable("message.elysium.story.status",Component.translatable("phase.elysium."+cycle.phase().name().toLowerCase(java.util.Locale.ROOT)),Integer.bitCount(cycle.watches())),false);
-            source.sendSuccess(()->Component.translatable("message.elysium.story.next."+(cycle.phase()==RealmCycle.Phase.PARADISE?"forge":cycle.watches()!=7?"watches":"governor")),false);
+            String next=switch(cycle.phase()){case PARADISE->"forge";case LIVING->"living";case GOLDEN->"golden";default->cycle.watches()!=7?"watches":"governor";};
+            source.sendSuccess(()->Component.translatable("message.elysium.story.next."+next),false);
             return 1;
         })));
     }

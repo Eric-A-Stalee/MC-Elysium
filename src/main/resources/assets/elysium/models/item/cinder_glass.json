@@ -1,6 +1,172 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
+  "gui_light": "front",
+  "ambientocclusion": false,
   "textures": {
-    "layer0": "minecraft:item/prismarine_crystals"
-  }
+    "shell": "minecraft:block/obsidian",
+    "ember": "minecraft:block/magma",
+    "particle": "#ember"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        2,
+        6
+      ],
+      "to": [
+        10,
+        6,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#shell"
+        },
+        "up": {
+          "texture": "#shell"
+        },
+        "north": {
+          "texture": "#shell"
+        },
+        "south": {
+          "texture": "#shell"
+        },
+        "west": {
+          "texture": "#shell"
+        },
+        "east": {
+          "texture": "#shell"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        6,
+        7
+      ],
+      "to": [
+        9,
+        13,
+        9
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ember"
+        },
+        "up": {
+          "texture": "#ember"
+        },
+        "north": {
+          "texture": "#ember"
+        },
+        "south": {
+          "texture": "#ember"
+        },
+        "west": {
+          "texture": "#ember"
+        },
+        "east": {
+          "texture": "#ember"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        5,
+        6
+      ],
+      "to": [
+        5,
+        11,
+        9
+      ],
+      "faces": {
+        "down": {
+          "texture": "#shell"
+        },
+        "up": {
+          "texture": "#shell"
+        },
+        "north": {
+          "texture": "#shell"
+        },
+        "south": {
+          "texture": "#shell"
+        },
+        "west": {
+          "texture": "#shell"
+        },
+        "east": {
+          "texture": "#shell"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        4,
+        7
+      ],
+      "to": [
+        11,
+        9,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#shell"
+        },
+        "up": {
+          "texture": "#shell"
+        },
+        "north": {
+          "texture": "#shell"
+        },
+        "south": {
+          "texture": "#shell"
+        },
+        "west": {
+          "texture": "#shell"
+        },
+        "east": {
+          "texture": "#shell"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        13,
+        7
+      ],
+      "to": [
+        8,
+        16,
+        8
+      ],
+      "faces": {
+        "down": {
+          "texture": "#shell"
+        },
+        "up": {
+          "texture": "#shell"
+        },
+        "north": {
+          "texture": "#shell"
+        },
+        "south": {
+          "texture": "#shell"
+        },
+        "west": {
+          "texture": "#shell"
+        },
+        "east": {
+          "texture": "#shell"
+        }
+      }
+    }
+  ]
 }

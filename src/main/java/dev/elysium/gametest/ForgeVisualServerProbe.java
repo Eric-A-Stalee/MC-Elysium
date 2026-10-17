@@ -29,6 +29,7 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 public final class ForgeVisualServerProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualServer");
     private static ForgePlan PLAN;
+    private static dev.elysium.structure.WatchfirePiece[] WATCHES;
 
     private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
     private static boolean depthsReady;
@@ -43,6 +44,7 @@ public final class ForgeVisualServerProbe {
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
         prepareDepths(level);
         PLAN=ForgeNaturalGenerationProbe.generateAndVerify(level);
+        WATCHES=WatchfireNaturalGenerationProbe.generateAndVerify(level,PLAN.entrance());
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
     }
 
@@ -137,9 +139,56 @@ public final class ForgeVisualServerProbe {
                 if(source.airflow())source.toggleAirflow();
                 camera(player,level,-10,PLAN.floor()+2,50,-2,PLAN.floor()+1,61);
             }
+            case "hammer_strike" -> {
+                ignite(level);
+                var source=(ForgeServiceBlockEntity)level.getBlockEntity(ForgeFixtures.source(PLAN));
+                for(int i=0;i<100;i++)ForgeLighting.advance(level,source,0);
+                var press=(dev.elysium.block.ForgePressBlockEntity)level.getBlockEntity(dev.elysium.forge.ForgeHammer.world(PLAN,-9,1,76));
+                player.setGameMode(GameType.CREATIVE);
+                if(!press.queue(player,dev.elysium.forge.ForgeRecipes.byId("sunwrought"))||!press.start())throw new IllegalStateException("Natural press refused its first bill");
+                for(int i=0;i<7;i++)press.advance();press.pause();
+                if(press.drop()!=4||dev.elysium.story.RealmCycle.get(level).phase()!=dev.elysium.story.RealmCycle.Phase.DESCENDING)throw new IllegalStateException("Physical first strike failed to release the sky");
+                player.setGameMode(GameType.SPECTATOR);
+                camera(player,level,-12,PLAN.floor()+5,65,0,PLAN.floor()+9,76);
+            }
+            case "harvest_sunset" -> watchCamera(player,level,0);
+            case "harvest_night" -> {
+                var cycle=dev.elysium.story.RealmCycle.get(level);
+                // Only the disposable review clock is accelerated, through the ordinary state transition.
+                while(cycle.time()<18000)cycle.advance(true);
+                dev.elysium.story.RealmClock.sync(player);watchCamera(player,level,0);
+            }
+            case "harvest_answered" -> {answer(player,level,0);watchCamera(player,level,0);}
+            case "water_answered" -> {answer(player,level,1);watchCamera(player,level,1);}
+            case "high_answered" -> {answer(player,level,2);watchCamera(player,level,2);}
+            case "governor" -> camera(player,level,6,PLAN.floor()+3,104,0,PLAN.floor()+2,110);
+            case "first_dawn" -> {
+                player.setGameMode(GameType.CREATIVE);
+                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.forge.ForgeHammer.world(PLAN,0,1,110),new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CLOCK),true))throw new IllegalStateException("Governor did not accept the repaired living sky");
+                var cycle=dev.elysium.story.RealmCycle.get(level);while(cycle.time()<24500)cycle.advance(true);
+                dev.elysium.story.RealmClock.sync(player);player.setGameMode(GameType.SPECTATOR);watchCamera(player,level,0);
+            }
+            case "chosen_hour" -> {
+                player.setGameMode(GameType.CREATIVE);
+                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.forge.ForgeHammer.world(PLAN,0,1,110),new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.ELYSIUM_FRAGMENT.get()),true))throw new IllegalStateException("Governor could not restore chosen golden hour");
+                player.setGameMode(GameType.SPECTATOR);watchCamera(player,level,0);
+            }
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);
         }
         LogUtils.getLogger().info("ELYSIUM_FORGE_SCENE {}",scene);
+    }
+
+    private static void answer(ServerPlayer player,ServerLevel level,int kind) {
+        player.setGameMode(GameType.CREATIVE);
+        var fire=(dev.elysium.block.WatchfireBlockEntity)level.getBlockEntity(WATCHES[kind].socket());
+        if(!fire.repair(player,new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.WATCHFIRE_SEAL.get())))throw new IllegalStateException("Natural watch refused its repair: "+kind);
+        player.setGameMode(GameType.SPECTATOR);
+    }
+    private static void watchCamera(ServerPlayer player,ServerLevel level,int kind) {
+        var pos=WATCHES[kind].socket();
+        double x=pos.getX()+10.5,y=pos.getY()+5,z=pos.getZ()+14.5;
+        double dx=pos.getX()+.5-x,dz=pos.getZ()+.5-z,dy=pos.getY()+2-y-1.62;
+        player.teleportTo(level,x,y,z,(float)(Math.toDegrees(Math.atan2(dz,dx))-90),(float)-Math.toDegrees(Math.atan2(dy,Math.hypot(dx,dz))));
     }
 
     private static void ignite(ServerLevel level) {

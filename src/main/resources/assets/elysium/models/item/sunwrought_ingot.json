@@ -1,6 +1,111 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
+  "gui_light": "front",
+  "ambientocclusion": false,
   "textures": {
-    "layer0": "minecraft:item/gold_ingot"
-  }
+    "gold": "minecraft:block/gold_block",
+    "copper": "minecraft:block/copper_block",
+    "iron": "minecraft:block/netherite_block",
+    "ember": "minecraft:block/magma",
+    "face": "minecraft:block/chiseled_quartz_block",
+    "particle": "#gold"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        4,
+        4
+      ],
+      "to": [
+        15,
+        7,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "north": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        7,
+        5
+      ],
+      "to": [
+        14,
+        9,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold"
+        },
+        "up": {
+          "texture": "#gold"
+        },
+        "north": {
+          "texture": "#gold"
+        },
+        "south": {
+          "texture": "#gold"
+        },
+        "west": {
+          "texture": "#gold"
+        },
+        "east": {
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        9,
+        6
+      ],
+      "to": [
+        9,
+        9.1,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron"
+        },
+        "up": {
+          "texture": "#iron"
+        },
+        "north": {
+          "texture": "#iron"
+        },
+        "south": {
+          "texture": "#iron"
+        },
+        "west": {
+          "texture": "#iron"
+        },
+        "east": {
+          "texture": "#iron"
+        }
+      }
+    }
+  ]
 }

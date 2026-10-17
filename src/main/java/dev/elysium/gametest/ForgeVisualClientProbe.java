@@ -18,7 +18,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
     private static final String[] SCENES={"descent","chimera_dark","chimera_lamp","chimera_eye","chimera_attack",
-            "dark","forge_service","forge_restored","forge_full_hall","forge_banked"};
+            "dark","forge_service","forge_restored","forge_full_hall","forge_banked",
+            "hammer_strike","harvest_sunset","harvest_night","harvest_answered","water_answered","high_answered","governor","first_dawn","chosen_hour"};
     private static boolean connecting,requested,captured;
     private static int index;
     private static long next;
@@ -55,6 +56,14 @@ public final class ForgeVisualClientProbe {
                 }
             }
             String name=String.format("%02d-%s.png",index+1,SCENES[index]);
+            long time=Math.floorMod(mc.level.getDayTime(),24000);
+            String scene=SCENES[index];
+            if(scene.equals("harvest_sunset")&&(time<11500||time>=14000)
+                    ||scene.equals("harvest_night")&&(time<18000||time>22000)
+                    ||scene.equals("first_dawn")&&time>=4000
+                    ||scene.equals("chosen_hour")&&time!=11500)
+                throw new IllegalStateException("Client sky is out of sync in "+scene+": "+time);
+            LogUtils.getLogger().info("ELYSIUM_CLIENT_CLOCK scene={} time={}",scene,time);
             Screenshot.grab(mc.gameDirectory,name,mc.getMainRenderTarget(),message->LogUtils.getLogger().info("Forge capture: {}",message.getString()));
             captured=true;next=now+3_000_000_000L;
         } else if(now>=next) {

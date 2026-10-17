@@ -374,8 +374,15 @@ asset('models/block/ward_lamp',{'parent':'elysium:block/keepers_lamp','textures'
 asset('blockstates/ward_lamp',{'variants':{'':{'model':'elysium:block/ward_lamp'}}})
 asset('models/item/ward_lamp',{'parent':'elysium:block/ward_lamp'})
 loot('ward_lamp',[pool([item('elysium:ward_lamp')],[SURVIVES])])
-for name,tex in [('sunwrought_ingot','gold_ingot'),('watchfire_seal','fire_charge'),('dawn_wayfinder','clock_00')]:
-    asset(f'models/item/{name}',{'parent':'minecraft:item/generated','textures':{'layer0':f'minecraft:item/{tex}'}})
+# Distinct forged silhouettes, still resolving every material from the player's active pack.
+instrument_textures={'gold':'minecraft:block/gold_block','copper':'minecraft:block/copper_block','iron':'minecraft:block/netherite_block','ember':'minecraft:block/magma','face':'minecraft:block/chiseled_quartz_block','particle':'#gold'}
+instruments={
+    'sunwrought_ingot':[cuboid([1,4,4],[15,7,12],'#copper'),cuboid([2,7,5],[14,9,11],'#gold'),cuboid([7,9,6],[9,9.1,10],'#iron')],
+    'watchfire_seal':[cuboid([3,3,6],[13,13,9],'#iron'),cuboid([1,5,6],[15,11,9],'#copper'),cuboid([5,1,6],[11,15,9],'#copper'),cuboid([4,4,9],[12,12,10],'#gold'),cuboid([7,5,10],[9,11,10.2],'#ember'),cuboid([5,7,10],[11,9,10.2],'#ember')],
+    'dawn_wayfinder':[cuboid([3,3,6],[13,13,8],'#iron'),cuboid([4,4,8],[12,12,9],'#face'),cuboid([2,2,7],[14,4,10],'#copper'),cuboid([2,12,7],[14,14,10],'#copper'),cuboid([2,4,7],[4,12,10],'#copper'),cuboid([12,4,7],[14,12,10],'#copper'),cuboid([7,5,9],[9,14,10],'#gold'),cuboid([5,7,9],[11,9,10],'#gold'),cuboid([7,14,7],[9,17,9],'#iron')],
+}
+for name,elements in instruments.items():
+    asset(f'models/item/{name}',{'parent':'minecraft:block/block','gui_light':'front','ambientocclusion':False,'textures':instrument_textures,'elements':elements})
 asset('models/item/harvest_sickle',{'parent':'minecraft:item/handheld','textures':{'layer0':'minecraft:item/golden_hoe'}})
 data('advancement/smiths_work',{'parent':'elysium:flame_returned','display':{'icon':{'id':'elysium:sunwrought_ingot'},'title':"The Smith's Charge",'description':'Temper a batch beneath the great hammer.','frame':'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 pickaxe=json.loads(OUTPUTS['data/minecraft/tags/block/mineable/pickaxe.json'])
@@ -398,7 +405,9 @@ asset('models/block/celestial_governor',{'parent':'minecraft:block/block','textu
 asset('blockstates/celestial_governor',{'variants':{'':{'model':'elysium:block/celestial_governor'}}})
 asset('models/item/celestial_governor',{'parent':'elysium:block/celestial_governor'})
 loot('celestial_governor',[pool([item('elysium:celestial_governor')],[SURVIVES])])
-asset('models/item/cinder_glass',{'parent':'minecraft:item/generated','textures':{'layer0':'minecraft:item/prismarine_crystals'}})
+asset('models/item/cinder_glass',{'parent':'minecraft:block/block','gui_light':'front','ambientocclusion':False,
+    'textures':{'shell':'minecraft:block/obsidian','ember':'minecraft:block/magma','particle':'#ember'},
+    'elements':[cuboid([4,2,6],[10,6,10],'#shell'),cuboid([5,6,7],[9,13,9],'#ember'),cuboid([3,5,6],[5,11,9],'#shell'),cuboid([9,4,7],[11,9,10],'#shell'),cuboid([6,13,7],[8,16,8],'#shell')]})
 asset('models/block/ember_glass',{'parent':'minecraft:block/cube_all','render_type':'minecraft:translucent','textures':{'all':'minecraft:block/orange_stained_glass'}})
 asset('blockstates/ember_glass',{'variants':{'':{'model':'elysium:block/ember_glass'}}})
 asset('models/item/ember_glass',{'parent':'elysium:block/ember_glass'})

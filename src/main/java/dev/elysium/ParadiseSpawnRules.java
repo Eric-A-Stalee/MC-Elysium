@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 /**
  * Elysium's dimension type is natural so beds and compasses work, which also lets lit nether portals
  * spawn zombified piglins. Block only those portal spawns; eggs, spawners and commands still work.
- * Tied to the fixed sun so a later phase that moves the clock can opt back in.
+ * The first night has its own cinders; releasing the sky does not import Nether portal mobs.
  */
 @EventBusSubscriber(modid = Elysium.MOD_ID)
 public final class ParadiseSpawnRules {
@@ -19,8 +19,7 @@ public final class ParadiseSpawnRules {
         var level = event.getLevel().getLevel();
         if (event.getSpawnType() == MobSpawnType.STRUCTURE
                 && event.getEntity().getType() == EntityType.ZOMBIFIED_PIGLIN
-                && level.dimension().equals(ElysiumTravel.DIMENSION)
-                && level.dimensionType().hasFixedTime()) {
+                && level.dimension().equals(ElysiumTravel.DIMENSION)) {
             event.setSpawnCancelled(true);
         }
     }

@@ -72,8 +72,9 @@ public final class ElysiumGameTests {
         var realm = helper.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
         helper.assertTrue(realm != null, "Elysium must load as an independent dimension");
         var type = realm.dimensionType();
-        helper.assertTrue(type.hasFixedTime(), "The paradise sun must remain fixed");
-        helper.assertTrue(type.timeOfDay(0) == type.timeOfDay(12000), "The Overworld clock must not move Elysium's sun");
+        helper.assertTrue(!type.hasFixedTime(), "The dimension type must allow the story's independent clock");
+        helper.assertTrue(dev.elysium.story.RealmCycle.get(realm).phase()==dev.elysium.story.RealmCycle.Phase.PARADISE
+                &&realm.getDayTime()==11500, "An untouched paradise keeps its own fixed golden hour");
         helper.assertTrue(type.hasSkyLight() && type.bedWorks(), "The realm needs daylight and usable beds");
         var biomes = realm.registryAccess().registryOrThrow(Registries.BIOME);
         for (String id : new String[]{"golden_fields", "golden_birch_woods", "golden_watermeadows", "amber_lakes", "elysian_highlands", "ivory_peaks"}) {

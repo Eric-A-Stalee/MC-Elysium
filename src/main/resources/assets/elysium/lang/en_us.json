@@ -194,5 +194,12 @@
   "story.elysium.golden.title": "An Hour Freely Chosen",
   "story.elysium.golden.subtitle": "The sun rests above a realm whose watches remember.",
   "story.elysium.dawn.title": "The First Dawn",
-  "story.elysium.dawn.subtitle": "For the first time, the fields have a tomorrow."
+  "story.elysium.dawn.subtitle": "For the first time, the fields have a tomorrow.",
+  "message.elysium.story.next.living": "The cycle is repaired. Elysium can greet each new morning. The heated governor remains yours to revisit.",
+  "message.elysium.story.next.golden": "The golden hour is yours by choice. The heated governor can release the living cycle whenever you wish.",
+  "tooltip.elysium.watchfire_seal": "Fit to an old watchfire after the first sunset; each watch asks its own offering.",
+  "tooltip.elysium.sunwrought_ingot": "Tempered beneath the great hammer. Used in the smith's instruments.",
+  "tooltip.elysium.cinder_glass": "An ember sealed in slag. Combine with four glass to make Emberglass.",
+  "tooltip.elysium.ward_lamp": "Repels stray cinders while carried; shelters twelve blocks around its placed light.",
+  "tooltip.elysium.ember_glass": "A warm window that gives its own light."
 }

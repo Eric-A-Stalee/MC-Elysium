@@ -75,7 +75,10 @@ public final class FirstDawnGameTests {
             realm.setBlock(ForgeFixtures.hearth(p),ModBlocks.FORGE_HEARTH.get().defaultBlockState().setValue(DormantHearthBlock.FLAME,true),3);
             var source=ForgeLighting.loadedService(realm,ForgeFixtures.source(p));source.addFuel(48000);source.ignite();source.toggleAirflow();for(int i=0;i<160;i++)ForgeLighting.advance(realm,source,10);
             h.assertTrue(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,governor,clock,false),"The choice is deliberately operated");
-            h.assertTrue(ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,governor,clock,true)&&clock.getCount()==1,"A supplied shrine releases the cycle without eating its instrument");
+            player.setShiftKeyDown(true);player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,clock);
+            var used=player.gameMode.useItemOn(player,realm,clock,net.minecraft.world.InteractionHand.MAIN_HAND,
+                    new net.minecraft.world.phys.BlockHitResult(governor.getCenter(),net.minecraft.core.Direction.UP,governor,false));
+            h.assertTrue(used.consumesAction()&&cycle.phase()==RealmCycle.Phase.LIVING&&clock.getCount()==1,"Real sneak-use must reach the governor and release the cycle without eating its instrument");
             source.toggleAirflow();h.assertTrue(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,governor,new ItemStack(ModItems.ELYSIUM_FRAGMENT.get()),true),"A banked forge cannot change the world again");
             h.succeed();
         } finally {install(realm,RealmCycle.load(original,realm.registryAccess()));}
