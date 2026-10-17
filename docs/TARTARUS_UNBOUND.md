@@ -56,3 +56,53 @@ NPC. His body is built into the rock; the eagle is an articulated moving entity.
 This needs actual client review before the silhouettes and material balance can
 be considered settled. The book's warning anticipates the consequence systems
 being developed next on this branch.
+
+## What changed while building
+
+The implementation now carries that sequence through to a playable consequence
+and repair cycle. The prison's first client review showed the folded eagle wings
+standing like a victory pose and a sun visible through the deep darkness. The
+wings now rest along the back. Elysium owns its sky effects and suppresses the
+sky, clouds and weather below Y=-64 without changing the surface's sun.
+Prometheus remains a figure built into the rock, not a walking humanoid.
+
+The underworld review exposed overly scattered surface noise and the risk of
+reading pale ribs as ice. Ash now forms coherent beds, ember seams remain local,
+and titan bone is charred. The descending route has partial rails, worn stone
+and breaches into the cavern. These are navigable terrain and saved structure
+pieces, not a teleport disguised as a stair.
+
+The third concept study explored what it would mean for the buried world to
+push into a golden field. The first actual rupture looked too much like a
+circular defensive wall, and the full creature bodies could not reliably clear
+its rim. The current wound has a warped outline and uneven broken ribs; spawning
+checks the whole entity box. Both a server test and the natural client probe
+require the hunters and warden to physically emerge.
+
+The restraints developed from three abstract keys into three different places
+and actions. Hunger has a ruined jaw and only pauses when fed. Sorrow has a
+faceless mourner over black water and requires presence, light and Hope.
+Dominion has a broken empty throne; its jailer obeys a sentence whose author
+is gone. Their testimonies ask what an eternal paradise kept out of sight:
+a hunger without a body, grief without a witness, and authority without a ruler.
+
+The first forging releases these forces only after the complete physical batch.
+The three surface traditions offer refuge but cannot repair their origin. Three
+deep restraints are also needed before the sky can move again. Closing a wound
+leaves a scar; restoring the sky leaves escaped creatures. This prevents the
+ending from quietly erasing what the player chose to do.
+
+## What this checkpoint deliberately leaves open
+
+This is an explorable alpha chapter with a complete expedition and return, not
+a claim of finished survival balance or an exhaustive mythology. The most
+interesting next decisions need time in this world: whether the three repairs
+feel like understanding rather than chores, whether the eagle's recovery is
+readable, how far a traveller can move between safe light sources, and whether
+wounds change a settlement's atmosphere without overwhelming it. More creatures
+should express different behavior and purpose, not just add health bars.
+
+The concept studies set atmosphere; actual default-texture client captures
+checked the implementation. Geometry review uses clearly identified night
+vision, while dark/lamp views retain normal lighting. No ReTerraForged preset
+is required for this terrain, and external shader compatibility is not claimed.

@@ -1,5 +1,10 @@
 # The first dawn
 
+Historical alpha 21–22 design checkpoint. Alpha 25 deliberately expands this
+boundary into continuous Tartarus and physical surface ruptures; its current
+rules and player route are in [Tartarus Unbound](UNBOUND.md). The no-invasion
+constraint below belongs to the earlier, smaller chapter.
+
 Elysium is a place worth keeping, not a disposable waiting room for a boss.
 The surface remains a viable home. Its buried works explain both its beauty
 and its arrested life. Exploration is voluntary; simply entering the realm,

@@ -1056,3 +1056,100 @@ terrain seeds and external resource-pack/shader combinations for playtesting.
 Use a fresh alpha world or fully regenerate Elysium for the new press, governor
 and watches. No old-world migration is promised. The surface palettes,
 settlement grammar and standalone terrain engine are retained.
+
+
+## Alpha 25 — Tartarus Unbound (October 17, 2026 UTC)
+
+Release source: `0cfd6faae09103b8f30c958bbac7e18bab37877d`.
+[Run 39036889157](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39036889157)
+builds the release, verifies generated assets/worldgen and the optional erosion
+guard, and passes **all 84 required server GameTests**.
+
+The new checks cover continuous deep columns and biome identity, saved winding
+routes, the prison's surveyed approach and one owned eagle, persistent personal
+teaching, marked dives, real pinion collision and melee recovery, hearing and
+cover for the Hungers, completed-work release versus interrupted forging,
+pressure persistence without an offline deadline, distinct restraint offerings
+and actual block light, jailer ownership, chain warning/dodge/cover, and real
+rupture damage, terrain writes, entity emergence and repair. A container placed
+after the rupture warning survives excavation; wards and gamerules are respected.
+The natural-block whitelist cannot identify player-placed ordinary stone as
+player construction, so this is not a general claim that every build is immune.
+
+Two test-fixture issues were corrected during this chapter. Temporary chunk
+loads expired during Sorrow's lighting wait, so the restraint test reloads its
+encounter neighbourhood before use. The remote warden combat arena sometimes
+had blocks loaded before its entity sections became accessible. Its test now
+waits with ticking test chunks and asserts the real spatial index contains the
+damageable player before exercising the attack. Production damage and collision
+were not bypassed. The same 84 tests also passed on `738892db661b`; the final
+source adds full-body rupture-emergence assertions and the reliable arena setup.
+
+The packaged `elysium-0.1.0-alpha.25.jar` is **933,124 bytes**, SHA-256
+`2f2048748955d3d5da151f1d1d37a1c2060464b1de18422361f6780dd6eb8fc4`.
+The downloaded artifact's SHA-256 and ZIP integrity match. All **208 shipped
+classes** target Java 21; all **389 source resources** intended for the jar
+match byte for byte. The GameTest classes, empty test structure and development
+flat-world override are excluded. The generators reproduce 255 asset resources
+and 129 worldgen resources.
+
+The separate natural restraint/rupture review succeeds in
+[run 39036195077](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39036195077),
+source `fe0f339bb6fdfaf9d455bf885dd8ead9381fc714`. Its eight actual client frames
+show all three structures, the Sentenced, normal lamp-lit Sorrow, and the surface
+before, during and after a real rupture. The probe requires two actual Hungers
+and one actual warden to emerge. This historical workflow caught the intermittent
+combat-test setup issue above; its client step succeeded. The subsequent final
+source preserves this player code and fixes the test fixture.
+
+| Natural seed-zero destination | Source chunk | Interactive core |
+|---|---|---|
+| Prometheus | [-107, 64] | (-1707, -450, 1037) |
+| Hunger | [-130, 106] | (-2072, -472, 1704) |
+| Sorrow | [99, -82] | (1592, -526, -1304) |
+| Dominion | [-71, 49] | (-1128, -464, 792) |
+
+These are ordinary generated starts and references, not injected structures or
+multi-seed frequency measurements. The restraint checks walk the complete
+64-step approach and clear inner route. The prison's four refined actual views
+come from [run 39034635164](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39034635164),
+source `fa329a7f98c53f090a7420af83fb9729d07c836a`; its geometry, eagle rendering and
+deep sky suppression are unchanged in the final player code. The preserved
+alpha 24 checkpoint independently passes its 79 tests and four prison captures
+in [run 39036164417](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39036164417).
+
+
+The full **26-scene actual client regression review** passes alongside all 84
+server tests in [run 39036427501](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39036427501),
+source `dbf75c285e27cef0acd7a502c34f162356c49148`. The final release changes only
+the combat-test setup after this source. The review revisits the original Eye
+and real projectile, four Forge heat states, the hammer, sunset and stalled
+moon, all three watches, governor and both restored skies, then six deep-world
+views. It verifies natural Tartarus across 272 chunks, 516 route steps and
+3,865 material samples; the natural Forge across 63 chunks and 359 fixtures;
+and all three watch starts. The four deep region landmarks are (-2087,-514,-23499)
+for ash, (-3084,-542,-23806) for chains, (-3239,-530,-23243) for mire and
+(-4324,-482,-23328) for the titan grave. No terrain is removed for the cameras.
+
+The combined downloadable review contains **38 actual frames**: these 26,
+four prison views and eight restraint/rupture views, with source-specific logs,
+lighting labels and per-frame hashes. It includes an HTML gallery. The final
+jar's source is independently green; documentation-only changes after it do not
+change the packaged code or resources.
+
+Captures retain default textures, no external shaders, gamma 0.5, FOV 70,
+ten-chunk rendering and Mesa OpenGL at 1280x720. Deep geography, prison and
+restraint overview views use explicit night vision. The named dark/lamp views
+use normal lighting with placed Keeper's Lamps; surface and Forge views use
+normal lighting. Fuel and materials are supplied for the disposable review,
+the story clock is accelerated through ordinary transitions, and the dawn
+fixture marks the deep restraints repaired. Actual repair requirements are
+covered by the server tests. The rupture probe pauses the spawned creatures'
+AI for photographs without replacing their positions or their entity types.
+
+There are no missing Elysium model or texture errors in the reviewed client logs.
+The runner has no audio device or narrator library. Manual survival balance,
+prolonged multiplayer, multi-seed encounter frequency, external shaders and
+active ReTerraForged presets remain unassessed. This chapter requires no external
+terrain or structure mod. Use a fresh alpha world or fully regenerate Elysium;
+saved-world migration is deliberately outside scope.

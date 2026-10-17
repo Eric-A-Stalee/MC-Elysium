@@ -1,5 +1,10 @@
 # Tartarus expedition — design and player notes
 
+This is the original Eye expedition, retained as the opening descent. Alpha 25
+continues below it into a continuous underworld; see [Tartarus Unbound](UNBOUND.md).
+The current dimension reaches Y=-640. The alpha 19–20 dimensions and boundaries
+discussed below describe those historical checkpoints.
+
 Alpha 20 reshapes the creature with unequal dragging limbs, a bowed neck, an
 irregular amber eye and an articulated hooked tail. Cinder volleys now travel
 as visible entities and collide with cover; the tail and ground pulse have
