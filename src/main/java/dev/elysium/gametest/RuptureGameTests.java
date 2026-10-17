@@ -27,18 +27,20 @@ public final class RuptureGameTests {
             l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(false,l.getServer());h.assertTrue(!RuptureDirector.open(l,plan,0)&&l.getBlockState(plan.core()).is(Blocks.STONE),"Disabled griefing prevents all rupture terrain writes");
             l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(true,l.getServer());var ward=centre.east(6).above();l.setBlock(ward,ModBlocks.WARD_LAMP.get().defaultBlockState(),3);cycle.addWard(ward);
             h.assertTrue(!RuptureDirector.open(l,plan,0),"A real ward keeps the surface intact");l.removeBlock(ward,false);cycle.removeWard(ward);
-            h.assertTrue(RuptureDirector.open(l,plan,0),"An unprotected surveyed wound can begin");var r=(RiftBlockEntity)l.getBlockEntity(plan.core());
+            h.assertTrue(RuptureDirector.open(l,plan,2),"An unprotected surveyed wound can begin");var r=(RiftBlockEntity)l.getBlockEntity(plan.core());
             for(int i=0;i<60;i++)r.advance();h.assertTrue(!r.opened()&&player.getHealth()==20&&l.getBlockState(centre).is(Blocks.STONE),"The warning does not silently carve or damage the ground early");
             var chest=centre.east(3);l.setBlock(chest,Blocks.CHEST.defaultBlockState(),3);((net.minecraft.world.level.block.entity.ChestBlockEntity)l.getBlockEntity(chest)).setItem(0,new ItemStack(net.minecraft.world.item.Items.DIAMOND,3));
             var restored=(RiftBlockEntity)BlockEntity.loadStatic(r.getBlockPos(),r.getBlockState(),r.saveWithFullMetadata(l.registryAccess()),l.registryAccess());restored.setLevel(l);l.setBlockEntity(restored);
             h.assertTrue(restored.age()==60&&!restored.opened(),"Saving during a warning preserves its countdown");for(int i=0;i<20;i++)restored.advance();
             h.assertTrue(restored.opened()&&player.getHealth()<20&&l.getBlockState(centre).isAir(),"The warned rupture causes real damage and actual excavation");
+            var area=new net.minecraft.world.phys.AABB(centre).inflate(20);
+            h.assertTrue(l.getEntitiesOfClass(dev.elysium.entity.AshenHoundEntity.class,area).size()==2&&l.getEntitiesOfClass(dev.elysium.entity.ChainWardenEntity.class,area).size()==1,"Both hunters and the wide jailer must physically fit over the uneven crater floor");
             h.assertTrue(((net.minecraft.world.level.block.entity.ChestBlockEntity)l.getBlockEntity(chest)).getItem(0).getCount()==3,"An inventory placed during the warning survives every terrain write");
             var nails=new ItemStack(ModItems.BINDING_NAIL.get(),2);restored.use(player,nails);restored.use(player,nails);
             h.assertTrue(restored.sealed()&&nails.getCount()==1&&l.getBlockState(centre).isAir(),"Repair consumes one nail and leaves a permanent scar");
             var far=new RupturePlan(910000,910000,heights);h.assertTrue(!RuptureDirector.open(l,far,1)&&l.getChunkSource().getChunkNow(910000>>4,910000>>4)==null,"Ruptures cannot force-load remote chunks");h.succeed();
         }finally{
-            for(var e:l.getEntitiesOfClass(dev.elysium.entity.AshenHoundEntity.class,new net.minecraft.world.phys.AABB(centre).inflate(30)))e.discard();l.getServer().getPlayerList().remove(player);l.getDataStorage().set("elysium_realm_cycle",RealmCycle.load(old,l.registryAccess()));l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(grief,l.getServer());l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(spawns,l.getServer());l.getServer().setDifficulty(difficulty,true);
+            for(var e:l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,new net.minecraft.world.phys.AABB(centre).inflate(30)))if(e instanceof dev.elysium.entity.AshenHoundEntity||e instanceof dev.elysium.entity.ChainWardenEntity)e.discard();l.getServer().getPlayerList().remove(player);l.getDataStorage().set("elysium_realm_cycle",RealmCycle.load(old,l.registryAccess()));l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(grief,l.getServer());l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(spawns,l.getServer());l.getServer().setDifficulty(difficulty,true);
         }
     }
 }

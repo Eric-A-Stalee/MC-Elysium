@@ -258,5 +258,14 @@
   "tooltip.elysium.binding_nail": "Forged restraint. Seals a prepared deep binding or an open surface wound.",
   "message.elysium.vessel.sealed": "The vessel is sealed into the Forge. Its bindings answer the great hammer.",
   "message.elysium.vessel.empty": "Only Hope remains. If yours is lost, offer an Elysium Fragment to kindle it again.",
-  "message.elysium.vessel.hope": "From the vessel’s darkness, you take what did not escape: Hope. Carry it below, with a lamp."
+  "message.elysium.vessel.hope": "From the vessel’s darkness, you take what did not escape: Hope. Carry it below, with a lamp.",
+  "lore.elysium.hunger.1": "A MOUTH WITHOUT A BODY\n\nThere was no beast to kill. We cut away its body. Hunger remained. We buried its teeth. Hunger learned the shape of the earth.",
+  "lore.elysium.hunger.2": "Above us, the fields could ripen without failing. Below, the mouth was kept from asking.\n\nYour hammer did not create it. Your hammer loosened the answer that held it shut.",
+  "lore.elysium.hunger.3": "An offering is not a feast. Eight heads of wheat will purchase a little silence. Drive a forged nail while the mouth remembers what enough once meant.\n\nDo not mistake that silence for death.",
+  "lore.elysium.sorrow.1": "THE WATER REMEMBERS\n\nThey tried to drain the cistern. By morning it was full. They tried to burn the water. The smoke remembered every name they had forgotten.",
+  "lore.elysium.sorrow.2": "No keeper was sentenced to stay here. That was the cruelty: no one stayed.\n\nSorrow grew so vast that the mountain learned to bow over it.",
+  "lore.elysium.sorrow.3": "Carry the small Hope left in the vessel. Bring light close to the restraint. Crouch, hold still, and remain for four seconds.\n\nThen mend the iron with a Binding Nail. You need not leave Hope behind.",
+  "lore.elysium.dominion.1": "THE EMPTY SEAT\n\nThe king is gone. The command remains.\n\nEvery chain below this throne was tightened by someone who believed the order had come from above.",
+  "lore.elysium.dominion.2": "The Sentenced carries its own prison on its shoulders. It rings no bell. It waits for footsteps, and answers with the same punishment it was given.\n\nIt does not know whose reign it serves.",
+  "lore.elysium.dominion.3": "When the chain rises, leave its marked path. When it falls, the jailer must gather it again.\n\nEnd this sentence. Nail the restraint closed. The empty seat must never be allowed to give another order."
 }

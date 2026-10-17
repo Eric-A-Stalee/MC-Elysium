@@ -58,6 +58,11 @@ public final class BindingBlockEntity extends BlockEntity {
     }
     public void use(Player p,ItemStack stack){
         if(!(level instanceof ServerLevel l))return;
+        if(p instanceof ServerPlayer reader&&(stack.isEmpty()||stack.is(Items.BOOK))){
+            var record=ForgeLore.Record.values()[ForgeLore.Record.HUNGER.ordinal()+kind()];
+            boolean first=dev.elysium.forge.ForgeDiscoveries.get(l).discover(reader.getUUID(),record.flag);
+            if(first||stack.is(Items.BOOK)){ForgeLore.give(reader,ForgeLore.book(record));if(!first&&!reader.getAbilities().instabuild)stack.shrink(1);}
+        }
         if(sealed()||RealmCycle.get(l).bindingHeld(kind())){tell(p,"held");return;}
         if(!RealmCycle.get(l).released()){tell(p,"intact");return;}
         if(offer(stack,p)||seal(p,stack))return;

@@ -78,6 +78,8 @@ restraint prevents new wounds of that kind and quiets its existing loaded wounds
 not silently undo the world's history. Repairs and watch progress are shared;
 Prometheus teaches individual players.
 
+Examine each restraint with an empty hand to copy its three-page testimony; a blank book makes a replacement.
+
 The ruined places are physically generated structures. Their approaches follow
 surveyed terrain, rather than relying on runtime room excavation. The Maw's
 broken jaw, the Cistern's water and mourner, and the empty throne tell different

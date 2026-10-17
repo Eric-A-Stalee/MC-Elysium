@@ -26,6 +26,7 @@ public final class DeepBindingPiece extends StructurePiece {
     public List<BlockPos> approachRoute(){return java.util.stream.IntStream.range(0,64).mapToObj(i->new BlockPos(x,y+route[i],z+27+i)).toList();}
     @Override protected void addAdditionalSaveData(StructurePieceSerializationContext c,CompoundTag t){t.putInt("X",x);t.putInt("Y",y);t.putInt("Z",z);t.putInt("Low",low);t.putInt("Kind",kind);t.putLong("Seed",seed);t.putIntArray("Route",route);}
     private BlockState stone(int u,int h,int v){return (Math.floorMod(u*31+v*17+h+(int)seed,11)==0?Blocks.CRACKED_DEEPSLATE_BRICKS:Blocks.DEEPSLATE_BRICKS).defaultBlockState();}
+    private static boolean ellipsoid(double x,double y,double z,double a,double b,double c){return x*x/(a*a)+y*y/(b*b)+z*z/(c*c)<1;}
     public BlockState materialAt(int wx,int wy,int wz){
         if(!boundingBox.isInside(wx,wy,wz))return null;int u=wx-x,h=wy-y,v=wz-z;double r=Math.hypot(u,v);
         if(u==0&&v==0&&h==2)return ModBlocks.DEEP_BINDING.get().defaultBlockState().setValue(BindingBlock.KIND,kind);
@@ -36,22 +37,37 @@ public final class DeepBindingPiece extends StructurePiece {
             double jaw=Math.sqrt(u*u/1.4+(v+9)*(v+9));
             if(jaw<7&&h>=-7&&h<10)return h==-7?Blocks.SOUL_SOIL.defaultBlockState():Blocks.CAVE_AIR.defaultBlockState();
             if(jaw>=7&&jaw<10&&v<1&&h>=0&&h<4)return ModBlocks.CHARRED_BONE.get().defaultBlockState();
-            if(v<-2&&jaw>=7.5&&jaw<10&&Math.floorMod(u*3+v,9)<3&&h>=4&&h<10-Math.abs(u)/3)return ModBlocks.CHARRED_BONE.get().defaultBlockState();
-            if(Math.abs(u)>17&&Math.abs(u)<21&&v<8&&v>-22&&Math.floorMod(v,9)<3&&h>=0&&h<25-Math.abs(v+6)/2)return h%7==0?ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState():ModBlocks.CHARRED_BONE.get().defaultBlockState();
+            for(int i=0;i<11;i++){double a=i*Math.PI*2/11;int tx=(int)Math.round(Math.sin(a)*10),tz=-9+(int)Math.round(Math.cos(a)*8),height=5+(i*7)%5;
+                if(tz<0&&h>=3&&h<=height&&Math.hypot(u-tx,v-tz)<2.4-(h-3)*.19)return ModBlocks.CHARRED_BONE.get().defaultBlockState();
+            }
+            for(int rib:new int[]{-20,-8,6})if(h>=0&&h<25-Math.abs(rib+6)/6&&Math.abs(v-rib)<1.6&&Math.abs(Math.abs(u)-(21-.018*h*h))<1.6)
+                return h<3?Blocks.BASALT.defaultBlockState():ModBlocks.CHARRED_BONE.get().defaultBlockState();
         }else if(kind==1){
             if(r>5&&r<18&&Math.abs(u)>2){if(h==-3)return Blocks.PACKED_MUD.defaultBlockState();if(h>-3&&h<=0)return Blocks.WATER.defaultBlockState();if(h>0&&h<12)return Blocks.CAVE_AIR.defaultBlockState();}
             if(r>=18&&r<21&&h>=-3&&h<=2+(u<0?2:0))return (h==2?Blocks.CHISELED_DEEPSLATE:Blocks.MUD_BRICKS).defaultBlockState();
             // A slumped, faceless mourner and a broken aqueduct. No ice or blue light.
-            if(v<-18&&v>-26&&Math.abs(u+7)<7&&h>=3&&h<21-Math.abs(u+7)*2)return (h>15?Blocks.BASALT:Blocks.POLISHED_BLACKSTONE).defaultBlockState();
+            boolean head=ellipsoid(u+6,h-23,v+19,4.5,5,5),body=ellipsoid(u+7,h-11,v+22,7,10,5);
+            boolean hands=(Math.abs(u+10)<2||Math.abs(u+2)<2)&&h>15&&h<24&&v>-18&&v<-14;
+            if(head||body||hands){
+                if(head&&Math.abs(u+6)<2&&h>=22&&h<=25&&v>-17)return h==24&&v==-16?ModBlocks.SMOULDERING_CLINKER.get().defaultBlockState():Blocks.CAVE_AIR.defaultBlockState();
+                return (hands||head?Blocks.POLISHED_BLACKSTONE:Math.floorMod(u+v,5)==0?Blocks.BASALT:Blocks.DEEPSLATE).defaultBlockState();
+            }
             if(u>20&&u<25&&Math.floorMod(v+30,12)<3&&v<13&&h>=0&&h<16)return stone(u,h,v);
         }else{
-            if(v>=-24&&v<=-18&&Math.abs(u)<12&&h>=2&&h<=31-Math.abs(u)/2)return (h%8==0?ModBlocks.FORGE_IRON.get():Blocks.CHISELED_DEEPSLATE).defaultBlockState();
+            if(v>=-24&&v<=-18&&Math.abs(u)<12&&h>=2&&h<=31-Math.abs(u)/2){
+                if(h>16&&h<27-Math.abs(u)&&Math.abs(u)<4)return Blocks.CAVE_AIR.defaultBlockState();
+                if(u>5&&h>23+(u%3))return null;
+                if(Math.abs(u)==10||h==8||h==15)return ModBlocks.FORGE_IRON.get().defaultBlockState();
+                return (v==-18&&Math.floorMod(u,4)==0?Blocks.POLISHED_BLACKSTONE:Blocks.CHISELED_DEEPSLATE).defaultBlockState();
+            }
             if(v>=-18&&v<=-10&&Math.abs(u)<12&&h>=2&&h<=7)return stone(u,h,v);
-            if(v>=-18&&v<=-6&&Math.abs(u)>=9&&Math.abs(u)<=12&&h>=7&&h<=13)return ModBlocks.FORGE_IRON.get().defaultBlockState();
+            if(v>=-18&&v<=(u<0?-6:-12)&&Math.abs(u)>=9&&Math.abs(u)<=12&&h>=7&&h<=13-Math.floorMod(v,3))return ModBlocks.FORGE_IRON.get().defaultBlockState();
             for(int a:new int[]{-23,21})if(Math.abs(u-a)<=1&&h>=4&&h<=37){int k=(h-4)%12-6;double ring=(v+8)*(v+8)/12.0+k*k/36.0;if(ring>.5&&ring<1.4)return ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState();}
         }
         if(r<25){
-            if(h<=1&&h>=Math.max(low-y,-9))return h==1?stone(u,h,v):Blocks.BLACKSTONE.defaultBlockState();
+            int floor=(kind==2&&r<15)||Math.sin(u*.27+v*.11)+Math.cos(v*.31)>-.6?1:0;
+            if(h<=floor&&h>=Math.max(low-y,-9))return h==floor?(Math.sin(u*.23-v*.17)>.65?ModBlocks.CINDER_ASH.get().defaultBlockState():stone(u,h,v)):Blocks.BLACKSTONE.defaultBlockState();
+            if(h>floor&&h<=1)return Blocks.CAVE_AIR.defaultBlockState();
             if(h>1&&h<11)return Blocks.CAVE_AIR.defaultBlockState();
         }
         if(r>=25&&r<29+2*Math.sin(v*.4)&&h>=low-y&&h<=3+3*Math.sin(u*.2+v*.4))return (kind==1?Blocks.PACKED_MUD:Blocks.BASALT).defaultBlockState();

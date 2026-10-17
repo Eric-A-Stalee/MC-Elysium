@@ -13,6 +13,9 @@ import net.minecraft.world.item.component.WrittenBookContent;
 
 public final class ForgeLore {
     public enum Record {
+        HUNGER("A Mouth Without a Body",4096,3),
+        SORROW("The Water Remembers",8192,3),
+        DOMINION("The Empty Seat",16384,3),
         PROMETHEUS("What Fire Remembers",ForgeDiscoveries.PROMETHEUS,5),
         SURVEY("The Last Survey",ForgeDiscoveries.SURVEY,4),
         LEDGER("The Unfinished Work",ForgeDiscoveries.LEDGER,5),
@@ -27,7 +30,7 @@ public final class ForgeLore {
         var book=new ItemStack(Items.WRITTEN_BOOK);
         List<Filterable<Component>> pages=IntStream.rangeClosed(1,record.pages)
                 .mapToObj(n->Filterable.<Component>passThrough(Component.translatable("lore.elysium."+record.key()+"."+n))).toList();
-        book.set(DataComponents.WRITTEN_BOOK_CONTENT,new WrittenBookContent(Filterable.passThrough(record.title),record==Record.PROMETHEUS?"Prometheus":"The Keepers of the Hearth",0,pages,true));
+        book.set(DataComponents.WRITTEN_BOOK_CONTENT,new WrittenBookContent(Filterable.passThrough(record.title),record.flag>=4096?"A Voice Below":record==Record.PROMETHEUS?"Prometheus":"The Keepers of the Hearth",0,pages,true));
         return book;
     }
     public static void give(ServerPlayer player,ItemStack stack) {

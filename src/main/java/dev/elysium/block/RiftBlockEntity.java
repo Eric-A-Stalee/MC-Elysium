@@ -46,6 +46,7 @@ public final class RiftBlockEntity extends BlockEntity {
             }
             spawn(l,true);return;
         }
+        if(l.getGameTime()%20==0)l.sendParticles(ParticleTypes.SMALL_FLAME,worldPosition.getX()+.5,worldPosition.getY()+1,worldPosition.getZ()+.5,4,.4,.1,.4,.01);
         if(cooldown>0){cooldown--;if(cooldown%100==0)setChanged();return;}
         spawn(l,false);cooldown=1200;setChanged();
     }
@@ -53,12 +54,17 @@ public final class RiftBlockEntity extends BlockEntity {
         if(Nightfall.protectedAt(l,worldPosition.above(6)))return;
         if(l.getEntitiesOfClass(AshenHoundEntity.class,new AABB(worldPosition).inflate(48)).size()>=4)return;
         if(kind==2&&first&&l.getEntitiesOfClass(ChainWardenEntity.class,new AABB(worldPosition).inflate(64)).isEmpty()){
-            var w=ModEntities.CHAIN_WARDEN.get().create(l);if(w!=null){w.setPos(Vec3.atBottomCenterOf(worldPosition.above()));w.setPersistenceRequired();if(l.noCollision(w))l.addFreshEntity(w);}
+            var w=ModEntities.CHAIN_WARDEN.get().create(l);if(w!=null)emerge(l,w,worldPosition);
         }
         for(int i=0;i<(first?2:1);i++){
             var pos=worldPosition.offset(i==0?-2:2,1,0);var h=ModEntities.ASHEN_HOUND.get().create(l);if(h==null)continue;
-            // The crater floor varies by a block; climb to a genuine two-block pocket.
-            while(pos.getY()<worldPosition.getY()+8&&!l.getBlockState(pos).isAir())pos=pos.above();h.setPos(Vec3.atBottomCenterOf(pos));h.setPersistenceRequired();if(l.noCollision(h))l.addFreshEntity(h);
+            emerge(l,h,pos.below());
+        }
+    }
+    /** The complete body must fit above all neighbouring floor columns, not only its centre point. */
+    private void emerge(ServerLevel l,net.minecraft.world.entity.Mob mob,BlockPos foot){
+        mob.setPersistenceRequired();for(int dy=1;dy<=8;dy++){
+            mob.setPos(Vec3.atBottomCenterOf(foot.above(dy)));if(l.noCollision(mob)){l.addFreshEntity(mob);return;}
         }
     }
     public static void tick(Level l,BlockPos p,BlockState s,RiftBlockEntity r){r.advance();}

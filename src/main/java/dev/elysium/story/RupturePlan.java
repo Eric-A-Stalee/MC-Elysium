@@ -12,6 +12,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 /** A small surveyed wound. Never excavates an inventory or an unfamiliar player-built material. */
 public record RupturePlan(int x,int z,int[] heights) {
     public static final int RADIUS=10,WIDTH=21;
+    private static final int[][] RIBS={{-7,-3,3},{6,4,5},{-3,5,2},{8,1,3}};
     public RupturePlan {if(heights.length!=WIDTH*WIDTH)throw new IllegalArgumentException("Invalid rupture survey");heights=heights.clone();}
     @Override public int[] heights(){return heights.clone();}
     public int ground(int u,int v){return heights[(u+RADIUS)*WIDTH+v+RADIUS];}
@@ -33,11 +34,15 @@ public record RupturePlan(int x,int z,int[] heights) {
         return hi-lo>10?Optional.empty():Optional.of(new RupturePlan(x,z,heights));
     }
     public BlockState material(int u,int y,int v){
-        double r=Math.hypot(u,v),crack=Math.abs(v-2*Math.sin(u*.55));int surface=ground(u,v);
+        double r=Math.hypot(u*.8,(v-1.3*Math.sin(u*.4))*1.25),crack=Math.abs(v-2*Math.sin(u*.55));int surface=ground(u,v);
         int depth=Math.max(0,(int)(5*(1-r/10)));if(crack<1.8&&Math.abs(u)<9)depth=Math.max(depth,3);
         int floor=surface-depth;
+        // Four broken ribs lean away from the split. A regular ring reads as a built enclosure.
+        for(int[] rib:RIBS){
+            int h=y-ground(rib[0],rib[1]);double lean=Math.signum(rib[0])*Math.max(0,h-1)*.35;
+            if(h>=-3&&h<=rib[2]&&Math.abs(u-rib[0]-lean)<1.2&&Math.abs(v-rib[1])<1.2)return (h==1?ModBlocks.FORGE_IRON.get():Blocks.BASALT).defaultBlockState();
+        }
         if(r<9.5&&y>=floor&&y<=surface){if(y>floor)return Blocks.AIR.defaultBlockState();return (crack<1.8?ModBlocks.SMOULDERING_CLINKER.get():ModBlocks.CINDER_ASH.get()).defaultBlockState();}
-        if(r>=6&&r<10&&Math.floorMod(u*7+v*13,19)<3&&y>surface&&y<=surface+2+Math.floorMod(u+v,4))return (y==surface+1?ModBlocks.FORGE_IRON.get():Blocks.BASALT).defaultBlockState();
         return null;
     }
     /** Revalidate each write after the warning, so placing a chest during it cannot sacrifice the chest. */

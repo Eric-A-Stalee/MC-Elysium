@@ -58,7 +58,7 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void blockColors(RegisterColorHandlersEvent.Block event) {
-        event.register((state,level,pos,tint)->0xA28A70,ModBlocks.CHARRED_BONE.get());
+        event.register((state,level,pos,tint)->0x8C8173,ModBlocks.CHARRED_BONE.get());
         event.register((state, level, pos, tint) -> foliageColor(level, pos),
                 ModBlocks.GOLDEN_BIRCH_LEAVES.get(), ModBlocks.LEAF_LITTER.get());
     }
@@ -71,7 +71,7 @@ public final class ElysiumClient {
 
     @SubscribeEvent
     public static void itemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack,tint)->FastColor.ARGB32.opaque(0xA28A70),ModBlocks.CHARRED_BONE.get());
+        event.register((stack,tint)->FastColor.ARGB32.opaque(0x8C8173),ModBlocks.CHARRED_BONE.get());
         // 1.21.1's ItemRenderer reads ARGB, including alpha. Our biome palette
         // uses RGB, so pass opaque tints or held/dropped items become invisible.
         event.register((stack, tint) -> FastColor.ARGB32.opaque(ModBlocks.GOLDEN_LEAF_COLOR),

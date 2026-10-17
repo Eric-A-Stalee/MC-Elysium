@@ -292,18 +292,21 @@ public final class ForgeVisualServerProbe {
         net.minecraft.world.phys.Vec3 camera,target;
         if(scene.startsWith("rupture_")){
             player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);player.setGameMode(GameType.CREATIVE);player.getAbilities().flying=true;player.onUpdateAbilities();
-            var centre=RUPTURE.core().above(6);camera=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(16,10,21);target=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(0,-2,0);
+            var centre=RUPTURE.core().above(6);camera=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(12,6,16);target=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(0,-2,0);
             player.teleportTo(level,camera.x,camera.y,camera.z,0,0);
             if(scene.equals("rupture_open")){
                 level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING).set(true,level.getServer());level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(true,level.getServer());
                 if(!dev.elysium.story.RuptureDirector.open(level,RUPTURE,2))throw new IllegalStateException("Reviewed rupture refused its survey");
                 var core=(dev.elysium.block.RiftBlockEntity)level.getBlockEntity(RUPTURE.core());for(int i=0;i<80;i++)core.advance();if(!core.opened())throw new IllegalStateException("Rupture warning did not lead to a real wound");
-                for(var e:level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,new net.minecraft.world.phys.AABB(centre).inflate(32)))e.setNoAi(true);
+                var spawned=level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,new net.minecraft.world.phys.AABB(centre).inflate(32));
+                if(spawned.stream().noneMatch(e->e instanceof dev.elysium.entity.ChainWardenEntity)||spawned.stream().filter(e->e instanceof dev.elysium.entity.AshenHoundEntity).count()<2)throw new IllegalStateException("Natural rupture did not release its actual creatures");
+                // Keep real spawned positions for evidence; the warning/strike behavior has separate damage tests.
+                for(var e:spawned)e.setNoAi(true);
             }else if(scene.equals("rupture_sealed"))((dev.elysium.block.RiftBlockEntity)level.getBlockEntity(RUPTURE.core())).use(player,new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.BINDING_NAIL.get()));
         }else{
             int kind=scene.equals("binding_hunger")?0:scene.equals("binding_sorrow")||scene.equals("binding_dark")?1:2;var core=BINDINGS[kind].core();
             player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION,12000,0,false,false));
-            camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(26,18,34);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(0,8,-9);
+            camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(kind==1?-26:26,18,34);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(0,8,-9);
             if(kind==2){var control=(dev.elysium.block.BindingBlockEntity)level.getBlockEntity(core);if(!control.summon()&&control.warden()==null)throw new IllegalStateException("Natural binding cannot house its jailer");var e=level.getEntity(control.warden());if(e instanceof net.minecraft.world.entity.Mob mob)mob.setNoAi(true);}
             if(scene.equals("binding_warden")){camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(16,2,10);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(8,1,-3);}
             if(scene.equals("binding_dark")){player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);level.setBlock(core.south(3),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(1,1,7);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(-7,5,-17);}
