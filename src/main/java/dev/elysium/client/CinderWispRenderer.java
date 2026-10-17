@@ -21,7 +21,9 @@ public final class CinderWispRenderer extends EntityRenderer<CinderWispEntity> {
             p.pushPose();p.mulPose(Axis.YP.rotationDegrees(i*90));
             double spread=e.charging()?.32:.22;
             box(p,b,Blocks.BLACKSTONE,-.22,-.27,spread,.44,.52,.14,light);
-            box(p,b,Blocks.RED_TERRACOTTA,-.04,-.18,spread-.01,.08,.34,.025,LightTexture.FULL_BRIGHT);
+            // The warning belongs on the outside of each plate, where a head-on approach can see it.
+            double width=e.charging()?.14:.08;
+            box(p,b,e.charging()?Blocks.ORANGE_CONCRETE:Blocks.RED_TERRACOTTA,-width/2,-.18,spread+.145,width,.34,.025,LightTexture.FULL_BRIGHT);
             p.popPose();
         }
         for(int i=0;i<3;i++){double a=t*.045+i*2.1;box(p,b,Blocks.BASALT,Math.cos(a)*.54-.06,Math.sin(a*1.7)*.28,Math.sin(a)*.54-.06,.12,.22,.12,light);}

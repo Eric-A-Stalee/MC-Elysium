@@ -160,6 +160,12 @@ public final class ForgeVisualServerProbe {
             }
             case "harvest_answered" -> {answer(player,level,0);watchCamera(player,level,0);}
             case "stray_cinder" -> {
+                if(!dev.elysium.story.RealmCycle.get(level).released()) {
+                    // A focused client review still earns the phase through the actual Forge machinery.
+                    scene(player,"forge_service");scene(player,"forge_restored");scene(player,"hammer_strike");
+                    var cycle=dev.elysium.story.RealmCycle.get(level);while(cycle.time()<18000)cycle.advance(true);
+                    dev.elysium.story.RealmClock.sync(player);
+                }
                 var pos=WATCHES[0].socket();
                 var wisp=dev.elysium.registry.ModEntities.CINDER_WISP.get().create(level);
                 wisp.setPos(pos.getX()+3.5,pos.getY()+5,pos.getZ()+10.5);level.addFreshEntity(wisp);

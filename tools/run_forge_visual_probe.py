@@ -60,9 +60,10 @@ def main():
                                           start_new_session=True)
                 result = client.wait(timeout=900)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 20 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            expected = 1 if os.environ.get('ELYSIUM_VISUAL_FOCUS') == 'cinder' else 20
+            if result or len(images) != expected or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured twenty actual vanilla-rendered expedition and first-dawn views:', *(p.name for p in images), sep='\n')
+            print(f'Captured {expected} actual vanilla-rendered review views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)
