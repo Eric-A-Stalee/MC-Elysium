@@ -33,6 +33,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Elysium.MOD_ID);
+    public static final DeferredBlock<dev.elysium.block.ForgePressBlock> FORGE_PRESS = BLOCKS.register("forge_press",
+            () -> new dev.elysium.block.ForgePressBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(6)));
+    public static final DeferredBlock<KeepersLampBlock> WARD_LAMP = BLOCKS.register("ward_lamp",
+            () -> new KeepersLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 15)));
     public static final DeferredBlock<KeepersLampBlock> KEEPERS_LAMP = BLOCKS.register("keepers_lamp",
             () -> new KeepersLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 13)));
     public static final DeferredBlock<KeeperWorkbenchBlock> KEEPER_WORKBENCH = BLOCKS.register("keeper_workbench",
@@ -44,7 +48,7 @@ public final class ModBlocks {
     public static final DeferredBlock<Block> SMOULDERING_CLINKER = BLOCKS.register("smouldering_clinker",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE).lightLevel(s -> 4)));
     public static final DeferredBlock<ChimeraGlowBlock> CHIMERA_GLOW = BLOCKS.register("chimera_glow",
-            () -> new ChimeraGlowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().lightLevel(s -> 8)));
+            () -> new ChimeraGlowBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().lightLevel(s -> s.getValue(ChimeraGlowBlock.LIGHT))));
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_COUNTERWEIGHT = BLOCKS.register("tartarus_counterweight",
             () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_HEART = BLOCKS.register("tartarus_heart",

@@ -16,6 +16,8 @@
     "elysium:burnt_clinker",
     "elysium:smouldering_clinker",
     "elysium:cinder_ash",
-    "elysium:keeper_workbench"
+    "elysium:keeper_workbench",
+    "elysium:forge_press",
+    "elysium:ward_lamp"
   ]
 }

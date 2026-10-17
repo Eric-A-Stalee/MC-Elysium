@@ -13,16 +13,17 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 /** A modest, throttled vanilla light in the depths, with expiry owned by its block. */
 @EventBusSubscriber(modid=Elysium.MOD_ID)
 public final class KeeperLampLight {
+    public static boolean ward(Player player) {return player.getMainHandItem().is(ModBlocks.WARD_LAMP.get().asItem())||player.getOffhandItem().is(ModBlocks.WARD_LAMP.get().asItem());}
     public static boolean carrying(Player player) {
         return player.isAlive()&&!player.isSpectator()&&player.level().dimension().equals(ElysiumTravel.DIMENSION)
-                &&player.getY()<0&&(player.getMainHandItem().is(ModBlocks.KEEPERS_LAMP.get().asItem())
-                ||player.getOffhandItem().is(ModBlocks.KEEPERS_LAMP.get().asItem()));
+                &&(ward(player)||player.getY()<0&&(player.getMainHandItem().is(ModBlocks.KEEPERS_LAMP.get().asItem())
+                ||player.getOffhandItem().is(ModBlocks.KEEPERS_LAMP.get().asItem())));
     }
     public static void illuminate(ServerPlayer player) {
         if(!carrying(player))return;
         var level=player.serverLevel();var pos=BlockPos.containing(player.getEyePosition());
         if(level.getChunkSource().getChunkNow(pos.getX()>>4,pos.getZ()>>4)!=null&&level.getBlockState(pos).isAir())
-            level.setBlock(pos,ModBlocks.CHIMERA_GLOW.get().defaultBlockState(),3);
+            level.setBlock(pos,ModBlocks.CHIMERA_GLOW.get().defaultBlockState().setValue(dev.elysium.block.ChimeraGlowBlock.LIGHT,ward(player)?12:8),3);
     }
     @SubscribeEvent public static void tick(PlayerTickEvent.Post event) {
         if(event.getEntity() instanceof ServerPlayer player&&player.tickCount%10==0)illuminate(player);

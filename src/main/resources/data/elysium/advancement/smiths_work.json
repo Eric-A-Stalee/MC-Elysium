@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:flame_returned",
+  "display": {
+    "icon": {
+      "id": "elysium:sunwrought_ingot"
+    },
+    "title": "The Smith's Charge",
+    "description": "Temper a batch beneath the great hammer.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

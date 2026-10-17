@@ -139,5 +139,20 @@
   "message.elysium.depths.span_missing": "Part of the fallen deck is missing. Restore its blackstone centre and copper-grate edges before raising it, or build your own crossing.",
   "entity.elysium.cinder_bolt": "Cinder Bolt",
   "block.elysium.forge_flame": "Forge Fire",
-  "message.elysium.forge.hearth_restored": "The heart burns again. Its heat follows connected, burning channels. Coal lasts five minutes at full heat; closing the brazier draught banks the fuel."
+  "message.elysium.forge.hearth_restored": "The heart burns again. Its heat follows connected, burning channels. Coal lasts five minutes at full heat; closing the brazier draught banks the fuel.",
+  "block.elysium.forge_press": "Great Hammer Control",
+  "block.elysium.ward_lamp": "Sunwrought Ward Lamp",
+  "item.elysium.sunwrought_ingot": "Sunwrought Ingot",
+  "item.elysium.watchfire_seal": "Watchfire Seal",
+  "item.elysium.dawn_wayfinder": "Dawn Wayfinder",
+  "item.elysium.harvest_sickle": "Harvest Sickle",
+  "message.elysium.press.started": "The hammer takes the load. Stand clear of the anvil.",
+  "message.elysium.press.cold": "The hammer needs the First Flame and a burning, restored runner beneath this control.",
+  "message.elysium.press.loaded": "Materials loaded. Stand clear, then sneak-use the control with an empty hand to begin.",
+  "message.elysium.press.busy": "The hammer is working. If it stops, inspect the head, its path and the heat supply.",
+  "message.elysium.press.paused": "The work is waiting for restored heat. Your materials remain in the control.",
+  "message.elysium.press.ready": "The works are ready. Offer a recipe material to load its complete batch; the Smith’s Charge lists the bills.",
+  "message.elysium.press.materials": "No batch loaded. Check the material bill in the Smith’s Charge. Offer a blank book for another copy.",
+  "message.elysium.press.finished": "The hammer rests. Collect your tempered work at its control.",
+  "tooltip.elysium.harvest_sickle": "Harvest ripe crops in a 3×3 patch. Seeds in your inventory replant vanilla crops."
 }

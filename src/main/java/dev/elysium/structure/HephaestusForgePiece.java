@@ -52,6 +52,8 @@ public final class HephaestusForgePiece extends StructurePiece {
                     if(state!=null)placeBlock(level,state,x,y,z,clip);
                 }
             }
+        var press=at(-9,plan.floor()+1,76);
+        if(clip.isInside(press)&&level.getBlockEntity(press) instanceof dev.elysium.block.ForgePressBlockEntity entity)entity.bind(plan);
         for(var fixture:ForgeFixtures.ALL) {
             var pos=fixture.worldPosition(plan);
             if(clip.isInside(pos)&&level.getBlockEntity(pos) instanceof ForgeServiceBlockEntity service)

@@ -45,6 +45,7 @@ public final class ForgeGeometry {
         var fixture=fixtures.get(BlockPos.asLong(u,h,v));
         if(fixture!=null)return fixture.local().equals(ForgeFixtures.MISSING)?b(Blocks.CAVE_AIR):ForgeFixtures.state(plan,fixture);
         if(y<=floor)return floor(u,y,v,floor);
+        if(u==-9&&v==76&&h==1)return b(ModBlocks.FORGE_PRESS.get());
         if(u==0&&v==61&&h==1)return b(ModBlocks.FORGE_HEARTH.get());
         if(u==-37&&v==50&&h==1)return b(ModBlocks.FORGE_LEDGER.get());
         if(u==0&&v==112&&h==1)return b(ModBlocks.TARTARUS_INSCRIPTION.get());
@@ -154,13 +155,8 @@ public final class ForgeGeometry {
         if(du>=13&&du<=18&&dv<=2&&h>=19&&h<=22&&du>=35-h)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
         if(du<=18&&dv<=2&&h>=23&&h<=24)return b(h==24?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.CHISELED_DEEPSLATE);
         if(du==6&&dv<=1&&h>=2&&h<=22)return b(h%5==0?Blocks.WAXED_EXPOSED_CUT_COPPER:ModBlocks.FORGE_IRON.get());
-        if(du<=1&&dv<=1&&h>=17&&h<=22)return pillar(Blocks.BASALT,Direction.Axis.Y);
         if(heavyChain(u-4,h,v-76)||heavyChain(u+4,h,v-76))return b(ModBlocks.TARTARUS_CHAIN_BLOCK.get());
-        // Neck, shouldered body and a replaceable striking face give the hammer a readable silhouette.
-        if(dv<=2&&du<=3&&h>=15&&h<=17)return b(h==15?Blocks.WAXED_EXPOSED_CUT_COPPER:Blocks.POLISHED_BLACKSTONE);
-        if(dv<=(h>=13?3:2)&&du<=(h>=13?4:3)&&du+dv<=6&&h>=11&&h<=14)
-            return b(h==14?Blocks.CHISELED_DEEPSLATE:Blocks.POLISHED_BLACKSTONE);
-        if(dv<=2&&du<=3&&h==10)return b(ModBlocks.FORGE_IRON.get());
+        var hammer=dev.elysium.forge.ForgeHammer.material(u,h,v,0);if(hammer!=null)return hammer;
         if(du<=6&&dv<=5&&h<=1)return b(Blocks.POLISHED_BLACKSTONE_BRICKS);
         if(du<=4&&dv<=3&&h==2)return b(Blocks.CHISELED_DEEPSLATE);
         if(du<=2&&dv<=2&&h>=3&&h<=4)return b(Blocks.POLISHED_BASALT);

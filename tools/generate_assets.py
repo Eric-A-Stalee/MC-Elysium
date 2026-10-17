@@ -364,6 +364,24 @@ for name,parent,icon,title,description in [
 path='data/minecraft/tags/block/mineable/pickaxe.json'
 mining=json.loads(OUTPUTS[path]);mining['values'] += [f'elysium:{n}' for n in ('keepers_lamp','burnt_clinker','smouldering_clinker','cinder_ash','keeper_workbench')];emit(path,mining)
 
+# The restored smithy: original instruments and a compact machine control.
+asset('models/block/forge_press', {'parent':'minecraft:block/block','textures':{'base':'minecraft:block/netherite_block','metal':'minecraft:block/copper_block','dial':'minecraft:block/chiseled_deepslate','particle':'#metal'},
+      'elements':[cuboid([0,0,0],[16,12,16],'#base'),cuboid([1,12,1],[15,14,15],'#metal'),cuboid([4,14,4],[12,16,12],'#dial'),cuboid([6,14,6],[8,22,8],'#metal'),cuboid([3,20,6],[11,22,8],'#base')]})
+asset('blockstates/forge_press',{'variants':{'':{'model':'elysium:block/forge_press'}}})
+asset('models/item/forge_press',{'parent':'elysium:block/forge_press'})
+loot('forge_press',[pool([item('elysium:forge_press')],[SURVIVES])])
+asset('models/block/ward_lamp',{'parent':'elysium:block/keepers_lamp','textures':{'copper':'minecraft:block/gold_block','light':'minecraft:block/shroomlight'}})
+asset('blockstates/ward_lamp',{'variants':{'':{'model':'elysium:block/ward_lamp'}}})
+asset('models/item/ward_lamp',{'parent':'elysium:block/ward_lamp'})
+loot('ward_lamp',[pool([item('elysium:ward_lamp')],[SURVIVES])])
+for name,tex in [('sunwrought_ingot','gold_ingot'),('watchfire_seal','fire_charge'),('dawn_wayfinder','clock_00')]:
+    asset(f'models/item/{name}',{'parent':'minecraft:item/generated','textures':{'layer0':f'minecraft:item/{tex}'}})
+asset('models/item/harvest_sickle',{'parent':'minecraft:item/handheld','textures':{'layer0':'minecraft:item/golden_hoe'}})
+data('advancement/smiths_work',{'parent':'elysium:flame_returned','display':{'icon':{'id':'elysium:sunwrought_ingot'},'title':"The Smith's Charge",'description':'Temper a batch beneath the great hammer.','frame':'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
+pickaxe=json.loads(OUTPUTS['data/minecraft/tags/block/mineable/pickaxe.json'])
+pickaxe['values'] += ['elysium:forge_press','elysium:ward_lamp']
+emit('data/minecraft/tags/block/mineable/pickaxe.json',pickaxe)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")

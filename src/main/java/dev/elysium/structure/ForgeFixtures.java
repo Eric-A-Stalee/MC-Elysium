@@ -29,6 +29,7 @@ public final class ForgeFixtures {
         path(map,0,0,60,24,0,60,43,0,60,43,0,80);
         line(map,new BlockPos(0,0,60),HEARTH_FEED);
         path(map,-12,0,60,-12,0,90,0,0,90,0,0,115);
+        path(map,-12,0,76,-9,0,76);
         path(map,-24,0,60,-24,0,74);
         path(map,24,0,60,24,0,74);
         path(map,-5,0,52,-5,0,45);

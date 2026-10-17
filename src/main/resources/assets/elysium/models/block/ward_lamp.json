@@ -1,0 +1,7 @@
+{
+  "parent": "elysium:block/keepers_lamp",
+  "textures": {
+    "copper": "minecraft:block/gold_block",
+    "light": "minecraft:block/shroomlight"
+  }
+}
