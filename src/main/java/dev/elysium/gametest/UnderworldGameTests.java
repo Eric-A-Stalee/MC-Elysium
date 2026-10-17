@@ -35,7 +35,9 @@ public final class UnderworldGameTests {
             for(int y:new int[]{-636,-590,column.floor,column.roof-5,-249}) {
                 h.assertTrue(base.getBlock(y).equals(column.at(y)),"Structure survey and generated geology must share the same formula");
                 var pos=new BlockPos(x,y,z);
-                h.assertTrue(realm.getBlockState(pos).equals(column.at(y)),"Ordinary generated chunks must contain the surveyed underworld at "+pos);
+                var actual=realm.getBlockState(pos);var wanted=column.at(y);
+                // Empty chunk sections canonicalize cave air to ordinary air.
+                h.assertTrue(wanted.isAir()?actual.isAir():actual.equals(wanted),"Ordinary generated chunks must contain the surveyed underworld at "+pos+": "+actual+" expected "+wanted);
                 inspected++;
             }
             var biome=realm.getNoiseBiome(x >> 2,-100,z >> 2);
