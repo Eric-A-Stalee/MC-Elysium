@@ -34,6 +34,8 @@ public final class ForgeVisualServerProbe {
 
     private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
     private static dev.elysium.structure.PrometheusPrisonPiece PRISON;
+    private static dev.elysium.structure.DeepBindingPiece[] BINDINGS;
+    private static dev.elysium.story.RupturePlan RUPTURE;
     private static boolean depthsReady;
     private static void prepareDepths(ServerLevel level) {
         if(depthsReady)return;
@@ -44,6 +46,11 @@ public final class ForgeVisualServerProbe {
         if(!ENABLED)return;
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
+        if("bindings".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))){
+            BINDINGS=BindingNaturalGenerationProbe.generateAndVerify(level);RUPTURE=findRupture(level);
+            var cycle=dev.elysium.story.RealmCycle.get(level);cycle.awaken(BINDINGS[0].core());for(int i=0;i<6500;i++)cycle.advance(true);
+            LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");return;
+        }
         if("prison".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))){PRISON=PrometheusNaturalGenerationProbe.generateAndVerify(level);LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");return;}
         prepareDepths(level);
         if("underworld".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))) {
@@ -64,13 +71,14 @@ public final class ForgeVisualServerProbe {
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,PRISON!=null?"prison_overview":"inspection_entry");
+        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,BINDINGS!=null?"binding_hunger":PRISON!=null?"prison_overview":"inspection_entry");
     }
 
     private static void scene(ServerPlayer player,String scene) {
         var level=player.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)return;
         player.setGameMode(GameType.SPECTATOR);
+        if(scene.startsWith("binding_")||scene.startsWith("rupture_")){bindingCamera(player,level,scene);return;}
         if(scene.startsWith("prison_")){prisonCamera(player,level,scene);return;}
         if(scene.startsWith("underworld_")){underworldCamera(player,level,scene);return;}
         switch(scene) {
@@ -259,6 +267,42 @@ public final class ForgeVisualServerProbe {
             REGIONS.put(column.region,pos);LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_REGION {} floor={} roof={}",column.region,pos,column.roof);
         }
         if(REGIONS.size()!=4)throw new IllegalStateException("Bounded underworld survey found only "+REGIONS.keySet());
+    }
+    private static dev.elysium.story.RupturePlan findRupture(ServerLevel l){
+        var g=l.getChunkSource().getGenerator();
+        for(int r=0;r<18;r++)for(int dx=-r;dx<=r;dx++)for(int dz=-r;dz<=r;dz++){
+            if(Math.max(Math.abs(dx),Math.abs(dz))!=r)continue;int x=dx*96,z=dz*96;
+            int y=g.getBaseHeight(x,z,net.minecraft.world.level.levelgen.Heightmap.Types.OCEAN_FLOOR_WG,l,l.getChunkSource().randomState());if(y<66||y>110)continue;
+            for(int cx=(x-12)>>4;cx<=(x+12)>>4;cx++)for(int cz=(z-12)>>4;cz<=(z+12)>>4;cz++)l.getChunk(cx,cz);
+            var plan=dev.elysium.story.RupturePlan.survey(l,x,z);if(plan.isPresent()){
+                for(int cx=(x-40)>>4;cx<=(x+40)>>4;cx++)for(int cz=(z-40)>>4;cz<=(z+40)>>4;cz++){l.getChunk(cx,cz);l.setChunkForced(cx,cz,true);}
+                LogUtils.getLogger().info("ELYSIUM_NATURAL_RUPTURE_SURVEY core={}",plan.get().core());return plan.get();
+            }
+        }
+        throw new IllegalStateException("No safe natural rupture site in bounded review survey");
+    }
+    private static void bindingCamera(ServerPlayer player,ServerLevel level,String scene){
+        net.minecraft.world.phys.Vec3 camera,target;
+        if(scene.startsWith("rupture_")){
+            player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);player.setGameMode(GameType.CREATIVE);player.getAbilities().flying=true;player.onUpdateAbilities();
+            var centre=RUPTURE.core().above(6);camera=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(16,10,21);target=net.minecraft.world.phys.Vec3.atCenterOf(centre).add(0,-2,0);
+            player.teleportTo(level,camera.x,camera.y,camera.z,0,0);
+            if(scene.equals("rupture_open")){
+                level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING).set(true,level.getServer());level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(true,level.getServer());
+                if(!dev.elysium.story.RuptureDirector.open(level,RUPTURE,2))throw new IllegalStateException("Reviewed rupture refused its survey");
+                var core=(dev.elysium.block.RiftBlockEntity)level.getBlockEntity(RUPTURE.core());for(int i=0;i<80;i++)core.advance();if(!core.opened())throw new IllegalStateException("Rupture warning did not lead to a real wound");
+                for(var e:level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,new net.minecraft.world.phys.AABB(centre).inflate(32)))e.setNoAi(true);
+            }else if(scene.equals("rupture_sealed"))((dev.elysium.block.RiftBlockEntity)level.getBlockEntity(RUPTURE.core())).use(player,new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.BINDING_NAIL.get()));
+        }else{
+            int kind=scene.equals("binding_hunger")?0:scene.equals("binding_sorrow")||scene.equals("binding_dark")?1:2;var core=BINDINGS[kind].core();
+            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION,12000,0,false,false));
+            camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(26,18,34);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(0,8,-9);
+            if(kind==2){var control=(dev.elysium.block.BindingBlockEntity)level.getBlockEntity(core);if(!control.summon()&&control.warden()==null)throw new IllegalStateException("Natural binding cannot house its jailer");var e=level.getEntity(control.warden());if(e instanceof net.minecraft.world.entity.Mob mob)mob.setNoAi(true);}
+            if(scene.equals("binding_warden")){camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(16,2,10);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(8,1,-3);}
+            if(scene.equals("binding_dark")){player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);level.setBlock(core.south(3),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=net.minecraft.world.phys.Vec3.atCenterOf(core).add(1,1,7);target=net.minecraft.world.phys.Vec3.atCenterOf(core).add(-7,5,-17);}
+        }
+        var d=target.subtract(camera.add(0,1.62,0));player.teleportTo(level,camera.x,camera.y,camera.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
+        LogUtils.getLogger().info("ELYSIUM_BINDING_SCENE {} nightVision={}",scene,scene.startsWith("binding_")&&!scene.equals("binding_dark"));
     }
     private static void prisonCamera(ServerPlayer player,ServerLevel level,String scene){
         var arena=PRISON.arena();var voice=PRISON.voice();

@@ -80,10 +80,20 @@ public final class UnderworldDescentPiece extends StructurePiece {
         if(y<=bottom-2)return Blocks.DEEPSLATE.defaultBlockState();
         for(var step:columns.getOrDefault(key(u,v),List.of())) {
             if(y==step.floor||y==step.floor-1)return (Math.floorMod(u+v+y,9)==0?Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS:Blocks.POLISHED_BLACKSTONE_BRICKS).defaultBlockState();
+            // Broken outer rails leave the central walking line intact. Missing spans expose the depth.
+            if(step.distance==1&&r==8&&y==step.floor+1&&Math.floorMod(u*3+v+y,11)<5)return Blocks.POLISHED_BLACKSTONE_BRICK_WALL.defaultBlockState();
             if(y>step.floor&&y<=step.floor+3)return Blocks.CAVE_AIR.defaultBlockState();
         }
-        if(r==9&&y<TOP)return (Math.floorMod(y,28)==0?ModBlocks.FORGE_IRON.get():Blocks.DEEPSLATE_BRICKS).defaultBlockState();
-        if(Math.abs(u)<=1&&v==0&&y<TOP-3)return ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState();
+        if(r==9&&y<TOP){
+            int breach=Math.floorMod(y+v*2+u,61);
+            if(y<-280&&((u==-9&&Math.abs(v)<5)||(v==-9&&Math.abs(u)<3))&&breach>18&&breach<34)return Blocks.CAVE_AIR.defaultBlockState();
+            if(Math.floorMod(y,37)==0&&v==9&&Math.abs(u)<2)return ModBlocks.SMOULDERING_CLINKER.get().defaultBlockState();
+            return (Math.floorMod(y,28)==0?ModBlocks.FORGE_IRON.get():Math.sin(y*.12+u*.4+v*.3)>.1?Blocks.CRACKED_DEEPSLATE_BRICKS:Blocks.DEEPSLATE).defaultBlockState();
+        }
+        if(y<TOP-3){
+            int a=(Math.floorDiv(y,12)&1)==0?u:v,p=(Math.floorDiv(y,12)&1)==0?v:u,k=Math.floorMod(y,12)-6;
+            double link=a*a/9.0+k*k/36.0;if(p==0&&link>=.45&&link<=1.30)return ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState();
+        }
         if(y>=bottom-1&&y<=TOP)return Blocks.CAVE_AIR.defaultBlockState();
         return null;
     }

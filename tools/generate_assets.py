@@ -462,6 +462,7 @@ for kind in range(3):
         if kind==0:face += [cuboid([3,3,-.2],[13,5,.2],'#mark'),*[cuboid([x,7,-.3],[x+1,11,.3],'#metal') for x in (4,7,10)]]
         elif kind==1:face += [cuboid([7,3,-.2],[9,8,.2],'#mark'),cuboid([3,11,-.2],[13,13,.2],'#metal')]
         else:face += [cuboid([3,11,-.2],[13,13,.2],'#mark'),cuboid([7,3,-.2],[9,13,.2],'#metal')]
+        face += [cuboid([16-e['to'][0],e['from'][1],16-e['to'][2]],[16-e['from'][0],e['to'][1],16-e['from'][2]],next(iter(e['faces'].values()))['texture']) for e in list(face)]
         asset('models/block/'+name,{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/chiseled_deepslate','metal':'minecraft:block/exposed_copper','mark':'minecraft:block/glowstone' if sealed else 'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),*face,cuboid([5,15.9,5],[11,16.1,11],'#metal' if sealed else '#mark')]})
         variants[f'kind={kind},sealed={str(sealed).lower()}']={'model':'elysium:block/'+name}
 asset('blockstates/deep_binding',{'variants':variants});asset('models/item/deep_binding',{'parent':'elysium:block/deep_binding_0'})

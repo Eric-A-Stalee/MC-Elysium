@@ -53,14 +53,14 @@ def main():
                 time.sleep(2)
             else:
                 raise TimeoutError('Visual server never completed its mountain placement')
-            print('Natural Tartarus, Forge and three watchfire ruins verified; starting real Minecraft client', flush=True)
+            print('Natural generation and routes verified; starting real Minecraft client', flush=True)
             with (CLIENT / 'probe.log').open('w') as client_log:
                 client = subprocess.Popen(['xvfb-run', '-a', '-s', '-screen 0 1280x720x24', *args, 'runForgeVisualClient'],
                                           cwd=ROOT, env=env, stdout=client_log, stderr=subprocess.STDOUT,
                                           start_new_session=True)
                 result = client.wait(timeout=900)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            expected = {'cinder': 1, 'underworld': 6, 'prison': 4}.get(os.environ.get('ELYSIUM_VISUAL_FOCUS'), 20)
+            expected = {'cinder': 1, 'underworld': 6, 'prison': 4, 'bindings': 8}.get(os.environ.get('ELYSIUM_VISUAL_FOCUS'), 20)
             if result or len(images) != expected or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
             print(f'Captured {expected} actual vanilla-rendered review views:', *(p.name for p in images), sep='\n')

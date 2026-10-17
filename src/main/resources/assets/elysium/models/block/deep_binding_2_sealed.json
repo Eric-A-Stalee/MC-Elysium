@@ -169,6 +169,134 @@
     },
     {
       "from": [
+        10,
+        3,
+        15.8
+      ],
+      "to": [
+        12,
+        12,
+        16.2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#mark"
+        },
+        "up": {
+          "texture": "#mark"
+        },
+        "north": {
+          "texture": "#mark"
+        },
+        "south": {
+          "texture": "#mark"
+        },
+        "west": {
+          "texture": "#mark"
+        },
+        "east": {
+          "texture": "#mark"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        15.8
+      ],
+      "to": [
+        6,
+        12,
+        16.2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#mark"
+        },
+        "up": {
+          "texture": "#mark"
+        },
+        "north": {
+          "texture": "#mark"
+        },
+        "south": {
+          "texture": "#mark"
+        },
+        "west": {
+          "texture": "#mark"
+        },
+        "east": {
+          "texture": "#mark"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        11,
+        15.8
+      ],
+      "to": [
+        13,
+        13,
+        16.2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#mark"
+        },
+        "up": {
+          "texture": "#mark"
+        },
+        "north": {
+          "texture": "#mark"
+        },
+        "south": {
+          "texture": "#mark"
+        },
+        "west": {
+          "texture": "#mark"
+        },
+        "east": {
+          "texture": "#mark"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        3,
+        15.8
+      ],
+      "to": [
+        9,
+        13,
+        16.2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#metal"
+        },
+        "up": {
+          "texture": "#metal"
+        },
+        "north": {
+          "texture": "#metal"
+        },
+        "south": {
+          "texture": "#metal"
+        },
+        "west": {
+          "texture": "#metal"
+        },
+        "east": {
+          "texture": "#metal"
+        }
+      }
+    },
+    {
+      "from": [
         5,
         15.9,
         5

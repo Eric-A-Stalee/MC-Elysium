@@ -24,7 +24,7 @@ public final class BindingBlockEntity extends BlockEntity {
     public BindingBlockEntity(BlockPos p,BlockState s){super(ModBlockEntities.DEEP_BINDING.get(),p,s);}
     public int kind(){return getBlockState().getValue(BindingBlock.KIND);}public boolean sealed(){return getBlockState().getValue(BindingBlock.SEALED);}
     public UUID warden(){return warden;}public boolean defeated(){return defeated;}public int quiet(){return quiet;}
-    public BlockPos resting(){return worldPosition.offset(8,-1,-3);}
+    public BlockPos resting(){return worldPosition.offset(8,0,-3);}
     private boolean loaded(ServerLevel l){for(int x=(worldPosition.getX()-28)>>4;x<=(worldPosition.getX()+28)>>4;x++)for(int z=(worldPosition.getZ()-28)>>4;z<=(worldPosition.getZ()+28)>>4;z++)if(l.getChunkSource().getChunkNow(x,z)==null)return false;return true;}
     public boolean summon(){
         if(!(level instanceof ServerLevel l)||kind()!=2||sealed()||defeated||warden!=null||!RealmCycle.get(l).released()||!loaded(l)||l.getDifficulty()==net.minecraft.world.Difficulty.PEACEFUL)return false;
@@ -39,7 +39,7 @@ public final class BindingBlockEntity extends BlockEntity {
     /** Called every five ticks. Losing the light or rising breaks concentration, not an already earned opening. */
     public void attend(Player p){
         boolean hope=p.getMainHandItem().is(ModItems.HOPES_EMBER.get())||p.getOffhandItem().is(ModItems.HOPES_EMBER.get());
-        if(kind()!=1||sealed()||!(level instanceof ServerLevel l)||!RealmCycle.get(l).released()||!hope||!p.isShiftKeyDown()||p.distanceToSqr(Vec3.atCenterOf(worldPosition))>16||l.getBrightness(LightLayer.BLOCK,worldPosition.above())<8){attention=0;listener=null;return;}
+        if(kind()!=1||sealed()||!(level instanceof ServerLevel l)||!RealmCycle.get(l).released()||!hope||!p.isShiftKeyDown()||p.getDeltaMovement().horizontalDistanceSqr()>.0004||p.distanceToSqr(Vec3.atCenterOf(worldPosition))>16||l.getBrightness(LightLayer.BLOCK,worldPosition.above())<8){attention=0;listener=null;return;}
         if(!p.getUUID().equals(listener)){listener=p.getUUID();attention=0;}
         attention+=5;
         if(attention>=80){quiet=200;attention=0;tell(p,"heard");l.sendParticles(ParticleTypes.SMALL_FLAME,worldPosition.getX()+.5,worldPosition.getY()+1.1,worldPosition.getZ()+.5,8,.4,.1,.4,.005);setChanged();}
