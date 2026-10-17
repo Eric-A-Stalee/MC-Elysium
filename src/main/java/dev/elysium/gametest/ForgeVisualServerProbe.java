@@ -30,6 +30,7 @@ public final class ForgeVisualServerProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualServer");
     private static ForgePlan PLAN;
     private static dev.elysium.structure.WatchfirePiece[] WATCHES;
+    private static final java.util.Map<dev.elysium.worldgen.TartarusTerrain.Region,BlockPos> REGIONS=new java.util.EnumMap<>(dev.elysium.worldgen.TartarusTerrain.Region.class);
 
     private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
     private static boolean depthsReady;
@@ -43,6 +44,10 @@ public final class ForgeVisualServerProbe {
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
         prepareDepths(level);
+        if("underworld".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))) {
+            prepareUnderworld(level);
+            LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");return;
+        }
         PLAN=ForgeNaturalGenerationProbe.generateAndVerify(level);
         WATCHES=WatchfireNaturalGenerationProbe.generateAndVerify(level,PLAN.entrance());
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
@@ -64,6 +69,7 @@ public final class ForgeVisualServerProbe {
         var level=player.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)return;
         player.setGameMode(GameType.SPECTATOR);
+        if(scene.startsWith("underworld_")){underworldCamera(player,level,scene);return;}
         switch(scene) {
             case "entrance" -> camera(player,level,-7,PLAN.entranceFloor()+5,-18,-2,PLAN.entranceFloor()+3,1);
             case "shaft" -> camera(player,level,-10,PLAN.floor()+48,22,4,PLAN.floor()+26,20);
@@ -230,6 +236,39 @@ public final class ForgeVisualServerProbe {
     private static void depthsCamera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
         double x=DEPTHS.x+u+.5,z=DEPTHS.z+v+.5,dx=tu-u,dz=tv-v,dy=ty-y-1.62;
         player.teleportTo(level,x,y,z,(float)(Math.toDegrees(Math.atan2(dz,dx))-90),(float)-Math.toDegrees(Math.atan2(dy,Math.hypot(dx,dz))));
+    }
+    private static void prepareUnderworld(ServerLevel level) {
+        var generator=(dev.elysium.worldgen.StratifiedChunkGenerator)level.getChunkSource().getGenerator();
+        var terrain=generator.terrain(level.getChunkSource().randomState());
+        for(int radius=0;radius<=48&&REGIONS.size()<4;radius++)for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++) {
+            if(Math.max(Math.abs(dx),Math.abs(dz))!=radius)continue;
+            int x=DEPTHS.x+dx*128,z=DEPTHS.z+dz*128;var column=terrain.column(x,z);
+            if(REGIONS.containsKey(column.region)||column.floor<=dev.elysium.worldgen.TartarusTerrain.WATERLINE||!column.at(column.floor+1).isAir())continue;
+            var pos=new BlockPos(x,column.floor,z);level.getChunk(pos);
+            if(!level.getBlockState(pos).equals(column.at(column.floor)))continue;
+            REGIONS.put(column.region,pos);LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_REGION {} floor={} roof={}",column.region,pos,column.roof);
+        }
+        if(REGIONS.size()!=4)throw new IllegalStateException("Bounded underworld survey found only "+REGIONS.keySet());
+    }
+    private static void underworldCamera(ServerPlayer player,ServerLevel level,String scene) {
+        // Geometry inspection is explicitly night-vision assisted; the final lamp view is normal darkness.
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION,12000,0,false,false));
+        if(scene.equals("underworld_descent")) {
+            player.teleportTo(level,DEPTHS.x+140.5,-270,DEPTHS.z+236.5,-90,58);return;
+        }
+        var kind=switch(scene) {
+            case "underworld_chains"->dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST;
+            case "underworld_mire"->dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE;
+            case "underworld_grave"->dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE;
+            default->dev.elysium.worldgen.TartarusTerrain.Region.ASH_WASTES;
+        };
+        var pos=REGIONS.get(kind);
+        if(scene.equals("underworld_lamp")) {
+            player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);
+            level.setBlock(pos.above(),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
+            player.teleportTo(level,pos.getX()+.5,pos.getY()+2,pos.getZ()+5.5,180,12);
+        }else player.teleportTo(level,pos.getX()+.5,pos.getY()+20,pos.getZ()+.5,-45,12);
+        LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_SCENE {} at={} nightVision={}",scene,pos,!scene.equals("underworld_lamp"));
     }
     private static void camera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
         double x=PLAN.worldX(u,v)+.5,z=PLAN.worldZ(u,v)+.5;

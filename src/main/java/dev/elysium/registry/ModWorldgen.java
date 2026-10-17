@@ -11,6 +11,10 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModWorldgen {
+    public static final DeferredRegister<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.chunk.ChunkGenerator>> GENERATORS =
+            DeferredRegister.create(Registries.CHUNK_GENERATOR, Elysium.MOD_ID);
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.minecraft.world.level.chunk.ChunkGenerator>,com.mojang.serialization.MapCodec<dev.elysium.worldgen.StratifiedChunkGenerator>> STRATIFIED =
+            GENERATORS.register("stratified", () -> dev.elysium.worldgen.StratifiedChunkGenerator.CODEC);
     public static final DeferredRegister<FoliagePlacerType<?>> FOLIAGE =
             DeferredRegister.create(Registries.FOLIAGE_PLACER_TYPE, Elysium.MOD_ID);
     public static final DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<BirchCrownPlacer>> BIRCH_CROWN =

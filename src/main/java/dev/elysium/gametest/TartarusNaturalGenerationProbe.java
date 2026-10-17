@@ -48,6 +48,7 @@ final class TartarusNaturalGenerationProbe {
             require(start != null && start.isValid(), "Natural chain start was not generated");
             var chain = ((TartarusChainPiece) start.getPieces().getFirst()).plan();
             var piece = (TartarusDepthsPiece) start.getPieces().get(1);
+            var descent = (dev.elysium.structure.UnderworldDescentPiece)start.getPieces().get(2);
             var plan = piece.plan();
             require(plan.heart().equals(expected.heart()) && plan.seed == expected.seed,
                     "Natural start differs from deterministic candidate");
@@ -98,6 +99,8 @@ final class TartarusNaturalGenerationProbe {
                 for (int v = TartarusDepthsPlan.MIN_Z + 1; v <= TartarusDepthsPlan.MAX_Z; v += 8)
                     for (int y = -242; y <= -64; y += 9) {
                         var wanted = piece.materialAt(u, y, v);
+                        var overlay=descent.materialAt(plan.x+u,y,plan.z+v);
+                        if(overlay!=null)wanted=overlay;
                         if (wanted == null) continue;
                         var pos = plan.at(u, y, v);
                         var actual = level.getBlockState(pos);
@@ -105,6 +108,12 @@ final class TartarusNaturalGenerationProbe {
                                 "Natural basin/chamber differs at " + pos + ": " + actual + " expected " + wanted);
                         samples++;
                     }
+            for(var step:descent.route()) {
+                var pos=descent.at(step);
+                require(!level.getBlockState(pos).isAir(),"Deep winding stair has no floor at "+pos);
+                require(level.getBlockState(pos.above()).isAir()&&level.getBlockState(pos.above(2)).isAir(),"Deep winding stair is obstructed at "+pos);
+            }
+            require(descent.bottom()<-400,"The chain must lead into the new continuous underworld");
             LogUtils.getLogger().info("ELYSIUM_NATURAL_TARTARUS_VERIFIED seed={} source={} anchor={} depthsOrigin={},{} chunks={} routeSteps={} materialSamples={} heart={}",
                     level.getSeed(), source, new BlockPos(chain.x(), chain.floor(), chain.z()),
                     plan.x, plan.z, chunks, steps, samples, plan.heart());

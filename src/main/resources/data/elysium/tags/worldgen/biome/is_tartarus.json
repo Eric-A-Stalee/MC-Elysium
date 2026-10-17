@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "elysium:ash_wastes",
+    "elysium:chain_forest",
+    "elysium:hollow_mire",
+    "elysium:titan_grave"
+  ]
+}

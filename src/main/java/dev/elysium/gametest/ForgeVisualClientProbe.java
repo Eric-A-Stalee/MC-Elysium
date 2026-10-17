@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID,value=Dist.CLIENT)
 public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
-    private static final String[] SCENES="cinder".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))?new String[]{"stray_cinder"}:new String[]{"descent","chimera_dark","chimera_lamp","chimera_eye","chimera_attack",
+    private static final String[] SCENES="underworld".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))?new String[]{"underworld_descent","underworld_ash","underworld_chains","underworld_mire","underworld_grave","underworld_lamp"}:"cinder".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))?new String[]{"stray_cinder"}:new String[]{"descent","chimera_dark","chimera_lamp","chimera_eye","chimera_attack",
             "dark","forge_service","forge_restored","forge_full_hall","forge_banked",
             "hammer_strike","harvest_sunset","harvest_night","stray_cinder","harvest_answered","water_answered","high_answered","governor","first_dawn","chosen_hour"};
     private static boolean connecting,requested,captured;

@@ -26,6 +26,7 @@ public final class Elysium {
         ModStructures.register(modBus);
         ModWorldgen.PLACEMENTS.register(modBus);
         ModWorldgen.FOLIAGE.register(modBus);
+        ModWorldgen.GENERATORS.register(modBus);
         ModAmbience.PARTICLES.register(modBus);
         ModAmbience.SOUNDS.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, ElysiumConfig.SPEC);

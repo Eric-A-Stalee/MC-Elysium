@@ -59,7 +59,7 @@ public final class TartarusExpeditionGameTests {
     @GameTest(template="portal_test_empty",timeoutTicks=180)
     public static void inspectionWayIsWalkableAndDarkAcrossSavedSeeds(GameTestHelper h) {
         var realm=h.getLevel().getServer().getLevel(ElysiumTravel.DIMENSION);
-        h.assertTrue(realm.getMinBuildHeight()==-256&&realm.getMaxBuildHeight()==320,"Extend only the lower world boundary");
+        h.assertTrue(realm.getMinBuildHeight()==-640&&realm.getMaxBuildHeight()==320,"Extend only the lower world boundary");
         for(long seed:new long[]{0,1,789,-2381,Long.MAX_VALUE}) {
             var plan=new TartarusDepthsPlan(128,-128,seed);var piece=new TartarusDepthsPiece(plan);
             TartarusDepthsPlan.Step previous=null;

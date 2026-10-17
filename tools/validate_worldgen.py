@@ -37,9 +37,10 @@ def validate_climates() -> int:
     for entry in entries:
         parameters = entry["parameters"]
         assert parameters["offset"] == 0
-        for axis in ("continentalness", "depth"):
+        for axis in ("continentalness",):
             low, high = bounds(parameters[axis])
             assert low <= -1 and high >= 1
+        assert bounds(parameters["depth"]) in ((0.0, 0.0), (1.0, 1.0))
         name = entry["biome"].split(":", 1)[1]
         assert (DATA / f"worldgen/biome/{name}.json").is_file()
     samples = {}
@@ -49,15 +50,16 @@ def validate_climates() -> int:
         assert boundaries[0] <= -1 and boundaries[-1] >= 1
     checked = 0
     for values in itertools.product(*(samples[axis] for axis in axes)):
-        matches = [entry for entry in entries if all(
-            bounds(entry["parameters"][axis])[0] <= value <= bounds(entry["parameters"][axis])[1]
-            for axis, value in zip(axes, values))]
-        assert matches, f"Climate hole at {values}"
-        strict = [entry for entry in matches if all(
-            bounds(entry["parameters"][axis])[0] < value < bounds(entry["parameters"][axis])[1]
-            for axis, value in zip(axes, values))]
-        assert len(strict) <= 1, f"Interior climate overlap at {values}"
-        checked += 1
+        for depth in (0.0, 1.0):
+            matches = [entry for entry in entries if bounds(entry["parameters"]["depth"])[0] == depth and all(
+                bounds(entry["parameters"][axis])[0] <= value <= bounds(entry["parameters"][axis])[1]
+                for axis, value in zip(axes, values))]
+            assert matches, f"Climate hole at depth {depth}: {values}"
+            strict = [entry for entry in matches if all(
+                bounds(entry["parameters"][axis])[0] < value < bounds(entry["parameters"][axis])[1]
+                for axis, value in zip(axes, values))]
+            assert len(strict) <= 1, f"Interior climate overlap at depth {depth}: {values}"
+            checked += 1
     return checked
 
 
@@ -211,9 +213,10 @@ def validate_terrain() -> None:
     vertical = combined["argument2"]
     assert vertical["type"] == "minecraft:y_clamped_gradient"
     assert vertical["from_y"] < vertical["to_y"] and vertical["from_value"] > vertical["to_value"]
-    # Alpha 18 extends solid geology downward; the old surface gradient stays exact.
+    # The surface gradient remains exact; the registered stratified generator owns the deep world.
     assert vertical["from_y"] == -64 and vertical["from_value"] == 64
-    assert (noise["noise"]["min_y"], noise["noise"]["height"]) == (-256, 576)
+    assert (noise["noise"]["min_y"], noise["noise"]["height"]) == (-640, 960)
+    assert read_json("dimension/elysium.json")["generator"]["type"] == "elysium:stratified"
     assert vertical["to_y"] >= noise["noise"]["min_y"] + noise["noise"]["height"]
     height = read_json("worldgen/density_function/terrain_height.json")
 
@@ -561,7 +564,7 @@ def main():
           f"{len(templates)} templates/{sum(template[0] for template in templates)} positions, "
           f"{sum(template[2] for template in templates)} villagers, 2 landmarks/{landmarks} positions, "
           f"5 small settlement modules/{modules} positions, 5 grand building modules/{grand_modules} positions, "
-          f"{isolated} isolated density functions, solid-depth density{suffix}.")
+          f"{isolated} isolated density functions, preserved surface density and separate deep strata{suffix}.")
 
 
 if __name__ == "__main__":

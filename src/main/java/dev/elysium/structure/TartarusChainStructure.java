@@ -38,12 +38,16 @@ public final class TartarusChainStructure extends Structure {
             long seed=context.random().nextLong();
             var chainPiece=new TartarusChainPiece(plan.get());
             var depthsPiece=new TartarusDepthsPiece(TartarusDepthsPlan.belowAnchor(x,z,seed));
+            var descent=context.chunkGenerator() instanceof dev.elysium.worldgen.StratifiedChunkGenerator stratified
+                    ?new UnderworldDescentPiece(depthsPiece.plan(),stratified.terrain(context.randomState())):null;
             if(!withinReferenceReach(context.chunkPos(),chainPiece.getBoundingBox())
-                    ||!withinReferenceReach(context.chunkPos(),depthsPiece.getBoundingBox()))continue;
+                    ||!withinReferenceReach(context.chunkPos(),depthsPiece.getBoundingBox())
+                    ||descent!=null&&!withinReferenceReach(context.chunkPos(),descent.getBoundingBox()))continue;
             return Optional.of(new GenerationStub(new BlockPos(x, top, z),
                     builder -> {
                         builder.addPiece(chainPiece);
                         builder.addPiece(depthsPiece);
+                        if(descent!=null)builder.addPiece(descent);
                     }));
         }
         return Optional.empty();

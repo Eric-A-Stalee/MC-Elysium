@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "src/main/resources/data/elysium"
 WORLDGEN = DATA / "worldgen"
-MIN_Y, HEIGHT, SEA_LEVEL = -256, 576, 63
+MIN_Y, HEIGHT, SEA_LEVEL = -640, 960, 63
 GOLDEN_HOUR = 11500
 # Approved V4 preview: warmer-amber B foliage on the L3 curve, and G4.1 grass. Grass's 0.95
 # common RGB gain is folded into its 8-bit biome tint (#FFD34A -> #F2C846).
@@ -46,10 +46,11 @@ class ClimateBox:
     temperature: tuple[float, float] = (-1.0, 1.0)
     continentalness: tuple[float, float] = (-1.2, 1.2)
     weirdness: tuple[float, float] = (-1.2, 1.2)
+    depth: tuple[float, float] = (0.0, 0.0)
 
     def parameters(self) -> dict:
         return {**{key: list(value) for key, value in vars(self).items()},
-                "depth": [-2.0, 2.0], "offset": 0.0}
+                "offset": 0.0}
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,7 @@ class BiomeDefinition:
     pale_cliffs: bool = False
     settlements: tuple[str, ...] = ()
     ambient_loop: str | None = None
+    underground: bool = False
 
     @property
     def key(self) -> str:
@@ -176,6 +178,17 @@ BIOMES = (
                             water=0x496D88, water_fog=0x334962),
                     Vegetation(1, 0, 1, 1, 0.55, canopy_tree_chance=0.25), (Spawn("sheep", 8), Spawn("rabbit", 4, 2, 3)),
                     temperature=0.35, downfall=0.25, pale_cliffs=True, settlements=("mountain_town",)),
+    *(BiomeDefinition(name, title,
+        (ClimateBox(humidity, (-1.0, 1.0), temperature=(-1.0, 1.0), depth=(1.0, 1.0)),),
+        Palette(0x6F5535, foliage=0x897048, sky=0x1B120D, fog=fog,
+                water=0x28221C, water_fog=0x100D0A),
+        Vegetation(0, 0, 0, 0, 0), (), temperature=0.7, downfall=0, underground=True)
+      for name, title, humidity, fog in (
+        ("ash_wastes", "Ash Wastes", (-1.0, -0.30), 0x21170F),
+        ("chain_forest", "The Hanging Chains", (-0.30, 0.10), 0x171413),
+        ("hollow_mire", "Hollow Mire", (0.10, 0.45), 0x1D1B12),
+        ("titan_grave", "Graves of the Bound", (0.45, 1.0), 0x211A14),
+      )),
 )
 
 
@@ -296,6 +309,9 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     emit(entries, "worldgen/noise/gentle_relief.json", {"firstOctave": -4, "amplitudes": [1.0, 0.5]})
     emit(entries, "worldgen/density_function/terrain_height.json", terrain_height)
     emit(entries, "worldgen/density_function/terrain_density.json", terrain_density)
+    # Quart samples are integral multiples of four; the strata therefore have
+    # exactly two climate depths while the original surface signals stay intact.
+    emit(entries, "worldgen/density_function/tartarus_depth.json", gradient(-248, -244, 1.0, 0.0))
 
     cliff_biomes = [biome.key for biome in BIOMES if biome.pale_cliffs]
     pale_cliffs = condition({"type": "minecraft:biome", "biome_is": cliff_biomes},
@@ -344,7 +360,7 @@ def make_noise(entries: dict[Path, bytes]) -> None:
     router = {"barrier": 0.0, "fluid_level_floodedness": 0.0,
               "fluid_level_spread": 0.0, "lava": 0.0,
               "continents": "elysium:continents", "erosion": "elysium:erosion",
-              "depth": 0.0, "ridges": "elysium:ridges",
+              "depth": "elysium:tartarus_depth", "ridges": "elysium:ridges",
               "initial_density_without_jaggedness": "elysium:terrain_density",
               "final_density": unary("squeeze", unary("interpolated", unary("blend_density", "elysium:terrain_density"))),
               "vein_toggle": 0.0, "vein_ridged": 0.0, "vein_gap": 0.0}
@@ -424,6 +440,15 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
     emit(entries, "worldgen/configured_feature/autumn_leaves.json", patch(simple_provider("elysium:leaf_litter"), 32, 5))
 
     for biome in BIOMES:
+        if biome.underground:
+            emit(entries, f"worldgen/biome/{biome.id}.json", {
+                "has_precipitation": False, "temperature": biome.temperature, "downfall": 0.0,
+                "effects": biome.palette.effects(), "carvers": {}, "features": [[] for _ in range(11)],
+                "spawn_costs": {}, "spawners": {name: [] for name in (
+                    "ambient", "axolotls", "creature", "misc", "monster", "underground_water_creature", "water_ambient", "water_creature")},
+                "creature_spawn_probability": 0.0,
+            })
+            continue
         vegetation = biome.vegetation
         # RandomSelector checks entries sequentially, so convert absolute shares
         # to conditional probabilities rather than silently reducing tall trees.
@@ -480,6 +505,7 @@ def make_biomes(entries: dict[Path, bytes]) -> None:
             "spawn_costs": {}, "spawners": spawners, "creature_spawn_probability": 0.12,
         })
     emit(entries, "tags/worldgen/biome/is_elysium.json", {"replace": False, "values": [biome.key for biome in BIOMES]})
+    emit(entries, "tags/worldgen/biome/is_tartarus.json", {"replace": False, "values": [biome.key for biome in BIOMES if biome.underground]})
 
 
 # Minimal typed NBT writer: deterministic, dependency-free, and readable source
@@ -899,7 +925,7 @@ def generate() -> dict[Path, bytes]:
         "ambient_light": 0.05, "monster_spawn_block_light_limit": 0, "monster_spawn_light_level": 0,
     })
     dimension = {
-        "type": "elysium:elysium", "generator": {"type": "minecraft:noise", "settings": "elysium:elysium",
+        "type": "elysium:elysium", "generator": {"type": "elysium:stratified", "settings": "elysium:elysium",
             "biome_source": {"type": "minecraft:multi_noise", "biomes": [
                 {"biome": biome.key, "parameters": climate.parameters()} for biome in BIOMES for climate in biome.climates]}}}
     emit(entries, "dimension/elysium.json", dimension)
