@@ -60,14 +60,16 @@ public final class ResonanceItem extends Item {
             if(!level.dimension().equals(ElysiumTravel.DIMENSION)) {ForgeLore.tell(server,"outside");return InteractionResultHolder.fail(stack);}
             if(player.getCooldowns().isOnCooldown(this))return InteractionResultHolder.fail(stack);
             player.getCooldowns().addCooldown(this,30);
+            var destination=forge?StructureSurvey.Destination.FORGE:player.getY()<dev.elysium.worldgen.TartarusTerrain.TOP?StructureSurvey.Destination.PROMETHEUS:StructureSurvey.Destination.CHAIN;
             if(!forge && player.isShiftKeyDown()) {
                 var data=data(stack);
                 if(data.contains("elysium_forge",Tag.TAG_LONG)) bearing(server,BlockPos.of(data.getLong("elysium_forge")),true);
                 else ForgeLore.tell(server,"no_memory");
-            } else if(forge&&player.isShiftKeyDown() || target(stack).isEmpty()) {
+            } else if(forge&&player.isShiftKeyDown() || target(stack).isEmpty() || !data(stack).getString("elysium_target_kind").equals(destination.name())) {
                 if(forge&&player.isShiftKeyDown())CustomData.update(DataComponents.CUSTOM_DATA,stack,t->t.remove("elysium_target"));
-                StructureSurvey.begin(server,stack,forge?StructureSurvey.Destination.FORGE:StructureSurvey.Destination.CHAIN);
-            } else bearing(server,target(stack).orElseThrow(),forge);
+                StructureSurvey.begin(server,stack,destination);
+            } else if(destination==StructureSurvey.Destination.PROMETHEUS)deepBearing(server,target(stack).orElseThrow());
+            else bearing(server,target(stack).orElseThrow(),forge);
         }
         return InteractionResultHolder.sidedSuccess(stack,level.isClientSide);
     }
@@ -118,6 +120,11 @@ public final class ResonanceItem extends Item {
     }
     public static boolean arrived(ServerPlayer player,BlockPos target) {
         return target.distToCenterSqr(player.getX(),player.getY(),player.getZ()) <= 64;
+    }
+    public static void deepBearing(ServerPlayer player,BlockPos target){
+        int dx=target.getX()-player.getBlockX(),dz=target.getZ()-player.getBlockZ();
+        player.displayClientMessage(Component.translatable("message.elysium.prometheus.bearing",Component.translatable("direction.elysium."+direction(dx,dz)),Math.round(Math.hypot(dx,dz)),target.getY()),true);
+        player.level().playSound(null,player.blockPosition(),SoundEvents.CHAIN_HIT,SoundSource.PLAYERS,.6f,.5f);
     }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,List<Component> lines,TooltipFlag flag) {
         lines.add(Component.translatable("tooltip.elysium."+(forge?"forge_survey":"chain_resonator")).withStyle(ChatFormatting.GOLD));

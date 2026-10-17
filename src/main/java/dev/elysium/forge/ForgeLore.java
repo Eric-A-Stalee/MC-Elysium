@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.WrittenBookContent;
 
 public final class ForgeLore {
     public enum Record {
+        PROMETHEUS("What Fire Remembers",ForgeDiscoveries.PROMETHEUS,5),
         SURVEY("The Last Survey",ForgeDiscoveries.SURVEY,4),
         LEDGER("The Unfinished Work",ForgeDiscoveries.LEDGER,5),
         BINDINGS("On the Bindings",ForgeDiscoveries.BINDINGS,4),
@@ -26,7 +27,7 @@ public final class ForgeLore {
         var book=new ItemStack(Items.WRITTEN_BOOK);
         List<Filterable<Component>> pages=IntStream.rangeClosed(1,record.pages)
                 .mapToObj(n->Filterable.<Component>passThrough(Component.translatable("lore.elysium."+record.key()+"."+n))).toList();
-        book.set(DataComponents.WRITTEN_BOOK_CONTENT,new WrittenBookContent(Filterable.passThrough(record.title),"The Keepers of the Hearth",0,pages,true));
+        book.set(DataComponents.WRITTEN_BOOK_CONTENT,new WrittenBookContent(Filterable.passThrough(record.title),record==Record.PROMETHEUS?"Prometheus":"The Keepers of the Hearth",0,pages,true));
         return book;
     }
     public static void give(ServerPlayer player,ItemStack stack) {

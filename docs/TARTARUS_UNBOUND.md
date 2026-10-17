@@ -40,3 +40,19 @@ relationship between divine forging, the vessel at the foundry, surface
 ruptures, and the old deep bindings. Actual client captures and playable
 encounters will determine the changes after each checkpoint. These paragraphs
 describe direction, not a claim that every encounter is already implemented.
+
+## The prison checkpoint
+
+A dry, surveyed deep outcrop now carries a monumental embedded figure, fractured
+bronze gantry, a narrow graded approach, and an open fighting ledge. The Bronze
+Eagle alternates marked dives with real projectile volleys, then drops to a long
+melee recovery. The voice in the restraint owns the encounter and remembers its
+defeat. Prometheus teaches each visitor personally; persistent knowledge, not
+the continued possession of a book, enables divine smithing. The Chain Resonator
+changes its search to the prison below the deep threshold.
+
+The concept study led to an architectural prisoner rather than a small humanoid
+NPC. His body is built into the rock; the eagle is an articulated moving entity.
+This needs actual client review before the silhouettes and material balance can
+be considered settled. The book's warning anticipates the consequence systems
+being developed next on this branch.

@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "elysium:prometheus_prison",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 64,
+    "separation": 24,
+    "salt": 821931713,
+    "exclusion_zone": {
+      "other_set": "elysium:tartarus_chain",
+      "chunk_count": 10
+    }
+  }
+}

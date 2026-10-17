@@ -19,6 +19,7 @@ public final class ModItems {
     public static final DeferredItem<ResonanceItem> FORGE_SURVEY = ITEMS.register("forge_survey", () -> new ResonanceItem(new Item.Properties().stacksTo(1),true));
     public static final DeferredItem<ResonanceItem> CHAIN_RESONATOR = ITEMS.register("chain_resonator", () -> new ResonanceItem(new Item.Properties().stacksTo(1).fireResistant(),false));
 
+    public static final DeferredItem<Item> BRONZE_PINION=ITEMS.registerSimpleItem("bronze_pinion",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> FIRST_FLAME = ITEMS.registerSimpleItem("first_flame", new Item.Properties().stacksTo(1).fireResistant());
     public static final DeferredItem<Item> CINDER_GLASS = ITEMS.registerSimpleItem("cinder_glass",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> SUNWROUGHT_INGOT = ITEMS.registerSimpleItem("sunwrought_ingot",new Item.Properties().fireResistant());
@@ -26,6 +27,7 @@ public final class ModItems {
     public static final DeferredItem<dev.elysium.item.DawnWayfinderItem> DAWN_WAYFINDER = ITEMS.register("dawn_wayfinder",()->new dev.elysium.item.DawnWayfinderItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<dev.elysium.item.HarvestSickleItem> HARVEST_SICKLE = ITEMS.register("harvest_sickle",()->new dev.elysium.item.HarvestSickleItem(new Item.Properties().durability(768).fireResistant()));
     static {
+        ITEMS.registerSimpleBlockItem(ModBlocks.PROMETHEUS_VOICE);
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_PRESS);
         ITEMS.registerSimpleBlockItem(ModBlocks.EMBER_GLASS);
         ITEMS.registerSimpleBlockItem(ModBlocks.WATCHFIRE);
@@ -60,6 +62,7 @@ public final class ModItems {
             () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.elysium"))
                     .icon(() -> ELYSIUM_SIGIL.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        output.accept(BRONZE_PINION);output.accept(ModBlocks.PROMETHEUS_VOICE);
                         output.accept(CINDER_GLASS);output.accept(ModBlocks.EMBER_GLASS);output.accept(SUNWROUGHT_INGOT);output.accept(WATCHFIRE_SEAL);output.accept(DAWN_WAYFINDER);output.accept(HARVEST_SICKLE);
                         output.accept(ModBlocks.FORGE_PRESS);output.accept(ModBlocks.WARD_LAMP);output.accept(ModBlocks.WATCHFIRE);output.accept(ModBlocks.CELESTIAL_GOVERNOR);
                         output.accept(FIRST_FLAME);output.accept(ModBlocks.KEEPERS_LAMP);output.accept(ModBlocks.KEEPER_WORKBENCH);

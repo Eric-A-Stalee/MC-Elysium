@@ -48,6 +48,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
     }
     public boolean queue(Player player,ForgeRecipes.Work recipe) {
         if(plan==null||recipe==null||!work.isEmpty()||!output.isEmpty()||!powered())return false;
+        if(!knowsCraft(player))return false;
         var inventory=player.getInventory();
         // Check the complete bill first. Failed jobs cannot eat a subset of the materials.
         for(var cost:recipe.costs()) {
@@ -78,11 +79,13 @@ public final class ForgePressBlockEntity extends BlockEntity {
             else tell(player,powered()?"busy":"paused");
             return;
         }
+        if(!knowsCraft(player)){tell(player,"untaught");return;}
         if(held.isEmpty()) {ForgeManual.give(server);tell(player,powered()?"ready":"cold");return;}
         if(held.is(net.minecraft.world.item.Items.BOOK)){ForgeLore.give(server,ForgeManual.book());if(!player.getAbilities().instabuild)held.shrink(1);return;}
         var recipe=ForgeRecipes.select(held);
         tell(player,queue(player,recipe)?"loaded":!powered()?"cold":"materials");
     }
+    private boolean knowsCraft(Player player){return player.getAbilities().instabuild||level instanceof ServerLevel server&&ForgeDiscoveries.get(server).has(player.getUUID(),ForgeDiscoveries.PROMETHEUS);}
     private static void tell(Player p,String key){
         if(key.equals("loaded")&&p.level() instanceof ServerLevel server&&server.dimension().equals(dev.elysium.portal.ElysiumTravel.DIMENSION)
                 &&dev.elysium.story.RealmCycle.get(server).released())key="queued";

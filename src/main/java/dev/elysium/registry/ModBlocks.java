@@ -59,6 +59,7 @@ public final class ModBlocks {
             () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
     public static final DeferredBlock<DepthsControlBlock> TARTARUS_HEART = BLOCKS.register("tartarus_heart",
             () -> new DepthsControlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
+    public static final DeferredBlock<dev.elysium.block.PrometheusBlock> PROMETHEUS_VOICE = BLOCKS.register("prometheus_voice",()->new dev.elysium.block.PrometheusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s->5)));
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
     public static final DeferredBlock<ForgeFlameBlock> FORGE_FLAME = BLOCKS.register("forge_flame",
             () -> new ForgeFlameBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().instabreak()

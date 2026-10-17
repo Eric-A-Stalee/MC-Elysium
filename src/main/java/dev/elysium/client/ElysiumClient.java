@@ -26,6 +26,8 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_EAGLE.get(),BronzeEagleRenderer::new);
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_FEATHER.get(),c->new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(c,1.4f,false));
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_WISP.get(),CinderWispRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.SLAG_CHIMERA.get(), SlagChimeraRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_BOLT.get(), context ->

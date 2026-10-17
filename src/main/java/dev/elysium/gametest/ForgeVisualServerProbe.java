@@ -33,6 +33,7 @@ public final class ForgeVisualServerProbe {
     private static final java.util.Map<dev.elysium.worldgen.TartarusTerrain.Region,BlockPos> REGIONS=new java.util.EnumMap<>(dev.elysium.worldgen.TartarusTerrain.Region.class);
 
     private static dev.elysium.structure.TartarusDepthsPlan DEPTHS;
+    private static dev.elysium.structure.PrometheusPrisonPiece PRISON;
     private static boolean depthsReady;
     private static void prepareDepths(ServerLevel level) {
         if(depthsReady)return;
@@ -43,6 +44,7 @@ public final class ForgeVisualServerProbe {
         if(!ENABLED)return;
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
+        if("prison".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))){PRISON=PrometheusNaturalGenerationProbe.generateAndVerify(level);LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");return;}
         prepareDepths(level);
         if("underworld".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))) {
             prepareUnderworld(level);
@@ -62,13 +64,14 @@ public final class ForgeVisualServerProbe {
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"inspection_entry");
+        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,PRISON!=null?"prison_overview":"inspection_entry");
     }
 
     private static void scene(ServerPlayer player,String scene) {
         var level=player.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)return;
         player.setGameMode(GameType.SPECTATOR);
+        if(scene.startsWith("prison_")){prisonCamera(player,level,scene);return;}
         if(scene.startsWith("underworld_")){underworldCamera(player,level,scene);return;}
         switch(scene) {
             case "entrance" -> camera(player,level,-7,PLAN.entranceFloor()+5,-18,-2,PLAN.entranceFloor()+3,1);
@@ -249,6 +252,18 @@ public final class ForgeVisualServerProbe {
             REGIONS.put(column.region,pos);LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_REGION {} floor={} roof={}",column.region,pos,column.roof);
         }
         if(REGIONS.size()!=4)throw new IllegalStateException("Bounded underworld survey found only "+REGIONS.keySet());
+    }
+    private static void prisonCamera(ServerPlayer player,ServerLevel level,String scene){
+        var arena=PRISON.arena();var voice=PRISON.voice();
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION,12000,0,false,false));
+        var controller=(dev.elysium.block.PrometheusBlockEntity)level.getBlockEntity(voice);controller.summon();
+        net.minecraft.world.phys.Vec3 camera,target;
+        if(scene.equals("prison_eagle")){camera=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(7,29,14);target=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(0,28,0);}
+        else if(scene.equals("prison_teacher")){camera=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(10,15,16);target=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-18,25,-15);}
+        else if(scene.equals("prison_dark")){player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);level.setBlock(voice.south(2),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(4,1,7);target=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-8,5,-8);}
+        else{camera=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(25,22,43);target=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(-24,17,-20);}
+        var d=target.subtract(camera.add(0,1.62,0));player.teleportTo(level,camera.x,camera.y,camera.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
+        LogUtils.getLogger().info("ELYSIUM_PRISON_SCENE {} nightVision={}",scene,!scene.equals("prison_dark"));
     }
     private static void underworldCamera(ServerPlayer player,ServerLevel level,String scene) {
         // Geometry inspection is explicitly night-vision assisted; the final lamp view is normal darkness.

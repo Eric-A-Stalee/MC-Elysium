@@ -17,5 +17,6 @@ public final class ModBlockEntities {
             () -> BlockEntityType.Builder.of(dev.elysium.block.ForgePressBlockEntity::new,ModBlocks.FORGE_PRESS.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.elysium.block.WatchfireBlockEntity>> WATCHFIRE = TYPES.register("watchfire",
             () -> BlockEntityType.Builder.of(dev.elysium.block.WatchfireBlockEntity::new,ModBlocks.WATCHFIRE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<dev.elysium.block.PrometheusBlockEntity>> PROMETHEUS=TYPES.register("prometheus",()->BlockEntityType.Builder.of(dev.elysium.block.PrometheusBlockEntity::new,ModBlocks.PROMETHEUS_VOICE.get()).build(null));
     private ModBlockEntities() {}
 }

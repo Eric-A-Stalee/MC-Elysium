@@ -23,6 +23,10 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>,EntityType<SlagChimeraEntity>> SLAG_CHIMERA=TYPES.register("slag_chimera",
             ()->EntityType.Builder.<SlagChimeraEntity>of(SlagChimeraEntity::new,MobCategory.MISC).sized(11,4)
                     .fireImmune().clientTrackingRange(12).updateInterval(2).build("elysium:slag_chimera"));
-    @SubscribeEvent public static void attributes(EntityAttributeCreationEvent event){event.put(SLAG_CHIMERA.get(),SlagChimeraEntity.attributes().build());event.put(CINDER_WISP.get(),dev.elysium.entity.CinderWispEntity.attributes().build());}
+    public static final DeferredHolder<EntityType<?>,EntityType<dev.elysium.entity.BronzeEagleEntity>> BRONZE_EAGLE=TYPES.register("bronze_eagle",
+            ()->EntityType.Builder.<dev.elysium.entity.BronzeEagleEntity>of(dev.elysium.entity.BronzeEagleEntity::new,MobCategory.MISC).sized(3.6f,2.8f).fireImmune().clientTrackingRange(12).updateInterval(2).build("elysium:bronze_eagle"));
+    public static final DeferredHolder<EntityType<?>,EntityType<dev.elysium.entity.BronzeFeatherEntity>> BRONZE_FEATHER=TYPES.register("bronze_feather",
+            ()->EntityType.Builder.<dev.elysium.entity.BronzeFeatherEntity>of(dev.elysium.entity.BronzeFeatherEntity::new,MobCategory.MISC).sized(.3f,.3f).fireImmune().clientTrackingRange(8).updateInterval(1).build("elysium:bronze_feather"));
+    @SubscribeEvent public static void attributes(EntityAttributeCreationEvent event){event.put(BRONZE_EAGLE.get(),dev.elysium.entity.BronzeEagleEntity.attributes().build());event.put(SLAG_CHIMERA.get(),SlagChimeraEntity.attributes().build());event.put(CINDER_WISP.get(),dev.elysium.entity.CinderWispEntity.attributes().build());}
     private ModEntities(){}
 }

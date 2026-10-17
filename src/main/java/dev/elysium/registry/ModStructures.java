@@ -66,6 +66,8 @@ public final class ModStructures {
             PIECES.register("underworld_descent",()->(StructurePieceType.ContextlessType)dev.elysium.structure.UnderworldDescentPiece::new);
     public static final DeferredHolder<StructureType<?>,StructureType<dev.elysium.structure.WatchfireStructure>> WATCHFIRE = STRUCTURES.register("watchfire",()->()->dev.elysium.structure.WatchfireStructure.CODEC);
     public static final DeferredHolder<StructurePieceType,StructurePieceType> WATCHFIRE_PIECE = PIECES.register("watchfire",()->(StructurePieceType.ContextlessType)dev.elysium.structure.WatchfirePiece::new);
+    public static final DeferredHolder<StructureType<?>,StructureType<dev.elysium.structure.PrometheusPrisonStructure>> PROMETHEUS_PRISON = STRUCTURES.register("prometheus_prison",()->()->dev.elysium.structure.PrometheusPrisonStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType,StructurePieceType> PROMETHEUS_PRISON_PIECE = PIECES.register("prometheus_prison",()->(StructurePieceType.ContextlessType)dev.elysium.structure.PrometheusPrisonPiece::new);
     private ModStructures() {}
 
     public static void register(IEventBus modBus) {

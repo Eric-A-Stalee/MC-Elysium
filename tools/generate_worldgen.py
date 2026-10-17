@@ -854,6 +854,10 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
         "placement": {"type": "minecraft:random_spread", "spacing": 48, "separation": 18,
                       "salt": 570196243, "spread_type": "linear",
                       "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
+    emit(entries, "worldgen/structure/prometheus_prison.json", {"type":"elysium:prometheus_prison", "biomes":"#elysium:is_tartarus", "step":"underground_structures", "terrain_adaptation":"none", "spawn_overrides":{}})
+    emit(entries, "worldgen/structure_set/prometheus_prison.json", {"structures":[{"structure":"elysium:prometheus_prison","weight":1}],
+         "placement":{"type":"minecraft:random_spread","spacing":64,"separation":24,"salt":821931713,
+                      "exclusion_zone":{"other_set":"elysium:tartarus_chain","chunk_count":10}}})
     for kind, name, biomes in [
             (0, "harvest_watch", ["golden_fields", "golden_birch_woods"]),
             (1, "water_watch", ["golden_watermeadows", "amber_lakes"]),
@@ -873,7 +877,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 370519827, "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town", "elysium:hephaestus_forge", "elysium:forge_waystation", "elysium:harvest_watch", "elysium:water_watch", "elysium:high_watch"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:prometheus_prison", "elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town", "elysium:hephaestus_forge", "elysium:forge_waystation", "elysium:harvest_watch", "elysium:water_watch", "elysium:high_watch"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:

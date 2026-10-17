@@ -425,6 +425,13 @@ for name,parent,icon,title,description in [
     ('first_dawn','living_realm','sunwrought_ingot','The First Dawn','Let Elysium greet the morning.')]:
     data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name in ('first_dawn','chosen_hour') else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
+# Prometheus's voice travels through a restraint; the pinion is an original three-dimensional item.
+asset('models/block/prometheus_voice',{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/chiseled_deepslate','metal':'minecraft:block/weathered_copper','ember':'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),cuboid([1,4,-.1],[15,6,.1],'#metal'),cuboid([1,11,-.1],[15,13,.1],'#metal'),cuboid([7,5,-.2],[9,12,.2],'#ember'),cuboid([4,15.9,4],[12,16.1,12],'#ember')]})
+asset('blockstates/prometheus_voice',{'variants':{'':{'model':'elysium:block/prometheus_voice'}}})
+asset('models/item/prometheus_voice',{'parent':'elysium:block/prometheus_voice'})
+asset('models/item/bronze_pinion',{'parent':'minecraft:block/block','gui_light':'front','textures':{'copper':'minecraft:block/exposed_copper','iron':'minecraft:block/netherite_block','particle':'#copper'},'elements':[cuboid([7,0,7],[9,16,9],'#iron'),*[cuboid([3+i*.4,3+i*2,6],[13-i*.4,4+i*2,9],'#copper') for i in range(6)]]})
+data('advancement/promethean_craft',{'parent':'elysium:first_flame','display':{'icon':{'id':'elysium:bronze_pinion'},'title':'What Fire Remembers','description':'Silence the bronze eagle and learn from Prometheus.','frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")

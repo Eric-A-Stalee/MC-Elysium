@@ -24,6 +24,8 @@ public final class ForgePressGameTests {
         player.getInventory().add(new ItemStack(Items.IRON_INGOT,3));
         h.assertTrue(!press.queue(player,ForgeRecipes.byId("sunwrought"))&&count(player,Items.IRON_INGOT)==3,"Partial bills must not consume materials");
         player.getInventory().add(new ItemStack(Items.COPPER_INGOT,2));player.getInventory().add(new ItemStack(Items.GOLD_INGOT));
+        h.assertTrue(!press.queue(player,ForgeRecipes.byId("sunwrought"))&&count(player,Items.IRON_INGOT)==3,"A complete bill cannot substitute for Prometheus's teaching");
+        ForgeDiscoveries.get(level).discover(player.getUUID(),ForgeDiscoveries.PROMETHEUS);
         h.assertTrue(press.queue(player,ForgeRecipes.byId("sunwrought"))&&count(player,Items.IRON_INGOT)==0,"Complete bill goes into escrow");
         h.assertTrue(!press.queue(player,ForgeRecipes.byId("sunwrought")),"Simultaneous users cannot replace queued work");
         h.assertTrue(press.start(),"A supplied press starts");

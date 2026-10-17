@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_flame",
+  "display": {
+    "icon": {
+      "id": "elysium:bronze_pinion"
+    },
+    "title": "What Fire Remembers",
+    "description": "Silence the bronze eagle and learn from Prometheus.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

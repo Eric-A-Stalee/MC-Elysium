@@ -96,12 +96,12 @@ jobs:
           name: elysium-neoforge-1.21.1
           path: build/libs/*.jar
       - name: Install software display for the real client review
-        if: ${{ !cancelled() && steps.compile.outcome == 'success' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[capture]') || contains(github.event.head_commit.message, '[capture-cinder]') || contains(github.event.head_commit.message, '[capture-underworld]')) }}
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[capture]') || contains(github.event.head_commit.message, '[capture-cinder]') || contains(github.event.head_commit.message, '[capture-underworld]') || contains(github.event.head_commit.message, '[capture-prison]')) }}
         run: sudo apt-get update -qq && sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
       - name: Capture the Forge in a real Minecraft client
-        if: ${{ !cancelled() && steps.compile.outcome == 'success' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[capture]') || contains(github.event.head_commit.message, '[capture-cinder]') || contains(github.event.head_commit.message, '[capture-underworld]')) }}
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[capture]') || contains(github.event.head_commit.message, '[capture-cinder]') || contains(github.event.head_commit.message, '[capture-underworld]') || contains(github.event.head_commit.message, '[capture-prison]')) }}
         env:
-          ELYSIUM_VISUAL_FOCUS: ${{ contains(github.event.head_commit.message, '[capture-underworld]') && 'underworld' || contains(github.event.head_commit.message, '[capture-cinder]') && 'cinder' || 'full' }}
+          ELYSIUM_VISUAL_FOCUS: ${{ contains(github.event.head_commit.message, '[capture-prison]') && 'prison' || contains(github.event.head_commit.message, '[capture-underworld]') && 'underworld' || contains(github.event.head_commit.message, '[capture-cinder]') && 'cinder' || 'full' }}
         run: python3 tools/run_forge_visual_probe.py
       - name: Upload actual client views
         if: always()
