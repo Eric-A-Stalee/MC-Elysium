@@ -86,13 +86,21 @@ public final class UnboundGameTests {
     @GameTest(template="portal_test_empty",timeoutTicks=140)
     public static void theSentenceWarnsLocksItsLaneAndCannotStrikeThroughStone(GameTestHelper h){
         var l=h.getLevel();var home=h.absolutePos(new BlockPos(2700,110,0));for(var pos:BlockPos.betweenClosed(home.offset(-5,0,-2),home.offset(8,7,12)))l.setBlock(pos,Blocks.AIR.defaultBlockState(),2);
+        // Loading blocks alone does not make their entity sections queryable. Keep this
+        // remote arena ticking before adding the real player, as the projectile tests do.
+        for(int x=(home.getX()-8)>>4;x<=(home.getX()+12)>>4;x++)for(int z=(home.getZ()-8)>>4;z<=(home.getZ()+16)>>4;z++)l.setChunkForced(x,z,true);
+        h.runAfterDelay(20,()->{
+        var previous=l.getDifficulty();l.getServer().setDifficulty(Difficulty.NORMAL,true);
         var p=CombatTestPlayer.create(l,home.south(6));var w=ModEntities.CHAIN_WARDEN.get().create(l);w.setPos(Vec3.atBottomCenterOf(home));w.setNoAi(true);w.setNoGravity(true);w.setYRot(0);l.addFreshEntity(w);
         try{
+            h.assertTrue(l.getEntitiesOfClass(net.minecraft.server.level.ServerPlayer.class,p.getBoundingBox().inflate(1)).contains(p),"The target is present in the real spatial entity index before striking");
+            h.assertTrue(w.canStrike(p),"The survival target begins inside the unobstructed chain lane");
             w.phase(1,0);for(int i=0;i<36;i++)w.tick();h.assertTrue(p.getHealth()==20&&w.phase()==2,"All 36 warning ticks precede the chain's strike");w.tick();h.assertTrue(p.getHealth()<20,"Remaining in the marked lane causes real damage");
             for(int i=0;i<10;i++)w.tick();h.assertTrue(w.phase()==3,"The jailer exposes a long recovery after striking");
             p.setHealth(20);p.invulnerableTime=0;p.setPos(Vec3.atBottomCenterOf(home.south(6).east(4)));w.phase(2,0);w.tick();h.assertTrue(p.getHealth()==20,"Stepping sideways avoids the locked lane");
             p.setPos(Vec3.atBottomCenterOf(home.south(6)));for(var pos:BlockPos.betweenClosed(home.offset(-2,0,3),home.offset(2,4,3)))l.setBlock(pos,Blocks.STONE.defaultBlockState(),2);
             w.phase(2,0);w.tick();h.assertTrue(p.getHealth()==20,"The chains cannot hit through solid cover");h.succeed();
-        }finally{w.discard();l.getServer().getPlayerList().remove(p);}
+        }finally{w.discard();l.getServer().getPlayerList().remove(p);l.getServer().setDifficulty(previous,true);for(int x=(home.getX()-8)>>4;x<=(home.getX()+12)>>4;x++)for(int z=(home.getZ()-8)>>4;z<=(home.getZ()+16)>>4;z++)l.setChunkForced(x,z,false);}
+        });
     }
 }
