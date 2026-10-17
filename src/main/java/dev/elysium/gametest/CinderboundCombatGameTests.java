@@ -36,7 +36,7 @@ public final class CinderboundCombatGameTests {
             Vec3 before=bolt.position();bolt.tick();
             h.assertTrue(bolt.position().distanceToSqr(before)>.1,"The visible bolt must travel before impact");
             for(int n=0;n<60&&!bolt.isRemoved();n++)bolt.tick();
-            h.assertTrue(player.getHealth()<20&&bolt.isRemoved(),"An unobstructed volley must actually hurt a survival player");
+            h.assertTrue(player.getHealth()<20&&bolt.isRemoved(),"An unobstructed volley must actually hurt a survival player: "+diagnostic(level,mob,player)+" bolt="+bolt.position()+" velocity="+bolt.getDeltaMovement()+" ticks="+bolt.tickCount+" removed="+bolt.isRemoved()+" box="+player.getBoundingBox()+" pickable="+player.isPickable());
             player.setHealth(20);player.invulnerableTime=0;
             for(var p:BlockPos.betweenClosed(base.offset(-5,0,11),base.offset(5,14,11)))level.setBlock(p,Blocks.STONE.defaultBlockState(),2);
             mob.phase(1,56);mob.tick();
