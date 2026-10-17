@@ -53,7 +53,7 @@ public final class TartarusTerrain {
     /** Survey the same cell-centred landmarks that ordinary columns generate. */
     public java.util.Optional<net.minecraft.core.BlockPos> landmark(Region kind,int x,int z){
         if(kind==Region.CHAIN_FOREST){int gx=Math.floorDiv(x,112),gz=Math.floorDiv(z,112),n=hash(gx,0,gz);int cx=gx*112+25+n%62,cz=gz*112+25+(n>>>7)%62;
-            if(n%3!=0&&region(cx,cz)==kind)return java.util.Optional.of(new net.minecraft.core.BlockPos(cx,floor(cx,cz),cz));
+            if(n%3!=0&&n%4!=0&&region(cx,cz)==kind)return java.util.Optional.of(new net.minecraft.core.BlockPos(cx,floor(cx,cz),cz));
         }else if(kind==Region.TITAN_GRAVE){int gx=Math.floorDiv(x,192),gz=Math.floorDiv(z,192),n=hash(gx,43,gz);int cx=gx*192+64+n%64,cz=gz*192+64+(n>>>8)%64;
             if(region(cx,cz)==kind)return java.util.Optional.of(new net.minecraft.core.BlockPos(cx,floor(cx,cz),cz));
         }

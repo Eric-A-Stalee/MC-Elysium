@@ -59,6 +59,7 @@ public final class ForgeVisualServerProbe {
         }
         PLAN=ForgeNaturalGenerationProbe.generateAndVerify(level);
         WATCHES=WatchfireNaturalGenerationProbe.generateAndVerify(level,PLAN.entrance());
+        prepareUnderworld(level);
         LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");
     }
 
@@ -266,7 +267,10 @@ public final class ForgeVisualServerProbe {
             if(kind==dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST||kind==dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE){
                 var landmark=terrain.landmark(kind,x,z);if(landmark.isEmpty())continue;pos=landmark.get();
             }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE){
-                if(column.floor>dev.elysium.worldgen.TartarusTerrain.WATERLINE-6)continue;pos=pos.atY(dev.elysium.worldgen.TartarusTerrain.WATERLINE);
+                int water=dev.elysium.worldgen.TartarusTerrain.WATERLINE;
+                if(column.floor>water-6||!column.at(water+7).isAir())continue;
+                if(terrain.floor(x-16,z)>water-2||terrain.floor(x+16,z)>water-2||terrain.floor(x,z-16)>water-2||terrain.floor(x,z+16)>water-2)continue;
+                pos=pos.atY(water);
             }else{
                 if(column.floor<=dev.elysium.worldgen.TartarusTerrain.WATERLINE||!column.at(column.floor+1).isAir())continue;
                 if(terrain.region(x+64,z)!=kind||terrain.region(x-64,z)!=kind||terrain.region(x,z+64)!=kind||terrain.region(x,z-64)!=kind)continue;
@@ -330,7 +334,7 @@ public final class ForgeVisualServerProbe {
         // Geometry inspection is explicitly night-vision assisted; the final lamp view is normal darkness.
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION,12000,0,false,false));
         if(scene.equals("underworld_descent")) {
-            player.teleportTo(level,DEPTHS.x+140.5,-270,DEPTHS.z+236.5,-90,58);return;
+            player.teleportTo(level,DEPTHS.x+143.5,-330,DEPTHS.z+238.5,45,56);return;
         }
         var kind=switch(scene) {
             case "underworld_chains"->dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST;
@@ -343,11 +347,17 @@ public final class ForgeVisualServerProbe {
             player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);
             level.setBlock(pos.above(),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
             player.teleportTo(level,pos.getX()+.5,pos.getY()+2,pos.getZ()+5.5,180,12);
-        }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE){
-            var c=net.minecraft.world.phys.Vec3.atCenterOf(pos).add(48,36,-90);var t=net.minecraft.world.phys.Vec3.atCenterOf(pos).add(0,15,-25);var d=t.subtract(c.add(0,1.62,0));player.teleportTo(level,c.x,c.y,c.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
-        }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST)player.teleportTo(level,pos.getX()+24.5,pos.getY()+25,pos.getZ()+30.5,141,-15);
-        else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE)player.teleportTo(level,pos.getX()+.5,pos.getY()+7,pos.getZ()+.5,-45,5);
-        else player.teleportTo(level,pos.getX()+.5,pos.getY()+14,pos.getZ()+.5,-45,12);
+        }else{
+            var origin=net.minecraft.world.phys.Vec3.atCenterOf(pos);net.minecraft.world.phys.Vec3 c,t;
+            if(kind==dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE){c=origin.add(48,36,-90);t=origin.add(0,15,-25);}
+            else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST){c=origin.add(24,65,30);t=origin.add(0,80,0);}
+            else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE){c=origin.add(0,7,0);t=c.add(40,-2,40);}
+            else{c=origin.add(0,14,0);t=c.add(40,-12,40);}
+            // A survey point may sit below a neighbouring hill. Never take a spectator shot from inside it.
+            int lifted=0;while(lifted<80&&(!level.getBlockState(BlockPos.containing(c)).isAir()||!level.getBlockState(BlockPos.containing(c.add(0,1.62,0))).isAir())){c=c.add(0,1,0);lifted++;}
+            if(lifted==80)throw new IllegalStateException("Underworld review camera is inside terrain at "+c);
+            var d=t.subtract(c.add(0,1.62,0));player.teleportTo(level,c.x,c.y,c.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
+        }
         LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_SCENE {} at={} nightVision={}",scene,pos,!scene.equals("underworld_lamp"));
     }
     private static void camera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
