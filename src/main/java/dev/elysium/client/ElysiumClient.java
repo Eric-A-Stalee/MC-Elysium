@@ -26,6 +26,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.CHAIN_WARDEN.get(),ChainWardenRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.ASHEN_HOUND.get(),AshenHoundRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_EAGLE.get(),BronzeEagleRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_FEATHER.get(),c->new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(c,1.4f,false));
@@ -34,6 +35,7 @@ public final class ElysiumClient {
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_BOLT.get(), context ->
                 new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context,1.5f,true));
     }
+    @SubscribeEvent public static void dimension(net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent event){event.register(ResourceLocation.fromNamespaceAndPath(Elysium.MOD_ID,"elysium"),new ElysiumSky());}
     @SubscribeEvent
     public static void grassModels(ModelEvent.ModifyBakingResult event) {
         // The supplier runs when chunk model data is requested, not during baking.

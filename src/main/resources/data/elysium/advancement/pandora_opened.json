@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:promethean_craft",
+  "display": {
+    "icon": {
+      "id": "elysium:pandora_vessel"
+    },
+    "title": "The Cost of Fire",
+    "description": "Complete the first divine work and open what the Forge restrained.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

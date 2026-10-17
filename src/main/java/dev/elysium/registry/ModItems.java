@@ -19,6 +19,8 @@ public final class ModItems {
     public static final DeferredItem<ResonanceItem> FORGE_SURVEY = ITEMS.register("forge_survey", () -> new ResonanceItem(new Item.Properties().stacksTo(1),true));
     public static final DeferredItem<ResonanceItem> CHAIN_RESONATOR = ITEMS.register("chain_resonator", () -> new ResonanceItem(new Item.Properties().stacksTo(1).fireResistant(),false));
 
+    public static final DeferredItem<Item> HOPES_EMBER=ITEMS.registerSimpleItem("hopes_ember",new Item.Properties().stacksTo(1).fireResistant());
+    public static final DeferredItem<Item> BINDING_NAIL=ITEMS.registerSimpleItem("binding_nail",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> ASHEN_FANG=ITEMS.registerSimpleItem("ashen_fang",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> HUSH_CHARM=ITEMS.registerSimpleItem("hush_charm",new Item.Properties().stacksTo(1).fireResistant());
     public static final DeferredItem<Item> BRONZE_PINION=ITEMS.registerSimpleItem("bronze_pinion",new Item.Properties().fireResistant());
@@ -29,6 +31,7 @@ public final class ModItems {
     public static final DeferredItem<dev.elysium.item.DawnWayfinderItem> DAWN_WAYFINDER = ITEMS.register("dawn_wayfinder",()->new dev.elysium.item.DawnWayfinderItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<dev.elysium.item.HarvestSickleItem> HARVEST_SICKLE = ITEMS.register("harvest_sickle",()->new dev.elysium.item.HarvestSickleItem(new Item.Properties().durability(768).fireResistant()));
     static {
+        ITEMS.registerSimpleBlockItem(ModBlocks.PANDORA_VESSEL);ITEMS.registerSimpleBlockItem(ModBlocks.DEEP_BINDING);ITEMS.registerSimpleBlockItem(ModBlocks.SURFACE_RIFT);
         ITEMS.registerSimpleBlockItem(ModBlocks.CHARRED_BONE);ITEMS.registerSimpleBlockItem(ModBlocks.EMBER_ROOT);
         ITEMS.registerSimpleBlockItem(ModBlocks.PROMETHEUS_VOICE);
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_PRESS);
@@ -65,6 +68,7 @@ public final class ModItems {
             () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.elysium"))
                     .icon(() -> ELYSIUM_SIGIL.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
+                        output.accept(ModBlocks.DEEP_BINDING);output.accept(ModBlocks.SURFACE_RIFT);output.accept(HOPES_EMBER);output.accept(BINDING_NAIL);output.accept(ModBlocks.PANDORA_VESSEL);
                         output.accept(ASHEN_FANG);output.accept(HUSH_CHARM);output.accept(ModBlocks.CHARRED_BONE);output.accept(ModBlocks.EMBER_ROOT);
                         output.accept(BRONZE_PINION);output.accept(ModBlocks.PROMETHEUS_VOICE);
                         output.accept(CINDER_GLASS);output.accept(ModBlocks.EMBER_GLASS);output.accept(SUNWROUGHT_INGOT);output.accept(WATCHFIRE_SEAL);output.accept(DAWN_WAYFINDER);output.accept(HARVEST_SICKLE);

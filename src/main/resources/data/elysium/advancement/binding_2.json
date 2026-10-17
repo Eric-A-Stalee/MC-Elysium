@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:pandora_opened",
+  "display": {
+    "icon": {
+      "id": "elysium:binding_nail"
+    },
+    "title": "An End to the Sentence",
+    "description": "Defeat Dominion’s jailer and repair its restraint.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID)
 public final class StructureSurvey {
     public enum Destination {
-        FORGE("hephaestus_forge"), CHAIN("tartarus_chain"), HARVEST_WATCH("harvest_watch"), WATER_WATCH("water_watch"), HIGH_WATCH("high_watch"), PROMETHEUS("prometheus_prison");
+        FORGE("hephaestus_forge"), CHAIN("tartarus_chain"), HARVEST_WATCH("harvest_watch"), WATER_WATCH("water_watch"), HIGH_WATCH("high_watch"), PROMETHEUS("prometheus_prison"), HUNGER("hunger_binding"), SORROW("sorrow_binding"), DOMINION("dominion_binding");
         private final String path;
         Destination(String path){this.path=path;}
         public ResourceLocation id(){return ResourceLocation.fromNamespaceAndPath(Elysium.MOD_ID,path);}
@@ -71,6 +71,7 @@ public final class StructureSurvey {
     public static Optional<BlockPos> destination(StructureStart start) {
         if(start==null||!start.isValid())return Optional.empty();
         for(var piece:start.getPieces()) {
+            if(piece instanceof dev.elysium.structure.DeepBindingPiece binding)return Optional.of(binding.core());
             if(piece instanceof dev.elysium.structure.PrometheusPrisonPiece prison)return Optional.of(prison.voice());
             if(piece instanceof HephaestusForgePiece forge) {
                 return Optional.of(forge.plan().entrance());
@@ -109,7 +110,7 @@ public final class StructureSurvey {
             if(result.isPresent()) {
                 ResonanceItem.bind(item,result.get());
                 net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,item,t->t.putString("elysium_target_kind",request.destination.name()));
-                if(request.destination==Destination.PROMETHEUS){ResonanceItem.deepBearing(player,result.get());return;}
+                if(request.destination.ordinal()>=Destination.PROMETHEUS.ordinal()){ResonanceItem.deepBearing(player,result.get(),request.destination);return;}
                 if(item.getItem() instanceof dev.elysium.item.DawnWayfinderItem) {
                     if(ResonanceItem.data(item).getInt("watch_kind")!=request.destination.ordinal()-2){net.minecraft.world.item.component.CustomData.update(net.minecraft.core.component.DataComponents.CUSTOM_DATA,item,t->t.remove("elysium_target"));return;}
                     dev.elysium.item.DawnWayfinderItem.bearing(player,result.get(),ResonanceItem.data(item).getInt("watch_kind"));return;

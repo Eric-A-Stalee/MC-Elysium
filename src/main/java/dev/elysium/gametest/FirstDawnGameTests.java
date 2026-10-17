@@ -36,12 +36,14 @@ public final class FirstDawnGameTests {
             realm.updateSkyBrightness();h.assertTrue(realm.isNight(),"Server daylight logic must recognize the first night");
             cycle.advance(false);h.assertTrue(cycle.time()==14000,"An unoccupied realm has no offline deadline");
             for(int i=0;i<9000;i++)cycle.advance(true);
-            h.assertTrue(cycle.phase()==RealmCycle.Phase.STALLED&&cycle.time()==22000&&!cycle.resolve(true),"Dawn cannot silently pass unanswered watches");
+            h.assertTrue(cycle.phase()==RealmCycle.Phase.STALLED&&cycle.time()==18000&&!cycle.resolve(true),"Dawn cannot silently pass unanswered watches");
             cycle.answerWatch(0,new BlockPos(100,70,0));cycle.answerWatch(0,new BlockPos(200,70,0));
             h.assertTrue(cycle.watches()==1&&DawnWayfinderItem.next(cycle.watches())==1,"Two harvest fires cannot substitute for the water watch");
             var restored=RealmCycle.load(cycle.save(new CompoundTag(),realm.registryAccess()),realm.registryAccess());install(realm,restored);
-            h.assertTrue(realm.getDayTime()==22000&&restored.watches()==1&&restored.forge().equals(new BlockPos(5,40,5)),"Clock, distinct watches and remembered forge survive serialization");
+            h.assertTrue(realm.getDayTime()==18000&&restored.watches()==1&&restored.forge().equals(new BlockPos(5,40,5)),"Clock, distinct watches and remembered forge survive serialization");
             restored.answerWatch(1,new BlockPos(0,70,100));restored.answerWatch(2,new BlockPos(0,150,200));
+            h.assertTrue(!restored.resolve(false),"Surface refuges cannot repair the deep prison");
+            for(int kind=0;kind<3;kind++)restored.bindDeep(kind);
             h.assertTrue(restored.resolve(false)&&realm.getDayTime()==11500,"The chosen golden hour is a genuine resolution");
             realm.updateSkyBrightness();h.assertTrue(realm.dayTime()==11500&&realm.isDay(),"Rebinding the golden hour must restore daylight too");
             for(int i=0;i<200;i++)restored.advance(true);h.assertTrue(realm.getDayTime()==11500,"A chosen golden hour remains arrested");
@@ -71,6 +73,8 @@ public final class FirstDawnGameTests {
             h.assertTrue(water.repair(player,seals)&&player.getInventory().contains(new ItemStack(Items.BUCKET)),"Water is offered; its vessel is returned");
             var high=watch(realm,new BlockPos(705200,100,705000),2);player.getInventory().add(new ItemStack(Items.AMETHYST_SHARD,4));
             h.assertTrue(high.repair(player,seals)&&seals.isEmpty()&&cycle.watches()==7,"Three different traditions complete the repair");
+            h.assertTrue(!cycle.resolve(true),"The high watch alone cannot recall escaped evils");
+            for(int kind=0;kind<3;kind++)cycle.bindDeep(kind);
             var p=new ForgePlan(706000,706000,172,1);var governor=CelestialGovernorBlock.position(p);realm.setBlock(governor,ModBlocks.CELESTIAL_GOVERNOR.get().defaultBlockState(),3);
             var clock=new ItemStack(Items.CLOCK);
             h.assertTrue(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,governor,clock,true),"An isolated governor cannot resolve the sky");

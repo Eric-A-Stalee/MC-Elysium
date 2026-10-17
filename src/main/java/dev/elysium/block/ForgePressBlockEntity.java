@@ -97,8 +97,6 @@ public final class ForgePressBlockEntity extends BlockEntity {
         if(!ForgeHammer.move(server,plan,drop,next))return;
         if(next!=drop)server.playSound(null,worldPosition,SoundEvents.CHAIN_PLACE,SoundSource.BLOCKS,.7f,.6f);
         if(next==4&&drop!=4) {
-            if(server.dimension().equals(dev.elysium.portal.ElysiumTravel.DIMENSION)&&dev.elysium.story.RealmCycle.get(server).awaken(ForgeFixtures.hearth(plan)))
-                dev.elysium.story.RealmClock.announce(server,"sunset");
             var impact=ForgeHammer.world(plan,0,6,76);
             server.playSound(null,impact,SoundEvents.ANVIL_LAND,SoundSource.BLOCKS,2,.5f);
             server.sendParticles(ParticleTypes.LAVA,impact.getX()+.5,impact.getY()+.1,impact.getZ()+.5,24,3,.2,2,0);
@@ -111,7 +109,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
             phase=0;strikes++;
             if(strikes>=3) {
                 var recipe=ForgeRecipes.byId(work);
-                if(recipe!=null)output=recipe.output();
+                if(recipe!=null){output=recipe.output();dev.elysium.story.FirstFlameConsequences.completed(server,plan);}
                 escrow.clear();work="";running=false;
                 if(smith!=null){var player=server.getServer().getPlayerList().getPlayer(smith);if(player!=null)tell(player,"finished");}
             }

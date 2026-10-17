@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "kind=0,sealed=false": {
+      "model": "elysium:block/deep_binding_0"
+    },
+    "kind=0,sealed=true": {
+      "model": "elysium:block/deep_binding_0_sealed"
+    },
+    "kind=1,sealed=false": {
+      "model": "elysium:block/deep_binding_1"
+    },
+    "kind=1,sealed=true": {
+      "model": "elysium:block/deep_binding_1_sealed"
+    },
+    "kind=2,sealed=false": {
+      "model": "elysium:block/deep_binding_2"
+    },
+    "kind=2,sealed=true": {
+      "model": "elysium:block/deep_binding_2_sealed"
+    }
+  }
+}

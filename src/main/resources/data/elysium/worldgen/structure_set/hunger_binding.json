@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "elysium:hunger_binding",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 48,
+    "separation": 20,
+    "salt": 320197811,
+    "exclusion_zone": {
+      "other_set": "elysium:prometheus_prison",
+      "chunk_count": 10
+    }
+  }
+}

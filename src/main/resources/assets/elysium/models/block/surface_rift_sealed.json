@@ -1,0 +1,106 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "stone": "minecraft:block/blackstone",
+    "seam": "minecraft:block/netherite_block",
+    "particle": "#stone"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#stone"
+        },
+        "up": {
+          "texture": "#stone"
+        },
+        "north": {
+          "texture": "#stone"
+        },
+        "south": {
+          "texture": "#stone"
+        },
+        "west": {
+          "texture": "#stone"
+        },
+        "east": {
+          "texture": "#stone"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        16,
+        0
+      ],
+      "to": [
+        8,
+        16.1,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#seam"
+        },
+        "up": {
+          "texture": "#seam"
+        },
+        "north": {
+          "texture": "#seam"
+        },
+        "south": {
+          "texture": "#seam"
+        },
+        "west": {
+          "texture": "#seam"
+        },
+        "east": {
+          "texture": "#seam"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16,
+        7
+      ],
+      "to": [
+        16,
+        16.1,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#seam"
+        },
+        "up": {
+          "texture": "#seam"
+        },
+        "north": {
+          "texture": "#seam"
+        },
+        "south": {
+          "texture": "#seam"
+        },
+        "west": {
+          "texture": "#seam"
+        },
+        "east": {
+          "texture": "#seam"
+        }
+      }
+    }
+  ]
+}

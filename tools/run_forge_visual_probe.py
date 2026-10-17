@@ -60,7 +60,7 @@ def main():
                                           start_new_session=True)
                 result = client.wait(timeout=900)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            expected = {'cinder': 1, 'underworld': 6}.get(os.environ.get('ELYSIUM_VISUAL_FOCUS'), 20)
+            expected = {'cinder': 1, 'underworld': 6, 'prison': 4}.get(os.environ.get('ELYSIUM_VISUAL_FOCUS'), 20)
             if result or len(images) != expected or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
             print(f'Captured {expected} actual vanilla-rendered review views:', *(p.name for p in images), sep='\n')

@@ -21,7 +21,7 @@ public final class BronzeEagleRenderer extends EntityRenderer<BronzeEagleEntity>
     private void box(PoseStack p,MultiBufferSource b,int light,Block material,double x,double y,double z,double w,double h,double d){p.pushPose();p.translate(x-w/2,y,z-d/2);p.scale((float)w,(float)h,(float)d);blocks.renderSingleBlock(material.defaultBlockState(),p,b,light,OverlayTexture.NO_OVERLAY);p.popPose();}
     @Override public void render(BronzeEagleEntity e,float yaw,float partial,PoseStack p,MultiBufferSource b,int light){
         double t=e.tickCount+partial;boolean rest=e.phase()==BronzeEagleEntity.PERCH||e.phase()==BronzeEagleEntity.RECOVER;
-        double flap=rest?8:Math.sin(t*.19)*22,fold=e.phase()==BronzeEagleEntity.DIVE?48:rest?58:e.phase()==BronzeEagleEntity.TELL?-18:0;
+        double flap=rest?0:Math.sin(t*.19)*22,fold=e.phase()==BronzeEagleEntity.DIVE?-20:rest?-15:e.phase()==BronzeEagleEntity.TELL?-18:0;
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-Mth.rotLerp(partial,e.yRotO,e.getYRot())));
         box(p,b,light,Blocks.BASALT,0,.55,0,1.65,1.7,2.7);
         for(int i=0;i<5;i++)box(p,b,light,i%2==0?Blocks.WAXED_EXPOSED_COPPER:Blocks.WAXED_WEATHERED_COPPER,0,.6+i*.27,.75-i*.12,1.7-i*.12,.35,1.7);
@@ -29,7 +29,7 @@ public final class BronzeEagleRenderer extends EntityRenderer<BronzeEagleEntity>
         box(p,b,light,Blocks.BLACKSTONE,0,2.2,2,.65,.48,.9);box(p,b,light,Blocks.OBSIDIAN,0,1.92,2.35,.5,.58,.35);
         for(int side:new int[]{-1,1}){
             box(p,b,LightTexture.FULL_BRIGHT,e.phase()==BronzeEagleEntity.TELL?Blocks.ORANGE_CONCRETE:Blocks.RED_TERRACOTTA,side*.54,2.6,1.53,.065,.17,.28);
-            p.pushPose();p.translate(side*.65,1.9,0);p.mulPose(Axis.ZP.rotationDegrees((float)(side*(flap+fold))));
+            p.pushPose();p.translate(side*.65,1.9,0);if(rest){p.mulPose(Axis.YP.rotationDegrees(side*80));p.scale(.65f,1,1);}p.mulPose(Axis.ZP.rotationDegrees((float)(side*(flap+fold))));
             box(p,b,light,Blocks.WAXED_WEATHERED_COPPER,side*1.7,0,-.25,3.6,.45,1.7);
             for(int i=0;i<9;i++){
                 p.pushPose();p.translate(side*(.75+i*.51),-.07,-.40-i*.10);p.mulPose(Axis.YP.rotationDegrees(side*(12+i*3)));

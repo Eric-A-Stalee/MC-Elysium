@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:pandora_opened",
+  "display": {
+    "icon": {
+      "id": "elysium:hopes_ember"
+    },
+    "title": "What Remains",
+    "description": "Take Hope from the opened vessel.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

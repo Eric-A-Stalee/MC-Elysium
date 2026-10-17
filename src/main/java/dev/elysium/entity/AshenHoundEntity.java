@@ -30,7 +30,7 @@ public final class AshenHoundEntity extends Monster {
         if(p.isShiftKeyDown())return 2.5;
         return p.getDeltaMovement().horizontalDistanceSqr()>.0004?(charm?5:14):3;
     }
-    public boolean hears(Player p){return p.isAlive()&&!p.isCreative()&&!p.isSpectator()&&distanceToSqr(p)<=Math.pow(hearingRadius(p),2)
+    public boolean hears(Player p){return p.isAlive()&&!p.isCreative()&&!p.isSpectator()&&(!(level() instanceof ServerLevel l)||!dev.elysium.story.Nightfall.protectedAt(l,p.blockPosition()))&&distanceToSqr(p)<=Math.pow(hearingRadius(p),2)
         &&level().clip(new ClipContext(getEyePosition(),p.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).getType()==HitResult.Type.MISS;}
     public void hear(Vec3 pos){heard=pos;memory=120;}
     @Override protected void registerGoals(){goalSelector.addGoal(0,new FloatGoal(this));goalSelector.addGoal(1,new Hunt());goalSelector.addGoal(5,new RandomStrollGoal(this,.7,100));}
@@ -39,7 +39,7 @@ public final class AshenHoundEntity extends Monster {
         if(biteCooldown>0)biteCooldown--;if(memory>0)memory--;else heard=null;
         if(tickCount%10==0){
             var p=l.getNearestPlayer(getX(),getY(),getZ(),32,e->e instanceof Player player&&hears(player));if(p!=null)hear(p.position());
-            if(age>12000&&!hasCustomName()&&l.getNearestPlayer(getX(),getY(),getZ(),48,false)==null)discard();
+            if(age>12000&&!isPersistenceRequired()&&!hasCustomName()&&l.getNearestPlayer(getX(),getY(),getZ(),48,false)==null)discard();
         }
         if(windup>0){windup--;entityData.set(JAW,18-windup);getNavigation().stop();
             if(windup==0&&heard!=null){var d=heard.subtract(position()).multiply(1,0,1).normalize();setDeltaMovement(d.scale(.72).add(0,.35,0));pounce=16;struck=false;playSound(SoundEvents.WOLF_GROWL,.8f,.55f);}
@@ -50,7 +50,7 @@ public final class AshenHoundEntity extends Monster {
             if(pounce==0){biteCooldown=32;entityData.set(JAW,0);}
         }
     }
-    private boolean canBite(Player p){return p.isAlive()&&!p.isCreative()&&!p.isSpectator()&&level().clip(new ClipContext(getEyePosition(),p.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).getType()==HitResult.Type.MISS;}
+    private boolean canBite(Player p){return p.isAlive()&&!p.isCreative()&&!p.isSpectator()&&(!(level() instanceof ServerLevel l)||!dev.elysium.story.Nightfall.protectedAt(l,p.blockPosition()))&&level().clip(new ClipContext(getEyePosition(),p.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).getType()==HitResult.Type.MISS;}
     @Override public boolean hurt(DamageSource source,float amount){boolean hit=super.hurt(source,amount);if(hit&&source.getEntity() instanceof LivingEntity attacker&&level() instanceof ServerLevel l){hear(attacker.position());for(var pack:l.getEntitiesOfClass(AshenHoundEntity.class,getBoundingBox().inflate(18)))pack.hear(attacker.position());}return hit;}
     @Override protected void dropCustomDeathLoot(ServerLevel l,DamageSource s,boolean hit){super.dropCustomDeathLoot(l,s,hit);if(hit){spawnAtLocation(ModItems.ASHEN_FANG.get(),1+random.nextInt(2));if(random.nextBoolean())spawnAtLocation(ModItems.CINDER_GLASS.get());}}
     @Override public void addAdditionalSaveData(CompoundTag t){super.addAdditionalSaveData(t);t.putInt("Age",age);}

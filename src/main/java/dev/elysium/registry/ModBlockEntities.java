@@ -18,5 +18,7 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.elysium.block.WatchfireBlockEntity>> WATCHFIRE = TYPES.register("watchfire",
             () -> BlockEntityType.Builder.of(dev.elysium.block.WatchfireBlockEntity::new,ModBlocks.WATCHFIRE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<dev.elysium.block.PrometheusBlockEntity>> PROMETHEUS=TYPES.register("prometheus",()->BlockEntityType.Builder.of(dev.elysium.block.PrometheusBlockEntity::new,ModBlocks.PROMETHEUS_VOICE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<dev.elysium.block.BindingBlockEntity>> DEEP_BINDING=TYPES.register("deep_binding",()->BlockEntityType.Builder.of(dev.elysium.block.BindingBlockEntity::new,ModBlocks.DEEP_BINDING.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<dev.elysium.block.RiftBlockEntity>> SURFACE_RIFT=TYPES.register("surface_rift",()->BlockEntityType.Builder.of(dev.elysium.block.RiftBlockEntity::new,ModBlocks.SURFACE_RIFT.get()).build(null));
     private ModBlockEntities() {}
 }

@@ -68,6 +68,8 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType,StructurePieceType> WATCHFIRE_PIECE = PIECES.register("watchfire",()->(StructurePieceType.ContextlessType)dev.elysium.structure.WatchfirePiece::new);
     public static final DeferredHolder<StructureType<?>,StructureType<dev.elysium.structure.PrometheusPrisonStructure>> PROMETHEUS_PRISON = STRUCTURES.register("prometheus_prison",()->()->dev.elysium.structure.PrometheusPrisonStructure.CODEC);
     public static final DeferredHolder<StructurePieceType,StructurePieceType> PROMETHEUS_PRISON_PIECE = PIECES.register("prometheus_prison",()->(StructurePieceType.ContextlessType)dev.elysium.structure.PrometheusPrisonPiece::new);
+    public static final DeferredHolder<StructureType<?>,StructureType<dev.elysium.structure.DeepBindingStructure>> DEEP_BINDING=STRUCTURES.register("deep_binding",()->()->dev.elysium.structure.DeepBindingStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType,StructurePieceType> DEEP_BINDING_PIECE=PIECES.register("deep_binding",()->(StructurePieceType.ContextlessType)dev.elysium.structure.DeepBindingPiece::new);
     private ModStructures() {}
 
     public static void register(IEventBus modBus) {

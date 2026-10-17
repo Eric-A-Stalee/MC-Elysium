@@ -1,0 +1,204 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "body": "minecraft:block/exposed_copper",
+    "band": "minecraft:block/weathered_copper",
+    "coal": "minecraft:block/blackstone",
+    "hope": "minecraft:block/glowstone",
+    "particle": "#body"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        2,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#coal"
+        },
+        "up": {
+          "texture": "#coal"
+        },
+        "north": {
+          "texture": "#coal"
+        },
+        "south": {
+          "texture": "#coal"
+        },
+        "west": {
+          "texture": "#coal"
+        },
+        "east": {
+          "texture": "#coal"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        2,
+        2
+      ],
+      "to": [
+        14,
+        11,
+        14
+      ],
+      "faces": {
+        "down": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        1.8,
+        4,
+        1.8
+      ],
+      "to": [
+        14.2,
+        6,
+        14.2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#band"
+        },
+        "up": {
+          "texture": "#band"
+        },
+        "north": {
+          "texture": "#band"
+        },
+        "south": {
+          "texture": "#band"
+        },
+        "west": {
+          "texture": "#band"
+        },
+        "east": {
+          "texture": "#band"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        11,
+        4
+      ],
+      "to": [
+        12,
+        13,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#coal"
+        },
+        "up": {
+          "texture": "#coal"
+        },
+        "north": {
+          "texture": "#coal"
+        },
+        "south": {
+          "texture": "#coal"
+        },
+        "west": {
+          "texture": "#coal"
+        },
+        "east": {
+          "texture": "#coal"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        12.8,
+        5
+      ],
+      "to": [
+        11,
+        13,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#hope"
+        },
+        "up": {
+          "texture": "#hope"
+        },
+        "north": {
+          "texture": "#hope"
+        },
+        "south": {
+          "texture": "#hope"
+        },
+        "west": {
+          "texture": "#hope"
+        },
+        "east": {
+          "texture": "#hope"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        14,
+        6
+      ],
+      "to": [
+        12,
+        16,
+        14
+      ],
+      "faces": {
+        "down": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        }
+      }
+    }
+  ]
+}

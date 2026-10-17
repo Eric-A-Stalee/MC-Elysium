@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:pandora_opened",
+  "display": {
+    "icon": {
+      "id": "elysium:hopes_ember"
+    },
+    "title": "Sit With Sorrow",
+    "description": "Bring Hope and patient light to the Cistern.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

@@ -57,7 +57,7 @@ public final class SunwroughtGameTests {
             var ward=base.east(4);realm.setBlock(ward,ModBlocks.WARD_LAMP.get().defaultBlockState(),3);
             h.assertTrue(Nightfall.protectedAt(realm,base),"A placed ward protects its actual local area");realm.removeBlock(ward,false);
             h.assertTrue(!Nightfall.protectedAt(realm,base),"Mining the lamp removes its protection");
-            for(int k=0;k<3;k++)cycle.answerWatch(k,base.offset(k*100,0,0));cycle.resolve(false);wisp.tick();
+            for(int k=0;k<3;k++){cycle.answerWatch(k,base.offset(k*100,0,0));cycle.bindDeep(k);}cycle.resolve(false);wisp.tick();
             h.assertTrue(wisp.isRemoved()&&!Nightfall.eligible(player),"Resolving the night removes its stray cinders and stops new ones");h.succeed();
         } finally {
             wisp.discard();realm.getServer().getPlayerList().remove(player);realm.getServer().setDifficulty(oldDifficulty,true);

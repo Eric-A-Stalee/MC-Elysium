@@ -13,7 +13,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 /** Personal discoveries live with the world: reconnecting, death and shared visits do not reset them. */
 public final class ForgeDiscoveries extends SavedData {
     public static final int SURVEY=1, LEDGER=2, BINDINGS=4, HEARTH=8, ANCHOR=16;
-    public static final int PROMETHEUS=1024;
+    public static final int PROMETHEUS=1024,HOPE=2048;
     private final Map<UUID,Integer> readers=new HashMap<>();
     public static ForgeDiscoveries get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(new Factory<>(ForgeDiscoveries::new,ForgeDiscoveries::load),"elysium_forge_discoveries");
@@ -27,7 +27,7 @@ public final class ForgeDiscoveries extends SavedData {
         var data=new ForgeDiscoveries();
         for(Tag entry:tag.getList("Readers",Tag.TAG_COMPOUND)) {
             var row=(CompoundTag)entry;
-            if(row.hasUUID("Player"))data.readers.put(row.getUUID("Player"),row.getInt("Discoveries")&2047);
+            if(row.hasUUID("Player"))data.readers.put(row.getUUID("Player"),row.getInt("Discoveries")&4095);
         }
         return data;
     }

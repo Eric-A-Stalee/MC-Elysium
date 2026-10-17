@@ -5,7 +5,7 @@
       "id": "elysium:celestial_governor"
     },
     "title": "A World That Can Wake",
-    "description": "After the three watches answer, release the living cycle at the governor.",
+    "description": "After the watches and deep bindings are repaired, release the living cycle at the governor.",
     "frame": "goal",
     "announce_to_chat": false
   },

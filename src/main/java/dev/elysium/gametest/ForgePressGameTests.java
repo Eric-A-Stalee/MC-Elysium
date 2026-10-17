@@ -65,7 +65,7 @@ public final class ForgePressGameTests {
     private static int count(FakePlayer p,Item item){int n=0;for(int i=0;i<p.getInventory().getContainerSize();i++)if(p.getInventory().getItem(i).is(item))n+=p.getInventory().getItem(i).getCount();return n;}
     private static ForgePlan plan(GameTestHelper h,int dx){var p=h.absolutePos(new BlockPos(dx,120,0));return new ForgePlan(p.getX(),p.getZ(),p.getY(),0);}
     private static void placeHead(ServerLevel l,ForgePlan p){for(int u=-4;u<=4;u++)for(int v=73;v<=79;v++)for(int y=6;y<=22;y++){var s=ForgeHammer.material(u,y,v,0);l.setBlock(ForgeHammer.world(p,u,y,v),s==null?Blocks.AIR.defaultBlockState():s,3);}}
-    private static ForgePressBlockEntity prepare(ServerLevel l,ForgePlan p) {
+    static ForgePressBlockEntity prepare(ServerLevel l,ForgePlan p) {
         for(var f:ForgeFixtures.ALL){var pos=f.worldPosition(p);l.setBlock(pos,ForgeFixtures.state(p,f).setValue(ForgeServiceBlock.DECAY,0),3);((ForgeServiceBlockEntity)l.getBlockEntity(pos)).bind(p);}
         l.setBlock(ForgeFixtures.hearth(p),ModBlocks.FORGE_HEARTH.get().defaultBlockState().setValue(DormantHearthBlock.FLAME,true),3);
         var source=ForgeLighting.loadedService(l,ForgeFixtures.source(p));source.addFuel(48000);source.ignite();source.toggleAirflow();for(int i=0;i<160;i++)ForgeLighting.advance(l,source,10);

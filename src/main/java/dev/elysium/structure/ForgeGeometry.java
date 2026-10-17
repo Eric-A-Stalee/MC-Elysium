@@ -49,6 +49,7 @@ public final class ForgeGeometry {
         if(u==0&&v==61&&h==1)return b(ModBlocks.FORGE_HEARTH.get());
         if(u==-37&&v==50&&h==1)return b(ModBlocks.FORGE_LEDGER.get());
         if(u==0&&v==dev.elysium.block.CelestialGovernorBlock.LOCAL_V&&h==1)return b(ModBlocks.CELESTIAL_GOVERNOR.get());
+        if(u==7&&v==104&&h==1)return b(ModBlocks.PANDORA_VESSEL.get());
         if(u==0&&v==112&&h==1)return b(ModBlocks.TARTARUS_INSCRIPTION.get());
         BlockState state=collapse(u,h,v);
         if(state!=null)return state;

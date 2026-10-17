@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "elysium:block/pandora_vessel"
+    },
+    "open=true": {
+      "model": "elysium:block/pandora_vessel_open"
+    }
+  }
+}

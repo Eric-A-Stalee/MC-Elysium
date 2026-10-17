@@ -62,6 +62,9 @@ public final class ModBlocks {
     public static final DeferredBlock<dev.elysium.block.PrometheusBlock> PROMETHEUS_VOICE = BLOCKS.register("prometheus_voice",()->new dev.elysium.block.PrometheusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s->5)));
     public static final DeferredBlock<Block> CHARRED_BONE=BLOCKS.register("charred_bone",()->new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BONE_BLOCK)));
     public static final DeferredBlock<dev.elysium.block.EmberRootBlock> EMBER_ROOT=BLOCKS.register("ember_root",()->new dev.elysium.block.EmberRootBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().instabreak().sound(SoundType.ROOTS).lightLevel(s->5)));
+    public static final DeferredBlock<dev.elysium.block.PandoraVesselBlock> PANDORA_VESSEL=BLOCKS.register("pandora_vessel",()->new dev.elysium.block.PandoraVesselBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s->s.getValue(dev.elysium.block.PandoraVesselBlock.OPEN)?4:0)));
+    public static final DeferredBlock<dev.elysium.block.BindingBlock> DEEP_BINDING=BLOCKS.register("deep_binding",()->new dev.elysium.block.BindingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s->s.getValue(dev.elysium.block.BindingBlock.SEALED)?7:2)));
+    public static final DeferredBlock<dev.elysium.block.RiftBlock> SURFACE_RIFT=BLOCKS.register("surface_rift",()->new dev.elysium.block.RiftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s->s.getValue(dev.elysium.block.RiftBlock.SEALED)?0:4)));
     public static final int GOLDEN_LEAF_COLOR = 0xFFB947;
     public static final DeferredBlock<ForgeFlameBlock> FORGE_FLAME = BLOCKS.register("forge_flame",
             () -> new ForgeFlameBlock(BlockBehaviour.Properties.of().noCollission().noOcclusion().replaceable().noLootTable().instabreak()

@@ -68,7 +68,7 @@ public final class PrometheusPrisonPiece extends StructurePiece {
             if(head&&h>=39&&(v<-15||h>43))return Blocks.BASALT.defaultBlockState();
             if(head&&h==40&&v>=-10&&(u==-25||u==-20))return ModBlocks.SMOULDERING_CLINKER.get().defaultBlockState();
             if(h>17&&h<28&&v>-15&&Math.floorMod(u*3+h,19)==0)return ModBlocks.SMOULDERING_CLINKER.get().defaultBlockState();
-            return (n%17==0?Blocks.CRACKED_DEEPSLATE_TILES:n%5==0?Blocks.TUFF:Blocks.DEEPSLATE).defaultBlockState();
+            return (n%17==0?Blocks.CRACKED_DEEPSLATE_TILES:n%5==0?Blocks.DEEPSLATE:Blocks.TUFF).defaultBlockState();
         }
         if(u>=-23&&u<=-21&&h>=35&&h<=39&&v>=-10&&v<=-7)return Blocks.DEEPSLATE.defaultBlockState();
         // The eagle's ruined gantry is not a complete symmetrical doorway.
@@ -76,7 +76,7 @@ public final class PrometheusPrisonPiece extends StructurePiece {
             return (h%7==0?Blocks.WAXED_WEATHERED_CUT_COPPER:Blocks.DEEPSLATE_BRICKS).defaultBlockState();
         if(h>=30&&h<=32&&u>=0&&u<=31&&Math.abs(v-15)<=2)return (h==31?ModBlocks.FORGE_IRON.get():Blocks.WAXED_EXPOSED_CUT_COPPER).defaultBlockState();
         // Jagged rock embraces the body. No clearing of the surrounding terrain or artificial rectangular room.
-        double cliff=1-Math.pow((u+20)/27.0,2)-Math.pow((v+25)/15.0,2);
+        double cliff=1-Math.pow((u+20)/27.0,2)-Math.pow((v+31)/10.0,2);
         if(cliff>0&&h<=56*cliff+4*Math.sin(u*.6+v*.4)&&h>=low-y)return (n%8==0?Blocks.BASALT:Blocks.DEEPSLATE).defaultBlockState();
         if(h>=low-y&&h<=0&&r<23)return Blocks.BLACKSTONE.defaultBlockState();
         return null;

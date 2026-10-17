@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sealed=false": {
+      "model": "elysium:block/surface_rift"
+    },
+    "sealed=true": {
+      "model": "elysium:block/surface_rift_sealed"
+    }
+  }
+}

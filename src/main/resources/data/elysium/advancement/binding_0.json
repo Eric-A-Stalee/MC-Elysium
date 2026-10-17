@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:pandora_opened",
+  "display": {
+    "icon": {
+      "id": "elysium:binding_nail"
+    },
+    "title": "What Hunger Cannot Eat",
+    "description": "Feed the Maw, then close its restraint.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

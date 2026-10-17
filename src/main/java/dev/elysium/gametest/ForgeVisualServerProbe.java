@@ -156,11 +156,16 @@ public final class ForgeVisualServerProbe {
                 player.setGameMode(GameType.CREATIVE);
                 if(!press.queue(player,dev.elysium.forge.ForgeRecipes.byId("sunwrought"))||!press.start())throw new IllegalStateException("Natural press refused its first bill");
                 for(int i=0;i<7;i++)press.advance();press.pause();
-                if(press.drop()!=4||dev.elysium.story.RealmCycle.get(level).phase()!=dev.elysium.story.RealmCycle.Phase.DESCENDING)throw new IllegalStateException("Physical first strike failed to release the sky");
+                if(press.drop()!=4||dev.elysium.story.RealmCycle.get(level).phase()!=dev.elysium.story.RealmCycle.Phase.PARADISE)throw new IllegalStateException("An unfinished first strike must leave the vessel sealed");
                 player.setGameMode(GameType.SPECTATOR);
                 camera(player,level,-12,PLAN.floor()+5,65,0,PLAN.floor()+9,76);
             }
-            case "harvest_sunset" -> watchCamera(player,level,0);
+            case "harvest_sunset" -> {
+                var press=(dev.elysium.block.ForgePressBlockEntity)level.getBlockEntity(dev.elysium.forge.ForgeHammer.world(PLAN,-9,1,76));press.start();
+                for(int i=0;i<40&&press.output().isEmpty();i++)press.advance();
+                if(!dev.elysium.story.RealmCycle.get(level).released())throw new IllegalStateException("Completed work failed to open the vessel");
+                watchCamera(player,level,0);
+            }
             case "harvest_night" -> {
                 var cycle=dev.elysium.story.RealmCycle.get(level);
                 // Only the disposable review clock is accelerated, through the ordinary state transition.
@@ -171,7 +176,7 @@ public final class ForgeVisualServerProbe {
             case "stray_cinder" -> {
                 if(!dev.elysium.story.RealmCycle.get(level).released()) {
                     // A focused client review still earns the phase through the actual Forge machinery.
-                    scene(player,"forge_service");scene(player,"forge_restored");scene(player,"hammer_strike");
+                    scene(player,"forge_service");scene(player,"forge_restored");scene(player,"hammer_strike");scene(player,"harvest_sunset");
                     var cycle=dev.elysium.story.RealmCycle.get(level);while(cycle.time()<18000)cycle.advance(true);
                     dev.elysium.story.RealmClock.sync(player);
                 }
@@ -187,6 +192,8 @@ public final class ForgeVisualServerProbe {
             case "high_answered" -> {answer(player,level,2);watchCamera(player,level,2);}
             case "governor" -> camera(player,level,6,PLAN.floor()+3,98,0,PLAN.floor()+2,104);
             case "first_dawn" -> {
+                // Review fixture: model the completed deep repairs; encounter tests cover earning them.
+                for(int kind=0;kind<3;kind++)dev.elysium.story.RealmCycle.get(level).bindDeep(kind);
                 player.setGameMode(GameType.CREATIVE);
                 if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.block.CelestialGovernorBlock.position(PLAN),new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CLOCK),true))throw new IllegalStateException("Governor did not accept the repaired living sky");
                 var cycle=dev.elysium.story.RealmCycle.get(level);while(cycle.time()<24500)cycle.advance(true);
@@ -259,7 +266,7 @@ public final class ForgeVisualServerProbe {
         var controller=(dev.elysium.block.PrometheusBlockEntity)level.getBlockEntity(voice);controller.summon();
         net.minecraft.world.phys.Vec3 camera,target;
         if(scene.equals("prison_eagle")){camera=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(7,29,14);target=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(0,28,0);}
-        else if(scene.equals("prison_teacher")){camera=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(10,15,16);target=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-18,25,-15);}
+        else if(scene.equals("prison_teacher")){camera=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-12,16,31);target=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-18,25,-15);}
         else if(scene.equals("prison_dark")){player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);level.setBlock(voice.south(2),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(4,1,7);target=net.minecraft.world.phys.Vec3.atCenterOf(voice).add(-8,5,-8);}
         else{camera=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(25,22,43);target=net.minecraft.world.phys.Vec3.atCenterOf(arena).add(-24,17,-20);}
         var d=target.subtract(camera.add(0,1.62,0));player.teleportTo(level,camera.x,camera.y,camera.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));

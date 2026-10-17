@@ -415,13 +415,13 @@ loot('ember_glass',[pool([item('elysium:ember_glass')],[SURVIVES])])
 data('recipe/ember_glass',{'type':'minecraft:crafting_shapeless','category':'building','ingredients':[{'item':'elysium:cinder_glass'},*({'item':'minecraft:glass'} for _ in range(4))],'result':{'id':'elysium:ember_glass','count':4}})
 data('advancement/recipes/ember_glass',{'parent':'minecraft:recipes/root','criteria':{'glass':{'trigger':'minecraft:inventory_changed','conditions':{'items':[{'items':'elysium:cinder_glass'}]}}},'rewards':{'recipes':['elysium:ember_glass']}})
 for name,parent,icon,title,description in [
-    ('first_sunset','smiths_work','forge_press','The First Sunset','Release the great hammer and the arrested sun.'),
+    ('first_sunset','smiths_work','forge_press','The First Sunset','Complete the first work and release the arrested sun.'),
     ('first_night','first_sunset','dawn_wayfinder','An Unremembered Night','See Elysium after the golden hour.'),
     ('watch_0','first_night','watchfire_seal','The Harvest Answers','Restore the harvest watch with a seal and eight wheat.'),
     ('watch_1','first_night','watchfire_seal','The Waters Answer','Restore the water watch with a seal and a bucket of water.'),
     ('watch_2','first_night','watchfire_seal','The Heights Answer','Restore the high watch with a seal and four amethyst shards.'),
-    ('living_realm','first_night','celestial_governor','A World That Can Wake','After the three watches answer, release the living cycle at the governor.'),
-    ('chosen_hour','first_night','elysium_fragment','An Hour Freely Chosen','After the three watches answer, deliberately bind another golden hour.'),
+    ('living_realm','first_night','celestial_governor','A World That Can Wake','After the watches and deep bindings are repaired, release the living cycle at the governor.'),
+    ('chosen_hour','first_night','elysium_fragment','An Hour Freely Chosen','After the watches and deep bindings are repaired, deliberately bind another golden hour.'),
     ('first_dawn','living_realm','sunwrought_ingot','The First Dawn','Let Elysium greet the morning.')]:
     data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name in ('first_dawn','chosen_hour') else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
@@ -443,6 +443,39 @@ asset('models/item/ember_root',{'parent':'elysium:block/ember_root'})
 loot('ember_root',[pool([item('elysium:cinder_glass')],[SURVIVES,{'condition':'minecraft:random_chance','chance':.25}])])
 asset('models/item/ashen_fang',{'parent':'minecraft:block/block','gui_light':'front','textures':{'bone':'minecraft:block/dripstone_block','char':'minecraft:block/basalt_side','particle':'#bone'},'elements':[cuboid([5,3,6],[11,8,10],'#char'),cuboid([6,8,6],[10,13,9],'#bone'),cuboid([7,13,6],[9,16,8],'#bone')]})
 asset('models/item/hush_charm',{'parent':'minecraft:block/block','gui_light':'front','textures':{'bone':'minecraft:block/dripstone_block','metal':'minecraft:block/gold_block','particle':'#metal'},'elements':[cuboid([3,7,7],[13,10,10],'#metal'),*[cuboid([x,3,7],[x+2,13,9],'#bone') for x in (3,7,11)]]})
+
+# Restraints and the opened vessel use authored geometry with the active resource pack's materials.
+for opened in (False,True):
+    name='pandora_vessel'+('_open' if opened else '')
+    asset('models/block/'+name,{'parent':'minecraft:block/block','textures':{'body':'minecraft:block/exposed_copper','band':'minecraft:block/weathered_copper','coal':'minecraft:block/blackstone','hope':'minecraft:block/glowstone','particle':'#body'},'elements':[
+        cuboid([4,0,4],[12,2,12],'#coal'),cuboid([2,2,2],[14,11,14],'#body'),cuboid([1.8,4,1.8],[14.2,6,14.2],'#band'),cuboid([4,11,4],[12,13,12],'#coal'),
+        cuboid([5,12.8,5],[11,13,11],'#hope' if opened else '#coal'),cuboid([4,14 if opened else 13,6 if opened else 4],[12,16 if opened else 15,14 if opened else 12],'#body')]})
+asset('blockstates/pandora_vessel',{'variants':{'open=false':{'model':'elysium:block/pandora_vessel'},'open=true':{'model':'elysium:block/pandora_vessel_open'}}})
+asset('models/item/pandora_vessel',{'parent':'elysium:block/pandora_vessel'})
+asset('models/item/hopes_ember',{'parent':'minecraft:block/block','gui_light':'front','textures':{'coal':'minecraft:block/blackstone','hope':'minecraft:block/glowstone','particle':'#hope'},'elements':[cuboid([4,2,5],[12,6,11],'#coal'),cuboid([6,5,6],[10,13,10],'#hope'),cuboid([5,8,6],[7,12,10],'#coal'),cuboid([10,7,6],[12,11,10],'#coal'),cuboid([7,13,7],[9,16,9],'#hope')]})
+asset('models/item/binding_nail',{'parent':'minecraft:block/block','gui_light':'front','textures':{'iron':'minecraft:block/netherite_block','gold':'minecraft:block/gold_block','particle':'#iron'},'elements':[cuboid([7,1,7],[9,13,9],'#iron'),cuboid([4,12,5],[12,15,11],'#gold'),cuboid([6,14,6],[10,16,10],'#iron')]})
+variants={}
+for kind in range(3):
+    for sealed in (False,True):
+        name=f'deep_binding_{kind}'+('_sealed' if sealed else '')
+        face=[cuboid([4,3,-.2],[6,12,.2],'#mark'),cuboid([10,3,-.2],[12,12,.2],'#mark')]
+        if kind==0:face += [cuboid([3,3,-.2],[13,5,.2],'#mark'),*[cuboid([x,7,-.3],[x+1,11,.3],'#metal') for x in (4,7,10)]]
+        elif kind==1:face += [cuboid([7,3,-.2],[9,8,.2],'#mark'),cuboid([3,11,-.2],[13,13,.2],'#metal')]
+        else:face += [cuboid([3,11,-.2],[13,13,.2],'#mark'),cuboid([7,3,-.2],[9,13,.2],'#metal')]
+        asset('models/block/'+name,{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/chiseled_deepslate','metal':'minecraft:block/exposed_copper','mark':'minecraft:block/glowstone' if sealed else 'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),*face,cuboid([5,15.9,5],[11,16.1,11],'#metal' if sealed else '#mark')]})
+        variants[f'kind={kind},sealed={str(sealed).lower()}']={'model':'elysium:block/'+name}
+asset('blockstates/deep_binding',{'variants':variants});asset('models/item/deep_binding',{'parent':'elysium:block/deep_binding_0'})
+for sealed in (False,True):
+    name='surface_rift'+('_sealed' if sealed else '')
+    asset('models/block/'+name,{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/blackstone','seam':'minecraft:block/netherite_block' if sealed else 'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),cuboid([5,16,0],[8,16.1,16],'#seam'),cuboid([0,16,7],[16,16.1,10],'#seam')]})
+asset('blockstates/surface_rift',{'variants':{'sealed=false':{'model':'elysium:block/surface_rift'},'sealed=true':{'model':'elysium:block/surface_rift_sealed'}}});asset('models/item/surface_rift',{'parent':'elysium:block/surface_rift'})
+for name,parent,icon,title,description in [
+    ('pandora_opened','promethean_craft','pandora_vessel','The Cost of Fire','Complete the first divine work and open what the Forge restrained.'),
+    ('hope_remains','pandora_opened','hopes_ember','What Remains','Take Hope from the opened vessel.'),
+    ('binding_0','pandora_opened','binding_nail','What Hunger Cannot Eat','Feed the Maw, then close its restraint.'),
+    ('binding_1','pandora_opened','hopes_ember','Sit With Sorrow','Bring Hope and patient light to the Cistern.'),
+    ('binding_2','pandora_opened','binding_nail','An End to the Sentence','Defeat Dominion’s jailer and repair its restraint.')]:
+    data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

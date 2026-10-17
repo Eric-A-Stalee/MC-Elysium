@@ -14,7 +14,9 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 public final class StoryTooltips {
     @SubscribeEvent public static void tooltip(ItemTooltipEvent event) {
         var stack=event.getItemStack();String key=null;
-        if(stack.is(ModItems.HUSH_CHARM.get()))key="hush_charm";
+        if(stack.is(ModItems.HOPES_EMBER.get()))key="hopes_ember";
+        else if(stack.is(ModItems.BINDING_NAIL.get()))key="binding_nail";
+        else if(stack.is(ModItems.HUSH_CHARM.get()))key="hush_charm";
         else if(stack.is(ModItems.WATCHFIRE_SEAL.get()))key="watchfire_seal";
         else if(stack.is(ModItems.SUNWROUGHT_INGOT.get()))key="sunwrought_ingot";
         else if(stack.is(ModItems.CINDER_GLASS.get()))key="cinder_glass";

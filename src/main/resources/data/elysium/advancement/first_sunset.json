@@ -5,7 +5,7 @@
       "id": "elysium:forge_press"
     },
     "title": "The First Sunset",
-    "description": "Release the great hammer and the arrested sun.",
+    "description": "Complete the first work and release the arrested sun.",
     "frame": "goal",
     "announce_to_chat": false
   },
