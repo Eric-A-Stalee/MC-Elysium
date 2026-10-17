@@ -65,6 +65,9 @@ public final class UnboundGameTests {
         l.setBlock(base.east(14).above(),Blocks.GLOWSTONE.defaultBlockState(),3);
         h.runAfterDelay(30,()->{
             var original=RealmCycle.get(l).save(new CompoundTag(),l.registryAccess());var previous=l.getDifficulty();var cycle=new RealmCycle();l.getDataStorage().set("elysium_realm_cycle",cycle);cycle.awaken(base);l.getServer().setDifficulty(Difficulty.NORMAL,true);
+            // UNKNOWN chunk tickets from setup may expire during the light-engine wait.
+            // Restore the whole encounter neighbourhood, just as a nearby real player would.
+            for(int x=(base.getX()-30)>>4;x<=(base.getX()+62)>>4;x++)for(int z=(base.getZ()-30)>>4;z<=(base.getZ()+30)>>4;z++)l.getChunk(x,z);
             var p=new FakePlayer(l,new GameProfile(UUID.randomUUID(),"DeepRepair"));var nail=new ItemStack(ModItems.BINDING_NAIL.get(),3);
             var hunger=(BindingBlockEntity)l.getBlockEntity(base);var sorrow=(BindingBlockEntity)l.getBlockEntity(base.east(12));var dominion=(BindingBlockEntity)l.getBlockEntity(base.east(24));
             try{

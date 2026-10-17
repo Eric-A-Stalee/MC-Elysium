@@ -587,3 +587,27 @@ end. It verifies actual chunk references, the complete walk route, bound control
 and material samples before starting the client. Alpha 18 fails this same test
 with a missing reference and `minecraft:stone` at the expected chamber control.
 Regenerate existing partial structures; this update does not repair saved chunks.
+
+## Alpha 23–25: a continuous underworld
+
+Elysium now spans Y=-640 through Y=319 (height 960). A registered
+`elysium:stratified` generator retains ordinary surface noise generation and
+replaces only the deep columns below Y=-248. `TartarusTerrain` is the common
+pure coordinate sampler for generation, base columns, terrain surveys and
+landmarks. Cell centres use floor division, including negative coordinates.
+Four humidity regions share the same roof and floor geography; the climate
+catalog separates them from surface biomes by depth. The cavern roof preserves
+at least 144 blocks of clearance above its sampled floor.
+
+The old Eye chamber connects through a saved winding descent whose bottom exit
+follows sampled ground. The Prometheus prison and deep restraints are ordinary
+structure starts, with serialized graded approaches and piece bounds inside
+Minecraft's eight-chunk reference neighbourhood. They do not load chunks from
+block-entity ticks or clear rooms as a player approaches.
+
+The custom client dimension effect suppresses the sun, sky and clouds below
+Y=-64 while preserving the surface sky. Low light, ember roots, placed lamps
+and warm deep fog define the actual dark view. Night vision is explicitly used
+only for geometry inspection captures. External shader behavior still needs
+manual verification. This extension uses Elysium's own generator; ReTerraForged
+is not a dependency.

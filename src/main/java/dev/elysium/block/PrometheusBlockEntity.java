@@ -43,6 +43,7 @@ public final class PrometheusBlockEntity extends BlockEntity {
     }
     public void use(Player player,ItemStack held){
         if(!(player instanceof ServerPlayer p)||arena==null)return;
+        if(!defeated&&p.serverLevel().getDifficulty()==net.minecraft.world.Difficulty.PEACEFUL){defeated=true;setChanged();}
         if(!defeated){summon();tell(p,"bound");return;}
         if(ForgeDiscoveries.get(p.serverLevel()).has(p.getUUID(),ForgeDiscoveries.PROMETHEUS)&&held.is(Items.BOOK)){
             if(!p.getAbilities().instabuild)held.shrink(1);ForgeLore.give(p,ForgeLore.book(ForgeLore.Record.PROMETHEUS));return;

@@ -15,6 +15,7 @@ public final class ForgeRecipes {
     }
     public static List<Work> all() {
         return List.of(
+            new Work("tempered_pinion",Items.FEATHER,List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),1),new Cost(Items.COPPER_INGOT,4),new Cost(Items.FEATHER,1)),ModItems.BRONZE_PINION.get(),1),
             new Work("binding_nail",ModItems.BRONZE_PINION.get(),List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),2),new Cost(ModItems.BRONZE_PINION.get(),1),new Cost(ModItems.CINDER_GLASS.get(),2)),ModItems.BINDING_NAIL.get(),4),
             new Work("hush_charm",ModItems.ASHEN_FANG.get(),List.of(new Cost(ModItems.SUNWROUGHT_INGOT.get(),2),new Cost(ModItems.ASHEN_FANG.get(),6)),ModItems.HUSH_CHARM.get(),1),
             new Work("sunwrought", Items.IRON_INGOT, List.of(new Cost(Items.IRON_INGOT,3),new Cost(Items.COPPER_INGOT,2),new Cost(Items.GOLD_INGOT,1)), ModItems.SUNWROUGHT_INGOT.get(),4),

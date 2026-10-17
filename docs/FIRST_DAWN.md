@@ -1,10 +1,7 @@
 # The first sunset and the first dawn
 
 This optional chapter begins after returning the First Flame. The sky remains
-at 11,500 until you deliberately start the **Great Hammer Control**, beside
-the anvil. Examining the works and loading materials are safe. The control
-warns that the first strike releases the sun; sneak-use with an empty hand
-starts the loaded job. Ordinary tourism never starts this chapter.
+at 11,500 until you deliberately complete the first divine batch at the **Great Hammer Control**. Prometheus must first teach you the craft. Examining the works, loading materials, and interrupted strokes do not open the vessel. The control warns before starting. See [Tartarus Unbound](UNBOUND.md) for the expanded route and consequences.
 
 ## Becoming the smith
 
@@ -33,10 +30,10 @@ stray cinders while carried and shelters a 12-block radius when placed.
 
 ## The unremembered night
 
-The sun reaches night after about two minutes, then stalls at tick 22,000
+The sun reaches night after about two minutes, then stalls at tick 18,000
 without a dawn. There is no deadline: Elysium's clock pauses when the realm
 has no players. The Overworld clock is independent. The first night cannot
-be skipped by sleeping. Three different watches need to answer.
+be skipped by sleeping. Three different watches and three deep restraints need repair.
 
 Use a **Dawn Wayfinder** to survey for the next unanswered tradition. Its
 search is bounded and uses real structure starts, like the existing folio.
@@ -68,7 +65,8 @@ material remains renewable after the night is resolved.
 ## Choosing the sky
 
 Repair the missing runner to the Forge's rear shrine and keep its restored
-heat supplied. At the **Celestial Governor**, after all three watches answer:
+heat supplied. At the **Celestial Governor**, after all three watches answer
+and Hunger, Sorrow and Dominion are bound again:
 
 - Sneak-use a **clock** to release the living cycle. The first dawn approaches,
   then ordinary days and nights continue. Sleeping can advance this repaired sky.
@@ -76,7 +74,8 @@ heat supplied. At the **Celestial Governor**, after all three watches answer:
   This is a completed resolution too; the repaired watches remain lit.
 
 Neither instrument is consumed. The working governor lets you revisit the
-choice. There is no block-destroying invasion or escalating offline crisis.
+choice. Surface ruptures can change natural terrain during the unresolved
+night; occupied play adds pressure, and an empty realm has no offline deadline.
 `/elysium story` reports the chapter and next objective without requiring cheats.
 
 Use fresh alpha worlds or regenerate Elysium for the new machinery, governor
@@ -84,7 +83,8 @@ and watch ruins. This chapter makes no saved-world migration promise.
 
 ## Verification boundary
 
-The chapter is implemented in alpha 22. See [validation notes](TESTING.md#alpha-22-first-dawn-chapter-october-17-2026-utc)
+The original chapter was implemented in alpha 22 and expanded by alpha 25.
+The current [Unbound guide](UNBOUND.md) supersedes its earlier watch-only resolution. See [validation notes](TESTING.md#alpha-22-first-dawn-chapter-october-17-2026-utc)
 for the exact tested source, 73 server GameTests, natural-generation checks and
 actual Minecraft captures. Manual survival balance, prolonged multiplayer play
 and external shader/resource-pack combinations remain playtesting work.

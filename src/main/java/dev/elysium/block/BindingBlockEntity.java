@@ -29,7 +29,8 @@ public final class BindingBlockEntity extends BlockEntity {
     public boolean summon(){
         if(!(level instanceof ServerLevel l)||kind()!=2||sealed()||defeated||warden!=null||!RealmCycle.get(l).released()||!loaded(l)||l.getDifficulty()==net.minecraft.world.Difficulty.PEACEFUL)return false;
         var mob=ModEntities.CHAIN_WARDEN.get().create(l);if(mob==null)return false;mob.bind(worldPosition,resting());
-        if(!l.noCollision(mob)||!l.addFreshEntity(mob))return false;warden=mob.getUUID();missing=0;setChanged();return true;
+        if(!l.noCollision(mob)){com.mojang.logging.LogUtils.getLogger().warn("Binding jailer has no space at {}",resting());return false;}
+        if(!l.addFreshEntity(mob))return false;warden=mob.getUUID();missing=0;setChanged();return true;
     }
     public void wardenDefeated(UUID id){if(id.equals(warden)&&!defeated){defeated=true;setChanged();}}
     public boolean offer(ItemStack stack,Player p){

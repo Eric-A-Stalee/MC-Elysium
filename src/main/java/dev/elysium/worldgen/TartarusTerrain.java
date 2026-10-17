@@ -50,6 +50,16 @@ public final class TartarusTerrain {
                 + 9 * detail.getValue(x / 83.0, z / 83.0)));
     }
 
+    /** Survey the same cell-centred landmarks that ordinary columns generate. */
+    public java.util.Optional<net.minecraft.core.BlockPos> landmark(Region kind,int x,int z){
+        if(kind==Region.CHAIN_FOREST){int gx=Math.floorDiv(x,112),gz=Math.floorDiv(z,112),n=hash(gx,0,gz);int cx=gx*112+25+n%62,cz=gz*112+25+(n>>>7)%62;
+            if(n%3!=0&&region(cx,cz)==kind)return java.util.Optional.of(new net.minecraft.core.BlockPos(cx,floor(cx,cz),cz));
+        }else if(kind==Region.TITAN_GRAVE){int gx=Math.floorDiv(x,192),gz=Math.floorDiv(z,192),n=hash(gx,43,gz);int cx=gx*192+64+n%64,cz=gz*192+64+(n>>>8)%64;
+            if(region(cx,cz)==kind)return java.util.Optional.of(new net.minecraft.core.BlockPos(cx,floor(cx,cz),cz));
+        }
+        return java.util.Optional.empty();
+    }
+
     public Column column(int x, int z) {
         int floor = floor(x, z), roof = roof(x, z);
         Region region = region(x, z);

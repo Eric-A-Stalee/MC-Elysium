@@ -260,11 +260,18 @@ public final class ForgeVisualServerProbe {
         var terrain=generator.terrain(level.getChunkSource().randomState());
         for(int radius=0;radius<=48&&REGIONS.size()<4;radius++)for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++) {
             if(Math.max(Math.abs(dx),Math.abs(dz))!=radius)continue;
-            int x=DEPTHS.x+dx*128,z=DEPTHS.z+dz*128;var column=terrain.column(x,z);
-            if(REGIONS.containsKey(column.region)||column.floor<=dev.elysium.worldgen.TartarusTerrain.WATERLINE||!column.at(column.floor+1).isAir())continue;
-            var pos=new BlockPos(x,column.floor,z);level.getChunk(pos);
-            if(!level.getBlockState(pos).equals(column.at(column.floor)))continue;
-            REGIONS.put(column.region,pos);LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_REGION {} floor={} roof={}",column.region,pos,column.roof);
+            int x=DEPTHS.x+dx*128,z=DEPTHS.z+dz*128;var column=terrain.column(x,z);var kind=column.region;
+            if(REGIONS.containsKey(kind))continue;
+            var pos=new BlockPos(x,column.floor,z);
+            if(kind==dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST||kind==dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE){
+                var landmark=terrain.landmark(kind,x,z);if(landmark.isEmpty())continue;pos=landmark.get();
+            }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE){
+                if(column.floor>dev.elysium.worldgen.TartarusTerrain.WATERLINE-6)continue;pos=pos.atY(dev.elysium.worldgen.TartarusTerrain.WATERLINE);
+            }else{
+                if(column.floor<=dev.elysium.worldgen.TartarusTerrain.WATERLINE||!column.at(column.floor+1).isAir())continue;
+                if(terrain.region(x+64,z)!=kind||terrain.region(x-64,z)!=kind||terrain.region(x,z+64)!=kind||terrain.region(x,z-64)!=kind)continue;
+            }
+            level.getChunk(pos);REGIONS.put(kind,pos);LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_REGION {} landmark={} roof={}",kind,pos,terrain.roof(pos.getX(),pos.getZ()));
         }
         if(REGIONS.size()!=4)throw new IllegalStateException("Bounded underworld survey found only "+REGIONS.keySet());
     }
@@ -333,7 +340,11 @@ public final class ForgeVisualServerProbe {
             player.removeEffect(net.minecraft.world.effect.MobEffects.NIGHT_VISION);
             level.setBlock(pos.above(),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);
             player.teleportTo(level,pos.getX()+.5,pos.getY()+2,pos.getZ()+5.5,180,12);
-        }else player.teleportTo(level,pos.getX()+.5,pos.getY()+20,pos.getZ()+.5,-45,12);
+        }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.TITAN_GRAVE){
+            var c=net.minecraft.world.phys.Vec3.atCenterOf(pos).add(48,36,-90);var t=net.minecraft.world.phys.Vec3.atCenterOf(pos).add(0,15,-25);var d=t.subtract(c.add(0,1.62,0));player.teleportTo(level,c.x,c.y,c.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
+        }else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.CHAIN_FOREST)player.teleportTo(level,pos.getX()+24.5,pos.getY()+25,pos.getZ()+30.5,141,-15);
+        else if(kind==dev.elysium.worldgen.TartarusTerrain.Region.HOLLOW_MIRE)player.teleportTo(level,pos.getX()+.5,pos.getY()+7,pos.getZ()+.5,-45,5);
+        else player.teleportTo(level,pos.getX()+.5,pos.getY()+14,pos.getZ()+.5,-45,12);
         LogUtils.getLogger().info("ELYSIUM_UNDERWORLD_SCENE {} at={} nightVision={}",scene,pos,!scene.equals("underworld_lamp"));
     }
     private static void camera(ServerPlayer player,ServerLevel level,int u,double y,int v,int tu,double ty,int tv) {
