@@ -3,6 +3,11 @@
   "minVersion": "0.8",
   "package": "dev.elysium.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["ParadiseWeatherMixin"],
-  "injectors": {"defaultRequire": 1}
+  "mixins": [
+    "ParadiseWeatherMixin",
+    "RealmTimeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

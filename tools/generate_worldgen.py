@@ -828,6 +828,15 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
         "placement": {"type": "minecraft:random_spread", "spacing": 48, "separation": 18,
                       "salt": 570196243, "spread_type": "linear",
                       "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
+    for kind, name, biomes in [
+            (0, "harvest_watch", ["golden_fields", "golden_birch_woods"]),
+            (1, "water_watch", ["golden_watermeadows", "amber_lakes"]),
+            (2, "high_watch", ["elysian_highlands", "ivory_peaks"])]:
+        emit(entries, f"worldgen/structure/{name}.json", {"type":"elysium:watchfire", "watch":kind,
+             "biomes":f"#elysium:has_structure/{name}","step":"surface_structures","terrain_adaptation":"none","spawn_overrides":{}})
+        emit(entries, f"tags/worldgen/biome/has_structure/{name}.json", {"replace":False,"values":[f"elysium:{b}" for b in biomes]})
+        emit(entries, f"worldgen/structure_set/{name}.json", {"structures":[{"structure":f"elysium:{name}","weight":1}],
+             "placement":{"type":"minecraft:random_spread","spacing":24,"separation":10,"salt":710815223+kind*701}})
     from landmark_templates import forge_waystation
     waystation = forge_waystation(state)
     entries[DATA / "structure" / "forge_waystation.nbt"] = encode_template(waystation.blocks, waystation.size, waystation.name)
@@ -838,7 +847,7 @@ def make_settlements(entries: dict[Path, bytes]) -> None:
                       "salt": 370519827, "exclusion_zone": {"other_set": "elysium:grand_mountain_town", "chunk_count": 8}}})
     emit(entries, "tags/worldgen/structure/is_elysium.json",
          {"replace": False, "values": [f"elysium:{name}" for name in settlements]
-          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town", "elysium:hephaestus_forge", "elysium:forge_waystation"] + [f"elysium:{site.id}" for site in sites]})
+          + ["elysium:elysian_bridge", "elysium:tartarus_chain", "elysium:grand_mountain_town", "elysium:hephaestus_forge", "elysium:forge_waystation", "elysium:harvest_watch", "elysium:water_watch", "elysium:high_watch"] + [f"elysium:{site.id}" for site in sites]})
 
 
 def emit(entries: dict[Path, bytes], relative: str, data: dict) -> None:
@@ -882,7 +891,7 @@ def generate() -> dict[Path, bytes]:
     make_noise(entries)
     make_settlements(entries)
     emit(entries, "dimension_type/elysium.json", {
-        "fixed_time": GOLDEN_HOUR, "has_skylight": True, "has_ceiling": False,
+        "has_skylight": True, "has_ceiling": False,
         "ultrawarm": False, "natural": True, "coordinate_scale": 1.0,
         "bed_works": True, "respawn_anchor_works": False, "piglin_safe": True,
         "has_raids": False, "logical_height": HEIGHT, "min_y": MIN_Y, "height": HEIGHT,

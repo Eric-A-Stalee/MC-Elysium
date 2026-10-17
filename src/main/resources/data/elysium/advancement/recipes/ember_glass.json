@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "glass": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "elysium:cinder_glass"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "elysium:ember_glass"
+    ]
+  }
+}

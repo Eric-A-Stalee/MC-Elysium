@@ -33,10 +33,16 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Elysium.MOD_ID);
+    public static final DeferredBlock<net.minecraft.world.level.block.TransparentBlock> EMBER_GLASS = BLOCKS.register("ember_glass",
+            () -> new net.minecraft.world.level.block.TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS).lightLevel(s -> 10)));
+    public static final DeferredBlock<dev.elysium.block.WatchfireBlock> WATCHFIRE = BLOCKS.register("watchfire",
+            () -> new dev.elysium.block.WatchfireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable().lightLevel(s -> switch(s.getValue(dev.elysium.block.WatchfireBlock.EMBER)){case 1->3;case 2->15;default->0;})));
+    public static final DeferredBlock<dev.elysium.block.CelestialGovernorBlock> CELESTIAL_GOVERNOR = BLOCKS.register("celestial_governor",
+            () -> new dev.elysium.block.CelestialGovernorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(8)));
     public static final DeferredBlock<dev.elysium.block.ForgePressBlock> FORGE_PRESS = BLOCKS.register("forge_press",
             () -> new dev.elysium.block.ForgePressBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(6)));
-    public static final DeferredBlock<KeepersLampBlock> WARD_LAMP = BLOCKS.register("ward_lamp",
-            () -> new KeepersLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 15)));
+    public static final DeferredBlock<dev.elysium.block.WardLampBlock> WARD_LAMP = BLOCKS.register("ward_lamp",
+            () -> new dev.elysium.block.WardLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 15)));
     public static final DeferredBlock<KeepersLampBlock> KEEPERS_LAMP = BLOCKS.register("keepers_lamp",
             () -> new KeepersLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(s -> 13)));
     public static final DeferredBlock<KeeperWorkbenchBlock> KEEPER_WORKBENCH = BLOCKS.register("keeper_workbench",

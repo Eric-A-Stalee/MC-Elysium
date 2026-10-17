@@ -382,6 +382,40 @@ pickaxe=json.loads(OUTPUTS['data/minecraft/tags/block/mineable/pickaxe.json'])
 pickaxe['values'] += ['elysium:forge_press','elysium:ward_lamp']
 emit('data/minecraft/tags/block/mineable/pickaxe.json',pickaxe)
 
+# Surface watches keep their own material traditions; night exposes a small ember, restoration a fire.
+watch_variants={}
+for kind,stone,metal in [(0,'mossy_stone_bricks','gold_block'),(1,'tuff_bricks','weathered_copper'),(2,'chiseled_deepslate','oxidized_copper')]:
+    for ember,fire in [(0,'coal_block'),(1,'magma'),(2,'lava_still')]:
+        name=f'watchfire_{kind}_{ember}'
+        pieces=[cuboid([0,0,0],[16,5,16],'#stone'),cuboid([2,5,2],[14,8,14],'#metal'),cuboid([3,8,3],[13,10,13],'#fire')]
+        for a,b in [([0,8,0],[3,15,16]),([13,8,0],[16,15,16]),([3,8,0],[13,12,3]),([3,8,13],[13,12,16])]:pieces.append(cuboid(a,b,'#stone'))
+        asset(f'models/block/{name}',{'parent':'minecraft:block/block','ambientocclusion':ember==0,'textures':{'stone':f'minecraft:block/{stone}','metal':f'minecraft:block/{metal}','fire':f'minecraft:block/{fire}','particle':'#stone'},'elements':pieces})
+        watch_variants[f'watch={kind},ember={ember}']={'model':f'elysium:block/{name}'}
+asset('blockstates/watchfire',{'variants':watch_variants})
+asset('models/item/watchfire',{'parent':'elysium:block/watchfire_0_0'})
+asset('models/block/celestial_governor',{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/chiseled_deepslate','metal':'minecraft:block/gold_block','face':'minecraft:block/amethyst_block','particle':'#stone'},
+      'elements':[cuboid([0,0,0],[16,12,16],'#stone'),cuboid([2,12,2],[14,14,14],'#metal'),cuboid([4,14,4],[12,17,12],'#face'),cuboid([7,17,7],[9,24,9],'#metal')]})
+asset('blockstates/celestial_governor',{'variants':{'':{'model':'elysium:block/celestial_governor'}}})
+asset('models/item/celestial_governor',{'parent':'elysium:block/celestial_governor'})
+loot('celestial_governor',[pool([item('elysium:celestial_governor')],[SURVIVES])])
+asset('models/item/cinder_glass',{'parent':'minecraft:item/generated','textures':{'layer0':'minecraft:item/prismarine_crystals'}})
+asset('models/block/ember_glass',{'parent':'minecraft:block/cube_all','render_type':'minecraft:translucent','textures':{'all':'minecraft:block/orange_stained_glass'}})
+asset('blockstates/ember_glass',{'variants':{'':{'model':'elysium:block/ember_glass'}}})
+asset('models/item/ember_glass',{'parent':'elysium:block/ember_glass'})
+loot('ember_glass',[pool([item('elysium:ember_glass')],[SURVIVES])])
+data('recipe/ember_glass',{'type':'minecraft:crafting_shapeless','category':'building','ingredients':[{'item':'elysium:cinder_glass'},*({'item':'minecraft:glass'} for _ in range(4))],'result':{'id':'elysium:ember_glass','count':4}})
+data('advancement/recipes/ember_glass',{'parent':'minecraft:recipes/root','criteria':{'glass':{'trigger':'minecraft:inventory_changed','conditions':{'items':[{'items':'elysium:cinder_glass'}]}}},'rewards':{'recipes':['elysium:ember_glass']}})
+for name,parent,icon,title,description in [
+    ('first_sunset','smiths_work','forge_press','The First Sunset','Release the great hammer and the arrested sun.'),
+    ('first_night','first_sunset','dawn_wayfinder','An Unremembered Night','See Elysium after the golden hour.'),
+    ('watch_0','first_night','watchfire_seal','The Harvest Answers','Restore the harvest watch with a seal and eight wheat.'),
+    ('watch_1','first_night','watchfire_seal','The Waters Answer','Restore the water watch with a seal and a bucket of water.'),
+    ('watch_2','first_night','watchfire_seal','The Heights Answer','Restore the high watch with a seal and four amethyst shards.'),
+    ('living_realm','first_night','celestial_governor','A World That Can Wake','After the three watches answer, release the living cycle at the governor.'),
+    ('chosen_hour','first_night','elysium_fragment','An Hour Freely Chosen','After the three watches answer, deliberately bind another golden hour.'),
+    ('first_dawn','living_realm','sunwrought_ingot','The First Dawn','Let Elysium greet the morning.')]:
+    data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name in ('first_dawn','chosen_hour') else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")

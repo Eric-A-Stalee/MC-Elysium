@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_night",
+  "display": {
+    "icon": {
+      "id": "elysium:watchfire_seal"
+    },
+    "title": "The Harvest Answers",
+    "description": "Restore the harvest watch with a seal and eight wheat.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

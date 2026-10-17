@@ -1,0 +1,8 @@
+{
+  "type": "elysium:watchfire",
+  "watch": 0,
+  "biomes": "#elysium:has_structure/harvest_watch",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

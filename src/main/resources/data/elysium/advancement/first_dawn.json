@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:living_realm",
+  "display": {
+    "icon": {
+      "id": "elysium:sunwrought_ingot"
+    },
+    "title": "The First Dawn",
+    "description": "Let Elysium greet the morning.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

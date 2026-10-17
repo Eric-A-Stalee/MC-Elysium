@@ -48,6 +48,7 @@ public final class ForgeGeometry {
         if(u==-9&&v==76&&h==1)return b(ModBlocks.FORGE_PRESS.get());
         if(u==0&&v==61&&h==1)return b(ModBlocks.FORGE_HEARTH.get());
         if(u==-37&&v==50&&h==1)return b(ModBlocks.FORGE_LEDGER.get());
+        if(u==0&&v==110&&h==1)return b(ModBlocks.CELESTIAL_GOVERNOR.get());
         if(u==0&&v==112&&h==1)return b(ModBlocks.TARTARUS_INSCRIPTION.get());
         BlockState state=collapse(u,h,v);
         if(state!=null)return state;

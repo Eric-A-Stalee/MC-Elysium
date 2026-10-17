@@ -185,7 +185,7 @@ public final class TartarusExpeditionGameTests {
         h.assertTrue(!block.receiveFlame(player,pos.east(3),flame)&&flame.getCount()==1,"A moved or copied hearth cannot consume the expedition reward");
         h.assertTrue(block.receiveFlame(player,pos,flame)&&flame.isEmpty(),"The saved original hearth must accept exactly one flame");
         h.assertTrue(level.getBlockState(pos).getValue(DormantHearthBlock.FLAME)&&level.getBlockState(pos).getLightEmission()==15,"Returning the flame lights its physical socket");
-        h.assertTrue(level.getDayTime()==time&&level.dimensionType().fixedTime().orElseThrow()==11500,"Completing this chapter may not start the sunset");
+        h.assertTrue(level.getDayTime()==time&&dev.elysium.story.RealmCycle.get(level).phase()==dev.elysium.story.RealmCycle.Phase.PARADISE,"Completing this chapter may not start the sunset");
         var second=new ItemStack(ModItems.FIRST_FLAME.get());h.assertTrue(!block.receiveFlame(player,pos,second)&&second.getCount()==1,"A filled socket may not consume another reward");
         h.succeed();
     }

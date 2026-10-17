@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_night",
+  "display": {
+    "icon": {
+      "id": "elysium:elysium_fragment"
+    },
+    "title": "An Hour Freely Chosen",
+    "description": "After the three watches answer, deliberately bind another golden hour.",
+    "frame": "challenge",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

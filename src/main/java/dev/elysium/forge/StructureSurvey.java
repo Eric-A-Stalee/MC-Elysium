@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid=Elysium.MOD_ID)
 public final class StructureSurvey {
     public enum Destination {
-        FORGE("hephaestus_forge"), CHAIN("tartarus_chain");
+        FORGE("hephaestus_forge"), CHAIN("tartarus_chain"), HARVEST_WATCH("harvest_watch"), WATER_WATCH("water_watch"), HIGH_WATCH("high_watch");
         private final String path;
         Destination(String path){this.path=path;}
         public ResourceLocation id(){return ResourceLocation.fromNamespaceAndPath(Elysium.MOD_ID,path);}
@@ -74,6 +74,7 @@ public final class StructureSurvey {
             if(piece instanceof HephaestusForgePiece forge) {
                 return Optional.of(forge.plan().entrance());
             }
+            if(piece instanceof dev.elysium.structure.WatchfirePiece watch)return Optional.of(watch.socket());
             if(piece instanceof TartarusChainPiece chain) {
                 var p=chain.plan();return Optional.of(new BlockPos(p.x(),p.top(),p.z()));
             }
@@ -106,6 +107,9 @@ public final class StructureSurvey {
             var result=probe(level,request.structure,request.candidates.get(request.index));
             if(result.isPresent()) {
                 ResonanceItem.bind(item,result.get());
+                if(item.getItem() instanceof dev.elysium.item.DawnWayfinderItem) {
+                    dev.elysium.item.DawnWayfinderItem.bearing(player,result.get(),ResonanceItem.data(item).getInt("watch_kind"));return;
+                }
                 if(request.destination==Destination.FORGE)ForgeLore.tell(player,"survey_found",result.get().getX(),result.get().getZ());
                 else ForgeLore.tell(player,"chain_found");
                 ResonanceItem.bearing(player,result.get(),request.destination==Destination.FORGE);

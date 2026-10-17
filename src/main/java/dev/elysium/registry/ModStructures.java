@@ -62,6 +62,8 @@ public final class ModStructures {
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> TARTARUS_DEPTHS_PIECE =
             PIECES.register("tartarus_depths", () -> (StructurePieceType.ContextlessType) dev.elysium.structure.TartarusDepthsPiece::new);
+    public static final DeferredHolder<StructureType<?>,StructureType<dev.elysium.structure.WatchfireStructure>> WATCHFIRE = STRUCTURES.register("watchfire",()->()->dev.elysium.structure.WatchfireStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType,StructurePieceType> WATCHFIRE_PIECE = PIECES.register("watchfire",()->(StructurePieceType.ContextlessType)dev.elysium.structure.WatchfirePiece::new);
     private ModStructures() {}
 
     public static void register(IEventBus modBus) {

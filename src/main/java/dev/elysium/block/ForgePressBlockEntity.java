@@ -31,7 +31,9 @@ public final class ForgePressBlockEntity extends BlockEntity {
     private boolean running;
     private UUID smith;
     public ForgePressBlockEntity(BlockPos pos,BlockState state){super(ModBlockEntities.FORGE_PRESS.get(),pos,state);}
-    public void bind(ForgePlan p){if(!ForgeHammer.world(p,CONTROL.getX(),CONTROL.getY(),CONTROL.getZ()).equals(worldPosition))throw new IllegalArgumentException("Foreign press");plan=p;setChanged();}
+    public void bind(ForgePlan p){if(!ForgeHammer.world(p,CONTROL.getX(),CONTROL.getY(),CONTROL.getZ()).equals(worldPosition))throw new IllegalArgumentException("Foreign press");plan=p;
+        if(level instanceof ServerLevel server)for(int d=0;d<=4;d++)if(ForgeHammer.move(server,p,d,d)){drop=d;break;}
+        setChanged();}
     public ForgePlan plan(){return plan;}
     public int drop(){return drop;}
     public boolean running(){return running;}
@@ -46,6 +48,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
     }
     public boolean queue(Player player,ForgeRecipes.Work recipe) {
         if(plan==null||recipe==null||!work.isEmpty()||!output.isEmpty()||!powered())return false;
+        if(drop>0&&level instanceof ServerLevel server){if(!ForgeHammer.move(server,plan,drop,0))return false;drop=0;}
         var inventory=player.getInventory();
         // Check the complete bill first. Failed jobs cannot eat a subset of the materials.
         for(var cost:recipe.costs()) {
@@ -61,6 +64,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
         }
         work=recipe.id();smith=player.getUUID();phase=0;strikes=0;running=false;setChanged();inventory.setChanged();return true;
     }
+    public void pause(){running=false;setChanged();}
     public boolean start(){if(work.isEmpty()||running||!powered())return false;running=true;setChanged();return true;}
     public void use(Player player,ItemStack held) {
         if(!(player instanceof ServerPlayer server))return;
@@ -68,6 +72,7 @@ public final class ForgePressBlockEntity extends BlockEntity {
             var reward=output;output=ItemStack.EMPTY;setChanged();ForgeLore.give(server,reward);ForgeLore.award(server,"smiths_work");return;
         }
         if(!work.isEmpty()) {
+            if(running&&player.isShiftKeyDown()&&held.isEmpty()){pause();tell(player,"loaded");return;}
             if(!running&&player.isShiftKeyDown()&&held.isEmpty()){start();tell(player,running?"started":"cold");}
             else if(!running&&held.isEmpty())tell(player,"loaded");
             else tell(player,powered()?"busy":"paused");
@@ -85,6 +90,8 @@ public final class ForgePressBlockEntity extends BlockEntity {
         if(!ForgeHammer.move(server,plan,drop,next))return;
         if(next!=drop)server.playSound(null,worldPosition,SoundEvents.CHAIN_PLACE,SoundSource.BLOCKS,.7f,.6f);
         if(next==4&&drop!=4) {
+            if(server.dimension().equals(dev.elysium.portal.ElysiumTravel.DIMENSION)&&dev.elysium.story.RealmCycle.get(server).awaken(ForgeFixtures.hearth(plan)))
+                dev.elysium.story.RealmClock.announce(server,"sunset");
             var impact=ForgeHammer.world(plan,0,6,76);
             server.playSound(null,impact,SoundEvents.ANVIL_LAND,SoundSource.BLOCKS,2,.5f);
             server.sendParticles(ParticleTypes.LAVA,impact.getX()+.5,impact.getY()+.1,impact.getZ()+.5,24,3,.2,2,0);

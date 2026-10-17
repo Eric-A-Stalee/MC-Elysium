@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_night",
+  "display": {
+    "icon": {
+      "id": "elysium:watchfire_seal"
+    },
+    "title": "The Heights Answer",
+    "description": "Restore the high watch with a seal and four amethyst shards.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

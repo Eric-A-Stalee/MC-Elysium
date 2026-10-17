@@ -26,6 +26,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_WISP.get(),CinderWispRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.SLAG_CHIMERA.get(), SlagChimeraRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CINDER_BOLT.get(), context ->
                 new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context,1.5f,true));
@@ -75,6 +76,7 @@ public final class ElysiumClient {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.EMBER_GLASS.get(),RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GOLDEN_BIRCH_LEAVES.get(), RenderType.cutoutMipped());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GOLDEN_BIRCH_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.WILD_GRAIN.get(), RenderType.cutout());

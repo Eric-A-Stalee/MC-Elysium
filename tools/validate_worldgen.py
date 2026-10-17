@@ -242,7 +242,7 @@ def validate_terrain() -> None:
     check_horizontal(height)
     assert "caves/" not in json.dumps(noise)
     dimension = read_json("dimension_type/elysium.json")
-    assert dimension["fixed_time"] == 11500 and not dimension["has_raids"]
+    assert "fixed_time" not in dimension and not dimension["has_raids"], "The saved realm clock owns Elysium time"
     assert (dimension["min_y"], dimension["height"]) == (noise["noise"]["min_y"], noise["noise"]["height"])
 
 

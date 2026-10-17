@@ -20,12 +20,16 @@ public final class ModItems {
     public static final DeferredItem<ResonanceItem> CHAIN_RESONATOR = ITEMS.register("chain_resonator", () -> new ResonanceItem(new Item.Properties().stacksTo(1).fireResistant(),false));
 
     public static final DeferredItem<Item> FIRST_FLAME = ITEMS.registerSimpleItem("first_flame", new Item.Properties().stacksTo(1).fireResistant());
+    public static final DeferredItem<Item> CINDER_GLASS = ITEMS.registerSimpleItem("cinder_glass",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> SUNWROUGHT_INGOT = ITEMS.registerSimpleItem("sunwrought_ingot",new Item.Properties().fireResistant());
     public static final DeferredItem<Item> WATCHFIRE_SEAL = ITEMS.registerSimpleItem("watchfire_seal",new Item.Properties().fireResistant());
-    public static final DeferredItem<Item> DAWN_WAYFINDER = ITEMS.registerSimpleItem("dawn_wayfinder",new Item.Properties().stacksTo(1).fireResistant());
+    public static final DeferredItem<dev.elysium.item.DawnWayfinderItem> DAWN_WAYFINDER = ITEMS.register("dawn_wayfinder",()->new dev.elysium.item.DawnWayfinderItem(new Item.Properties().stacksTo(1).fireResistant()));
     public static final DeferredItem<dev.elysium.item.HarvestSickleItem> HARVEST_SICKLE = ITEMS.register("harvest_sickle",()->new dev.elysium.item.HarvestSickleItem(new Item.Properties().durability(768).fireResistant()));
     static {
         ITEMS.registerSimpleBlockItem(ModBlocks.FORGE_PRESS);
+        ITEMS.registerSimpleBlockItem(ModBlocks.EMBER_GLASS);
+        ITEMS.registerSimpleBlockItem(ModBlocks.WATCHFIRE);
+        ITEMS.registerSimpleBlockItem(ModBlocks.CELESTIAL_GOVERNOR);
         ITEMS.registerSimpleBlockItem(ModBlocks.WARD_LAMP,new Item.Properties().fireResistant());
         ITEMS.registerSimpleBlockItem(ModBlocks.KEEPERS_LAMP, new Item.Properties().fireResistant());
         ITEMS.registerSimpleBlockItem(ModBlocks.KEEPER_WORKBENCH);
@@ -56,8 +60,8 @@ public final class ModItems {
             () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.elysium"))
                     .icon(() -> ELYSIUM_SIGIL.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
-                        output.accept(SUNWROUGHT_INGOT);output.accept(WATCHFIRE_SEAL);output.accept(DAWN_WAYFINDER);output.accept(HARVEST_SICKLE);
-                        output.accept(ModBlocks.FORGE_PRESS);output.accept(ModBlocks.WARD_LAMP);
+                        output.accept(CINDER_GLASS);output.accept(ModBlocks.EMBER_GLASS);output.accept(SUNWROUGHT_INGOT);output.accept(WATCHFIRE_SEAL);output.accept(DAWN_WAYFINDER);output.accept(HARVEST_SICKLE);
+                        output.accept(ModBlocks.FORGE_PRESS);output.accept(ModBlocks.WARD_LAMP);output.accept(ModBlocks.WATCHFIRE);output.accept(ModBlocks.CELESTIAL_GOVERNOR);
                         output.accept(FIRST_FLAME);output.accept(ModBlocks.KEEPERS_LAMP);output.accept(ModBlocks.KEEPER_WORKBENCH);
                         output.accept(ModBlocks.BURNT_CLINKER);output.accept(ModBlocks.CINDER_ASH);output.accept(ModBlocks.SMOULDERING_CLINKER);
                         output.accept(ModBlocks.TARTARUS_COUNTERWEIGHT);output.accept(ModBlocks.TARTARUS_HEART);

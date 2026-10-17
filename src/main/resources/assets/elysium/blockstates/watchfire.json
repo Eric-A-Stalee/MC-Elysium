@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "watch=0,ember=0": {
+      "model": "elysium:block/watchfire_0_0"
+    },
+    "watch=0,ember=1": {
+      "model": "elysium:block/watchfire_0_1"
+    },
+    "watch=0,ember=2": {
+      "model": "elysium:block/watchfire_0_2"
+    },
+    "watch=1,ember=0": {
+      "model": "elysium:block/watchfire_1_0"
+    },
+    "watch=1,ember=1": {
+      "model": "elysium:block/watchfire_1_1"
+    },
+    "watch=1,ember=2": {
+      "model": "elysium:block/watchfire_1_2"
+    },
+    "watch=2,ember=0": {
+      "model": "elysium:block/watchfire_2_0"
+    },
+    "watch=2,ember=1": {
+      "model": "elysium:block/watchfire_2_1"
+    },
+    "watch=2,ember=2": {
+      "model": "elysium:block/watchfire_2_2"
+    }
+  }
+}

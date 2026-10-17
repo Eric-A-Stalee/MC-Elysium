@@ -43,7 +43,7 @@ public final class ResonanceItem extends Item {
         var id=UUID.randomUUID();CustomData.update(DataComponents.CUSTOM_DATA,stack,t->t.putUUID("elysium_survey_id",id));return id;
     }
     public static boolean identifies(ItemStack stack,UUID id) {
-        var data=data(stack);return stack.getItem() instanceof ResonanceItem && data.hasUUID("elysium_survey_id")&&id.equals(data.getUUID("elysium_survey_id"));
+        var data=data(stack);return (stack.getItem() instanceof ResonanceItem||stack.getItem() instanceof DawnWayfinderItem) && data.hasUUID("elysium_survey_id")&&id.equals(data.getUUID("elysium_survey_id"));
     }
     public static void rememberForge(ItemStack stack,BlockPos pos) {
         CustomData.update(DataComponents.CUSTOM_DATA,stack,t->t.putLong("elysium_forge",pos.asLong()));

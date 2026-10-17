@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_night",
+  "display": {
+    "icon": {
+      "id": "elysium:watchfire_seal"
+    },
+    "title": "The Waters Answer",
+    "description": "Restore the water watch with a seal and a bucket of water.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

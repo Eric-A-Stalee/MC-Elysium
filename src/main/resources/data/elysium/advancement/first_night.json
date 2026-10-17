@@ -1,0 +1,17 @@
+{
+  "parent": "elysium:first_sunset",
+  "display": {
+    "icon": {
+      "id": "elysium:dawn_wayfinder"
+    },
+    "title": "An Unremembered Night",
+    "description": "See Elysium after the golden hour.",
+    "frame": "goal",
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "discovered": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

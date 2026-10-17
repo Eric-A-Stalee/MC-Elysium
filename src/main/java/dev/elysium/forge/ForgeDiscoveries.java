@@ -26,7 +26,7 @@ public final class ForgeDiscoveries extends SavedData {
         var data=new ForgeDiscoveries();
         for(Tag entry:tag.getList("Readers",Tag.TAG_COMPOUND)) {
             var row=(CompoundTag)entry;
-            if(row.hasUUID("Player"))data.readers.put(row.getUUID("Player"),row.getInt("Discoveries")&63);
+            if(row.hasUUID("Player"))data.readers.put(row.getUUID("Player"),row.getInt("Discoveries")&1023);
         }
         return data;
     }
