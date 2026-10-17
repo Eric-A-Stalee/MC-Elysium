@@ -60,9 +60,9 @@ def main():
                                           start_new_session=True)
                 result = client.wait(timeout=900)
             images = sorted((CLIENT / 'screenshots').glob('*.png'))
-            if result or len(images) != 19 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
+            if result or len(images) != 20 or 'ELYSIUM_FORGE_VISUAL_COMPLETE' not in (CLIENT / 'probe.log').read_text():
                 raise RuntimeError(f'Visual client exit={result}, screenshots={len(images)}; inspect client probe.log')
-            print('Captured nineteen actual vanilla-rendered expedition and first-dawn views:', *(p.name for p in images), sep='\n')
+            print('Captured twenty actual vanilla-rendered expedition and first-dawn views:', *(p.name for p in images), sep='\n')
     finally:
         stop(client)
         stop(server)

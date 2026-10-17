@@ -159,18 +159,27 @@ public final class ForgeVisualServerProbe {
                 dev.elysium.story.RealmClock.sync(player);watchCamera(player,level,0);
             }
             case "harvest_answered" -> {answer(player,level,0);watchCamera(player,level,0);}
+            case "stray_cinder" -> {
+                var pos=WATCHES[0].socket();
+                var wisp=dev.elysium.registry.ModEntities.CINDER_WISP.get().create(level);
+                wisp.setPos(pos.getX()+3.5,pos.getY()+5,pos.getZ()+10.5);level.addFreshEntity(wisp);
+                player.teleportTo(level,pos.getX()+3.5,pos.getY()+4.5,pos.getZ()+16.5,180,0);
+                player.setGameMode(GameType.SURVIVAL);
+                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,1200,4,false,false));
+                player.getAbilities().mayfly=true;player.getAbilities().flying=true;player.onUpdateAbilities();
+            }
             case "water_answered" -> {answer(player,level,1);watchCamera(player,level,1);}
             case "high_answered" -> {answer(player,level,2);watchCamera(player,level,2);}
-            case "governor" -> camera(player,level,6,PLAN.floor()+3,104,0,PLAN.floor()+2,110);
+            case "governor" -> camera(player,level,6,PLAN.floor()+3,98,0,PLAN.floor()+2,104);
             case "first_dawn" -> {
                 player.setGameMode(GameType.CREATIVE);
-                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.forge.ForgeHammer.world(PLAN,0,1,110),new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CLOCK),true))throw new IllegalStateException("Governor did not accept the repaired living sky");
+                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.block.CelestialGovernorBlock.position(PLAN),new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CLOCK),true))throw new IllegalStateException("Governor did not accept the repaired living sky");
                 var cycle=dev.elysium.story.RealmCycle.get(level);while(cycle.time()<24500)cycle.advance(true);
                 dev.elysium.story.RealmClock.sync(player);player.setGameMode(GameType.SPECTATOR);watchCamera(player,level,0);
             }
             case "chosen_hour" -> {
                 player.setGameMode(GameType.CREATIVE);
-                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.forge.ForgeHammer.world(PLAN,0,1,110),new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.ELYSIUM_FRAGMENT.get()),true))throw new IllegalStateException("Governor could not restore chosen golden hour");
+                if(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,dev.elysium.block.CelestialGovernorBlock.position(PLAN),new net.minecraft.world.item.ItemStack(dev.elysium.registry.ModItems.ELYSIUM_FRAGMENT.get()),true))throw new IllegalStateException("Governor could not restore chosen golden hour");
                 player.setGameMode(GameType.SPECTATOR);watchCamera(player,level,0);
             }
             default -> throw new IllegalArgumentException("Unknown review scene: "+scene);

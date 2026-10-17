@@ -19,7 +19,7 @@ public final class ForgeVisualClientProbe {
     private static final boolean ENABLED=Boolean.getBoolean("elysium.visualClient");
     private static final String[] SCENES={"descent","chimera_dark","chimera_lamp","chimera_eye","chimera_attack",
             "dark","forge_service","forge_restored","forge_full_hall","forge_banked",
-            "hammer_strike","harvest_sunset","harvest_night","harvest_answered","water_answered","high_answered","governor","first_dawn","chosen_hour"};
+            "hammer_strike","harvest_sunset","harvest_night","stray_cinder","harvest_answered","water_answered","high_answered","governor","first_dawn","chosen_hour"};
     private static boolean connecting,requested,captured;
     private static int index;
     private static long next;
@@ -54,6 +54,14 @@ public final class ForgeVisualClientProbe {
                     if(now>=attackDeadline)throw new IllegalStateException("No visible cinder projectile reached the client during the combat capture");
                     return;
                 }
+            }
+            if(SCENES[index].equals("stray_cinder")) {
+                var cinders=mc.level.getEntitiesOfClass(dev.elysium.entity.CinderWispEntity.class,mc.player.getBoundingBox().inflate(24));
+                if(cinders.isEmpty()){if(now>=attackDeadline)throw new IllegalStateException("No stray cinder reached the client");return;}
+                var cinder=cinders.getFirst();var delta=cinder.position().add(0,.4,0).subtract(mc.player.getEyePosition());
+                mc.player.setYRot((float)(Math.toDegrees(Math.atan2(delta.z,delta.x))-90));
+                mc.player.setXRot((float)-Math.toDegrees(Math.atan2(delta.y,Math.hypot(delta.x,delta.z))));
+                if(!cinder.charging()){if(now>=attackDeadline)throw new IllegalStateException("No visible stray-cinder telegraph reached the client");return;}
             }
             String name=String.format("%02d-%s.png",index+1,SCENES[index]);
             long time=Math.floorMod(mc.level.getDayTime(),24000);

@@ -71,7 +71,7 @@ public final class FirstDawnGameTests {
             h.assertTrue(water.repair(player,seals)&&player.getInventory().contains(new ItemStack(Items.BUCKET)),"Water is offered; its vessel is returned");
             var high=watch(realm,new BlockPos(705200,100,705000),2);player.getInventory().add(new ItemStack(Items.AMETHYST_SHARD,4));
             h.assertTrue(high.repair(player,seals)&&seals.isEmpty()&&cycle.watches()==7,"Three different traditions complete the repair");
-            var p=new ForgePlan(706000,706000,172,1);var governor=ForgeHammer.world(p,0,1,110);realm.setBlock(governor,ModBlocks.CELESTIAL_GOVERNOR.get().defaultBlockState(),3);
+            var p=new ForgePlan(706000,706000,172,1);var governor=CelestialGovernorBlock.position(p);realm.setBlock(governor,ModBlocks.CELESTIAL_GOVERNOR.get().defaultBlockState(),3);
             var clock=new ItemStack(Items.CLOCK);
             h.assertTrue(!ModBlocks.CELESTIAL_GOVERNOR.get().choose(player,governor,clock,true),"An isolated governor cannot resolve the sky");
             for(var f:ForgeFixtures.ALL){var pos=f.worldPosition(p);realm.setBlock(pos,ForgeFixtures.state(p,f).setValue(ForgeServiceBlock.DECAY,0),3);((ForgeServiceBlockEntity)realm.getBlockEntity(pos)).bind(p);}

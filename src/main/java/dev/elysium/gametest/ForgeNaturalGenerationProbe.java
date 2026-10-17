@@ -41,6 +41,8 @@ final class ForgeNaturalGenerationProbe {
                 level.setChunkForced(x,z,true);chunks++;
             }
             require(level.getBlockState(piece.hearth()).is(ModBlocks.FORGE_HEARTH.get()),"Natural hearth missing");
+            require(level.getBlockState(dev.elysium.block.CelestialGovernorBlock.position(plan)).is(ModBlocks.CELESTIAL_GOVERNOR.get()),"Natural governor missing");
+            require(level.getBlockState(dev.elysium.forge.ForgeHammer.world(plan,1,2,103)).isAir(),"Governor approach has blocked headroom");
             for(var f:ForgeFixtures.ALL) {
                 var pos=f.worldPosition(plan);var state=level.getBlockState(pos);
                 if(f.local().equals(ForgeFixtures.MISSING)){require(state.isAir(),"Broken runner must start missing");continue;}

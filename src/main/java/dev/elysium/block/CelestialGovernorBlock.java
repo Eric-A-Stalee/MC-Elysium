@@ -17,11 +17,13 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /** The answer to the night is chosen at a working original shrine, not by consuming a remote menu item. */
 public final class CelestialGovernorBlock extends Block {
+    public static final int LOCAL_V=104;
+    public static BlockPos position(dev.elysium.structure.ForgePlan plan){return ForgeHammer.world(plan,0,1,LOCAL_V);}
     public CelestialGovernorBlock(Properties p){super(p);}
     public boolean choose(ServerPlayer player,BlockPos pos,ItemStack held,boolean deliberate) {
         var level=player.serverLevel();if(!level.dimension().equals(ElysiumTravel.DIMENSION)||!deliberate)return false;
         var feed=ForgeLighting.loadedService(level,pos.below());if(feed==null||feed.plan()==null)return false;
-        var plan=feed.plan();if(!ForgeHammer.world(plan,0,1,110).equals(pos))return false;
+        var plan=feed.plan();if(!position(plan).equals(pos))return false;
         var source=ForgeLighting.loadedService(level,dev.elysium.structure.ForgeFixtures.source(plan));
         if(source==null||!source.burning()||!source.restored().contains(pos.below()))return false;
         boolean living=held.is(Items.CLOCK);if(!living&&!held.is(ModItems.ELYSIUM_FRAGMENT.get()))return false;
