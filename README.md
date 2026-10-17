@@ -24,6 +24,9 @@ This repository develops the playable **paradise** and its first optional explor
 - A physical three-stroke forge press with persistent work, Sunwrought Ingots, a replanting Harvest Sickle, a Dawn Wayfinder, protective Ward Lamps and luminous Ember Glass. The first strike deliberately starts an independent realm clock. Three terrain-fitted watch ruins answer the interrupted night; a repaired governor lets players choose and later revisit the realm's future.
 - Dedicated-server GameTests and a GitHub Actions build. See [validation notes](docs/TESTING.md) for what has actually run.
 
+The working-forge and first-dawn milestones are preserved as separate
+[development checkpoints](docs/CHECKPOINTS.md).
+
 ## Try it
 
 Install NeoForge for Minecraft **1.21.1**, then put the built `elysium-0.1.0-alpha.22.jar` in `mods/` on both client and server. No biome or structure mod is required for the standalone version. Alpha 22 adds the working smithy, first sunset, three watchfire traditions, stray cinders and both resolutions of the first dawn. It retains the articulated Cinderbound Eye, visible projectiles, dangerous restored forge fire, and the natural-generation fixes for the [Tartarus expedition](docs/TARTARUS.md). Start with an archive in a grand mountain hall or abandoned waystation, or a folio bought from an Elysium librarian/cartographer. Use a **new alpha test world or fully regenerate Elysium** for this update: the dimension extends to Y=-256, and previously truncated Tartarus structures are not repaired in existing chunks. Newly generated Forges include the press control, physical hammer and celestial governor; new surface chunks contain the watch ruins.

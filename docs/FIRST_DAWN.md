@@ -84,6 +84,7 @@ and watch ruins. This chapter makes no saved-world migration promise.
 
 ## Verification boundary
 
-Implementation is under active verification in this branch. Final release notes
-record the exact tested commit, GameTests, natural-generation checks and actual
-Minecraft captures. Concept images are not runtime evidence.
+The chapter is implemented in alpha 22. See [validation notes](TESTING.md#alpha-22-first-dawn-chapter-october-17-2026-utc)
+for the exact tested source, 73 server GameTests, natural-generation checks and
+actual Minecraft captures. Manual survival balance, prolonged multiplayer play
+and external shader/resource-pack combinations remain playtesting work.

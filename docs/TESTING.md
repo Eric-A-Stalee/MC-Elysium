@@ -114,9 +114,9 @@ This update changes no world generation or saved block IDs. Existing leaf litter
 
 [GitHub Actions run 36514620141](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/36514620141) built commit `a2455c4b169b8f6633a68e69287f334b9e9f1d03` successfully. All **23 required GameTests passed** in **5.755 seconds**, and the generated-resource, client-atlas and worldgen checks passed. These server tests do not exercise rendering.
 
-## What still needs a client playtest
+## Broader manual playtest checklist
 
-No graphical Minecraft client was available in the development environment. The mod is an early alpha, with server and data validation rather than a completed visual playthrough.
+The early alpha milestones below predate graphical testing. Later milestones record actual client captures, while this broader manual survival, multiplayer and resource-pack checklist remains relevant.
 
 1. Install the jar on both client and server with NeoForge 21.1.233+, and create a new world. Use `/elysium visit` with operator permission for a quick inspection.
 2. Inspect all six biomes across several seeds: tree shapes, foliage and item tinting, water and sky colors, mountain slopes, lighting, and frame/chunk-generation performance.
@@ -961,3 +961,98 @@ clock do not start moving in this update.
 
 Use a fresh alpha world or regenerate Elysium for the broader cavern strata,
 localized collapse and new physical hearth feed. Old structures are not migrated.
+
+
+## Alpha 21 working-forge checkpoint (October 17, 2026 UTC)
+
+Checkpoint `291b668621624bf0ca88d86e85b1d7c87a016dce`, preserved on
+`checkpoint/alpha21-working-forge`, passes **68 required GameTests**, the
+optional compatibility-guard checks and ten actual client captures in
+[run 39012405365](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39012405365).
+The added machine checks exercise complete material bills, exclusive queued
+work, actual moving blocks, fuel loss, preservation of a player obstruction,
+real block-entity serialization mid-stroke, three completed strokes and
+collect-once output. All four Forge orientations work; a missing head section
+cannot regenerate itself, and a stroke cannot load a missing chunk.
+
+The projectile regression now waits for its test arena's entity sections to
+become accessible. A simulated player was present in the player list but not
+yet visible to the projectile collision query. The test verifies that spatial
+query before firing the aimed centre bolt; production collision and damage
+code were not bypassed or replaced.
+
+
+## Alpha 22 first-dawn chapter (October 17, 2026 UTC)
+
+Release source: `6d90e06dad1976cd39d8542efee80b5d8e8bd574`.
+[Run 39015622534](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39015622534)
+builds the release, checks generated content and the optional erosion guard,
+and passes **73 required GameTests**.
+
+The five added tests cover the dimension-scoped saved clock, both daylight
+read paths, vanilla server night/day recognition, packet encoding, paused
+unoccupied time, save/load, distinct watch traditions, both revisitable endings,
+and the unchanged Overworld clock. Actual watch interactions check full material
+bills, bucket return, duplicate repair prevention and sanctuary registration.
+The governor requires a heated physical feed and is exercised through the real
+server sneak-use path. Ruins retain their per-column surveys through registered
+structure NBT. A normal damageable player verifies the cinder's warning before
+health loss, carried and placed wards, and disappearance after resolution.
+The sickle uses real crop destruction, leaves young plants alone, replants from
+inventory seeds and pays durability per harvested plant.
+
+The packaged `elysium-0.1.0-alpha.22.jar` is **795,890 bytes**, SHA-256
+`b9edac88e49ff531c686bce2caaeb1755d7768e1feb191cd2a1d2b1a84ed2184`.
+The downloaded ZIP digest and integrity match. All **174 shipped classes**
+target Java 21; all **337 source resources** match byte for byte. GameTests,
+visual harnesses and the development flat preset are excluded. The generators
+reproduce 217 asset resources and 115 worldgen resources.
+
+The full **twenty-scene actual client review** passes in
+[run 39014428298](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39014428298),
+using `adeb896b00533ca1e34ae4a30d14c1a9e077c788`. It covers the deep descent,
+dark/lamp-lit creature and visible projectile, four Forge heat states and the
+whole hall, an actual hammer strike, first sunset and night, a stray cinder,
+all three repaired watches, the governor, first dawn and chosen golden hour.
+The client asserts both time read paths and the sky angle before capturing.
+No missing Elysium model or texture errors appear in the client log.
+
+The release source also passes a **focused final client capture** in
+[run 39015622534](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39015622534).
+The cinder's orange warning is now on the outside of its dark plates, visible
+from a head-on approach during the wind-up. This is the only player-code
+change after the full review. The focused harness still starts an actual
+natural Forge hammer strike before entering the night. Its observer protection
+covers the rendering warm-up, and an observer death fails the run immediately.
+The downloadable review replaces scene 14 with this final capture; its other
+nineteen frames are unchanged from the full run.
+
+The natural-generation review uses an ordinary seed-zero world. It rechecks
+the Tartarus start's 272 chunks, 516 route steps and 3,861 material samples;
+the Forge's 63 chunks and 359 physical fixtures; and three naturally generated
+watch ruins. The watches must have actual saved starts, structure references,
+and bound, unrestored block entities before any player actions.
+
+| Watch | Source chunk | Socket | Candidates inspected from the Forge |
+|---|---|---|---:|
+| Harvest | [145, 176] | (2328, 78, 2824) | 4 |
+| Water | [194, 241] | (3112, 65, 3864) | 63 |
+| High | [144, 153] | (2312, 93, 2456) | 4 |
+
+These are reproducible seed-zero destinations, not a multi-seed frequency
+measurement. The review uses supplied fuel and Creative material allowances
+for interactions, accelerates only the disposable story clock through its
+normal state transitions, and pauses the physical hammer at the bottom of a
+real stroke. No structure starts or references are inserted, and no foliage
+is removed to make a clearer screenshot.
+
+Captures use default Minecraft textures, no external shaders, gamma 0.5,
+FOV 70, a ten-chunk render distance and Mesa software OpenGL. The opt-in review
+classes are development-only. The runner has no audio device or narrator
+library, so sound quality is unassessed. These scripted cameras and server
+checks leave manual survival balance, prolonged multiplayer play, multiple
+terrain seeds and external resource-pack/shader combinations for playtesting.
+
+Use a fresh alpha world or fully regenerate Elysium for the new press, governor
+and watches. No old-world migration is promised. The surface palettes,
+settlement grammar and standalone terrain engine are retained.

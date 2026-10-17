@@ -40,5 +40,8 @@ why the dawn cannot return, and chooses how to leave the realm.
 - Actual Minecraft captures and server tests determine what is finished.
   Concept imagery is direction, never evidence of an implemented feature.
 
-This is the intended scope, not a claim that every part is already implemented.
-Release notes record the verified boundary of each checkpoint.
+All three parts are implemented in alpha 22. The [player guide](FIRST_DAWN.md)
+describes the complete route; [validation notes](TESTING.md) record the tested
+boundary. The alpha 21 working-forge checkpoint is preserved separately from
+the alpha 22 first-dawn chapter. A larger Tartarus realm and later chapters
+remain outside this release.
