@@ -171,7 +171,7 @@ public final class ForgeVisualServerProbe {
                 wisp.setPos(pos.getX()+3.5,pos.getY()+5,pos.getZ()+10.5);level.addFreshEntity(wisp);
                 player.teleportTo(level,pos.getX()+3.5,pos.getY()+4.5,pos.getZ()+16.5,180,0);
                 player.setGameMode(GameType.SURVIVAL);
-                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,1200,4,false,false));
+                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE,2400,4,false,false));
                 player.getAbilities().mayfly=true;player.getAbilities().flying=true;player.onUpdateAbilities();
             }
             case "water_answered" -> {answer(player,level,1);watchCamera(player,level,1);}

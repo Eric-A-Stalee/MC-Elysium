@@ -39,7 +39,9 @@ public final class ForgeVisualClientProbe {
                     new ServerData("Forge visual review","127.0.0.1:25565",ServerData.Type.OTHER),false,null);
             return;
         }
-        if(mc.player==null||mc.level==null||mc.screen!=null)return;
+        if(mc.player==null||mc.level==null)return;
+        if(mc.player.isDeadOrDying())throw new IllegalStateException("Visual observer died before completing scene "+index);
+        if(mc.screen!=null)return;
         long now=System.nanoTime();
         if(index>=SCENES.length) {
             if(now>=next) {LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_COMPLETE");mc.stop();}
@@ -47,7 +49,8 @@ public final class ForgeVisualClientProbe {
         }
         if(!requested) {
             mc.player.connection.sendCommand("forge_probe "+SCENES[index]);
-            next=now+(index==0?90_000_000_000L:20_000_000_000L);attackDeadline=next+30_000_000_000L;requested=true;captured=false;cinderFramed=false;
+            long warmup=index==0?(SCENES[index].equals("stray_cinder")?30_000_000_000L:90_000_000_000L):20_000_000_000L;
+            next=now+warmup;attackDeadline=next+30_000_000_000L;requested=true;captured=false;cinderFramed=false;
         } else if(now>=next&&!captured) {
             if(SCENES[index].equals("chimera_attack")) {
                 boolean bolt=mc.level.getEntitiesOfClass(dev.elysium.entity.CinderBoltEntity.class,mc.player.getBoundingBox().inflate(40),e->e.tickCount>=5&&e.tickCount<=18).size()>0;
