@@ -13,7 +13,7 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.*;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 
-/** The Maw, the Cistern and the Empty Throne share surveyed routes, not room geometry. */
+/** The Maw, the Cistern and the Captive Throne share surveyed routes, not room geometry. */
 public final class DeepBindingPiece extends StructurePiece {
     private final int x,y,z,low,kind;private final long seed;private final int[] route;
     public DeepBindingPiece(int x,int y,int z,int low,int kind,long seed,int[] route){

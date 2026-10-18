@@ -36,7 +36,7 @@ public final class CrownlessEntity extends Mob {
     public void phase(int value,int age){entityData.set(PHASE,value);entityData.set(AGE,age);if(age==0)struck.clear();}
     public double waveRadius(float partial){return 12+Math.min(1,(age()+partial)/50)*34;}
     public boolean canCommand(Player p){
-        if(!p.isAlive()||p.isCreative()||p.isSpectator()||Math.abs(p.getY()-getY())>9)return false;
+        if(!p.isAlive()||p.isCreative()||p.isSpectator()||Math.abs(p.getY()-getY())>9||level() instanceof ServerLevel l&&dev.elysium.story.Nightfall.protectedAt(l,p.blockPosition()))return false;
         // Low origin makes ordinary ruins useful cover. A tall head must not see over every refuge.
         return level().clip(new ClipContext(position().add(0,3,7),p.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).getType()==HitResult.Type.MISS;
     }

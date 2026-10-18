@@ -44,7 +44,7 @@ public final class MireMournerEntity extends Monster {
                 for(var p:l.getEntitiesOfClass(Player.class,AABB.ofSize(lament,5,5,5)))if(canLament(p)&&p.position().subtract(lament).horizontalDistanceSqr()<2.4*2.4){
                     if(p.hurt(damageSources().mobAttack(this),6)){p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,70,1));var pull=position().subtract(p.position()).multiply(1,0,1).normalize();p.push(pull.x*.4,.12,pull.z*.4);}
                 }
-                l.sendParticles(ParticleTypes.LARGE_SMOKE,lament.x,lament.y+.5,lament.z,24,1.3,.4,1.3,.02);playSound(SoundEvents.SOUL_ESCAPE,1,.5f);
+                l.sendParticles(ParticleTypes.LARGE_SMOKE,lament.x,lament.y+.5,lament.z,24,1.3,.4,1.3,.02);playSound(SoundEvents.SOUL_ESCAPE.value(),1,.5f);
                 entityData.set(CHANT,0);lament=null;cooldown=100;
             }else entityData.set(CHANT,age+1);
         }else if(!isNoAi()&&tickCount%10==0){

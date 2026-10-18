@@ -70,7 +70,7 @@ restraint. Sneak-use retains its remembered Forge bearing.
 |---|---|---|
 | Hunger's Maw | Offer eight wheat to the restraint. Its hunger pauses for twelve seconds. | Use one Binding Nail during the opening. |
 | Sorrow's Cistern | Hold Hope in either hand, crouch within four blocks and remain still in actual block light of at least level eight for four seconds. Bring or place a lamp. | Switch to a Binding Nail within ten seconds; Hope is retained. |
-| Dominion's Empty Throne | Defeat its own Sentenced jailer. An unrelated kill does not count. Its defeat persists through saving. | Use one Binding Nail. In Peaceful, examine the restraint first. |
+| Dominion's Captive Throne | Shelter from the Crownless's command and defeat his restraint's own Sentenced jailer. Its defeat persists through saving. | Use one Binding Nail. In Peaceful, examine the restraint first. |
 
 A Binding Nail can also close an individual open surface wound. Restoring a deep
 restraint prevents new wounds of that kind and quiets its existing loaded wounds.
@@ -82,7 +82,7 @@ Examine each restraint with an empty hand to copy its three-page testimony; a bl
 
 The ruined places are physically generated structures. Their approaches follow
 surveyed terrain, rather than relying on runtime room excavation. The Maw's
-broken jaw, the Cistern's water and mourner, and the empty throne tell different
+broken jaw, the Cistern's water and mourner, and the living Crownless tell different
 parts of the imprisonment. Prometheus's immense body is built into the rock;
 his voice is an interactive block, and the eagle is an animated entity.
 
