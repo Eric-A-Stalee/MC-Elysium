@@ -28,7 +28,7 @@ Hungers and Sentenced also use original hide, horn, bone and bronze materials in
 
 ## Art and evidence
 
-`tools/generate_tartarus_art.py` reproduces thirteen original PNGs from code without sampling Minecraft or concept-image pixels. `--check` verifies the committed bytes. `--preview` adds a Pillow contact sheet of the exact sprites. The first skin study resembled masonry and was revised before implementation. The art sheet lives at `docs/art/alpha26-materials.png`.
+`tools/generate_tartarus_art.py` reproduces thirteen original PNGs from code without sampling Minecraft or concept-image pixels. `--check` verifies the committed bytes. `--preview` adds a Pillow contact sheet of the exact sprites. The first skin study resembled masonry. The next looked like wood grain on the real models, so the final skin uses subdued, irregular ash patches and shorter scars. Bone was likewise revised after inspecting its large structures. The art sheet lives at `docs/art/alpha26-materials.png`.
 
 The entity renderer uses textured faces and face normals directly. The four terrain materials replace former vanilla references: warm ash, burnt clinker, smouldering clinker and charred bone. Resource packs can override the new `elysium:textures/...` files normally.
 

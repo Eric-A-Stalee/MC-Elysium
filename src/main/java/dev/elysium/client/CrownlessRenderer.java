@@ -53,13 +53,16 @@ public final class CrownlessRenderer extends EntityRenderer<CrownlessEntity> {
         }
         p.pushPose();p.translate(0,24+breath,0);p.mulPose(Axis.YP.rotationDegrees(Mth.clamp(Mth.rotLerp(partial,e.yHeadRotO,e.getYHeadRot()),-18,18)));
         p.mulPose(Axis.XP.rotationDegrees(e.phase()==CrownlessEntity.DORMANT?17:(float)(9-inhaling*12)));
-        box(p,b,light,SKIN,0,0,0,6.8,6.5,6);box(p,b,light,HIDE,0,.1,2.5,5.8,3,2);
+        double[] skullWidth={4.8,6.3,7,6.8,5.7},skullDepth={4.6,5.6,6,5.4,4.7};
+        for(int row=0;row<5;row++)box(p,b,light,SKIN,0,row*1.3,-.1+row*.08,skullWidth[row],1.4,skullDepth[row]);
+        box(p,b,light,HIDE,0,.15,2.5,4.8,1.7,1.4);
         for(int side:new int[]{-1,1}){
-            box(p,b,light,HORN,side*1.8,3.9,3.02,2.3,.9,.6);
+            p.pushPose();p.translate(side*1.8,3.9,3.02);p.mulPose(Axis.ZP.rotationDegrees(side*9));box(p,b,light,HORN,0,0,0,2.3,.65,.6);p.popPose();
             if(e.phase()!=CrownlessEntity.DORMANT)box(p,b,LightTexture.FULL_BRIGHT,EMBER,side*1.8,3.65,3.2,1.1,.18,.06);
             box(p,b,light,BONE,side*2.6,1.4,3.1,1,2,.5);
         }
-        box(p,b,light,HORN,0,1.6,3.5,3,.45+inhaling*.8,.12);
+        box(p,b,light,HORN,0,1.6,3.25,3,.45+inhaling*.8,.12);
+        for(int i=-2;i<=2;i++){p.pushPose();p.translate(i*.7,.3,2.8);p.mulPose(Axis.XP.rotationDegrees(12+i*2));box(p,b,light,HORN,0,-1.8+Math.abs(i)*.3,0,.48,2.0-Math.abs(i)*.3,.65);p.popPose();}
         for(int i=0;i<7;i++){double a=i*Math.PI*2/7;p.pushPose();p.translate(Math.cos(a)*3.4,5.5,Math.sin(a)*2.7);p.mulPose(Axis.ZP.rotationDegrees((float)(Math.cos(a)*-15)));box(p,b,light,BRONZE,0,0,0,.75,2.3+(i*7%5)*.5,.8);box(p,b,light,HORN,0,2.2+(i*7%5)*.5,0,.4,.65,.4);p.popPose();}
         p.popPose();p.popPose();super.render(e,yaw,partial,p,b,light);
     }

@@ -32,6 +32,19 @@ def pigment(c, n):
     return tuple(max(0, min(255, round(v+n))) for v in c) + (255,)
 
 
+def field(x, y, scale, seed=17):
+    """Low-frequency pigment clumps, without the repeating sine-wave wood grain."""
+    x/=scale; y/=scale; ix=math.floor(x); iy=math.floor(y); tx=x-ix; ty=y-iy
+    tx=tx*tx*(3-2*tx); ty=ty*ty*(3-2*ty)
+    def point(a,b):
+        n=(a*374761393+b*668265263+seed*1274126177)&0xffffffff
+        n=((n^(n>>13))*1274126177)&0xffffffff
+        return (n^(n>>16))/0xffffffff
+    a=point(ix,iy)*(1-tx)+point(ix+1,iy)*tx
+    b=point(ix,iy+1)*(1-tx)+point(ix+1,iy+1)*tx
+    return a*(1-ty)+b*ty
+
+
 def texture(name, w, h):
     rng = random.Random('elysium-original-26-' + name)
     pixels = []
@@ -62,26 +75,27 @@ def texture(name, w, h):
                 if (x-5)**2+(y-5)**2 < 4 or (x-w+6)**2+(y-h+6)**2 < 4: c = (195, 148, 76)
                 if (x+y*2) % 23 == 0: c = mix(c, (207, 156, 85), .4)
             elif name == 'horn':
-                c = mix((28, 25, 25), (87, 75, 58), (wave+1)*.36)
+                c = mix((28, 25, 25), (87, 75, 58), (wave+1)*.18)
                 if (y+int(x*.4)) % 11 == 0: c = (21, 20, 21)
             elif name in ('cinder_hide', 'titan_skin'):
-                # Folded hide, not rectilinear stone joints. Broken diagonal ridges
-                # branch around softer patches; the titan has a long healed burn.
-                fold=math.sin(x*.28+math.sin(y*.16)*2.4)+.35*math.cos(y*.41-x*.15)
-                c=mix((35, 27, 27), (101, 72, 54), (fold+1.35)/2.7)
-                if fold < -.85: c=mix(c,(27,22,24),.65)
-                if (x+int(5*math.sin(y*.19)))%23==4 and y%17<12: c=(44,29,26)
+                # Fine ashen patches and healed fissures. The first material
+                # looked like polished timber on the actual giant and was rejected.
+                pigment_field=field(x,y,8)+field(x+51,y+19,3)*.22
+                c=mix((32,30,30),(85,71,60),.15+pigment_field*.65)
+                fissure=abs(field(x+13,y-7,9,91)-.49)
+                if fissure<.025: c=mix(c,(26,24,25),.55)
                 if name == 'titan_skin':
-                    scar = abs(x - w*.46 - 4*math.sin(y*.12))
-                    if scar < 1.4: c = (127, 70, 43)
-                    elif scar < 2.8: c = (34, 22, 22)
+                    c=mix(c,(83,78,71),.22)
+                    scar=abs(x-w*.46-2*math.sin(y*.19))
+                    if 17<y<48 and scar<.8:c=(94,62,46)
+                    elif 17<y<48 and scar<1.7:c=(32,28,28)
             elif name == 'ember':
                 c = mix((117, 30, 16), (255, 194, 78), (.5+.5*math.sin(x*.39+y*.18))**3)
                 if (x+int(3*math.sin(y*.3))) % 11 < 2: c = (67, 26, 22)
             elif name == 'mourner_cloth':
-                c = mix((32, 34, 33), (102, 91, 67), (wave+1)*.33)
+                c = mix((32, 34, 33), (83, 78, 64), (wave+1)*.27)
                 if y > h*.55: c = mix(c, (31, 35, 30), (y/h-.55)*1.6)
-                if x%13 == 3 and y%5 < 3: c = (136, 110, 65)
+                if x%13 == 3 and y%5 < 3: c = (96, 81, 65)
                 if y > h-8 and (x*7)%11 > h-y: pixels.append((0,0,0,0)); continue
             elif name == 'moth_wing':
                 # A complete paired wing silhouette, charcoal margins around amber cells.
@@ -94,9 +108,10 @@ def texture(name, w, h):
                 if (abs(u)-.53)**2+(v+.18)**2<.038: c=(45, 36, 30)
                 if (abs(u)-.53)**2+(v+.18)**2<.008: c=(244, 196, 111)
             elif name == 'charred_bone':
-                c = mix((89, 73, 58), (164, 144, 108), (wave+1)*.4)
-                if (x+int(2*math.sin(y*.14)))%13 < 2: c=(65, 55, 47)
-                if y%19==2 and x%7<3: c=(64, 51, 42)
+                fibre=(x*17+x*x*3)%19-9
+                c=(124+fibre,113+fibre,94+fibre)
+                if (x+int(math.sin(y*.21)))%23==5 and y>18:c=(80,73,61)
+                if rng.randrange(31)==0:c=(146,130,105)
             elif name == 'cinder_ash':
                 c = mix((57, 48, 46), (115, 94, 77), .4+.2*math.sin((x+y)*.2)+.1*math.cos(y*.5))
                 if rng.randrange(19)==0: c=(135, 109, 79)

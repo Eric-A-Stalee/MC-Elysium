@@ -22,8 +22,8 @@ public final class MireMournerRenderer extends EntityRenderer<MireMournerEntity>
             box(p,b,light,CLOTH,0,-2.5,0,.48,2.6,.15);p.popPose();
         }
         p.pushPose();p.translate(0,2.4+breath,.08);p.mulPose(Axis.XP.rotationDegrees(e.chant()>0?-18:12));
-        box(p,b,light,CLOTH,0,.7,0,1.15,.3,.85);box(p,b,light,CLOTH,0,0,-.32,1.1,.8,.2);
-        for(int side:new int[]{-1,1})box(p,b,light,CLOTH,side*.48,0,0,.23,.85,.85);
+        box(p,b,light,CLOTH,0,.7,0,.7,.25,.8);box(p,b,light,CLOTH,0,0,-.32,1.1,.8,.2);
+        for(int side:new int[]{-1,1}){p.pushPose();p.translate(side*.48,0,0);p.mulPose(Axis.ZP.rotationDegrees(side*16));box(p,b,light,CLOTH,0,0,0,.23,.85,.85);p.popPose();}
         box(p,b,light,HORN,0,.15,0,.55,.45,.3);
         box(p,b,LightTexture.FULL_BRIGHT,EMBER,0,.21,.18,e.chant()>0?.4:.22,.18,.035);
         p.popPose();
