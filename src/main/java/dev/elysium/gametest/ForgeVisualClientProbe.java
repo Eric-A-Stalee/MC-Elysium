@@ -54,7 +54,12 @@ public final class ForgeVisualClientProbe {
         } else if(now>=next&&!captured) {
             if(SCENES[index].equals("inhabitant_command")) {
                 boolean warned=mc.level.getEntitiesOfClass(dev.elysium.entity.CrownlessEntity.class,mc.player.getBoundingBox().inflate(80),e->e.phase()==dev.elysium.entity.CrownlessEntity.INHALE&&e.age()>=35).size()>0;
-                if(!warned){if(now>=attackDeadline)throw new IllegalStateException("The living captive never warned the survival observer");return;}
+                if(!warned){if(now>=attackDeadline){
+                    var captives=mc.level.getEntitiesOfClass(dev.elysium.entity.CrownlessEntity.class,mc.player.getBoundingBox().inflate(80));
+                    LogUtils.getLogger().error("ELYSIUM_CAPTIVE_CLIENT player={} captives={}",mc.player.position(),captives.stream().map(e->e.phase()+":"+e.age()+":"+e.tickCount).toList());
+                    Screenshot.grab(mc.gameDirectory,"failed-command.png",mc.getMainRenderTarget(),message->LogUtils.getLogger().info("Failed warning capture: {}",message.getString()));
+                    throw new IllegalStateException("The living captive never warned the survival observer");
+                }return;}
             }
             if(SCENES[index].equals("chimera_attack")) {
                 boolean bolt=mc.level.getEntitiesOfClass(dev.elysium.entity.CinderBoltEntity.class,mc.player.getBoundingBox().inflate(40),e->e.tickCount>=5&&e.tickCount<=18).size()>0;

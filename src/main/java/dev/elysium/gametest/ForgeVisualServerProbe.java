@@ -76,6 +76,10 @@ public final class ForgeVisualServerProbe {
         if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"inhabitants".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))?"inhabitant_captive":BINDINGS!=null?"binding_hunger":PRISON!=null?"prison_overview":"inspection_entry");
     }
 
+    @SubscribeEvent public static void tick(net.neoforged.neoforge.event.tick.ServerTickEvent.Post event) {
+        if(ENABLED&&"inhabitants".equals(System.getenv("ELYSIUM_VISUAL_FOCUS")))InhabitantsVisualProbe.traceCommand(event.getServer());
+    }
+
     private static void scene(ServerPlayer player,String scene) {
         var level=player.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)return;

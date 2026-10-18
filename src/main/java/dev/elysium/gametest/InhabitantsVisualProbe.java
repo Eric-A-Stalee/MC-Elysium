@@ -16,6 +16,7 @@ final class InhabitantsVisualProbe {
     static final String[] SCENES={"inhabitant_captive","inhabitant_face","inhabitant_command","inhabitant_dark","inhabitant_mourner","inhabitant_moths","inhabitant_hunger","inhabitant_sentenced","inhabitant_eagle","inhabitant_perch"};
     private static DeepBindingPiece[] bindings;private static PrometheusPrisonPiece prison;
     private static MireMournerEntity mourner;private static AshenHoundEntity hound;private static ChainWardenEntity warden;
+    private static java.util.UUID commandObserver;
     static void prepare(ServerLevel l){
         bindings=BindingNaturalGenerationProbe.generateAndVerify(l);prison=PrometheusNaturalGenerationProbe.generateAndVerify(l);
         var cycle=RealmCycle.get(l);cycle.awaken(bindings[2].core());
@@ -32,6 +33,7 @@ final class InhabitantsVisualProbe {
     }
     private static void pose(ServerLevel l,Mob mob,BlockPos at){mob.setPos(Vec3.atBottomCenterOf(at));mob.setNoAi(true);mob.setNoGravity(true);mob.setPersistenceRequired();mob.setYRot(0);mob.setYHeadRot(0);l.addFreshEntity(mob);}
     static void scene(ServerPlayer p,ServerLevel l,String scene){
+        commandObserver=scene.equals("inhabitant_command")?p.getUUID():null;
         p.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,12000,0,false,false));
         Vec3 camera,target;
         var core=bindings[2].core();var home=Vec3.atBottomCenterOf(core.offset(0,0,-23));
@@ -44,7 +46,7 @@ final class InhabitantsVisualProbe {
                 p.addEffect(new MobEffectInstance(MobEffects.SATURATION,2400,4,false,false));
                 p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();
                 // The central surveyed approach is guaranteed clear; the side ruins are cover.
-                camera=home.add(0,3,40);target=home.add(0,24,0);
+                camera=home.add(0,7,40);target=home.add(0,24,0);
             }
             case "inhabitant_dark"->{p.removeEffect(MobEffects.NIGHT_VISION);l.setBlock(core.south(3),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=Vec3.atCenterOf(core).add(3,1,8);target=home.add(0,22,0);}
             case "inhabitant_mourner"->{camera=mourner.position().add(4,1,7);target=mourner.position().add(0,1.7,0);}
@@ -68,6 +70,13 @@ final class InhabitantsVisualProbe {
             if(!titan.canCommand(p))throw new IllegalStateException("The natural central approach obstructs the captive's command at "+hit.getBlockPos());
         }
         com.mojang.logging.LogUtils.getLogger().info("ELYSIUM_INHABITANT_SCENE {} nightVision={}",scene,!scene.equals("inhabitant_dark"));
+    }
+    static void traceCommand(net.minecraft.server.MinecraftServer server){
+        if(commandObserver==null||server.getTickCount()%40!=0)return;
+        var p=server.getPlayerList().getPlayer(commandObserver);if(p==null)return;var l=p.serverLevel();
+        var binding=(BindingBlockEntity)l.getBlockEntity(bindings[2].core());var titan=(CrownlessEntity)l.getEntity(binding.titan());
+        var nearest=l.getNearestPlayer(titan.getX(),titan.getY(),titan.getZ(),48,e->e instanceof net.minecraft.world.entity.player.Player target&&titan.canCommand(target));
+        com.mojang.logging.LogUtils.getLogger().info("ELYSIUM_CAPTIVE_TICK player={} mode={} targetable={} nearest={} phase={} age={} ticks={} held={} sealed={} alive={}",p.position(),p.gameMode.getGameModeForPlayer(),titan.canCommand(p),nearest==p,titan.phase(),titan.age(),titan.tickCount,RealmCycle.get(l).bindingHeld(2),binding.sealed(),titan.isAlive());
     }
     private InhabitantsVisualProbe(){}
 }
