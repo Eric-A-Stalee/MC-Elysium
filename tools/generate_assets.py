@@ -429,7 +429,7 @@ for name,parent,icon,title,description in [
 asset('models/block/prometheus_voice',{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/chiseled_deepslate','metal':'minecraft:block/weathered_copper','ember':'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),cuboid([1,4,-.1],[15,6,.1],'#metal'),cuboid([1,11,-.1],[15,13,.1],'#metal'),cuboid([7,5,-.2],[9,12,.2],'#ember'),cuboid([4,15.9,4],[12,16.1,12],'#ember')]})
 asset('blockstates/prometheus_voice',{'variants':{'':{'model':'elysium:block/prometheus_voice'}}})
 asset('models/item/prometheus_voice',{'parent':'elysium:block/prometheus_voice'})
-asset('models/item/bronze_pinion',{'parent':'minecraft:block/block','gui_light':'front','textures':{'copper':'minecraft:block/exposed_copper','iron':'minecraft:block/netherite_block','particle':'#copper'},'elements':[cuboid([7,0,7],[9,16,9],'#iron'),*[cuboid([3+i*.4,3+i*2,6],[13-i*.4,4+i*2,9],'#copper') for i in range(6)]]})
+asset('models/item/bronze_pinion',{'parent':'minecraft:item/generated','textures':{'layer0':'elysium:item/bronze_pinion'}})
 data('advancement/promethean_craft',{'parent':'elysium:first_flame','display':{'icon':{'id':'elysium:bronze_pinion'},'title':'What Fire Remembers','description':'Silence the bronze eagle and learn from Prometheus.','frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
 # Dirty ivory, warm undergrowth, and the predator's first useful craft.

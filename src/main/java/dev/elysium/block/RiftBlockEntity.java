@@ -52,20 +52,27 @@ public final class RiftBlockEntity extends BlockEntity {
     }
     private void spawn(ServerLevel l,boolean first){
         if(Nightfall.protectedAt(l,worldPosition.above(6)))return;
-        if(l.getEntitiesOfClass(AshenHoundEntity.class,new AABB(worldPosition).inflate(48)).size()>=4)return;
-        if(kind==2&&first&&l.getEntitiesOfClass(ChainWardenEntity.class,new AABB(worldPosition).inflate(64)).isEmpty()){
-            var w=ModEntities.CHAIN_WARDEN.get().create(l);if(w!=null)emerge(l,w,worldPosition);
+        var nearby=new AABB(worldPosition).inflate(48);
+        int remaining=4-l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,nearby,DeepEcology::hostile).size();
+        if(remaining<=0)return;
+        if(kind==2&&first&&l.getEntitiesOfClass(ChainWardenEntity.class,nearby.inflate(16)).isEmpty()){
+            var w=ModEntities.CHAIN_WARDEN.get().create(l);if(w!=null&&emerge(l,w,worldPosition))remaining--;
         }
-        for(int i=0;i<(first?2:1);i++){
+        if(kind==1&&l.getEntitiesOfClass(MireMournerEntity.class,nearby).size()<2){
+            var m=ModEntities.MIRE_MOURNER.get().create(l);if(m!=null&&emerge(l,m,worldPosition))remaining--;
+            if(!first)return;
+        }
+        for(int i=0;i<(first?2:1)&&remaining>0;i++){
             var pos=worldPosition.offset(i==0?-2:2,1,0);var h=ModEntities.ASHEN_HOUND.get().create(l);if(h==null)continue;
-            emerge(l,h,pos.below());
+            if(emerge(l,h,pos.below()))remaining--;
         }
     }
     /** The complete body must fit above all neighbouring floor columns, not only its centre point. */
-    private void emerge(ServerLevel l,net.minecraft.world.entity.Mob mob,BlockPos foot){
+    private boolean emerge(ServerLevel l,net.minecraft.world.entity.Mob mob,BlockPos foot){
         mob.setPersistenceRequired();for(int dy=1;dy<=8;dy++){
-            mob.setPos(Vec3.atBottomCenterOf(foot.above(dy)));if(l.noCollision(mob)){l.addFreshEntity(mob);return;}
+            mob.setPos(Vec3.atBottomCenterOf(foot.above(dy)));if(l.noCollision(mob))return l.addFreshEntity(mob);
         }
+        return false;
     }
     public static void tick(Level l,BlockPos p,BlockState s,RiftBlockEntity r){r.advance();}
     @Override protected void saveAdditional(CompoundTag t,HolderLookup.Provider p){super.saveAdditional(t,p);if(plan!=null)t.putIntArray("Heights",plan.heights());t.putInt("Kind",kind);t.putInt("Age",age);t.putInt("Cooldown",cooldown);t.putBoolean("Opened",opened);}

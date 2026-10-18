@@ -39,7 +39,14 @@ def texture(name, w, h):
         for x in range(w):
             grain = rng.choice((-4, -2, 0, 0, 2, 4))
             wave = math.sin(x*.53 + math.sin(y*.33)*2)
-            if name == 'bronze_feather':
+            if name == 'bronze_pinion':
+                centre=13+(h-y)*.18; d=abs(x-centre)
+                extent=7*math.sin(max(0,(y-2)/(h-6))*math.pi)**.6 if 2<=y<=h-4 else 0
+                if d>extent and not (d<1 and y>h-12): pixels.append((0,0,0,0)); continue
+                barb=(y+int(d*1.8))%5
+                c=(205,149,66) if d<1 else (159,102,48) if barb<3 else (72,48,32)
+                if y>h*.73 and d>1:c=mix(c,(51,73,60),.55)
+            elif name == 'bronze_feather':
                 # Long-axis quill and oblique barbs: different from a sheet of copper.
                 d = abs(x-(w-1)/2)
                 barb = (y + int(d*1.6)) % 7
@@ -105,7 +112,8 @@ def texture(name, w, h):
 SPECS = [('entity/bronze_feather',32,64),('entity/bronze_plate',32,32),('entity/horn',32,32),
          ('entity/cinder_hide',32,32),('entity/titan_skin',64,64),('entity/ember',16,16),
          ('entity/mourner_cloth',32,64),('entity/moth_wing',64,32),('block/charred_bone',32,32),
-         ('block/cinder_ash',32,32),('block/burnt_clinker',32,32),('block/smouldering_clinker',32,32)]
+         ('block/cinder_ash',32,32),('block/burnt_clinker',32,32),('block/smouldering_clinker',32,32),
+         ('item/bronze_pinion',32,32)]
 
 
 def main():
@@ -118,7 +126,7 @@ def main():
         else: target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(content)
     if args.preview:
         from PIL import Image, ImageDraw, ImageFont
-        sheet=Image.new('RGB',(1040,1030),'#191817');draw=ImageDraw.Draw(sheet)
+        sheet=Image.new('RGB',(1040,62+320*math.ceil(len(SPECS)/4)),'#191817');draw=ImageDraw.Draw(sheet)
         font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',17)
         draw.text((24,18),'TARTARUS / original material study — exact shipped pixels',font=font,fill='#e8c58e')
         for i,(path,w,h) in enumerate(SPECS):

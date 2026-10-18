@@ -72,7 +72,7 @@ public final class PrometheusGameTests {
             try{
                 bird.phase(BronzeEagleEntity.CIRCLE,69);bird.tick();
                 h.assertTrue(bird.phase()==BronzeEagleEntity.TELL&&player.getHealth()==20,"The dive announces its locked ground position before doing damage");
-                for(int i=0;i<36;i++)bird.tick();
+                for(int i=0;i<BronzeEagleEntity.DIVE_WARNING;i++)bird.tick();
                 h.assertTrue(bird.phase()==BronzeEagleEntity.DIVE&&player.getHealth()==20,"The complete dive warning is safe");
                 for(int i=0;i<28;i++)bird.tick();
                 h.assertTrue(player.getHealth()<20,"A player who stays in the marked dive lane is struck by the moving body");

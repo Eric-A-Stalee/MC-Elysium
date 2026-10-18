@@ -52,6 +52,10 @@ public final class ForgeVisualClientProbe {
             long warmup=index==0?(SCENES[index].equals("stray_cinder")?30_000_000_000L:90_000_000_000L):20_000_000_000L;
             next=now+warmup;attackDeadline=next+30_000_000_000L;requested=true;captured=false;cinderFramed=false;
         } else if(now>=next&&!captured) {
+            if(SCENES[index].equals("inhabitant_command")) {
+                boolean warned=mc.level.getEntitiesOfClass(dev.elysium.entity.CrownlessEntity.class,mc.player.getBoundingBox().inflate(80),e->e.phase()==dev.elysium.entity.CrownlessEntity.INHALE&&e.age()>=35).size()>0;
+                if(!warned){if(now>=attackDeadline)throw new IllegalStateException("The living captive never warned the survival observer");return;}
+            }
             if(SCENES[index].equals("chimera_attack")) {
                 boolean bolt=mc.level.getEntitiesOfClass(dev.elysium.entity.CinderBoltEntity.class,mc.player.getBoundingBox().inflate(40),e->e.tickCount>=5&&e.tickCount<=18).size()>0;
                 if(!bolt) {

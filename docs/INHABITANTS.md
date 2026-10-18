@@ -14,7 +14,7 @@ The old Empty Seat is rebuilt into an open, broken apse around the living body. 
 
 ## Mire Mourner
 
-A tall, hollow shroud over long hands and a false amber hearth. Naturally inhabits the Hollow Mire. It marks a fixed patch of ground with ash for two seconds, then harms and briefly slows a survivor still inside it. Move out of the marked patch; the attack does not follow you. Solid cover, Hope held in either hand, a watch ward, or actual block light of level 10 at the player prevents acquisition and damage. A glowing face is not a source of block light.
+A tall, hollow shroud over long hands and a false amber hearth. Naturally inhabits the Hollow Mire. Unrepaired Sorrow wounds can also release mourners onto the surface after the First Flame is used. It marks a fixed patch of ground with ash for two seconds, then harms and briefly slows a survivor still inside it. Move out of the marked patch; the attack does not follow you. Solid cover, Hope held in either hand, a watch ward, or actual block light of level 10 at the player prevents acquisition and damage. A glowing face is not a source of block light.
 
 ## Ash Moth
 
@@ -22,14 +22,14 @@ A harmless, roughly two-block winged inhabitant of the deep strata, also present
 
 ## Existing inhabitants, revisited
 
-The eagle has a substantially larger body (6.4 × 5.4 block collision bounds) and a much wider flight silhouette. Separate coverts, primary feathers, hooked beak, brow, crest and talons use original materials. The grounded recovery and visible attack warnings remain; more size does not mean extra health or a shorter dodge window.
+The eagle has a substantially larger body (6.4 × 5.4 block collision bounds) and a roughly 26-block spread-wing silhouette. Separate coverts, primary feathers, hooked beak, brow, crest and talons use original materials. The impact warning now marks the enlarged body footprint, with a 48-tick windup and 28 ticks after its aim locks. The grounded recovery remains; health is unchanged. The projectile and carried Bronze Pinion use an original feather sprite as well.
 
 Hungers and Sentenced also use original hide, horn, bone and bronze materials instead of stretched vanilla building blocks. Sentenced now sometimes patrol the Chain Forest; Hungers inhabit the other dry regions. Their four-creature local limit and forty-creature realm limit are shared with mourners. Moths have a separate five-local / forty-eight-realm cap. Ecology never forces chunks merely to find a spawn and honors `doMobSpawning`.
 
 ## Art and evidence
 
-`tools/generate_tartarus_art.py` reproduces twelve original PNGs from code without sampling Minecraft or concept-image pixels. `--check` verifies the committed bytes. `--preview` adds a Pillow contact sheet of the exact sprites. The first skin study resembled masonry and was revised before implementation. The art sheet lives at `docs/art/alpha26-materials.png`.
+`tools/generate_tartarus_art.py` reproduces thirteen original PNGs from code without sampling Minecraft or concept-image pixels. `--check` verifies the committed bytes. `--preview` adds a Pillow contact sheet of the exact sprites. The first skin study resembled masonry and was revised before implementation. The art sheet lives at `docs/art/alpha26-materials.png`.
 
 The entity renderer uses textured faces and face normals directly. The four terrain materials replace former vanilla references: warm ash, burnt clinker, smouldering clinker and charred bone. Resource packs can override the new `elysium:textures/...` files normally.
 
-The opt-in `[capture-inhabitants]` review generates actual natural prisons, checks the titan's full collision volume, then captures nine Minecraft client views without shaders. Geometry inspection uses clearly documented night vision; `inhabitant_dark` removes it and uses one real Keeper's Lamp. The close creature views use posed entities so materials and silhouette can be judged consistently. These are in-game captures, not concept renders.
+The opt-in `[capture-inhabitants]` review generates actual natural prisons, checks the titan's full collision volume, then captures ten Minecraft client views without shaders. Geometry inspection uses clearly documented night vision; `inhabitant_dark` removes it and uses one real Keeper's Lamp. The command view waits for a real warning against a damage-resistant survival observer. The close creature views use posed entities so materials and silhouette can be judged consistently. These are in-game captures, not concept renders.

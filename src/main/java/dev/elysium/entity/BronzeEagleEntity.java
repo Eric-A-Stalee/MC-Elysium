@@ -22,6 +22,7 @@ import net.minecraft.world.phys.*;
 public final class BronzeEagleEntity extends Mob {
     public static final int PERCH=0,CIRCLE=1,TELL=2,DIVE=3,RECOVER=4,PINIONS=5;
     private static final EntityDataAccessor<Integer> PHASE=SynchedEntityData.defineId(BronzeEagleEntity.class,EntityDataSerializers.INT);
+    public static final int DIVE_WARNING=48;
     private static final EntityDataAccessor<Integer> AGE=SynchedEntityData.defineId(BronzeEagleEntity.class,EntityDataSerializers.INT);
     private final ServerBossEvent boss=new ServerBossEvent(Component.translatable("entity.elysium.bronze_eagle"),BossEvent.BossBarColor.RED,BossEvent.BossBarOverlay.PROGRESS);
     private BlockPos control;private Vec3 home,aim=Vec3.ZERO,direction=Vec3.ZERO;private boolean alternate,struck;
@@ -53,8 +54,11 @@ public final class BronzeEagleEntity extends Mob {
         }else if(phase()==TELL){
             if(age<20)aim=target.position().add(0,.7,0);
             face(aim.subtract(position()));
-            if(age%4==0)server.sendParticles(ParticleTypes.ASH,aim.x,aim.y,aim.z,8,.5,.05,.5,.005);
-            if(age>=36){direction=aim.subtract(position()).normalize();phase(DIVE,0);playSound(SoundEvents.PHANTOM_SWOOP,1.7f,.6f);}
+            if(age%4==0){
+                double radius=getBbWidth()/2+.6;
+                for(int i=0;i<24;i++){double a=i*Math.PI/12;server.sendParticles(ParticleTypes.ASH,aim.x+Math.cos(a)*radius,aim.y-.5,aim.z+Math.sin(a)*radius,2,.08,.04,.08,.003);}
+            }
+            if(age>=DIVE_WARNING){direction=aim.subtract(position()).normalize();phase(DIVE,0);playSound(SoundEvents.PHANTOM_SWOOP,1.7f,.6f);}
         }else if(phase()==DIVE){
             var before=getBoundingBox();move(MoverType.SELF,direction.scale(.95));face(direction);
             if(!struck&&before.minmax(getBoundingBox()).inflate(.2).intersects(target.getBoundingBox())&&visible(target)){

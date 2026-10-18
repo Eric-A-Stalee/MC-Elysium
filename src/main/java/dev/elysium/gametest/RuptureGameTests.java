@@ -43,4 +43,26 @@ public final class RuptureGameTests {
             for(var e:l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,new net.minecraft.world.phys.AABB(centre).inflate(30)))if(e instanceof dev.elysium.entity.AshenHoundEntity||e instanceof dev.elysium.entity.ChainWardenEntity)e.discard();l.getServer().getPlayerList().remove(player);l.getDataStorage().set("elysium_realm_cycle",RealmCycle.load(old,l.registryAccess()));l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(grief,l.getServer());l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(spawns,l.getServer());l.getServer().setDifficulty(difficulty,true);
         }
     }
+    @GameTest(template="portal_test_empty",timeoutTicks=160)
+    public static void sorrowCanReachTheSurfaceButAllEmergenceSharesOnePopulationBudget(GameTestHelper h){
+        var l=h.getLevel();var centre=h.absolutePos(new BlockPos(4950,110,0));
+        for(var p:BlockPos.betweenClosed(centre.offset(-13,-8,-13),centre.offset(13,9,13)))l.setBlock(p,p.getY()<=centre.getY()?Blocks.STONE.defaultBlockState():Blocks.AIR.defaultBlockState(),2);
+        var old=RealmCycle.get(l).save(new CompoundTag(),l.registryAccess());boolean grief=l.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING),spawns=l.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING);var difficulty=l.getDifficulty();
+        var cycle=new RealmCycle();l.getDataStorage().set("elysium_realm_cycle",cycle);cycle.awaken(centre);l.getServer().setDifficulty(Difficulty.NORMAL,true);l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(true,l.getServer());l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(true,l.getServer());
+        int[] heights=new int[441];Arrays.fill(heights,centre.getY());var plan=new RupturePlan(centre.getX(),centre.getZ(),heights);var player=CombatTestPlayer.create(l,centre.above());
+        var area=new net.minecraft.world.phys.AABB(centre).inflate(35);
+        try{
+            h.assertTrue(RuptureDirector.open(l,plan,1),"An unbound Sorrow wound can open");var r=(RiftBlockEntity)l.getBlockEntity(plan.core());
+            for(int i=0;i<80;i++)r.advance();
+            var mourners=l.getEntitiesOfClass(dev.elysium.entity.MireMournerEntity.class,area);
+            h.assertTrue(mourners.size()==1&&l.noCollision(mourners.getFirst()),"A real, fully unobstructed mourner emerges with Sorrow");
+            for(int i=0;i<2600;i++)r.advance();
+            h.assertTrue(l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,area,DeepEcology::hostile).size()==4,"Repeated emergence shares a four-creature budget across species");
+            cycle.bindDeep(1);r.advance();h.assertTrue(r.sealed(),"Repairing Sorrow closes its surface wounds too");
+            h.assertTrue(!mourners.getFirst().isRemoved(),"Repair does not erase an escaped inhabitant");h.succeed();
+        }finally{
+            for(var e:l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,area,DeepEcology::hostile))e.discard();l.getServer().getPlayerList().remove(player);l.getDataStorage().set("elysium_realm_cycle",RealmCycle.load(old,l.registryAccess()));l.getGameRules().getRule(GameRules.RULE_MOBGRIEFING).set(grief,l.getServer());l.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(spawns,l.getServer());l.getServer().setDifficulty(difficulty,true);
+        }
+    }
+
 }

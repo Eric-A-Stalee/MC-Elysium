@@ -7,6 +7,7 @@ Use a Java 21 JDK, Minecraft 1.21.1 and the pinned NeoForge 21.1.233 development
 ```sh
 python3 tools/generate_assets.py --check
 python3 tools/generate_ambience.py --check
+python3 tools/generate_tartarus_art.py --check
 python3 tools/validate_client_assets.py
 python3 tools/generate_worldgen.py --check
 python3 tools/validate_worldgen.py

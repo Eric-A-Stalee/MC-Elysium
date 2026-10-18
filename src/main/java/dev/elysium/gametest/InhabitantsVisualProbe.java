@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** Actual client inspection of naturally generated prisons and explicitly posed living creatures. */
 final class InhabitantsVisualProbe {
-    static final String[] SCENES={"inhabitant_captive","inhabitant_face","inhabitant_dark","inhabitant_mourner","inhabitant_moths","inhabitant_hunger","inhabitant_sentenced","inhabitant_eagle","inhabitant_perch"};
+    static final String[] SCENES={"inhabitant_captive","inhabitant_face","inhabitant_command","inhabitant_dark","inhabitant_mourner","inhabitant_moths","inhabitant_hunger","inhabitant_sentenced","inhabitant_eagle","inhabitant_perch"};
     private static DeepBindingPiece[] bindings;private static PrometheusPrisonPiece prison;
     private static MireMournerEntity mourner;private static AshenHoundEntity hound;private static ChainWardenEntity warden;
     static void prepare(ServerLevel l){
@@ -38,6 +38,13 @@ final class InhabitantsVisualProbe {
         switch(scene){
             case "inhabitant_captive"->{camera=home.add(35,18,56);target=home.add(0,19,0);}
             case "inhabitant_face"->{camera=home.add(12,28,20);target=home.add(0,27,0);}
+            case "inhabitant_command"->{
+                p.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+                p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,2400,4,false,false));
+                p.addEffect(new MobEffectInstance(MobEffects.SATURATION,2400,4,false,false));
+                p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();
+                camera=home.add(9,3,40);target=home.add(0,24,0);
+            }
             case "inhabitant_dark"->{p.removeEffect(MobEffects.NIGHT_VISION);l.setBlock(core.south(3),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=Vec3.atCenterOf(core).add(3,1,8);target=home.add(0,22,0);}
             case "inhabitant_mourner"->{camera=mourner.position().add(4,1,7);target=mourner.position().add(0,1.7,0);}
             case "inhabitant_moths"->{var lamp=Vec3.atCenterOf(bindings[1].core().south(17));camera=lamp.add(4,1,5);target=lamp.add(0,1.3,0);}

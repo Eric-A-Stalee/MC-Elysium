@@ -10,7 +10,7 @@ The paradise now has a continuous, darker world beneath it. A buried Forge and a
 
 - Six surface biomes: Golden Fields, Golden Birch Woods, Golden Watermeadows, Amber Lakes, Elysian Highlands and Ivory Peaks.
 - Parameterized biome definitions generate climate entries, palettes, feature budgets and settlement tags together, informed by the architecture of BicBiomeCraft.
-- Open Golden Fields, straw/ochre biome grass colors, and golden woods with sparse openings, varied tall crowns and occasional branching birches. Wild grain and passive animals fill the landscape. Models reference vanilla textures; no Minecraft texture files are redistributed.
+- Open Golden Fields, straw/ochre biome grass colors, and golden woods with sparse openings, varied tall crowns and occasional branching birches. Wild grain and passive animals fill the landscape. Surface models derive from vanilla textures; new underworld materials and creature skins are original pixel art. No Minecraft texture files are redistributed.
 - Flowered stream corridors with high-branching birches, wider amber lake reaches, copper foliage, scattered fallen leaves and cooler mountain palettes.
 - Independent surface terrain with river cuts and uplands. Below the Eye, four depth-specific biomes share continuous seeded geology, huge caverns, black-water basins, linked chains, ember roots and charred titan remains. The surface formulas and approved palettes are retained.
 - Two original harvest hamlet layouts with pale cottages, grain plots and villagers. Gentle sites can gain a short path to a nearby riverbank; terrain-aware birch bridges span suitable rivers.
@@ -23,6 +23,7 @@ The paradise now has a continuous, darker world beneath it. A buried Forge and a
 - A bounded Tartarus basin beneath each new chain: a long inspection descent, charcoal cliffs, sparse ash, buried embers, a repairable crossing, and a dark chamber containing the tar-and-slag chimera. Its real eye hitbox lowers after visible cinder volleys, a hooked-tail sweep and an expanding ground pulse. Recover the First Flame and return it to the original Forge hearth. [Expedition guide](docs/TARTARUS.md).
 - A physical three-stroke forge press with persistent work, Sunwrought Ingots, a replanting Harvest Sickle, a Dawn Wayfinder, protective Ward Lamps and luminous Ember Glass. The first completed divine batch deliberately starts an independent realm clock and opens the sealed vessel. Three surface watch traditions and three distinct deep restraints must hold before the heated governor can release the living sky or bind the golden hour.
 - A monumental Prometheus prison, an animated Bronze Eagle with actual dives and pinions, blind Ashen Hungers, and bell-headed Sentenced wardens with telegraphed chain attacks. Renewably forged Binding Nails repair physical surface wounds and prepared deep restraints.
+- The Crownless, a living 34-block captive whose commands stir nearby prisoners until Dominion is repaired; Mire Mourners that counterfeit warmth; harmless Ash Moths that gather at real light. Sorrow wounds can release mourners onto the surface. [Inhabitants and art notes](docs/INHABITANTS.md).
 - Dedicated-server GameTests and a GitHub Actions build. See [validation notes](docs/TESTING.md) for what has actually run.
 
 The working-forge and first-dawn milestones are preserved as separate
@@ -30,7 +31,7 @@ The working-forge and first-dawn milestones are preserved as separate
 
 ## Try it
 
-Install NeoForge for Minecraft **1.21.1**, then put `elysium-0.1.0-alpha.25.jar` in `mods/` on both client and server. No biome, terrain or structure mod is required. Alpha 25 expands Tartarus to a continuous world beneath Elysium and connects divine forging to lasting consequences. Use a **new alpha test world or fully regenerate Elysium**: the dimension now spans Y=-640 through Y=319, and no saved-world migration is promised. Start with a mountain archive, a waystation or a folio bought from an Elysium librarian/cartographer. The [expedition guide](docs/UNBOUND.md) covers the full survival route and inspection commands.
+Install NeoForge for Minecraft **1.21.1**, then put `elysium-0.1.0-alpha.26.jar` in `mods/` on both client and server. No biome, terrain or structure mod is required. Alpha 26 adds a living captive titan, Mire Mourners, Ash Moths, original creature and terrain textures, and a much larger Bronze Eagle. Dominion’s prison now contains the Crownless; the First Flame can free his voice while his body remains chained. Use a **new alpha test world or fully regenerate Elysium**: the dimension now spans Y=-640 through Y=319, and no saved-world migration is promised. Start with a mountain archive, a waystation or a folio bought from an Elysium librarian/cartographer. The [expedition guide](docs/UNBOUND.md) covers the full survival route and inspection commands.
 
 The approved **warmer-amber B foliage** (`#FFB947`), L3 texture curve and G4.1 golden grass are unchanged. Grass tops, side overlays and grass plants receive the same treatment within Elysium. The client derives the sprites from the active resource pack, preserving their pixel patterns, transparency, resolution and animation. The untouched realm and chosen golden-hour ending stay at **11,500 ticks**, and the pale, snowlike Ivory Peaks rock remains part of the intended mountain atmosphere.
 
@@ -59,6 +60,7 @@ When changing content definitions, use Python 3.10+:
 
 ```sh
 python3 tools/generate_assets.py
+python3 tools/generate_tartarus_art.py
 python3 tools/validate_client_assets.py
 python3 tools/generate_worldgen.py
 python3 tools/validate_worldgen.py
