@@ -13,10 +13,15 @@ import net.minecraft.world.level.block.*;
 
 /** Eyeless charcoal anatomy, a hollow rib cage and a jaw that opens before the lunge. */
 public final class AshenHoundRenderer extends EntityRenderer<AshenHoundEntity> {
-    private final BlockRenderDispatcher blocks;
-    public AshenHoundRenderer(EntityRendererProvider.Context c){super(c);blocks=c.getBlockRenderDispatcher();shadowRadius=.7f;}
-    @Override public ResourceLocation getTextureLocation(AshenHoundEntity e){return TextureAtlas.LOCATION_BLOCKS;}
-    private void box(PoseStack p,MultiBufferSource b,int light,Block m,double x,double y,double z,double w,double h,double d){p.pushPose();p.translate(x-w/2,y,z-d/2);p.scale((float)w,(float)h,(float)d);blocks.renderSingleBlock(m.defaultBlockState(),p,b,light,OverlayTexture.NO_OVERLAY);p.popPose();}
+    public AshenHoundRenderer(EntityRendererProvider.Context c){super(c);shadowRadius=.7f;}
+    @Override public ResourceLocation getTextureLocation(AshenHoundEntity e){return TexturedPrimitives.HIDE;}
+    private void box(PoseStack p,MultiBufferSource b,int light,Block m,double x,double y,double z,double w,double h,double d){
+        var material=m==Blocks.RED_TERRACOTTA?TexturedPrimitives.EMBER:
+            m==Blocks.DRIPSTONE_BLOCK||m==Blocks.CRACKED_DEEPSLATE_TILES?TexturedPrimitives.BONE:
+            m==Blocks.OBSIDIAN?TexturedPrimitives.HORN:
+            m==Blocks.BASALT||m==Blocks.BLACKSTONE?TexturedPrimitives.HIDE:TexturedPrimitives.BRONZE;
+        TexturedPrimitives.box(p,b,light,material,x,y,z,w,h,d);
+    }
     @Override public void render(AshenHoundEntity e,float yaw,float partial,PoseStack p,MultiBufferSource b,int light){
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-Mth.rotLerp(partial,e.yRotO,e.getYRot())));double stride=Math.sin((e.tickCount+partial)*.6)*Math.min(1,e.getDeltaMovement().horizontalDistance()*8);
         box(p,b,light,Blocks.BASALT,0,.64,-.2,.45,.3,1.9);box(p,b,light,Blocks.BLACKSTONE,0,.6,.50,1.05,.65,.7);

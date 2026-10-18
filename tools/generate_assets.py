@@ -321,7 +321,7 @@ for name, parent, icon, title, description in [
 for name, texture in [('burnt_clinker','blackstone'),('cinder_ash','gray_terracotta'),('smouldering_clinker','blackstone'),
                       ('keeper_workbench','smithing_table_side'),('tartarus_counterweight','chiseled_deepslate'),('tartarus_heart','chiseled_polished_blackstone')]:
     pieces=[cuboid([0,0,0],[16,16,16],'#base')]
-    textures={'base':f'minecraft:block/{texture}','particle':'#base','metal':'minecraft:block/weathered_copper','ember':'minecraft:block/magma','iron':'minecraft:block/netherite_block'}
+    textures={'base':f'elysium:block/{name}' if name in ('burnt_clinker','cinder_ash','smouldering_clinker') else f'minecraft:block/{texture}','particle':'#base','metal':'minecraft:block/weathered_copper','ember':'minecraft:block/magma','iron':'minecraft:block/netherite_block'}
     if name=='smouldering_clinker':
         pieces += [cuboid([5,15.99,2],[6,16.01,13],'#ember'),cuboid([6,15.99,10],[12,16.01,11],'#ember')]
     if name=='keeper_workbench':
@@ -433,7 +433,7 @@ asset('models/item/bronze_pinion',{'parent':'minecraft:block/block','gui_light':
 data('advancement/promethean_craft',{'parent':'elysium:first_flame','display':{'icon':{'id':'elysium:bronze_pinion'},'title':'What Fire Remembers','description':'Silence the bronze eagle and learn from Prometheus.','frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 
 # Dirty ivory, warm undergrowth, and the predator's first useful craft.
-asset('models/block/charred_bone',{'parent':'minecraft:block/block','textures':{'side':'minecraft:block/bone_block_side','end':'minecraft:block/bone_block_top','particle':'#side'},'elements':[{'from':[0,0,0],'to':[16,16,16],'faces':{face:{'texture':'#end' if face in ('up','down') else '#side','tintindex':0,'cullface':face} for face in ('up','down','north','south','west','east')}}]})
+asset('models/block/charred_bone',{'parent':'minecraft:block/cube_all','textures':{'all':'elysium:block/charred_bone'}})
 asset('blockstates/charred_bone',{'variants':{'':{'model':'elysium:block/charred_bone'}}})
 asset('models/item/charred_bone',{'parent':'elysium:block/charred_bone'})
 loot('charred_bone',[pool([item('elysium:charred_bone')],[SURVIVES])])

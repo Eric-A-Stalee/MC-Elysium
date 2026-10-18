@@ -15,11 +15,16 @@ import net.minecraft.world.level.block.*;
 
 /** Hollow bell, heavy yoke and dragging linked arms; its chain reaches the same eight-block lane as the strike. */
 public final class ChainWardenRenderer extends EntityRenderer<ChainWardenEntity> {
-    private final BlockRenderDispatcher blocks;
-    public ChainWardenRenderer(EntityRendererProvider.Context c){super(c);blocks=c.getBlockRenderDispatcher();shadowRadius=1.4f;}
-    @Override public ResourceLocation getTextureLocation(ChainWardenEntity e){return TextureAtlas.LOCATION_BLOCKS;}
+    public ChainWardenRenderer(EntityRendererProvider.Context c){super(c);shadowRadius=1.4f;}
+    @Override public ResourceLocation getTextureLocation(ChainWardenEntity e){return TexturedPrimitives.HIDE;}
     @Override public boolean shouldRender(ChainWardenEntity e,Frustum f,double x,double y,double z){return f.isVisible(e.getBoundingBox().inflate(9,3,9));}
-    private void box(PoseStack p,MultiBufferSource b,int light,Block m,double x,double y,double z,double w,double h,double d){p.pushPose();p.translate(x-w/2,y,z-d/2);p.scale((float)w,(float)h,(float)d);blocks.renderSingleBlock(m.defaultBlockState(),p,b,light,OverlayTexture.NO_OVERLAY);p.popPose();}
+    private void box(PoseStack p,MultiBufferSource b,int light,Block m,double x,double y,double z,double w,double h,double d){
+        var material=m==Blocks.RED_TERRACOTTA?TexturedPrimitives.EMBER:
+            m==Blocks.DRIPSTONE_BLOCK||m==Blocks.CRACKED_DEEPSLATE_TILES?TexturedPrimitives.BONE:
+            m==Blocks.OBSIDIAN?TexturedPrimitives.HORN:
+            m==Blocks.BASALT||m==Blocks.BLACKSTONE?TexturedPrimitives.HIDE:TexturedPrimitives.BRONZE;
+        TexturedPrimitives.box(p,b,light,material,x,y,z,w,h,d);
+    }
     @Override public void render(ChainWardenEntity e,float yaw,float partial,PoseStack p,MultiBufferSource b,int light){
         p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-Mth.rotLerp(partial,e.yRotO,e.getYRot())));double stride=Math.sin((e.tickCount+partial)*.23)*Math.min(1,e.getDeltaMovement().horizontalDistance()*10);
         for(int side:new int[]{-1,1}){p.pushPose();p.translate(side*.58,1.65,0);p.mulPose(Axis.XP.rotationDegrees((float)(stride*18*side)));box(p,b,light,Blocks.BASALT,0,-1.5,0,.5,1.6,.6);box(p,b,light,Blocks.BLACKSTONE,0,-1.65,.2,.7,.25,1.1);p.popPose();}

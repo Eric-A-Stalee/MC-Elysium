@@ -24,7 +24,7 @@ public final class ModEntities {
             ()->EntityType.Builder.<SlagChimeraEntity>of(SlagChimeraEntity::new,MobCategory.MISC).sized(11,4)
                     .fireImmune().clientTrackingRange(12).updateInterval(2).build("elysium:slag_chimera"));
     public static final DeferredHolder<EntityType<?>,EntityType<dev.elysium.entity.BronzeEagleEntity>> BRONZE_EAGLE=TYPES.register("bronze_eagle",
-            ()->EntityType.Builder.<dev.elysium.entity.BronzeEagleEntity>of(dev.elysium.entity.BronzeEagleEntity::new,MobCategory.MISC).sized(3.6f,2.8f).fireImmune().clientTrackingRange(12).updateInterval(2).build("elysium:bronze_eagle"));
+            ()->EntityType.Builder.<dev.elysium.entity.BronzeEagleEntity>of(dev.elysium.entity.BronzeEagleEntity::new,MobCategory.MISC).sized(6.4f,5.4f).fireImmune().clientTrackingRange(12).updateInterval(2).build("elysium:bronze_eagle"));
     public static final DeferredHolder<EntityType<?>,EntityType<dev.elysium.entity.BronzeFeatherEntity>> BRONZE_FEATHER=TYPES.register("bronze_feather",
             ()->EntityType.Builder.<dev.elysium.entity.BronzeFeatherEntity>of(dev.elysium.entity.BronzeFeatherEntity::new,MobCategory.MISC).sized(.3f,.3f).fireImmune().clientTrackingRange(8).updateInterval(1).build("elysium:bronze_feather"));
     public static final DeferredHolder<EntityType<?>,EntityType<dev.elysium.entity.AshenHoundEntity>> ASHEN_HOUND=TYPES.register("ashen_hound",()->EntityType.Builder.<dev.elysium.entity.AshenHoundEntity>of(dev.elysium.entity.AshenHoundEntity::new,MobCategory.MONSTER).sized(1.3f,1.25f).fireImmune().clientTrackingRange(10).build("elysium:ashen_hound"));

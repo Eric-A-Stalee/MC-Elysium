@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "base": "minecraft:block/gray_terracotta",
+    "base": "elysium:block/cinder_ash",
     "particle": "#base",
     "metal": "minecraft:block/weathered_copper",
     "ember": "minecraft:block/magma",

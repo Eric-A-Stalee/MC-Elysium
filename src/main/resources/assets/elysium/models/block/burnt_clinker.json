@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "base": "minecraft:block/blackstone",
+    "base": "elysium:block/burnt_clinker",
     "particle": "#base",
     "metal": "minecraft:block/weathered_copper",
     "ember": "minecraft:block/magma",

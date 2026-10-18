@@ -4,43 +4,57 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.elysium.entity.BronzeEagleEntity;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.*;
-import net.minecraft.client.renderer.texture.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.*;
+import static dev.elysium.client.TexturedPrimitives.*;
 
-/** Articulated serrated pinions and hooked beak; active-pack materials, original anatomy. */
+/** Twenty-two-block flight silhouette, layered coverts and individually splayed primary feathers. */
 public final class BronzeEagleRenderer extends EntityRenderer<BronzeEagleEntity> {
-    private final BlockRenderDispatcher blocks;
-    public BronzeEagleRenderer(EntityRendererProvider.Context c){super(c);blocks=c.getBlockRenderDispatcher();shadowRadius=2;}
-    @Override public ResourceLocation getTextureLocation(BronzeEagleEntity e){return TextureAtlas.LOCATION_BLOCKS;}
-    @Override public boolean shouldRender(BronzeEagleEntity e,Frustum f,double x,double y,double z){return f.isVisible(e.getBoundingBox().inflate(7,4,5));}
-    private void box(PoseStack p,MultiBufferSource b,int light,Block material,double x,double y,double z,double w,double h,double d){p.pushPose();p.translate(x-w/2,y,z-d/2);p.scale((float)w,(float)h,(float)d);blocks.renderSingleBlock(material.defaultBlockState(),p,b,light,OverlayTexture.NO_OVERLAY);p.popPose();}
+    public static final float SCALE=1.9f;
+    public BronzeEagleRenderer(EntityRendererProvider.Context c){super(c);shadowRadius=3.4f;}
+    @Override public ResourceLocation getTextureLocation(BronzeEagleEntity e){return FEATHER;}
+    @Override public boolean shouldRender(BronzeEagleEntity e,Frustum f,double x,double y,double z){return f.isVisible(e.getBoundingBox().inflate(13,5,9));}
     @Override public void render(BronzeEagleEntity e,float yaw,float partial,PoseStack p,MultiBufferSource b,int light){
         double t=e.tickCount+partial;boolean rest=e.phase()==BronzeEagleEntity.PERCH||e.phase()==BronzeEagleEntity.RECOVER;
-        double flap=rest?0:Math.sin(t*.19)*22,fold=e.phase()==BronzeEagleEntity.DIVE?-20:rest?-15:e.phase()==BronzeEagleEntity.TELL?-18:0;
-        p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-Mth.rotLerp(partial,e.yRotO,e.getYRot())));
-        box(p,b,light,Blocks.BASALT,0,.55,0,1.65,1.7,2.7);
-        for(int i=0;i<5;i++)box(p,b,light,i%2==0?Blocks.WAXED_EXPOSED_COPPER:Blocks.WAXED_WEATHERED_COPPER,0,.6+i*.27,.75-i*.12,1.7-i*.12,.35,1.7);
-        box(p,b,light,Blocks.WAXED_EXPOSED_COPPER,0,2.05,1.15,1.05,.95,1.3);
-        box(p,b,light,Blocks.BLACKSTONE,0,2.2,2,.65,.48,.9);box(p,b,light,Blocks.OBSIDIAN,0,1.92,2.35,.5,.58,.35);
+        double flap=rest?Math.sin(t*.055)*2:Math.sin(t*.12)*19;
+        double fold=e.phase()==BronzeEagleEntity.DIVE?-28:rest?-12:e.phase()==BronzeEagleEntity.TELL?-14:0;
+        p.pushPose();p.mulPose(Axis.YP.rotationDegrees(-Mth.rotLerp(partial,e.yRotO,e.getYRot())));p.scale(SCALE,SCALE,SCALE);
+        box(p,b,light,HIDE,0,.55,-.05,1.5,1.5,2.3);
+        for(int row=0;row<5;row++)for(int side:new int[]{-1,1}){
+            p.pushPose();p.translate(side*(.40+row*.045),.64+row*.25,.78-row*.08);p.mulPose(Axis.ZP.rotationDegrees(side*22));
+            box(p,b,light,FEATHER,0,0,0,.65,.48,1.55-row*.12);p.popPose();
+        }
+        box(p,b,light,BRONZE,0,1.92,1.04,.95,.85,1.16);
+        box(p,b,light,HORN,0,2.07,1.94,.57,.42,.94);
+        p.pushPose();p.translate(0,2.1,2.3);p.mulPose(Axis.XP.rotationDegrees(-24));box(p,b,light,HORN,0,-.42,0,.38,.53,.3);p.popPose();
+        for(int i=-1;i<=1;i++){p.pushPose();p.translate(i*.25,2.6,.87);p.mulPose(Axis.XP.rotationDegrees(-32));box(p,b,light,FEATHER,0,0,0,.24,.75,.2);p.popPose();}
         for(int side:new int[]{-1,1}){
-            box(p,b,LightTexture.FULL_BRIGHT,e.phase()==BronzeEagleEntity.TELL?Blocks.ORANGE_CONCRETE:Blocks.RED_TERRACOTTA,side*.54,2.6,1.53,.065,.17,.28);
-            p.pushPose();p.translate(side*.65,1.9,0);if(rest){p.mulPose(Axis.YP.rotationDegrees(side*80));p.scale(.65f,1,1);}p.mulPose(Axis.ZP.rotationDegrees((float)(side*(flap+fold))));
-            box(p,b,light,Blocks.WAXED_WEATHERED_COPPER,side*1.7,0,-.25,3.6,.45,1.7);
-            for(int i=0;i<9;i++){
-                p.pushPose();p.translate(side*(.75+i*.51),-.07,-.40-i*.10);p.mulPose(Axis.YP.rotationDegrees(side*(12+i*3)));
-                box(p,b,light,i%3==0?Blocks.WAXED_WEATHERED_COPPER:Blocks.WAXED_EXPOSED_COPPER,0,0,-.7,.58,.19,2.3+i*.14);
-                box(p,b,light,Blocks.BLACKSTONE,0,-.07,-1.65-i*.05,.35,.15,.7);p.popPose();
+            box(p,b,LightTexture.FULL_BRIGHT,EMBER,side*.48,2.41,1.35,.045,.13,.32);
+            box(p,b,light,HORN,side*.48,2.55,1.37,.17,.13,.54);
+            p.pushPose();p.translate(side*.65,1.82,0);
+            if(rest){p.mulPose(Axis.YP.rotationDegrees(side*73));p.scale(.7f,1,1);}
+            p.mulPose(Axis.ZP.rotationDegrees((float)(side*(flap+fold))));
+            box(p,b,light,BRONZE,side*1.45,0,-.12,2.9,.33,1.2);
+            box(p,b,light,HORN,side*3.7,-.04,-.4,1.7,.19,.58);
+            for(int row=0;row<2;row++)for(int i=0;i<7;i++){
+                p.pushPose();p.translate(side*(.55+i*.51),.20-row*.13,-.02-row*.52);p.mulPose(Axis.YP.rotationDegrees(side*(13+i*2)));
+                box(p,b,light,FEATHER,0,0,-.12,.64,.14,1.15);p.popPose();
+            }
+            for(int i=0;i<10;i++){
+                p.pushPose();p.translate(side*(.78+i*.51),-.07,-.46-i*.085);p.mulPose(Axis.YP.rotationDegrees(side*(10+i*3.1)));
+                box(p,b,light,FEATHER,0,0,-.8,.55,.13,2.4+i*.12);
+                box(p,b,light,HORN,0,.02,-2.02-i*.035,.24,.075,.35);p.popPose();
             }
             p.popPose();
-            box(p,b,light,Blocks.BASALT,side*.55,.2,.4,.3,.7,.35);
-            for(int claw=-1;claw<=1;claw++)box(p,b,light,Blocks.OBSIDIAN,side*.55+claw*.16,.02,.8,.12,.18,.85);
+            box(p,b,light,BRONZE,side*.5,.2,.38,.29,.65,.35);
+            for(int claw=-1;claw<=1;claw++){
+                box(p,b,light,HORN,side*.5+claw*.17,.08,.82,.12,.17,.9);
+                box(p,b,light,HORN,side*.5+claw*.17,.01,1.2,.09,.18,.18);
+            }
         }
-        for(int i=-2;i<=2;i++){p.pushPose();p.mulPose(Axis.YP.rotationDegrees(i*10));box(p,b,light,Blocks.WAXED_EXPOSED_CUT_COPPER,i*.26,.6,-2.3,.44,.2,2.2);p.popPose();}
+        for(int i=-3;i<=3;i++){p.pushPose();p.mulPose(Axis.YP.rotationDegrees(i*8));box(p,b,light,FEATHER,i*.22,.6,-2.2,.46,.12,2.5);p.popPose();}
         p.popPose();super.render(e,yaw,partial,p,b,light);
     }
 }
