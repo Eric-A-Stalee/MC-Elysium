@@ -43,7 +43,7 @@ public final class BronzeEagleRenderer extends EntityRenderer<BronzeEagleEntity>
                 box(p,b,light,FEATHER,0,0,-.12,.64,.14,1.15);p.popPose();
             }
             for(int i=0;i<10;i++){
-                p.pushPose();p.translate(side*(.78+i*.51),-.07,-.46-i*.085);p.mulPose(Axis.YP.rotationDegrees(side*(10+i*3.1)));
+                p.pushPose();p.translate(side*(.78+i*.51),-.07,-.46-i*.085);p.mulPose(Axis.YP.rotationDegrees(side*(10+i*3.1f)));
                 box(p,b,light,FEATHER,0,0,-.8,.55,.13,2.4+i*.12);
                 box(p,b,light,HORN,0,.02,-2.02-i*.035,.24,.075,.35);p.popPose();
             }
