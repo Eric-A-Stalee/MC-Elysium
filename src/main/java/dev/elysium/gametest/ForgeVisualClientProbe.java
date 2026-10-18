@@ -49,7 +49,11 @@ public final class ForgeVisualClientProbe {
         }
         if(!requested) {
             mc.player.connection.sendCommand("forge_probe "+SCENES[index]);
-            long warmup=index==0?(SCENES[index].equals("stray_cinder")?30_000_000_000L:90_000_000_000L):20_000_000_000L;
+            // This view stays inside the already loaded prison. Watch its first
+            // inhale: a 20-second settle misses it, then the real command pushes
+            // the unattended flying observer outside the captive's target range.
+            long warmup=index==0?(SCENES[index].equals("stray_cinder")?30_000_000_000L:90_000_000_000L)
+                    :SCENES[index].equals("inhabitant_command")?2_000_000_000L:20_000_000_000L;
             next=now+warmup;attackDeadline=next+30_000_000_000L;requested=true;captured=false;cinderFramed=false;
         } else if(now>=next&&!captured) {
             if(SCENES[index].equals("inhabitant_command")) {
