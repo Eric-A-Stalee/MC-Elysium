@@ -26,6 +26,9 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 @EventBusSubscriber(modid = Elysium.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ElysiumClient {
     @SubscribeEvent public static void entities(net.neoforged.neoforge.client.event.EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.MIRE_MOURNER.get(),MireMournerRenderer::new);
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.ASH_MOTH.get(),AshMothRenderer::new);
+        event.registerEntityRenderer(dev.elysium.registry.ModEntities.CROWNLESS.get(),CrownlessRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.CHAIN_WARDEN.get(),ChainWardenRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.ASHEN_HOUND.get(),AshenHoundRenderer::new);
         event.registerEntityRenderer(dev.elysium.registry.ModEntities.BRONZE_EAGLE.get(),BronzeEagleRenderer::new);

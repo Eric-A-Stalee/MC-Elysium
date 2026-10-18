@@ -17,7 +17,7 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 public final class DeepBindingPiece extends StructurePiece {
     private final int x,y,z,low,kind;private final long seed;private final int[] route;
     public DeepBindingPiece(int x,int y,int z,int low,int kind,long seed,int[] route){
-        super(ModStructures.DEEP_BINDING_PIECE.get(),0,new BoundingBox(x-30,low,z-30,x+30,y+38,z+90));
+        super(ModStructures.DEEP_BINDING_PIECE.get(),0,new BoundingBox(x-(kind==2?44:30),low,z-(kind==2?55:30),x+(kind==2?44:30),y+(kind==2?66:38),z+90));
         if(kind<0||kind>2||route.length!=64)throw new IllegalArgumentException("Invalid binding survey");
         this.x=x;this.y=y;this.z=z;this.low=low;this.kind=kind;this.seed=seed;this.route=route.clone();setOrientation(null);
     }
@@ -54,16 +54,31 @@ public final class DeepBindingPiece extends StructurePiece {
             }
             if(u>20&&u<25&&Math.floorMod(v+30,12)<3&&v<13&&h>=0&&h<16)return stone(u,h,v);
         }else{
-            if(v>=-24&&v<=-18&&Math.abs(u)<12&&h>=2&&h<=31-Math.abs(u)/2){
-                if(h>16&&h<27-Math.abs(u)&&Math.abs(u)<4)return Blocks.CAVE_AIR.defaultBlockState();
-                if(u>5&&h>23+(u%3))return null;
-                if(Math.abs(u)==10||h==8||h==15)return ModBlocks.FORGE_IRON.get().defaultBlockState();
-                return (v==-18&&Math.floorMod(u,4)==0?Blocks.POLISHED_BLACKSTONE:Blocks.CHISELED_DEEPSLATE).defaultBlockState();
+            // The Crownless is an entity in a surveyed bowl, with stone anchors
+            // outside his body. No masonry statue occupies his breathing space.
+            double bowl=Math.hypot(u,(v+23)*.92);
+            for(int side:new int[]{-1,1}){
+                int px=side*34;
+                if(Math.abs(u-px)<=3&&Math.abs(v+26)<=4&&h>=low-y&&h<=58-(side<0?0:5)){
+                    if(h==43||h==44||h==15)return ModBlocks.FORGE_IRON.get().defaultBlockState();
+                    if(h>48&&Math.floorMod(u*7+v,5)<2)return null;
+                    return stone(u,h,v);
+                }
+                // Broken cover is useful against the king's low travelling command.
+                if(Math.abs(u-side*13)<=2&&Math.abs(v-6)<=2&&h>=0&&h<=5-Math.floorMod(v+u,2))return Blocks.POLISHED_BLACKSTONE.defaultBlockState();
             }
-            if(v>=-18&&v<=-10&&Math.abs(u)<12&&h>=2&&h<=7)return stone(u,h,v);
-            if(v>=-18&&v<=(u<0?-6:-12)&&Math.abs(u)>=9&&Math.abs(u)<=12&&h>=7&&h<=13-Math.floorMod(v,3))return ModBlocks.FORGE_IRON.get().defaultBlockState();
-            for(int a:new int[]{-23,21})if(Math.abs(u-a)<=1&&h>=4&&h<=37){int k=(h-4)%12-6;double ring=(v+8)*(v+8)/12.0+k*k/36.0;if(ring>.5&&ring<1.4)return ModBlocks.TARTARUS_CHAIN_BLOCK.get().defaultBlockState();}
+            if(bowl<28&&v<-4){
+                if(h<=1&&h>=Math.max(low-y,-12))return h==1?ModBlocks.BURNT_CLINKER.get().defaultBlockState():Blocks.BLACKSTONE.defaultBlockState();
+                if(h>1&&h<43)return Blocks.CAVE_AIR.defaultBlockState();
+            }
+            // A shattered apse is open above the captive's crown, not a rectangular room.
+            if(bowl>=28&&bowl<32&&v<-16&&h>=0&&h<30+8*Math.sin(u*.17)){
+                if(Math.floorMod(u+v,13)<3&&h>10)return null;
+                return Math.floorMod(h,9)==0?ModBlocks.FORGE_IRON.get().defaultBlockState():stone(u,h,v);
+            }
+            if(bowl<39&&v<-4&&h>=low-y&&h<=Math.max(1,(int)(bowl-27)*.8))return Blocks.BASALT.defaultBlockState();
         }
+
         if(r<25){
             int floor=(kind==2&&r<15)||Math.sin(u*.27+v*.11)+Math.cos(v*.31)>-.6?1:0;
             if(h<=floor&&h>=Math.max(low-y,-9))return h==floor?(Math.sin(u*.23-v*.17)>.65?ModBlocks.CINDER_ASH.get().defaultBlockState():stone(u,h,v)):Blocks.BLACKSTONE.defaultBlockState();

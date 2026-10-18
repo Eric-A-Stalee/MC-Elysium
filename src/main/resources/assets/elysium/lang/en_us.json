@@ -265,7 +265,11 @@
   "lore.elysium.sorrow.1": "THE WATER REMEMBERS\n\nThey tried to drain the cistern. By morning it was full. They tried to burn the water. The smoke remembered every name they had forgotten.",
   "lore.elysium.sorrow.2": "No keeper was sentenced to stay here. That was the cruelty: no one stayed.\n\nSorrow grew so vast that the mountain learned to bow over it.",
   "lore.elysium.sorrow.3": "Carry the small Hope left in the vessel. Bring light close to the restraint. Crouch, hold still, and remain for four seconds.\n\nThen mend the iron with a Binding Nail. You need not leave Hope behind.",
-  "lore.elysium.dominion.1": "THE EMPTY SEAT\n\nThe king is gone. The command remains.\n\nEvery chain below this throne was tightened by someone who believed the order had come from above.",
-  "lore.elysium.dominion.2": "The Sentenced carries its own prison on its shoulders. It rings no bell. It waits for footsteps, and answers with the same punishment it was given.\n\nIt does not know whose reign it serves.",
-  "lore.elysium.dominion.3": "When the chain rises, leave its marked path. When it falls, the jailer must gather it again.\n\nEnd this sentence. Nail the restraint closed. The empty seat must never be allowed to give another order."
+  "lore.elysium.dominion.1": "THE CROWNLESS\n\nHe is still here.\n\nHis crown was broken, his hands chained to the anchors, and his name struck from every stone. The Sentenced are what remains of the people who carried his orders.",
+  "lore.elysium.dominion.2": "The First Flame did not break these chains. It gave his voice a road out.\n\nHe draws a long breath before the command travels across the ground. The broken pillars can shelter you. The Hungers and Sentenced listen too.",
+  "lore.elysium.dominion.3": "Do not try to kill what this prison was built to hold.\n\nEnd the sentence of its own jailer. Then drive a Binding Nail into the restraint. The king will fall silent; his body must remain below.\n\nThe moths follow real warmth. The mourners only imitate it.",
+  "entity.elysium.mire_mourner": "Mire Mourner",
+  "entity.elysium.ash_moth": "Ash Moth",
+  "entity.elysium.crownless": "The Crownless",
+  "message.elysium.crownless.inhale": "The Crownless draws breath. Find cover before the command reaches you."
 }

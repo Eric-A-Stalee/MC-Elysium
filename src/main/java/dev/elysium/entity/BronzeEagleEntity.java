@@ -39,7 +39,7 @@ public final class BronzeEagleEntity extends Mob {
     @Override public void push(double x,double y,double z){}
     @Override public void tick(){
         setDeltaMovement(Vec3.ZERO);super.tick();setDeltaMovement(Vec3.ZERO);
-        if(!(level() instanceof ServerLevel server)||!isAlive())return;
+        if(!(level() instanceof ServerLevel server)||!isAlive()||isNoAi())return;
         if(home==null)home=position();
         if(control!=null&&server.hasChunkAt(control)&&(!(server.getBlockEntity(control) instanceof PrometheusBlockEntity prison)||prison.defeated())){discard();return;}
         Player target=server.getNearestPlayer(home.x,home.y,home.z,32,e->e instanceof Player p&&p.isAlive()&&!p.isCreative()&&!p.isSpectator()&&Math.abs(p.getY()-home.y)<18);
@@ -77,7 +77,7 @@ public final class BronzeEagleEntity extends Mob {
     private void face(Vec3 d){if(d.horizontalDistanceSqr()<.0001)return;setYRot((float)Math.toDegrees(Math.atan2(-d.x,d.z)));setYHeadRot(getYRot());yBodyRot=getYRot();}
     private boolean visible(Player target){return level().clip(new ClipContext(position().add(0,1,0),target.getEyePosition(),ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,this)).getType()==HitResult.Type.MISS;}
     private void fire(ServerLevel level,double spread){
-        var from=position().add(0,1.3,0);var d=aim.subtract(from).normalize();
+        var from=position().add(0,2.6,0);var d=aim.subtract(from).normalize();
         var feather=ModEntities.BRONZE_FEATHER.get().create(level);if(feather==null)return;
         feather.setOwner(this);feather.setPos(from);feather.setDeltaMovement(new Vec3(d.x*Math.cos(spread)-d.z*Math.sin(spread),d.y,d.z*Math.cos(spread)+d.x*Math.sin(spread)).scale(.9));level.addFreshEntity(feather);
         playSound(SoundEvents.TRIDENT_THROW.value(),1,.6f);

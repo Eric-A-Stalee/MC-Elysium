@@ -20,9 +20,33 @@ import net.minecraft.world.phys.*;
 
 /** Hunger accepts an offering; Sorrow needs patient light; Dominion still obeys its jailer. */
 public final class BindingBlockEntity extends BlockEntity {
-    private int quiet,attention,missing;private UUID listener,warden;private boolean defeated;
+    private int quiet,attention,missing,titanMissing;private UUID listener,warden,titan;private boolean defeated;
     public BindingBlockEntity(BlockPos p,BlockState s){super(ModBlockEntities.DEEP_BINDING.get(),p,s);}
     public int kind(){return getBlockState().getValue(BindingBlock.KIND);}public boolean sealed(){return getBlockState().getValue(BindingBlock.SEALED);}
+    public UUID titan(){return titan;}
+    private boolean titanLoaded(ServerLevel l){
+        for(int x=(worldPosition.getX()-44)>>4;x<=(worldPosition.getX()+44)>>4;x++)
+            for(int z=(worldPosition.getZ()-55)>>4;z<=(worldPosition.getZ()+45)>>4;z++)
+                if(l.getChunkSource().getChunkNow(x,z)==null)return false;
+        return true;
+    }
+    public boolean summonTitan(){
+        if(!(level instanceof ServerLevel l)||kind()!=2||titan!=null||!titanLoaded(l))return false;
+        var entity=ModEntities.CROWNLESS.get().create(l);if(entity==null)return false;entity.bind(worldPosition);
+        if(!l.noCollision(entity)||!l.addFreshEntity(entity))return false;
+        titan=entity.getUUID();titanMissing=0;setChanged();return true;
+    }
+    private void keepTitan(ServerLevel l){
+        if(kind()!=2||l.getGameTime()%20!=0)return;
+        if(!titanLoaded(l)){titanMissing=0;return;}
+        if(titan!=null){
+            if(l.getEntity(titan)!=null){titanMissing=0;return;}
+            if((titanMissing+=20)<200)return;
+            var found=l.getEntitiesOfClass(dev.elysium.entity.CrownlessEntity.class,new AABB(worldPosition).inflate(65),e->worldPosition.equals(e.control()));
+            titan=found.isEmpty()?null:found.getFirst().getUUID();titanMissing=0;setChanged();
+        }
+        if(titan==null&&l.getNearestPlayer(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),64,false)!=null)summonTitan();
+    }
     public UUID warden(){return warden;}public boolean defeated(){return defeated;}public int quiet(){return quiet;}
     public BlockPos resting(){return worldPosition.offset(8,0,-3);}
     private boolean loaded(ServerLevel l){for(int x=(worldPosition.getX()-28)>>4;x<=(worldPosition.getX()+28)>>4;x++)for(int z=(worldPosition.getZ()-28)>>4;z<=(worldPosition.getZ()+28)>>4;z++)if(l.getChunkSource().getChunkNow(x,z)==null)return false;return true;}
@@ -71,7 +95,8 @@ public final class BindingBlockEntity extends BlockEntity {
     }
     private static void tell(Player p,String key){p.displayClientMessage(Component.translatable("message.elysium.binding."+key),true);}
     public static void tick(Level level,BlockPos pos,BlockState state,BindingBlockEntity core){
-        if(!(level instanceof ServerLevel l)||level.getGameTime()%5!=0||core.sealed())return;
+        if(!(level instanceof ServerLevel l)||level.getGameTime()%5!=0)return;
+        core.keepTitan(l);if(core.sealed())return;
         if(RealmCycle.get(l).bindingHeld(core.kind())){l.setBlock(pos,state.setValue(BindingBlock.SEALED,true),3);return;}
         if(!RealmCycle.get(l).released())return;
         if(core.quiet>0){core.quiet=Math.max(0,core.quiet-5);core.setChanged();}
@@ -85,6 +110,6 @@ public final class BindingBlockEntity extends BlockEntity {
         }
         if(core.warden==null&&l.getNearestPlayer(pos.getX(),pos.getY(),pos.getZ(),26,false)!=null)core.summon();
     }
-    @Override protected void saveAdditional(CompoundTag t,HolderLookup.Provider p){super.saveAdditional(t,p);t.putInt("Quiet",quiet);t.putBoolean("Defeated",defeated);if(warden!=null)t.putUUID("Warden",warden);}
-    @Override protected void loadAdditional(CompoundTag t,HolderLookup.Provider p){super.loadAdditional(t,p);quiet=Math.max(0,Math.min(240,t.getInt("Quiet")));defeated=t.getBoolean("Defeated");warden=t.hasUUID("Warden")?t.getUUID("Warden"):null;attention=0;listener=null;missing=0;}
+    @Override protected void saveAdditional(CompoundTag t,HolderLookup.Provider p){super.saveAdditional(t,p);t.putInt("Quiet",quiet);t.putBoolean("Defeated",defeated);if(warden!=null)t.putUUID("Warden",warden);if(titan!=null)t.putUUID("Titan",titan);}
+    @Override protected void loadAdditional(CompoundTag t,HolderLookup.Provider p){super.loadAdditional(t,p);quiet=Math.max(0,Math.min(240,t.getInt("Quiet")));defeated=t.getBoolean("Defeated");warden=t.hasUUID("Warden")?t.getUUID("Warden"):null;titan=t.hasUUID("Titan")?t.getUUID("Titan"):null;titanMissing=0;attention=0;listener=null;missing=0;}
 }

@@ -15,7 +15,7 @@ public final class ForgeLore {
     public enum Record {
         HUNGER("A Mouth Without a Body",4096,3),
         SORROW("The Water Remembers",8192,3),
-        DOMINION("The Empty Seat",16384,3),
+        DOMINION("The Crownless",16384,3),
         PROMETHEUS("What Fire Remembers",ForgeDiscoveries.PROMETHEUS,5),
         SURVEY("The Last Survey",ForgeDiscoveries.SURVEY,4),
         LEDGER("The Unfinished Work",ForgeDiscoveries.LEDGER,5),

@@ -46,6 +46,7 @@ public final class ForgeVisualServerProbe {
         if(!ENABLED)return;
         var level=event.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)throw new IllegalStateException("Missing Elysium dimension");
+        if("inhabitants".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))){InhabitantsVisualProbe.prepare(level);LogUtils.getLogger().info("ELYSIUM_FORGE_VISUAL_READY");return;}
         if("bindings".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))){
             BINDINGS=BindingNaturalGenerationProbe.generateAndVerify(level);RUPTURE=findRupture(level);
             var cycle=dev.elysium.story.RealmCycle.get(level);cycle.awaken(BINDINGS[0].core());for(int i=0;i<6500;i++)cycle.advance(true);
@@ -72,13 +73,14 @@ public final class ForgeVisualServerProbe {
     }
 
     @SubscribeEvent public static void login(PlayerEvent.PlayerLoggedInEvent event) {
-        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,BINDINGS!=null?"binding_hunger":PRISON!=null?"prison_overview":"inspection_entry");
+        if(ENABLED&&event.getEntity() instanceof ServerPlayer player)scene(player,"inhabitants".equals(System.getenv("ELYSIUM_VISUAL_FOCUS"))?"inhabitant_captive":BINDINGS!=null?"binding_hunger":PRISON!=null?"prison_overview":"inspection_entry");
     }
 
     private static void scene(ServerPlayer player,String scene) {
         var level=player.getServer().getLevel(ElysiumTravel.DIMENSION);
         if(level==null)return;
         player.setGameMode(GameType.SPECTATOR);
+        if(scene.startsWith("inhabitant_")){InhabitantsVisualProbe.scene(player,level,scene);return;}
         if(scene.startsWith("binding_")||scene.startsWith("rupture_")){bindingCamera(player,level,scene);return;}
         if(scene.startsWith("prison_")){prisonCamera(player,level,scene);return;}
         if(scene.startsWith("underworld_")){underworldCamera(player,level,scene);return;}

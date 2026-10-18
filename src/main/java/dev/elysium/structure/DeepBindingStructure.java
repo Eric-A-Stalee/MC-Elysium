@@ -17,8 +17,8 @@ public final class DeepBindingStructure extends Structure {
         if(!(c.chunkGenerator() instanceof StratifiedChunkGenerator g))return Optional.empty();
         var t=g.terrain(c.randomState());int x=c.chunkPos().getMiddleBlockX(),z=c.chunkPos().getMiddleBlockZ(),base=t.floor(x,z),low=base,high=base;
         if(kind!=1&&base<TartarusTerrain.WATERLINE+3)return Optional.empty();
-        for(int u=-28;u<=28;u+=7)for(int v=-28;v<=28;v+=7){int y=t.floor(x+u,z+v);low=Math.min(low,y);high=Math.max(high,y);}
-        if(high-low>32)return Optional.empty();base=Math.max(base,kind==1?TartarusTerrain.WATERLINE+2:base);
+        for(int u=kind==2?-42:-28;u<=(kind==2?42:28);u+=7)for(int v=kind==2?-49:-28;v<=28;v+=7){int y=t.floor(x+u,z+v);low=Math.min(low,y);high=Math.max(high,y);}
+        if(high-low>(kind==2?45:32)||kind==2&&t.roof(x,z)-base<90)return Optional.empty();base=Math.max(base,kind==1?TartarusTerrain.WATERLINE+2:base);
         if(!c.validBiome().test(c.biomeSource().getNoiseBiome(QuartPos.fromBlock(x),QuartPos.fromBlock(base+8),QuartPos.fromBlock(z),c.randomState().sampler())))return Optional.empty();
         int[] route=new int[64];route[0]=1;
         for(int i=1;i<64;i++){int wanted=Math.max(t.floor(x,z+27+i),kind==1?TartarusTerrain.WATERLINE:Integer.MIN_VALUE)-base;route[i]=Math.max(route[i-1]-1,Math.min(route[i-1]+1,wanted));low=Math.min(low,base+route[i]);}
