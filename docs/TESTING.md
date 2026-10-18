@@ -1154,3 +1154,67 @@ prolonged multiplayer, multi-seed encounter frequency, external shaders and
 active ReTerraForged presets remain unassessed. This chapter requires no external
 terrain or structure mod. Use a fresh alpha world or fully regenerate Elysium;
 saved-world migration is deliberately outside scope.
+
+## Alpha 26 — The Living Prison (October 18, 2026 UTC)
+
+Release source: `08477fc92d4aa59360b395003f3641cf62294b08`.
+[Release verification](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39089243828)
+checks generated content, builds the mod and optional erosion guard, runs the
+**89 required dedicated-server GameTests**, and captures all ten views of the
+natural inhabitant review.
+
+The five additional server tests exercise a mourner's marked-ground damage,
+dodging, Hope and cover; a moth's distinction between actual emitting blocks,
+false glow and occluded light; the captive's full body volume and anchor collars;
+owned captive persistence, the travelling command, cover and repair; and Sorrow's
+actual surface emergence under a shared four-creature population limit. Existing
+eagle tests still exercise real dive damage, projectile collision and melee
+recovery. Its warning now lasts 48 ticks and matches the larger body footprint.
+
+The shipped jar is `elysium-0.1.0-alpha.26.jar`:
+
+- Size: 991,202 bytes.
+- SHA-256: `39a4773297617fc78db79707039d611756dc050c2a39d21d903a8d415940cd08`.
+- All 215 shipped classes target Java 21; all 402 intended source resources
+  match byte for byte. GameTests, the visual harness, empty test structure and
+  development world override are excluded.
+- Thirteen original PNGs reproduce exactly with
+  `python3 tools/generate_tartarus_art.py --check`. The sprite sheet is generated
+  from these same pixels; no Minecraft texture files or concept-image pixels
+  were copied into this art.
+
+The review uses ordinary seed-zero starts for all three deep restraints and
+Prometheus. Dominion's expanded bounds, full natural body clearance and all
+64 approach steps are verified before a camera is admitted. Its core remains
+at (-1128, -464, 792); the living captive rests at (-1127.5, -464, 769.5).
+The other destinations retain the seed-zero coordinates in the alpha 25 table.
+This is a natural-placement check, not a multi-seed distribution study.
+
+The ten actual Minecraft frames use vanilla assets plus Elysium's authored
+materials, no external shaders, gamma 0.5, FOV 70 and Mesa OpenGL at 1280×720.
+Nine have night vision for geometry/material inspection. `inhabitant_dark`
+removes it and uses one placed Keeper's Lamp. The command frame waits for a
+real server-driven inhale against a damage-resistant flying survival observer;
+it does not force the captive into its warning phase. The closer eagle,
+mourner, Hunger and Sentenced views are deliberately posed. The moths are alive
+and orbit a real lamp. These distinctions appear alongside each image in the
+review gallery and its manifest.
+
+Earlier client reviews stopped at the live command scene. The diagnostic
+trace showed a real inhale and command, followed by knockback that moved the
+unattended flying observer outside the 48-block targeting range. The old
+20-second camera settle had missed the warning. This scene now watches after
+two seconds inside the already loaded prison; production combat is unchanged.
+The source retains diagnostic logging for this opt-in development review.
+
+The material loop rejected two earlier skin treatments: one resembled masonry,
+and the next read as wood grain on the actual large models. The final hide is
+quieter charred skin, with bone fibres revised in the same client loop. The
+Crownless's skull and the mourner's hood were refined after their first captures.
+The eagle's rest pose was folded closer after checking it against its gantry.
+
+Manual survival balance, long multiplayer sessions, multi-seed encounter
+frequency, external resource packs, shader packs and active ReTerraForged
+presets remain unassessed. The runner has no audio device. This does not claim
+the entire underworld is populated or that every concept-art detail is present.
+Use a fresh alpha world or fully regenerate Elysium for the expanded prison.

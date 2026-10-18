@@ -2,6 +2,7 @@
 
 These preserved branches mark playable turning points. Alpha 25 joins the
 continuous underworld, Prometheus and the consequences of divine smithing.
+Alpha 26 gives the prison a living captive, new ecology and original materials.
 
 | Checkpoint | Playable boundary | Verification |
 |---|---|---|
@@ -10,6 +11,7 @@ continuous underworld, Prometheus and the consequences of divine smithing.
 | [Alpha 23 — Continuous Tartarus](https://github.com/Eric-A-Stalee/MC-Elysium/tree/checkpoint/alpha23-continuous-tartarus) | Elysium extends to Y=-640. Four continuous underworld regions and a physical winding descent replace the chamber as the expedition's endpoint. | Green build, terrain and route tests, natural-generation and actual client review. |
 | [Alpha 24 — Prometheus](https://github.com/Eric-A-Stalee/MC-Elysium/tree/checkpoint/alpha24-prometheus) | A monumental prisoner, a real Bronze Eagle encounter, personal smithing knowledge and sound-hunting Ashen Hungers. | 79 required server GameTests and four actual prison views in [run 39036164417](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39036164417). |
 | [Alpha 25 — Tartarus Unbound](https://github.com/Eric-A-Stalee/MC-Elysium/tree/checkpoint/alpha25-tartarus-unbound) | Completed divine work opens the vessel; the moon stalls, surface wounds release creatures, and three distinct deep restraints must be answered alongside the watches. Scars and escaped creatures remain. | See the exact final source, server tests and client evidence in [testing notes](TESTING.md). |
+| [Alpha 26 — The Living Prison](https://github.com/Eric-A-Stalee/MC-Elysium/tree/checkpoint/alpha26-living-prison) | A living Crownless held by Dominion, Mire Mourners and Ash Moths, a roughly 26-block eagle, and thirteen original textures refined in the actual client. | 89 required server GameTests and ten actual client views in [run 39089243828](https://github.com/Eric-A-Stalee/MC-Elysium/actions/runs/39089243828); exact source and jar hash in [testing notes](TESTING.md). |
 
 Start a fresh alpha world or fully regenerate Elysium when changing between
 these checkpoints. Old-world migration is not part of their contract.

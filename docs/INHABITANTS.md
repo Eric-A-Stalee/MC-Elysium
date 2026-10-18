@@ -2,6 +2,20 @@
 
 Tartarus now has a living prisoner at Dominion, alongside its giant remains and older Cinderbound Eye. This is the beginning of a bestiary with relationships, not a claim that the whole prison is populated or finished.
 
+| Inhabitant | Place in the world | Player relationship |
+|---|---|---|
+| Cinderbound Eye | The chained chimera at the threshold | Recover its First Flame to restore the Forge. |
+| Bronze Eagle | Prometheus's airborne jailer | Survive marked dives and pinions; strike during recovery. |
+| Ashen Hunger | A blind hunter in the dry depths | Footsteps and hits carry sound; crouching and cover matter. |
+| The Sentenced | Walking remnants of the Crownless's orders | Chain lanes have a warning and recovery; one belongs to Dominion's restraint. |
+| The Crownless | A living, bound sovereign | His voice escapes after divine forging. Contain him by repairing Dominion. |
+| Mire Mourner | Grief wearing the appearance of warmth | Leave the marked ground; real light and Hope protect you. |
+| Stray Cinder | Fire loose upon the unsettled surface | The watches and wards offer refuge. |
+| Ash Moth | Harmless life around real embers | Observe where it gathers; its false counterpart does not attract it. |
+
+These are eight non-projectile entity types. Prometheus's monumental body is
+generated architecture with an interactive voice, rather than a ninth mob.
+
 ## The Crownless
 
 An original imprisoned sovereign, roughly 34 blocks high while seated. His wrists are visibly chained to two 58-block anchors. His body breathes; his head follows nearby survivors; his crown is broken. He survives the repair of his restraint.

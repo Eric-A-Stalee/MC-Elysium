@@ -66,7 +66,7 @@ python3 tools/generate_worldgen.py
 python3 tools/validate_worldgen.py
 ```
 
-CI checks both content generators and `tools/generate_ambience.py --check`. The latter verifies the original leaf sprite and the committed sound asset. `tools/validate_client_assets.py` independently verifies that custom model textures are present in the blocks atlas and that model/particle texture files exist. Regenerating the sound uses Python synthesis and ffmpeg; players and ordinary builds need neither. The source of truth and extension points are explained in [world generation](docs/WORLDGEN.md), [structures](docs/STRUCTURES.md) and [testing](docs/TESTING.md).
+CI checks both content generators, `tools/generate_tartarus_art.py --check` and `tools/generate_ambience.py --check`. The latter verifies the original leaf sprite and the committed sound asset. `tools/validate_client_assets.py` independently verifies that custom model textures are present in the blocks atlas and that model/particle texture files exist. Regenerating the sound uses Python synthesis and ffmpeg; players and ordinary builds need neither. The source of truth and extension points are explained in [world generation](docs/WORLDGEN.md), [structures](docs/STRUCTURES.md) and [testing](docs/TESTING.md).
 
 [ReTerraForged / FreeTerraForged research](docs/RETERRAFORGED.md) identifies the 1.21.1 Uplift fork and a possible future dimension adapter. Its jar passed a co-installation GameTest smoke test, but its terrain engine is **not integrated into Elysium** and an active FreeTerraForged Overworld preset has not been tested.
 

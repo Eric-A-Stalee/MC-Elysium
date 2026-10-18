@@ -47,7 +47,9 @@ against their attacks as well as the Sentenced's chains.
 Unrepaired bindings build pressure during occupied nights. A surface rupture
 begins away from a player with four seconds of ash and rumbling. It then tears
 open a small irregular crater and releases hunters; some wounds also release
-a **Sentenced** chain warden. The warning is real: standing beside the wound
+a **Sentenced** chain warden. Sorrow wounds can release **Mire Mourners**, whose
+false hearths mark the ground before a damaging lament. Real light, Hope and
+solid cover shelter against them. The warning is real: standing beside the wound
 when it opens hurts and throws the player. Wardens telegraph a locked chain
 lane, then leave a long recovery. Sidestep or use solid cover.
 
@@ -74,7 +76,7 @@ restraint. Sneak-use retains its remembered Forge bearing.
 
 A Binding Nail can also close an individual open surface wound. Restoring a deep
 restraint prevents new wounds of that kind and quiets its existing loaded wounds.
-**Scars remain. Escaped Hungers and Sentenced remain.** Restoring the sky does
+**Scars remain. Escaped Hungers, Sentenced and Mourners remain.** Restoring the sky does
 not silently undo the world's history. Repairs and watch progress are shared;
 Prometheus teaches individual players.
 
@@ -85,6 +87,20 @@ surveyed terrain, rather than relying on runtime room excavation. The Maw's
 broken jaw, the Cistern's water and mourner, and the living Crownless tell different
 parts of the imprisonment. Prometheus's immense body is built into the rock;
 his voice is an interactive block, and the eagle is an animated entity.
+
+Dominion now holds the **Crownless**, a living sovereign roughly 34 blocks high
+while seated. Before divine smithing, he sleeps. The First Flame lets his voice
+escape without freeing his wrists. A drawn breath warns of the command that
+travels across the ground; broken masonry stops it. The command hurts exposed
+survivors and directs nearby Hungers and Sentenced toward them. Repair the
+restraint to quiet him. Ordinary weapons cannot kill this captive.
+
+The restraints are not three interchangeable treasure rooms. Hunger is a need
+that outlived its body; Sorrow is grief that offers counterfeit comfort; Dominion
+is a will that can command others even while chained. Their remains, inhabitants
+and repairs express those differences. Tiny Ash Moths offer a quieter contrast:
+they gather around genuine emitting blocks and ignore a Mourner's false glow.
+The [inhabitants guide](INHABITANTS.md) covers the encounters, art and current limits.
 
 ## Useful work
 
