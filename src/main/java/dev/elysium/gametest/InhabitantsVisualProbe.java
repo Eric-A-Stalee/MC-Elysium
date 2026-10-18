@@ -43,7 +43,8 @@ final class InhabitantsVisualProbe {
                 p.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE,2400,4,false,false));
                 p.addEffect(new MobEffectInstance(MobEffects.SATURATION,2400,4,false,false));
                 p.getAbilities().mayfly=true;p.getAbilities().flying=true;p.onUpdateAbilities();
-                camera=home.add(9,3,40);target=home.add(0,24,0);
+                // The central surveyed approach is guaranteed clear; the side ruins are cover.
+                camera=home.add(0,3,40);target=home.add(0,24,0);
             }
             case "inhabitant_dark"->{p.removeEffect(MobEffects.NIGHT_VISION);l.setBlock(core.south(3),ModBlocks.KEEPERS_LAMP.get().defaultBlockState(),3);camera=Vec3.atCenterOf(core).add(3,1,8);target=home.add(0,22,0);}
             case "inhabitant_mourner"->{camera=mourner.position().add(4,1,7);target=mourner.position().add(0,1.7,0);}
@@ -59,6 +60,13 @@ final class InhabitantsVisualProbe {
             }
         }
         var d=target.subtract(camera.add(0,1.62,0));p.teleportTo(l,camera.x,camera.y,camera.z,(float)(Math.toDegrees(Math.atan2(d.z,d.x))-90),(float)-Math.toDegrees(Math.atan2(d.y,d.horizontalDistance())));
+        if(scene.equals("inhabitant_command")){
+            var binding=(BindingBlockEntity)l.getBlockEntity(core);
+            var titan=(CrownlessEntity)l.getEntity(binding.titan());
+            var hit=l.clip(new net.minecraft.world.level.ClipContext(titan.position().add(0,3,7),p.getEyePosition(),net.minecraft.world.level.ClipContext.Block.COLLIDER,net.minecraft.world.level.ClipContext.Fluid.NONE,titan));
+            com.mojang.logging.LogUtils.getLogger().info("ELYSIUM_CAPTIVE_OBSERVER player={} targetable={} phase={} released={} difficulty={} cover={}",p.position(),titan.canCommand(p),titan.phase(),RealmCycle.get(l).released(),l.getDifficulty(),hit.getType()==net.minecraft.world.phys.HitResult.Type.MISS?"none":hit.getBlockPos());
+            if(!titan.canCommand(p))throw new IllegalStateException("The natural central approach obstructs the captive's command at "+hit.getBlockPos());
+        }
         com.mojang.logging.LogUtils.getLogger().info("ELYSIUM_INHABITANT_SCENE {} nightVision={}",scene,!scene.equals("inhabitant_dark"));
     }
     private InhabitantsVisualProbe(){}
