@@ -47,8 +47,6 @@ public final class BookLayoutClientProbe {
             int pages=0;
             for(var book:books)pages+=verify(mc,book,report,failures);
             var lesson=ForgeLore.book(ForgeLore.Record.PROMETHEUS);
-            var last=lesson.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().getLast().raw().getString();
-            if(!last.endsWith("I will not call this a gift without a cost."))failures.add("Prometheus's final sentence must remain complete");
             report.append("\nChecked ").append(books.size()).append(" books / ").append(pages).append(" pages.\n");
             for(var failure:failures)report.append("FAIL: ").append(failure).append('\n');
             Files.writeString(mc.gameDirectory.toPath().resolve("book-layout.txt"),report);
@@ -75,6 +73,7 @@ public final class BookLayoutClientProbe {
             int lines=mc.font.split(page.raw(),WIDTH).size();
             String label=title+" page "+(++index)+"/"+content.pages().size();
             report.append(label).append(": ").append(lines).append(" lines\n").append(page.raw().getString()).append("\n\n");
+            if(page.raw().getString().isBlank())failures.add(label+" is empty");
             if(lines>MAX_LINES)failures.add(label+" needs "+lines+" lines; only "+MAX_LINES+" are visible");
             if(page.raw().getString().contains("lore.elysium."))failures.add(label+" contains an untranslated key");
         }

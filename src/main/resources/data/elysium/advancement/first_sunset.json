@@ -2,12 +2,14 @@
   "parent": "elysium:smiths_work",
   "display": {
     "icon": {
-      "id": "elysium:forge_press"
+      "id": "elysium:golden_birch_leaves"
     },
     "title": "The First Sunset",
-    "description": "Complete the first work and release the arrested sun.",
+    "description": "See the lengthening shadows above ground.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true,
+    "show_toast": false
   },
   "criteria": {
     "discovered": {

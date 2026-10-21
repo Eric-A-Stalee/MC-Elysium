@@ -24,6 +24,7 @@ public final class PandoraVesselBlock extends Block {
     private void use(BlockState s,Player player,ItemStack held){
         if(!(player instanceof ServerPlayer p))return;
         if(!s.getValue(OPEN)){tell(p,"sealed");return;}
+        ForgeLore.award(p,"pandora_opened");
         var discoveries=ForgeDiscoveries.get(p.serverLevel());boolean first=!discoveries.has(p.getUUID(),ForgeDiscoveries.HOPE);
         boolean carrying=false;for(int i=0;i<p.getInventory().getContainerSize();i++)if(p.getInventory().getItem(i).is(ModItems.HOPES_EMBER.get()))carrying=true;
         if(!first&&(carrying||!held.is(ModItems.ELYSIUM_FRAGMENT.get()))){tell(p,"empty");return;}

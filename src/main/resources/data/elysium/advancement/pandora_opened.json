@@ -4,10 +4,12 @@
     "icon": {
       "id": "elysium:pandora_vessel"
     },
-    "title": "The Cost of Fire",
-    "description": "Complete the first divine work and open what the Forge restrained.",
+    "title": "An Open Vessel",
+    "description": "Examine the open vessel at the rear of the foundry.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true,
+    "show_toast": false
   },
   "criteria": {
     "discovered": {

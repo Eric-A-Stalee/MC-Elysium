@@ -1,7 +1,6 @@
 package dev.elysium.story;
 
 import dev.elysium.block.PandoraVesselBlock;
-import dev.elysium.forge.ForgeLore;
 import dev.elysium.portal.ElysiumTravel;
 import dev.elysium.registry.ModBlocks;
 import dev.elysium.structure.*;
@@ -20,7 +19,7 @@ public final class FirstFlameConsequences {
             l.sendParticles(ParticleTypes.LARGE_SMOKE,vessel.getX()+.5,vessel.getY()+1,vessel.getZ()+.5,70,.8,.6,.8,.035);
             l.sendParticles(ParticleTypes.ASH,vessel.getX()+.5,vessel.getY()+1,vessel.getZ()+.5,50,1,1,1,.08);
         }
-        if(first){l.playSound(null,ForgeFixtures.hearth(plan),SoundEvents.IRON_GOLEM_DEATH,SoundSource.BLOCKS,2,.4f);RealmClock.announce(l,"sunset");for(var p:l.players())ForgeLore.award(p,"pandora_opened");}
+        if(first){l.playSound(null,ForgeFixtures.hearth(plan),SoundEvents.IRON_GOLEM_DEATH,SoundSource.BLOCKS,2,.4f);RealmClock.announce(l,"sunset");}
     }
     private FirstFlameConsequences(){}
 }

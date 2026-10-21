@@ -7,7 +7,8 @@
     "title": "The Waters Answer",
     "description": "Restore the water watch with a seal and a bucket of water.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

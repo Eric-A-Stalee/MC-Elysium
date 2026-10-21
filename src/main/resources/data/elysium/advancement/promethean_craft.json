@@ -7,7 +7,8 @@
     "title": "What Fire Remembers",
     "description": "Silence the bronze eagle and learn from Prometheus.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

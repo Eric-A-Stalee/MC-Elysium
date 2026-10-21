@@ -5,9 +5,10 @@
       "id": "elysium:forge_hearth"
     },
     "title": "A Promise Carried Home",
-    "description": "Return the First Flame to restore full heat through the surviving forge runners. The great hammer and afternoon still wait.",
+    "description": "Seat the First Flame in the great hearth and restore heat to the forge runners.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

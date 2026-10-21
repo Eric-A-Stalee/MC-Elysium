@@ -14,6 +14,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 public final class ForgeDiscoveries extends SavedData {
     public static final int SURVEY=1, LEDGER=2, BINDINGS=4, HEARTH=8, ANCHOR=16;
     public static final int PROMETHEUS=1024,HOPE=2048;
+    public static final int WATCH_RECORDS=128|256|512,DEEP_RECORDS=4096|8192|16384;
     private final Map<UUID,Integer> readers=new HashMap<>();
     public static ForgeDiscoveries get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(new Factory<>(ForgeDiscoveries::new,ForgeDiscoveries::load),"elysium_forge_discoveries");

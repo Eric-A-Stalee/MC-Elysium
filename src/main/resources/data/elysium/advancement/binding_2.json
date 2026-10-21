@@ -7,7 +7,8 @@
     "title": "An End to the Sentence",
     "description": "Defeat Dominion’s jailer and repair its restraint.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

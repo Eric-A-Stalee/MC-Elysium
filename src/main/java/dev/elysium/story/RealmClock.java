@@ -52,14 +52,26 @@ public final class RealmClock {
         cycle.advance(!level.players().isEmpty());
         if(before!=cycle.phase())announce(level,cycle.phase()==RealmCycle.Phase.NIGHT?"night":"stalled");
         if(!dawn&&cycle.firstDawn())announce(level,"dawn");
-        if(level.getGameTime()%20==0)for(var player:level.players())sync(player);
+        if(level.getGameTime()%20==0)for(var player:level.players()) {
+            sync(player);
+            // The sky is something to see on returning above ground, not a
+            // remote plot announcement sent into an underground workshop.
+            if(!level.canSeeSky(player.blockPosition()))continue;
+            if(cycle.phase()==RealmCycle.Phase.DESCENDING)ForgeLore.award(player,"first_sunset");
+            else if(cycle.unsettled()) {
+                ForgeLore.award(player,"first_sunset");
+                ForgeLore.award(player,"first_night");
+            }
+        }
     }
     public static void announce(ServerLevel level,String chapter) {
         for(var p:level.players()) {
-            p.connection.send(new ClientboundSetTitlesAnimationPacket(30,100,40));
-            p.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable("story.elysium."+chapter+".subtitle")));
-            p.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("story.elysium."+chapter+".title")));
-            ForgeLore.award(p,chapter.equals("sunset")?"first_sunset":chapter.equals("dawn")?"first_dawn":"first_night");
+            if(chapter.equals("release")||chapter.equals("golden")||chapter.equals("dawn")) {
+                p.connection.send(new ClientboundSetTitlesAnimationPacket(30,100,40));
+                p.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable("story.elysium."+chapter+".subtitle")));
+                p.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("story.elysium."+chapter+".title")));
+            }
+            if(chapter.equals("dawn"))ForgeLore.award(p,"first_dawn");
             sync(p);
         }
     }

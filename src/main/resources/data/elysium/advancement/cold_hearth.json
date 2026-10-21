@@ -7,7 +7,8 @@
     "title": "The Unfinished Work",
     "description": "Examine the dormant hearth of Hephaestus and recover a Chain Resonator.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

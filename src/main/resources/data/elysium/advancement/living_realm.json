@@ -7,7 +7,8 @@
     "title": "A World That Can Wake",
     "description": "After the watches and deep bindings are repaired, release the living cycle at the governor.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

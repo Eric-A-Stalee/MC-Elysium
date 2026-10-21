@@ -7,7 +7,8 @@
     "title": "A Light to Carry",
     "description": "Restore the workshop embers, then bring a lantern, copper ingot and amethyst shard to the Keeper workbench. Place and recover the lamp along the descent.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

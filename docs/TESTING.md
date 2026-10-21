@@ -1223,6 +1223,12 @@ Use a fresh alpha world or fully regenerate Elysium for the expanded prison.
 
 ## Alpha 26.1 book pagination
 
-`tools/run_book_layout_probe.py` starts the real client at the title screen, constructs all eight lore books, three watch testimonies and the Smith’s Charge (including its recipe pages), and measures their translated components with the loaded English default font. Minecraft 1.21.1 displays at most 14 lines in a 114 × 128 book text area. The original Prometheus page 5 is retained as a failing-layout fixture: it must measure 15 lines, reproducing the hidden final line. Every current page must fit, and the full closing sentence must remain present.
+`tools/run_book_layout_probe.py` starts the real client at the title screen, constructs all eight lore books, three watch testimonies and the Smith’s Charge (including its recipe pages), and measures their translated components with the loaded English default font. Minecraft 1.21.1 displays at most 14 lines in a 114 × 128 book text area. The original Prometheus page 5 is retained as a failing-layout fixture: it must measure 15 lines, reproducing the hidden final line. Every current page must fit.
 
 The probe also opens page 5 in the actual book screen and captures it. CI uploads the page-by-page report, client log and screenshot as `book-layout-review`. No game world is created, and the probe is excluded from the player jar. Font-changing resource packs and other languages are outside this check.
+
+## Alpha 26.2 discovery and writing
+
+All authored book prose now uses translation components. The same actual-client probe checks all 51 pages, including the revised manuals and watch records, and rejects empty pages or untranslated keys. The old overflowing page is only a test fixture; the probe does not require that ending in the current story.
+
+Two focused GameTests cover personal journal visibility across a shared-world progression and the actual loaded advancement display flags. New readers must not inherit the expedition walkthrough or unseen objective counts from another player’s progress. Future chapter entries are hidden, and the automatic sky/vessel entries have no toast. Existing clock, press, vessel and repair tests continue to cover the underlying gameplay. The book capture uses the default font, without a resource pack.

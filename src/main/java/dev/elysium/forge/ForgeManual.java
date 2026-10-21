@@ -11,12 +11,8 @@ import net.minecraft.world.item.component.WrittenBookContent;
 public final class ForgeManual {
     public static ItemStack book() {
         var pages=new ArrayList<Filterable<Component>>();
-        pages.add(Filterable.passThrough(Component.literal("THE SMITH'S CHARGE\n\nThe first completed work opens the old vessel. The sun will fall; things below will rise. This is a choice. Paradise may remain as it is.\n\nReturning the First Flame alone does not move the sky.")));
-        pages.add(Filterable.passThrough(Component.literal("LOADING THE WORKS\n\nRepair and heat the runner beneath the control. Offer a recipe's selector to load its entire bill.\n\nStand clear of the anvil. Sneak-use an empty hand to begin. Three strokes temper a batch. Use again to collect.")));
-        pages.add(Filterable.passThrough(Component.literal("INTERRUPTED WORK\n\nSneak-use the control to pause or resume. Lost heat pauses the work too. Materials remain in the control.\n\nA blocked or damaged hammer will not move. Inspect the head and its path; the machine never clears your blocks.")));
-        pages.add(Filterable.passThrough(Component.literal("THE FIRST NIGHT\n\nMake a Dawn Wayfinder, three Watchfire Seals and a Ward Lamp.\n\nThe wayfinder seeks watches. Sneak-use it to recall this Forge.\n\nWatchfires shelter you; they cannot mend Tartarus.")));
-        pages.add(Filterable.passThrough(Component.literal("CHOOSING THE SKY\n\nRepair the watches AND deep bindings. Heat the rear shrine. Sneak-use its governor: a clock starts a living cycle; an Elysium Fragment holds golden hour.\n\nNeither is consumed. You may choose again.")));
-        pages.add(Filterable.passThrough(Component.literal("THE DEEP REPAIR\n\nTake Hope from the opened vessel. Forge Binding Nails. Below the Eye, your Chain Resonator seeks Hunger, Sorrow and Dominion.\n\nAn offering stills Hunger. Quiet light reaches Sorrow. Dominion has a warden.")));
+        for(int page=1;page<=6;page++)
+            pages.add(Filterable.passThrough(Component.translatable("lore.elysium.manual."+page)));
         for(var recipe:ForgeRecipes.all()) {
             var page=Component.empty().append(recipe.output().getHoverName()).append(" × "+recipe.count()+"\n\nLoad with: ").append(recipe.selector().getDescription()).append("\n\n");
             for(var cost:recipe.costs())page.append(cost.count()+" × ").append(cost.item().getDescription()).append("\n");

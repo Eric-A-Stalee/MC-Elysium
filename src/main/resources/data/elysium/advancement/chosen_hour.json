@@ -7,7 +7,8 @@
     "title": "An Hour Freely Chosen",
     "description": "After the watches and deep bindings are repaired, deliberately bind another golden hour.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

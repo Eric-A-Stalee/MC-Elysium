@@ -20,7 +20,7 @@ public final class ForgeLore {
         SURVEY("The Last Survey",ForgeDiscoveries.SURVEY,4),
         LEDGER("The Unfinished Work",ForgeDiscoveries.LEDGER,5),
         BINDINGS("On the Bindings",ForgeDiscoveries.BINDINGS,4),
-        ANCHOR("A Voice in the Iron",ForgeDiscoveries.ANCHOR,3);
+        ANCHOR("Anchor Reading",ForgeDiscoveries.ANCHOR,3);
         public final String title;
         public final int flag,pages;
         Record(String title,int flag,int pages){this.title=title;this.flag=flag;this.pages=pages;}

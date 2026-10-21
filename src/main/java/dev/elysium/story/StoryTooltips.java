@@ -9,7 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-/** Compact reminders; the smith's book retains the full bills and deliberate world choice. */
+/** Practical item reminders. History and consequences belong to discoveries in the world. */
 @EventBusSubscriber(modid=Elysium.MOD_ID)
 public final class StoryTooltips {
     @SubscribeEvent public static void tooltip(ItemTooltipEvent event) {

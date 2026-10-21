@@ -7,7 +7,8 @@
     "title": "Sit With Sorrow",
     "description": "Bring Hope and patient light to the Cistern.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

@@ -310,7 +310,7 @@ for result, ingredient in [("elysium_fragment", "elysium_shard"), ("elysium_sigi
 for name, parent, icon, title, description in [
         ("forge_survey", "elysium", "forge_survey", "An Older Craft", "Read the mountain archive and recover a survey of the old Forge."),
         ("cold_hearth", "forge_survey", "forge_hearth", "The Unfinished Work", "Examine the dormant hearth of Hephaestus and recover a Chain Resonator."),
-        ("borrowed_light", "forge_survey", "forge_service_switch", "A Little Light Remains", "Fuel and ignite the service brazier, then open its draught. The great hearth still waits for the First Flame."),
+        ("borrowed_light", "forge_survey", "forge_service_switch", "A Little Light Remains", "Fuel and ignite the service brazier, then open its draught."),
         ("voice_in_iron", "cold_hearth", "chain_resonator", "A Voice in the Iron", "Listen to the terminal anchor of a Chain of Tartarus.")]:
     data(f"advancement/{name}", {"parent": f"elysium:{parent}",
          "display": {"icon": {"id": f"elysium:{icon}"}, "title": title, "description": description,
@@ -358,7 +358,7 @@ for name,parent,icon,title,description in [
     ('keepers_lamp','borrowed_light','keepers_lamp','A Light to Carry','Restore the workshop embers, then bring a lantern, copper ingot and amethyst shard to the Keeper workbench. Place and recover the lamp along the descent.'),
     ('tartarus_crossing','voice_in_iron','tartarus_counterweight','Across the Cinder Rift','Repair the fallen crossing with four chains at its counterweight.'),
     ('first_flame','tartarus_crossing','first_flame','The Fire Within','Survive the one-eyed chimera. When its attack ends, the lowered eye is vulnerable.'),
-    ('flame_returned','first_flame','forge_hearth','A Promise Carried Home','Return the First Flame to restore full heat through the surviving forge runners. The great hammer and afternoon still wait.')]:
+    ('flame_returned','first_flame','forge_hearth','A Promise Carried Home','Seat the First Flame in the great hearth and restore heat to the forge runners.')]:
     data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge' if name=='first_flame' else 'goal','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
 # Append to the generated pickaxe tag without duplicating the earlier list.
 path='data/minecraft/tags/block/mineable/pickaxe.json'
@@ -415,7 +415,7 @@ loot('ember_glass',[pool([item('elysium:ember_glass')],[SURVIVES])])
 data('recipe/ember_glass',{'type':'minecraft:crafting_shapeless','category':'building','ingredients':[{'item':'elysium:cinder_glass'},*({'item':'minecraft:glass'} for _ in range(4))],'result':{'id':'elysium:ember_glass','count':4}})
 data('advancement/recipes/ember_glass',{'parent':'minecraft:recipes/root','criteria':{'glass':{'trigger':'minecraft:inventory_changed','conditions':{'items':[{'items':'elysium:cinder_glass'}]}}},'rewards':{'recipes':['elysium:ember_glass']}})
 for name,parent,icon,title,description in [
-    ('first_sunset','smiths_work','forge_press','The First Sunset','Complete the first work and release the arrested sun.'),
+    ('first_sunset','smiths_work','golden_birch_leaves','The First Sunset','See the lengthening shadows above ground.'),
     ('first_night','first_sunset','dawn_wayfinder','An Unremembered Night','See Elysium after the golden hour.'),
     ('watch_0','first_night','watchfire_seal','The Harvest Answers','Restore the harvest watch with a seal and eight wheat.'),
     ('watch_1','first_night','watchfire_seal','The Waters Answer','Restore the water watch with a seal and a bucket of water.'),
@@ -471,12 +471,28 @@ for sealed in (False,True):
     asset('models/block/'+name,{'parent':'minecraft:block/block','textures':{'stone':'minecraft:block/blackstone','seam':'minecraft:block/netherite_block' if sealed else 'minecraft:block/magma','particle':'#stone'},'elements':[cuboid([0,0,0],[16,16,16],'#stone'),cuboid([5,16,0],[8,16.1,16],'#seam'),cuboid([0,16,7],[16,16.1,10],'#seam')]})
 asset('blockstates/surface_rift',{'variants':{'sealed=false':{'model':'elysium:block/surface_rift'},'sealed=true':{'model':'elysium:block/surface_rift_sealed'}}});asset('models/item/surface_rift',{'parent':'elysium:block/surface_rift'})
 for name,parent,icon,title,description in [
-    ('pandora_opened','promethean_craft','pandora_vessel','The Cost of Fire','Complete the first divine work and open what the Forge restrained.'),
+    ('pandora_opened','promethean_craft','pandora_vessel','An Open Vessel','Examine the open vessel at the rear of the foundry.'),
     ('hope_remains','pandora_opened','hopes_ember','What Remains','Take Hope from the opened vessel.'),
     ('binding_0','pandora_opened','binding_nail','What Hunger Cannot Eat','Feed the Maw, then close its restraint.'),
     ('binding_1','pandora_opened','hopes_ember','Sit With Sorrow','Bring Hope and patient light to the Cistern.'),
     ('binding_2','pandora_opened','binding_nail','An End to the Sentence','Defeat Dominion’s jailer and repair its restraint.')]:
     data(f'advancement/{name}',{'parent':f'elysium:{parent}','display':{'icon':{'id':f'elysium:{icon}'},'title':title,'description':description,'frame':'challenge','announce_to_chat':False},'criteria':{'discovered':{'trigger':'minecraft:impossible'}}})
+
+# Discoveries should not appear as a preview of the whole plot. The entrance
+# recipes remain visible; later records appear only when earned. Automatic sky
+# observations and the opened vessel are deliberately quiet.
+for path, content in list(OUTPUTS.items()):
+    if not path.startswith('data/elysium/advancement/'):
+        continue
+    advancement = json.loads(content)
+    if 'display' not in advancement:
+        continue
+    name = path.removeprefix('data/elysium/advancement/').removesuffix('.json')
+    if name not in ('root', 'sigil', 'elysium'):
+        advancement['display']['hidden'] = True
+    if name in ('first_sunset', 'first_night', 'pandora_opened'):
+        advancement['display']['show_toast'] = False
+    emit(path, advancement)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

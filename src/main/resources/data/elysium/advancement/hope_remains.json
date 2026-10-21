@@ -7,7 +7,8 @@
     "title": "What Remains",
     "description": "Take Hope from the opened vessel.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

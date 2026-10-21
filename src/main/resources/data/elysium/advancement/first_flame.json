@@ -7,7 +7,8 @@
     "title": "The Fire Within",
     "description": "Survive the one-eyed chimera. When its attack ends, the lowered eye is vulnerable.",
     "frame": "challenge",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

@@ -30,7 +30,12 @@ public final class CelestialGovernorBlock extends Block {
         var cycle=RealmCycle.get(level);if(!cycle.resolve(living))return false;
         RealmClock.announce(level,living?"release":"golden");ForgeLore.award(player,living?"living_realm":"chosen_hour");return true;
     }
-    private void explain(Player player){player.displayClientMessage(Component.translatable("message.elysium.story.governor"),false);}
+    private void explain(Player player){
+        if(!(player.level() instanceof net.minecraft.server.level.ServerLevel level))return;
+        var cycle=RealmCycle.get(level);
+        String suffix=!cycle.released()?".dormant":cycle.watches()!=7||cycle.bindings()!=7?".locked":"";
+        player.displayClientMessage(Component.translatable("message.elysium.story.governor"+suffix),false);
+    }
     @Override protected InteractionResult useWithoutItem(BlockState s,Level l,BlockPos p,Player player,BlockHitResult hit){if(!l.isClientSide)explain(player);return InteractionResult.sidedSuccess(l.isClientSide);}
     @Override protected ItemInteractionResult useItemOn(ItemStack stack,BlockState s,Level l,BlockPos pos,Player player,InteractionHand hand,BlockHitResult hit){if(player instanceof ServerPlayer sp&&!choose(sp,pos,stack,player.isShiftKeyDown()))explain(player);return ItemInteractionResult.sidedSuccess(l.isClientSide);}
 }

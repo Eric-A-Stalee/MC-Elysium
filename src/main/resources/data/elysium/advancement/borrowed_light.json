@@ -5,9 +5,10 @@
       "id": "elysium:forge_service_switch"
     },
     "title": "A Little Light Remains",
-    "description": "Fuel and ignite the service brazier, then open its draught. The great hearth still waits for the First Flame.",
+    "description": "Fuel and ignite the service brazier, then open its draught.",
     "frame": "goal",
-    "announce_to_chat": false
+    "announce_to_chat": false,
+    "hidden": true
   },
   "criteria": {
     "discovered": {

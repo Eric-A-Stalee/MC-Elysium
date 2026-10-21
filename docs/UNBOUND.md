@@ -125,7 +125,7 @@ living day/night cycle, or an Elysium Fragment to choose the enduring golden
 hour. Neither instrument is consumed. The choice can be revisited. The repaired
 world retains its scars and escaped creatures; the underworld remains explorable.
 
-`/elysium story` reports watch and restraint progress without cheats.
+`/elysium story` gives reminders without cheats, limited to the reader’s discoveries. Watch and restraint counts appear after their records have been found.
 For inspection with commands enabled, use these inside Elysium:
 
 ```
