@@ -82,6 +82,13 @@ neoForge {
             programArguments.addAll '--username', 'ForgeObserver', '--width', '1280', '--height', '720'
         }
 
+        bookLayoutClient {
+            client()
+            gameDirectory = project.file('run-book-client')
+            systemProperty 'elysium.bookLayout', 'true'
+            programArguments.addAll '--username', 'BookReader', '--width', '1280', '--height', '720'
+        }
+
         data {
             data()
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it

@@ -13,6 +13,8 @@ python3 tools/generate_worldgen.py --check
 python3 tools/validate_worldgen.py
 ./gradlew build
 ./gradlew runGameTestServer
+# With xvfb and Mesa installed (no world or server needed):
+python3 tools/run_book_layout_probe.py
 ```
 
 Minecraft's server may require accepting its EULA in `run/eula.txt` before starting. The GitHub Actions workflow runs these checks and uploads the mod jar and test logs.
@@ -1218,3 +1220,9 @@ frequency, external resource packs, shader packs and active ReTerraForged
 presets remain unassessed. The runner has no audio device. This does not claim
 the entire underworld is populated or that every concept-art detail is present.
 Use a fresh alpha world or fully regenerate Elysium for the expanded prison.
+
+## Alpha 26.1 book pagination
+
+`tools/run_book_layout_probe.py` starts the real client at the title screen, constructs all eight lore books, three watch testimonies and the Smith’s Charge (including its recipe pages), and measures their translated components with the loaded English default font. Minecraft 1.21.1 displays at most 14 lines in a 114 × 128 book text area. The original Prometheus page 5 is retained as a failing-layout fixture: it must measure 15 lines, reproducing the hidden final line. Every current page must fit, and the full closing sentence must remain present.
+
+The probe also opens page 5 in the actual book screen and captures it. CI uploads the page-by-page report, client log and screenshot as `book-layout-review`. No game world is created, and the probe is excluded from the player jar. Font-changing resource packs and other languages are outside this check.
