@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:smiths_work",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:golden_birch_leaves"

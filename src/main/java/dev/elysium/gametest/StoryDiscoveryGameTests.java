@@ -60,6 +60,8 @@ public final class StoryDiscoveryGameTests {
             h.assertTrue(advancement!=null,"Discovery advancement must still exist: "+id);
             var display=advancement.value().display().orElseThrow();
             h.assertTrue(display.isHidden(),"Unfound chapters cannot appear as future objectives: "+id);
+            h.assertTrue(advancement.value().parent().orElseThrow().equals(ResourceLocation.fromNamespaceAndPath("elysium","elysium")),
+                    "A later discovery cannot expose an unvisited encounter through its ancestors: "+id);
             if(id.equals("first_sunset")||id.equals("first_night")||id.equals("pandora_opened"))
                 h.assertTrue(!display.shouldShowToast(),"Automatic changes may not announce unseen events: "+id);
         }

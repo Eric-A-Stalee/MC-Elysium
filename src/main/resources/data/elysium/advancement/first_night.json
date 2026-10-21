@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:first_sunset",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:dawn_wayfinder"

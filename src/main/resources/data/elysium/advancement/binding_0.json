@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:pandora_opened",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:binding_nail"

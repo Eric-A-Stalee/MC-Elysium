@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:flame_returned",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:sunwrought_ingot"

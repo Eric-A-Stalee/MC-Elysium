@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:promethean_craft",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:pandora_vessel"

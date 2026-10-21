@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:living_realm",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:sunwrought_ingot"

@@ -490,6 +490,9 @@ for path, content in list(OUTPUTS.items()):
     name = path.removeprefix('data/elysium/advancement/').removesuffix('.json')
     if name not in ('root', 'sigil', 'elysium'):
         advancement['display']['hidden'] = True
+        # Completed children can expose hidden ancestors in vanilla. Independent
+        # records must not reveal an encounter a player skipped or never visited.
+        advancement['parent'] = 'elysium:elysium'
     if name in ('first_sunset', 'first_night', 'pandora_opened'):
         advancement['display']['show_toast'] = False
     emit(path, advancement)

@@ -23,7 +23,9 @@ progression can change the realm without giving a new visitor knowledge of every
 system. Recipe bills and controls remain explicit. The rear regulator explains
 its choices once its fittings have been repaired.
 
-Later advancements are hidden until earned. The first sunset, night and opened
+Later advancements are independent records under the dimension entry, hidden
+until earned. Completing one cannot expose an unvisited encounter through its
+ancestors. The first sunset, night and opened
 vessel do not send toast notifications. Unexpected clock changes do not broadcast
 chapter titles into the underground workshop. Sky records require exposure to the
 sky; the vessel record requires examining the open vessel. Local sounds, smoke,

@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:first_night",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:celestial_governor"

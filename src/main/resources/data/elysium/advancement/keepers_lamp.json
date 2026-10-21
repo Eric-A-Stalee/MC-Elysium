@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:borrowed_light",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:keepers_lamp"

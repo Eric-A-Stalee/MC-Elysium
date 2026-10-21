@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:voice_in_iron",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:tartarus_counterweight"

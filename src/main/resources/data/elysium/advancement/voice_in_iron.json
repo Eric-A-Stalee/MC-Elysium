@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:cold_hearth",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:chain_resonator"

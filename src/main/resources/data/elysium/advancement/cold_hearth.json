@@ -1,5 +1,5 @@
 {
-  "parent": "elysium:forge_survey",
+  "parent": "elysium:elysium",
   "display": {
     "icon": {
       "id": "elysium:forge_hearth"
